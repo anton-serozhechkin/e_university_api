@@ -71,7 +71,12 @@ CREATE TABLE user(
     CONSTRAINT user_pk PRIMARY KEY(user_id));
 
 
-CREATE SEQUENCE 
+CREATE SEQUENCE IF NOT EXISTS user_id_seq_no_seq AS bigint
+START WITH 1 INCREMENT BY MINVALUE 1 MAXVALUE
+9223372036854775807 CACHE 1;
+
+ALTER TABLE user_id ALTER COLUMN seq_no_seq SET DEFAULT
+nextval('user_id_seq_no_seq')
 
 "Mark user_faculty_fk as FK to faculty(faculty_id)"
 ALTER TABLE user ADD CONSTRAINT user_faculty_fk FOREIGN KEY(faculty_id)
@@ -102,4 +107,12 @@ CREATE TABLE action(
     role_id integer, 
     action_name varchar(50),
     action_id integer
-    CONSTRAINT action_pk PRIMARY KEY(actione_id));
+    CONSTRAINT action_pk PRIMARY KEY(action_id));
+
+
+"Mark action_role_fk as FK to action(role(id)"
+ALTER TABLE action ADD CONSTRAINT action_role_fk FOREIGN KEY(role_id)
+REFERENCES action(role_id)
+MATCH FULL
+ON DELETE CASCADE
+ON UPDATE CASCADE
