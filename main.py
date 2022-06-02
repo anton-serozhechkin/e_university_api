@@ -1,6 +1,8 @@
-from fastapi import FastAPI
 from db import database
 from handlers import faculty
+
+from fastapi import FastAPI
+
 
 app = FastAPI()
 

@@ -1,8 +1,9 @@
+from models.faculty import faculty as faculty_table
+from db import database
+
 from typing import List
 
-from db import database
 from pydantic import BaseModel
-from models.faculty import faculty as faculty_table
 from fastapi import APIRouter 
 
 

@@ -1,7 +1,10 @@
+import os
+
 import databases
 import sqlalchemy 
 
-DATABASE_URL = "***"
+
+DATABASE_URL = os.getenv("DATABASE_URL", None)
 
 database = databases.Database(DATABASE_URL)
 

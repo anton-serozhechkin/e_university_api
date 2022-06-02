@@ -40,24 +40,6 @@ ALTER TABLE faculty ADD CONSTRAINT faculty_university_fk
 FOREIGN KEY (university_id) REFERENCES university (university_id) 
 MATCH FULL ON DELETE CASCADE ON UPDATE CASCADE;
 
--- Create table user
-CREATE TABLE "user"(
-    user_id integer NOT NULL,
-    login varchar(50),
-    password varchar(50),
-    last_visit timestamp,
-    email varchar(100),
-    role_id integer,
-    is_active BOOLEAN DEFAULT FALSE,
-    CONSTRAINT user_pk PRIMARY KEY(user_id));
-
--- Create sequence user_id_seq"
-CREATE SEQUENCE IF NOT EXISTS user_id_seq AS bigint
-START WITH 1 INCREMENT BY 1;
-
--- Link sequence to column user_id_seq
-ALTER TABLE "user" ALTER COLUMN user_id SET DEFAULT
-nextval('user_id_seq');
 
 -- Create table student
 -- student_pk marked as PK to faculty_id"
@@ -69,6 +51,7 @@ CREATE TABLE student (
     user_id integer,
     CONSTRAINT student_pk PRIMARY KEY(student_id));
 
+
 -- Create sequence student_id_seq
 CREATE SEQUENCE IF NOT EXISTS student_id_seq AS bigint
 START WITH 1 INCREMENT BY 1;
@@ -76,7 +59,6 @@ START WITH 1 INCREMENT BY 1;
 -- Link sequence to column student_id
 ALTER TABLE student ALTER COLUMN student_id SET DEFAULT
 nextval('student_id_seq');
-
 
 -- Mark student.faculty_id as FK to faculty(faculty_id)
 ALTER TABLE student ADD CONSTRAINT student_faculty_fk 
@@ -107,13 +89,6 @@ nextval('user_id_seq');
 ALTER TABLE student ADD CONSTRAINT student_user_fk 
 FOREIGN KEY (user_id) REFERENCES "user"(user_id)
 MATCH FULL ON DELETE CASCADE ON UPDATE CASCADE;
-
--- Mark user_faculty_fk as FK to faculty(faculty_id)"
-ALTER TABLE user ADD CONSTRAINT user_faculty_fk FOREIGN KEY(faculty_id)
-REFERENCES faculty(faculty_id)
-MATCH FULL
-ON DELETE CASCADE
-ON UPDATE CASCADE;
 
 -- Create table role
 CREATE TABLE role(
