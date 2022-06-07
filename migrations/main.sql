@@ -3,9 +3,10 @@ SET search_path to public;
 
 --Сreate table university
 -- university_pk marked as PK to university_id
-CREATE TABLE university(
+CREATE TABLE IF NOT EXISTS university (
     university_id integer NOT NULL,
     university_name varchar(255) NOT NULL,
+    short_university_name varchar(50) NOT NULL,
     logo varchar(255),
     CONSTRAINT university_pk PRIMARY KEY (university_id));
 
@@ -18,12 +19,11 @@ nextval('university_id_seq');
 
 -- Сreate table faculty
 -- faculty_pk marked as PK to faculty_id
-CREATE TABLE faculty(
+CREATE TABLE IF NOT EXISTS faculty(
     faculty_id integer NOT NULL,
     name varchar(255) NOT NULL,
     shortname varchar(20),
     main_email varchar(50),
-    hostel_email varchar(50) NOT NULL,
     university_id integer NOT NULL,
     CONSTRAINT faculty_pk PRIMARY KEY (faculty_id));
 
@@ -40,17 +40,34 @@ ALTER TABLE faculty ADD CONSTRAINT faculty_university_fk
 FOREIGN KEY (university_id) REFERENCES university (university_id) 
 MATCH FULL ON DELETE CASCADE ON UPDATE CASCADE;
 
+-- Create table user
+CREATE TABLE IF NOT EXISTS "user"(
+    user_id integer NOT NULL,
+    login varchar(50),
+    password varchar(50),
+    last_visit timestamp,
+    email varchar(100),
+    role_id integer,
+    is_active BOOLEAN DEFAULT FALSE,
+    CONSTRAINT user_pk PRIMARY KEY(user_id));
+
+-- Create sequence user_id_seq"
+CREATE SEQUENCE IF NOT EXISTS user_id_seq AS bigint
+START WITH 1 INCREMENT BY 1;
+
+-- Link sequence to column user_id_seq
+ALTER TABLE "user" ALTER COLUMN user_id SET DEFAULT
+nextval('user_id_seq');
 
 -- Create table student
 -- student_pk marked as PK to faculty_id"
-CREATE TABLE student (
+CREATE TABLE IF NOT EXISTS student (
     student_id integer NOT NULL,
     full_name varchar(255) NOT NULL,
     telephone_number varchar(255) NOT NULL,
     faculty_id integer NOT NULL,
     user_id integer,
     CONSTRAINT student_pk PRIMARY KEY(student_id));
-
 
 -- Create sequence student_id_seq
 CREATE SEQUENCE IF NOT EXISTS student_id_seq AS bigint
@@ -60,6 +77,7 @@ START WITH 1 INCREMENT BY 1;
 ALTER TABLE student ALTER COLUMN student_id SET DEFAULT
 nextval('student_id_seq');
 
+
 -- Mark student.faculty_id as FK to faculty(faculty_id)
 ALTER TABLE student ADD CONSTRAINT student_faculty_fk 
 FOREIGN KEY (faculty_id) REFERENCES faculty(faculty_id)
@@ -67,7 +85,7 @@ MATCH FULL ON DELETE CASCADE ON UPDATE CASCADE;
 
 
 -- Create table user
-CREATE TABLE "user"(
+CREATE TABLE IF NOT EXISTS "user"(
     user_id integer NOT NULL,
     login varchar(50) NOT NULL,
     password varchar(50) NOT NULL,
@@ -90,8 +108,15 @@ ALTER TABLE student ADD CONSTRAINT student_user_fk
 FOREIGN KEY (user_id) REFERENCES "user"(user_id)
 MATCH FULL ON DELETE CASCADE ON UPDATE CASCADE;
 
+-- Mark user_faculty_fk as FK to faculty(faculty_id)"
+ALTER TABLE "user" ADD CONSTRAINT user_faculty_fk FOREIGN KEY(faculty_id)
+REFERENCES faculty(faculty_id)
+MATCH FULL
+ON DELETE CASCADE
+ON UPDATE CASCADE;
+
 -- Create table role
-CREATE TABLE role(
+CREATE TABLE IF NOT EXISTS role(
     role_id integer NOT NULL,
     role_name varchar(50) NOT NULL,
     CONSTRAINT role_pk PRIMARY KEY(role_id));
@@ -110,7 +135,7 @@ FOREIGN KEY(role_id) REFERENCES role(role_id)
 MATCH FULL ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- Create table actions"
-CREATE TABLE action(
+CREATE TABLE IF NOT EXISTS action(
     role_id integer NOT NULL, 
     action_name varchar(50) NOT NULL,
     action_id integer NOT NULL,
@@ -129,8 +154,8 @@ ALTER TABLE action ADD CONSTRAINT action_role_fk
 FOREIGN KEY(role_id) REFERENCES role(role_id)
 MATCH FULL ON DELETE CASCADE ON UPDATE CASCADE;
 
--- Create table user_faculty
-CREATE TABLE user_faculty(
+-- Create table user_facultygetd
+CREATE TABLE IF NOT EXISTS user_faculty(
     user_id integer NOT NULL,
     faculty_id integer NOT NULL,
     CONSTRAINT user_faculty_pk PRIMARY KEY(user_id, faculty_id));
@@ -144,3 +169,27 @@ MATCH FULL ON DELETE CASCADE ON UPDATE CASCADE;
 ALTER TABLE user_faculty ADD CONSTRAINT user_faculty_faculty_fk 
 FOREIGN KEY(faculty_id) REFERENCES faculty(faculty_id)
 MATCH FULL ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- Create table one_time_tocken
+CREATE TABLE IF NOT EXISTS one_time_token(
+    student_id integer NOT NULL,
+    token_id integer NOT NULL, 
+    token varchar(255) NOT NULL, 
+    expiries timestamp NOT NULL,
+    CONSTRAINT one_time_token_pk PRIMARY KEY (token_id));
+
+-- Create sequence to column token_id_seq
+CREATE SEQUENCE IF NOT EXISTS token_id_seq AS bigint
+START WITH 1 INCREMENT BY 1; 
+
+ALTER TABLE one_time_token ALTER COLUMN token_id SET DEFAULT
+nextval('token_id_seq');
+
+ALTER TABLE one_time_token ADD CONSTRAINT one_time_token_student_fk
+FOREIGN KEY (student_id) REFERENCES student(student_id)
+MATCH FULL ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- INSERT DATA TO table university
+INSERT INTO university(university_name, short_university_name)
+VALUES ('Харківський національний економічний університет імені Семена Кузнеця',
+        'ХНЕУ ім. С. Кузнеця');
