@@ -1,7 +1,7 @@
 from sqlalchemy import (MetaData, Column, Table, Integer, VARCHAR, ForeignKey)
 
-from e_university_api.models import faculty 
-from e_university_api.models import user
+from models import faculty 
+from models import user
 
 metadata_obj = MetaData()
 

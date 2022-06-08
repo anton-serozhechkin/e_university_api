@@ -1,7 +1,7 @@
 from sqlalchemy import (MetaData, Column, Table, Integer, VARCHAR, ForeignKey, 
                         BOOLEAN, TIMESTAMP)
 
-from e_university_api.models.role import role
+from models.role import role
 
 
 metadata_obj = MetaData()

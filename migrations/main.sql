@@ -175,7 +175,7 @@ CREATE TABLE IF NOT EXISTS one_time_token(
     student_id integer NOT NULL,
     token_id integer NOT NULL, 
     token varchar(255) NOT NULL, 
-    expiries timestamp NOT NULL,
+    expires timestamp NOT NULL,
     CONSTRAINT one_time_token_pk PRIMARY KEY (token_id));
 
 -- Create sequence to column token_id_seq
@@ -193,3 +193,6 @@ MATCH FULL ON DELETE CASCADE ON UPDATE CASCADE;
 INSERT INTO university(university_name, short_university_name)
 VALUES ('Харківський національний економічний університет імені Семена Кузнеця',
         'ХНЕУ ім. С. Кузнеця');
+
+
+
