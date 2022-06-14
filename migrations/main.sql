@@ -87,7 +87,7 @@ nextval('user_id_seq');
 -- Mark student_user_fk as FK to user(user_id)
 ALTER TABLE student ADD CONSTRAINT student_user_fk 
 FOREIGN KEY (user_id) REFERENCES "user"(user_id)
-MATCH FULL ON DELETE CASCADE ON UPDATE CASCADE;
+MATCH FULL ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- Create table role
 CREATE TABLE IF NOT EXISTS role(

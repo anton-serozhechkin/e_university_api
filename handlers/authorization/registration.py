@@ -3,16 +3,12 @@ from models.student import student as student_table
 from models.one_time_token import one_time_token
 from models.user_faculty import user_faculty
 from db import database
-import hashlib
-import os
 import re   
-import json
-from settings.globals import TOKEN_LIFE_TIME
-from datetime import date, datetime, timedelta
+import base64
+from datetime import datetime
 from translitua import translit
 from random import randint
-
-from pydantic import BaseModel, validator, ValidationError
+from pydantic import BaseModel, validator
 from fastapi import APIRouter
 from fastapi.responses import JSONResponse
 
@@ -60,6 +56,7 @@ class RegistrationIn(BaseModel):
 class Registration(BaseModel):
     user_id: int
     faculty_id: int
+    login: str
 
 
 @router.post("/registration/", response_model=Registration)
@@ -75,6 +72,7 @@ async def registation(user: RegistrationIn):
 
     if not token_data:
         return JSONResponse(status_code=404, content={"message": "Для реєстрації користувача, спочатку перейдіть на сторінку перевірки наявності студента в реєстрі"})
+        
     # iteration by result, token expires 
     for token in token_data: 
         expires = token.expires
@@ -90,15 +88,26 @@ async def registation(user: RegistrationIn):
  
     if not student:
         return JSONResponse(status_code=404, content={"message": "Студента не знайдено"})
+
     for item in student: 
         full_name = item.full_name
         faculty_id = item.faculty_id
-    login = f"{translit(full_name[:4])}-{randint(100,999)}".lower()
-    
-    query = user_table.insert().values(login=login, email=user.email, password=user.password, role_id=1, is_active=True)
+        student_user_id = item.user_id
+
+    if student_user_id:
+        return JSONResponse(status_code=409, content={"message": "Обліковий запис для студента вже існую, перевірте деталі на електронній пошті"})
+
+    transliterated_full_name = translit(full_name)
+    login = f"{(transliterated_full_name[:4])}-{randint(100,999)}".lower()
+
+    # Encoding password
+    encoded_user_password = base64.b64encode(user.password.encode("utf-8")).decode("utf-8")
+
+    query = user_table.insert().values(login=login, email=user.email, password=encoded_user_password, role_id=1, is_active=True)
     last_record_id = await database.execute(query)
+    query = student_table.update().values(user_id=last_record_id).where(student_table.c.student_id == student_id)
+    await database.execute(query)
+
     query = user_faculty.insert().values(user_id=last_record_id, faculty_id = faculty_id).returning(user_faculty.c.faculty_id)    
     user_faculty_data = await database.execute(query)
-    return {"user_id": last_record_id, "faculty_id": user_faculty_data}
-
-    
+    return {"user_id": last_record_id, "faculty_id": user_faculty_data, "login": login}
