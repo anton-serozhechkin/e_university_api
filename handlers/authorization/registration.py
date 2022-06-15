@@ -3,11 +3,13 @@ from models.student import student as student_table
 from models.one_time_token import one_time_token
 from models.user_faculty import user_faculty
 from db import database
+
 import re   
 import base64
-from datetime import datetime
-from translitua import translit
 from random import randint
+from datetime import datetime
+
+from translitua import translit
 from pydantic import BaseModel, validator
 from fastapi import APIRouter
 from fastapi.responses import JSONResponse
@@ -17,6 +19,7 @@ router = APIRouter()
 
 
 class RegistrationIn(BaseModel):
+
     token: str
     email: str
     password: str
@@ -35,21 +38,28 @@ class RegistrationIn(BaseModel):
                            '(?!.*[' + specials + ']$)'
                            '[A-Za-z0-9' + specials + ']+(?<!['+ specials + '])@[A-Za-z0-9.-]+\.[A-Za-z]{2,4}$')
         message = False
+
         if not v:
             message = "Електронний адрес не може бути порожнім"
+
         elif not re.fullmatch(regex, v):
             message = f"Невірний формат адресу електронної пошти: {v}."
+
         if message:
             raise ValueError(message)
+
         return v
 
     @validator('password_re_check')
     def validate_password(cls, v, values):
         password = values.get('password')
+
         if not password or not v:
-            raise ValueError('Дані про пароль не можуть бути порожні')
+            raise ValueError('Паролі не можуть бути порожніми')
+
         if password != v:
             raise ValueError('Введені паролі не співпадають')
+
         return v
  
 
@@ -61,6 +71,7 @@ class Registration(BaseModel):
 
 @router.post("/registration/", response_model=Registration)
 async def registation(user: RegistrationIn):
+
     RegistrationIn(
         token=user.token,
         email=user.email,
@@ -71,18 +82,21 @@ async def registation(user: RegistrationIn):
     token_data = await database.fetch_all(query)
 
     if not token_data:
-        return JSONResponse(status_code=404, content={"message": "Для реєстрації користувача, спочатку перейдіть на сторінку перевірки наявності студента в реєстрі"})
-        
-    # iteration by result, token expires 
+        return JSONResponse(status_code=404, content={"message": "Для реєстрації" \
+                                            "користувача, спочатку перейдіть на сторінку " \
+                                            "перевірки наявності студента в реєстрі"})
+ 
     for token in token_data: 
         expires = token.expires
         student_id = token.student_id
-       
+
     datetime_utc_now = datetime.utcnow()
 
     if datetime_utc_now > expires:
-        return JSONResponse(status_code=403, content={"message": "Час на реєстрацію вичерпано, перейдіть на посилання для перевірки студента."})
-    
+        return JSONResponse(status_code=403, content={"message": "Час на реєстрацію вичерпано. " \
+                                            "Будь ласка, перейдіть на посилання для перевірки " \
+                                            "наявності студентав реєстрі."})
+
     query = student_table.select().where(student_table.c.student_id == student_id)
     student = await database.fetch_all(query)
  
@@ -95,7 +109,8 @@ async def registation(user: RegistrationIn):
         student_user_id = item.user_id
 
     if student_user_id:
-        return JSONResponse(status_code=409, content={"message": "Обліковий запис для студента вже існую, перевірте деталі на електронній пошті"})
+        return JSONResponse(status_code=409, content={"message": "Обліковий запис для студента " \
+                                "вже існує. Будь ласка, перевірте деталі на електронній пошті"})
 
     transliterated_full_name = translit(full_name)
     login = f"{(transliterated_full_name[:4])}-{randint(100,999)}".lower()
@@ -105,9 +120,17 @@ async def registation(user: RegistrationIn):
 
     query = user_table.insert().values(login=login, email=user.email, password=encoded_user_password, role_id=1, is_active=True)
     last_record_id = await database.execute(query)
+
     query = student_table.update().values(user_id=last_record_id).where(student_table.c.student_id == student_id)
     await database.execute(query)
 
     query = user_faculty.insert().values(user_id=last_record_id, faculty_id = faculty_id).returning(user_faculty.c.faculty_id)    
     user_faculty_data = await database.execute(query)
-    return {"user_id": last_record_id, "faculty_id": user_faculty_data, "login": login}
+
+    response = {
+            "user_id": last_record_id, 
+            "faculty_id": user_faculty_data, 
+            "login": login
+    }
+
+    return response
