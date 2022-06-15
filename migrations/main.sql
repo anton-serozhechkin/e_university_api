@@ -87,7 +87,7 @@ nextval('user_id_seq');
 -- Mark student_user_fk as FK to user(user_id)
 ALTER TABLE student ADD CONSTRAINT student_user_fk 
 FOREIGN KEY (user_id) REFERENCES "user"(user_id)
-MATCH FULL ON DELETE CASCADE ON UPDATE CASCADE;
+MATCH FULL ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- Create table role
 CREATE TABLE IF NOT EXISTS role(
@@ -167,3 +167,13 @@ MATCH FULL ON DELETE CASCADE ON UPDATE CASCADE;
 INSERT INTO university(university_name, short_university_name)
 VALUES ('Харківський національний економічний університет імені Семена Кузнеця',
         'ХНЕУ ім. С. Кузнеця');
+
+-- INSERT DATA to table role
+INSERT INTO role(role_name)
+VALUES ('Студент');
+
+INSERT INTO role(role_name)
+VALUES ('Адміністратор');
+
+INSERT INTO role(role_name)
+VALUES ('Супер Адміністратор');
