@@ -2,6 +2,8 @@ from db import database
 from handlers import faculty
 from handlers.authorization import check_student_existance 
 from handlers.authorization import registration
+from handlers.authorization import auth
+from handlers import me
 
 from fastapi import FastAPI
 
@@ -12,6 +14,9 @@ app = FastAPI()
 app.include_router(faculty.router)
 app.include_router(check_student_existance.router)
 app.include_router(registration.router)
+app.include_router(auth.router)
+app.include_router(me.router)
+
 
 @app.on_event("startup")
 async def startup():
