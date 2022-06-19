@@ -3,9 +3,9 @@ from models.student import student as student_table
 from models.one_time_token import one_time_token
 from models.user_faculty import user_faculty
 from db import database
+from components.utils import get_hashed_password
 
 import re   
-import base64
 from random import randint
 from datetime import datetime
 
@@ -116,7 +116,7 @@ async def registation(user: RegistrationIn):
     login = f"{(transliterated_full_name[:4])}-{randint(100,999)}".lower()
 
     # Encoding password
-    encoded_user_password = base64.b64encode(user.password.encode("utf-8")).decode("utf-8")
+    encoded_user_password = get_hashed_password(user.password)
 
     query = user_table.insert().values(login=login, email=user.email, password=encoded_user_password, role_id=1, is_active=True)
     last_record_id = await database.execute(query)

@@ -69,7 +69,7 @@ MATCH FULL ON DELETE CASCADE ON UPDATE CASCADE;
 CREATE TABLE IF NOT EXISTS "user"(
     user_id integer NOT NULL,
     login varchar(50) NOT NULL,
-    password varchar(50) NOT NULL,
+    password varchar(255) NOT NULL,
     last_visit timestamp,
     email varchar(100) NOT NULL,
     role_id integer NOT NULL,
