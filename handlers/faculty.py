@@ -18,7 +18,7 @@ async def read_faculties(university_id: int, user = Depends(get_current_user)):
 
 
 @router.post("/{university_id}/faculties/", response_model=FacultyOut)
-async def create_faculty(faculty: FacultyIn, user = Depends(get_current_user)):
+async def create_faculty(university_id: int, faculty: FacultyIn, user = Depends(get_current_user)):
     query = faculty_table.insert().values(name=faculty.name, shortname=faculty.shortname, 
                                     main_email=faculty.main_email, 
                                     university_id=faculty.university_id)
