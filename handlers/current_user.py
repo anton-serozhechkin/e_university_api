@@ -1,4 +1,5 @@
 from models.user import user as user_table
+from models.user_faculty import user_faculty as user_faculty_table
 from settings.globals import (
     ALGORITHM,
     JWT_SECRET_KEY
@@ -41,12 +42,19 @@ async def get_current_user(token: str = Depends(reuseable_oauth)) -> UserOut:
         )
         
     query = user_table.select().where(user_table.c.email == token_data.sub)
-    user = await database.fetch_all(query)
+    user = await database.fetch_one(query)
 
     if user is None:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Користувача не знайдено",
         )
-    
-    return UserOut(**user[0])
+
+    user_faculty_query = user_faculty_table.select().where(user_faculty_table.c.user_id == user.user_id)
+    user_faculty = await database.fetch_all(user_faculty_query)
+    user_faculties_list = []
+    for item in user_faculty:
+        user_faculties_list.append(item.faculty_id)
+
+    response = UserOut(**user, faculty_id=user_faculties_list)
+    return response

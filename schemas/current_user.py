@@ -15,6 +15,7 @@ class UserOut(BaseModel):
     email: str
     is_active: bool
     role_id: int
+    faculty_id: list
 
 
 class UserIn(TokenPayload):
