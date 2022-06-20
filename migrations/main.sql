@@ -179,7 +179,7 @@ INSERT INTO role(role_name)
 VALUES ('Супер Адміністратор');
 
 
-CREATE VIEW extras_item_view AS
+CREATE VIEW user_list_view AS
 SELECT 
     u.user_id, 
     u.login, 
@@ -187,11 +187,15 @@ SELECT
     u.email,
     u.role_id, 
     r.role_name, 
-    f.faculty_name 
-FROM user u 
-LEFT JOIN role r ON 
-    u.role_id = r.role_id 
+    f.name as faculty_name, 
+    un.university_id,
+    f.faculty_id
+FROM "user" u 
+LEFT JOIN "role" r ON 
+    r.role_id = u.role_id 
 LEFT JOIN user_faculty uf ON 
     uf.user_id = u.user_id 
 LEFT JOIN faculty f ON 
     f.faculty_id = uf.faculty_id
+LEFT JOIN university un ON
+    un.university_id = f.university_id;

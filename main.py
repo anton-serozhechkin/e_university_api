@@ -4,6 +4,8 @@ from handlers.authorization import check_student_existance
 from handlers.authorization import registration
 from handlers.authorization import auth
 from handlers import me
+from handlers import user
+
 
 from fastapi import FastAPI
 
@@ -16,6 +18,8 @@ app.include_router(check_student_existance.router)
 app.include_router(registration.router)
 app.include_router(auth.router)
 app.include_router(me.router)
+app.include_router(user.router)
+
 
 
 @app.on_event("startup")
