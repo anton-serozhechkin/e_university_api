@@ -1,25 +1,43 @@
-from datetime import timedelta
-from schemas.user import UsersListView
-from models.faculty import faculty as faculty_table
+from schemas.user import UsersListViewOut
+from schemas.create_user import CreateUserIn, CreateUserOut
 from models.user_list_view import user_list_view
+from models.user import user as user_table
+from models.user_faculty import user_faculty
 from handlers.current_user import get_current_user
 from db import database
-from pydantic import BaseModel, validator
-
+from components.utils import get_hashed_password
+from random import randint
 from typing import List
-import re
 
 from fastapi import Depends, APIRouter 
 
 router = APIRouter()
 
 
-@router.get("/{univesity_id}/users-list/", response_model=List[UsersListView])
+@router.get("/{univesity_id}/users/", response_model=List[UsersListViewOut])
 async def users_list(university_id: int, user = Depends(get_current_user)):
     query = user_list_view.select().where(user_list_view.c.university_id == university_id)
     response = await database.fetch_all(query)
-    print(response)
     return response
     
+@router.post("/{university_id}/users/", response_model=CreateUserOut)
+async def create_user(university_id: int, user: CreateUserIn, authorisation = Depends(get_current_user)):
     
-       
+    CreateUserIn(
+        email=user.email,
+        password=user.password,
+        password_re_check = user.password_re_check,
+        role_id =  user.role_id,
+        faculty_id = user.faculty_id)
+
+    hashed_password = get_hashed_password(user.password)
+    login = f"{(user.email[:4])}-{randint(100,999)}".lower()
+    query = user_table.insert().values(login=login, password=hashed_password, email=user.email, role_id=user.role_id, is_active=False)
+    last_record_id = await database.execute(query)
+    
+    for faculty_id in user.faculty_id:
+        query = user_faculty.insert().values(user_id=last_record_id, faculty_id = faculty_id).returning(user_faculty.c.faculty_id)    
+        await database.execute(query)
+  
+    return {
+       "user_id": last_record_id}

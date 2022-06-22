@@ -20,6 +20,7 @@ app.include_router(me.router)
 app.include_router(user.router)
 
 
+
 @app.on_event("startup")
 async def startup():
     await database.connect()

@@ -3,7 +3,7 @@ from datetime import datetime
 from pydantic import BaseModel
 
 
-class UsersListView(BaseModel):
+class UsersListViewOut(BaseModel):
 
     user_id: int
     login: str
