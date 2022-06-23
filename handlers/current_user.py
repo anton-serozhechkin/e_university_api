@@ -1,11 +1,11 @@
 from models.user import user as user_table
-from models.user_faculty import user_faculty as user_faculty_table
+from models.user_list_view import user_list_view
 from settings.globals import (
     ALGORITHM,
     JWT_SECRET_KEY
 )
 from db import database
-from schemas.current_user import TokenPayload, UserOut
+from schemas.user import TokenPayload, UserOut
 
 from datetime import datetime
 
@@ -50,11 +50,7 @@ async def get_current_user(token: str = Depends(reuseable_oauth)) -> UserOut:
             detail="Користувача не знайдено",
         )
 
-    user_faculty_query = user_faculty_table.select().where(user_faculty_table.c.user_id == user.user_id)
-    user_faculty = await database.fetch_all(user_faculty_query)
-    user_faculties_list = []
-    for item in user_faculty:
-        user_faculties_list.append(item.faculty_id)
+    query = user_list_view.select(user_list_view.c.user_id == user.user_id)
+    user = await database.fetch_one(query)
 
-    response = UserOut(**user, faculty_id=user_faculties_list)
-    return response
+    return user
