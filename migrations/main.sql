@@ -178,24 +178,24 @@ VALUES ('Адміністратор');
 INSERT INTO role(role_name)
 VALUES ('Супер Адміністратор');
 
-
+DROP VIEW IF EXISTS user_list_view; 
 CREATE VIEW user_list_view AS
-SELECT 
-    u.user_id, 
-    u.login, 
-    u.last_visit,
-    u.email,
-    u.role_id, 
-    r.role_name, 
-    f.name as faculty_name, 
-    un.university_id,
-    f.faculty_id
-FROM "user" u 
-LEFT JOIN "role" r ON 
-    r.role_id = u.role_id 
-LEFT JOIN user_faculty uf ON 
-    uf.user_id = u.user_id 
-LEFT JOIN faculty f ON 
-    f.faculty_id = uf.faculty_id
-LEFT JOIN university un ON
-    un.university_id = f.university_id;
+    SELECT
+        u.user_id, 
+        u.login, 
+        u.last_visit,
+        u.email,
+        u.role_id, 
+        r.role_name, 
+        f.name as faculty_name, 
+        un.university_id,
+        f.faculty_id
+    FROM "user" u 
+    LEFT JOIN "role" r ON 
+        r.role_id = u.role_id 
+    LEFT JOIN user_faculty uf ON 
+        uf.user_id = u.user_id 
+    LEFT JOIN faculty f ON 
+        f.faculty_id = uf.faculty_id
+    LEFT JOIN university un ON
+        un.university_id = f.university_id;
