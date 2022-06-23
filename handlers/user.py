@@ -16,14 +16,14 @@ from fastapi import Depends, APIRouter
 router = APIRouter()
 
 
-@router.get("/{univesity_id}/users/", response_model=List[UsersListViewOut])
+@router.get("/{univesity_id}/users/", response_model=List[UsersListViewOut], tags=["SuperAdmin dashboard"])
 async def users_list(university_id: int, user = Depends(get_current_user)):
     query = user_list_view.select().where(user_list_view.c.university_id == university_id)
     response = await database.fetch_all(query)
     return response
 
 
-@router.post("/{university_id}/users/", response_model=CreateUserOut)
+@router.post("/{university_id}/users/", response_model=CreateUserOut, tags=["SuperAdmin dashboard"])
 async def create_user(university_id: int, user: CreateUserIn, authorisation = Depends(get_current_user)):
     
     CreateUserIn(

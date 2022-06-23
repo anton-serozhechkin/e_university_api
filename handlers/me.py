@@ -7,6 +7,6 @@ from fastapi import Depends, APIRouter
 router = APIRouter()
 
 
-@router.get('/me', summary='Отримати інформацію про поточного користувача, який увійшов у систему', response_model=UserOut)
+@router.get('/me', summary='Отримати інформацію про поточного користувача, який увійшов у систему', response_model=UserOut, tags=["Authorization"])
 async def get_me(user: UserIn = Depends(get_current_user)):
     return user

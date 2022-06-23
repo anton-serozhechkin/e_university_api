@@ -1,4 +1,5 @@
 from db import database
+from tags_metadata import metadata
 from handlers import faculty
 from handlers.authorization import check_student_existance 
 from handlers.authorization import registration
@@ -9,7 +10,7 @@ from handlers import user
 from fastapi import FastAPI
 
 
-app = FastAPI()
+app = FastAPI(openapi_tags=metadata)
 
 # Endpoints registration
 app.include_router(faculty.router)

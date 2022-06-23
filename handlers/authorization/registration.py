@@ -69,7 +69,7 @@ class Registration(BaseModel):
     login: str
 
 
-@router.post("/registration/", response_model=Registration)
+@router.post("/registration/", response_model=Registration, tags=["Authorization"])
 async def registation(user: RegistrationIn):
 
     RegistrationIn(
