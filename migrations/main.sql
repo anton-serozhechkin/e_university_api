@@ -130,9 +130,9 @@ MATCH FULL ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- Create table user_facultygetd
 CREATE TABLE IF NOT EXISTS user_faculty(
-    user_id integer NOT NULL,
-    faculty_id integer NOT NULL,
-    CONSTRAINT user_faculty_pk PRIMARY KEY(user_id, faculty_id));
+user_id integer NOT NULL,
+faculty_id integer NOT NULL,
+CONSTRAINT user_faculty_pk PRIMARY KEY(user_id, faculty_id));
 
 --Mark user_faculty as FK to user(user_id)
 ALTER TABLE user_faculty ADD CONSTRAINT user_faculty_user_fk 
@@ -199,3 +199,49 @@ LEFT JOIN faculty f ON
     f.faculty_id = uf.faculty_id
 LEFT JOIN university un ON
     un.university_id = f.university_id;
+
+
+-- Create table user_request
+CREATE TABLE IF NOT EXISTS user_request(
+    user_id integer NOT NULL,
+    service_id integer NOT NULL, 
+    date_created timestamp NOT NULL, 
+    user_request_id integer NOT NULL,
+    status_id integer NOT NULL,
+    remarks varchar(50) NOT NULL,
+    review_id integer NOT NULL, 
+    date_review timestamp NOT NULL);
+
+-- Create table service
+CREATE TABLE IF NOT EXISTS service(
+service_name varchar(255) NOT NULL, 
+service_id integer NOT NULL,
+CONSTRAINT service_id_pk PRIMARY KEY (service_id));
+
+
+-- Create table status
+CREATE TABLE IF NOT EXISTS status(
+status_id integer NOT NULL,
+status_name varchar(255) NOT NULL,
+CONSTRAINT status_id_pk PRIMARY KEY (status_id));
+    
+
+-- Create table documents
+CREATE TABLE IF NOT EXISTS document(
+    service_id integer NOT NULL, 
+    document_id integer NOT NULL,
+    document_name varchar(255) NOT NULL, 
+    document_content varchar(255) NOT NULL, 
+    is_downloaded_by_user BOOLEAN DEFAULT FALSE,
+    CONSTRAINT document_id_pk PRIMARY KEY (document_id));
+
+-- foreign key from user_request table to service table
+ALTER TABLE user_request ADD CONSTRAINT user_request_service_fk
+FOREIGN KEY (service_id) REFERENCES service(service_id)
+MATCH FULL ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- foreign key from user_request table to status table
+ALTER TABLE user_request ADD CONSTRAINT user_request_status_fk
+FOREIGN KEY (status_id) REFERENCES status(status_id)
+MATCH FULL ON DELETE CASCADE ON UPDATE CASCADE;
+
