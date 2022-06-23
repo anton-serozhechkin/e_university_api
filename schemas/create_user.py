@@ -1,7 +1,8 @@
 import re
+from typing import List
 
 from pydantic import BaseModel, validator
-from typing import List
+
 
 class CreateUserIn(BaseModel):
     
