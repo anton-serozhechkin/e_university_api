@@ -1,5 +1,5 @@
 from schemas.user import UsersListViewOut
-from schemas.create_user import CreateUserIn, CreateUserOut
+from schemas.user import CreateUserIn, CreateUserOut
 from models.user_list_view import user_list_view
 from models.user import user as user_table
 from models.user_faculty import user_faculty
@@ -16,7 +16,7 @@ from fastapi import Depends, APIRouter
 router = APIRouter()
 
 
-@router.get("/{univesity_id}/users/", response_model=List[UsersListViewOut], tags=["SuperAdmin dashboard"])
+@router.get("/{university_id}/users/", response_model=List[UsersListViewOut], tags=["SuperAdmin dashboard"])
 async def users_list(university_id: int, user = Depends(get_current_user)):
     query = user_list_view.select().where(user_list_view.c.university_id == university_id)
     response = await database.fetch_all(query)
@@ -24,7 +24,7 @@ async def users_list(university_id: int, user = Depends(get_current_user)):
 
 
 @router.post("/{university_id}/users/", response_model=CreateUserOut, tags=["SuperAdmin dashboard"])
-async def create_user(university_id: int, user: CreateUserIn, authorisation = Depends(get_current_user)):
+async def create_user(university_id: int, user: CreateUserIn, auth = Depends(get_current_user)):
     
     CreateUserIn(
         email=user.email,

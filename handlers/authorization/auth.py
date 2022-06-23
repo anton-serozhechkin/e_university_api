@@ -8,7 +8,7 @@ from db import database
 
 from fastapi import status, HTTPException, Depends, APIRouter
 from fastapi.security import OAuth2PasswordRequestForm
-from schemas.auth import AuthOut
+from schemas.user import AuthOut
 
 
 router = APIRouter()

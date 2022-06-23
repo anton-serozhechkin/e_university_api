@@ -45,7 +45,7 @@ MATCH FULL ON DELETE CASCADE ON UPDATE CASCADE;
 CREATE TABLE IF NOT EXISTS student (
     student_id integer NOT NULL,
     full_name varchar(255) NOT NULL,
-    telephone_number varchar(255) NOT NULL,
+    telephone_number varchar(255) NOT NULL UNIQUE,
     faculty_id integer NOT NULL,
     user_id integer,
     CONSTRAINT student_pk PRIMARY KEY(student_id));
@@ -74,6 +74,7 @@ CREATE TABLE IF NOT EXISTS "user"(
     email varchar(100) NOT NULL,
     role_id integer NOT NULL,
     is_active BOOLEAN DEFAULT FALSE,
+    UNIQUE (login, email),
     CONSTRAINT user_pk PRIMARY KEY(user_id));
 
 -- Create sequence user_id_seq"
@@ -181,15 +182,14 @@ VALUES ('Супер Адміністратор');
 DROP VIEW IF EXISTS user_list_view; 
 CREATE VIEW user_list_view AS
     SELECT
-        u.user_id, 
-        u.login, 
+        u.user_id,
+        u.login,
         u.last_visit,
         u.email,
-        u.role_id, 
-        r.role_name, 
-        f.name as faculty_name, 
-        un.university_id,
-        f.faculty_id
+        u.is_active,
+        COALESCE(json_agg(json_build_object('role', u.role_id, 'role_name', r.role_name)) FILTER (WHERE r.role_name IS NOT NULL), NULL) as role, 
+        COALESCE(json_agg(json_build_object('faculty', f.faculty_id, 'faculty_name', f.name)) FILTER (WHERE f.name IS NOT NULL), NULL) as faculties,
+        un.university_id
     FROM "user" u 
     LEFT JOIN "role" r ON 
         r.role_id = u.role_id 
@@ -198,4 +198,15 @@ CREATE VIEW user_list_view AS
     LEFT JOIN faculty f ON 
         f.faculty_id = uf.faculty_id
     LEFT JOIN university un ON
-        un.university_id = f.university_id;
+        un.university_id = f.university_id
+    GROUP BY
+        u.user_id,
+        u.login,
+        u.last_visit,
+        u.email,
+        u.is_active,
+        un.university_id
+    ORDER BY
+        un.university_id,
+        u.user_id,
+        u.is_active;

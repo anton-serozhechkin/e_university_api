@@ -1,5 +1,5 @@
 from handlers.current_user import get_current_user
-from schemas.current_user import UserOut, UserIn
+from schemas.user import UserOut, UserIn
 
 from fastapi import Depends, APIRouter
 
