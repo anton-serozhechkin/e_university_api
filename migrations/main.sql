@@ -170,14 +170,11 @@ VALUES ('Харківський національний економічний 
         'ХНЕУ ім. С. Кузнеця');
 
 -- INSERT DATA to table role
-INSERT INTO role(role_name)
-VALUES ('Студент');
+INSERT INTO role(role_name) VALUES ('Студент');
 
-INSERT INTO role(role_name)
-VALUES ('Адміністратор');
+INSERT INTO role(role_name) VALUES ('Адміністратор');
 
-INSERT INTO role(role_name)
-VALUES ('Супер Адміністратор');
+INSERT INTO role(role_name) VALUES ('Супер Адміністратор');
 
 DROP VIEW IF EXISTS user_list_view; 
 CREATE VIEW user_list_view AS
@@ -210,3 +207,97 @@ CREATE VIEW user_list_view AS
         un.university_id,
         u.user_id,
         u.is_active;
+
+
+-- Create table service
+CREATE TABLE IF NOT EXISTS service(
+    service_id integer NOT NULL,
+    service_name varchar(255) NOT NULL, 
+    CONSTRAINT service_pk PRIMARY KEY (service_id));
+
+
+INSERT INTO service(service_id, service_name) VALUES (1, 'Поселення в гуртожиток');
+
+
+-- Create table status
+CREATE TABLE IF NOT EXISTS status(
+    status_id integer NOT NULL,
+    status_name varchar(50) NOT NULL,
+    CONSTRAINT status_pk PRIMARY KEY (status_id));
+
+
+INSERT INTO status(status_id, status_name) VALUES (1, 'Схвалено');
+INSERT INTO status(status_id, status_name) VALUES (2, 'Відхилено');
+INSERT INTO status(status_id, status_name) VALUES (3, 'Розглядається');
+INSERT INTO status(status_id, status_name) VALUES (4, 'Скасовано');
+
+
+-- Create table user_request
+CREATE TABLE IF NOT EXISTS user_request(
+    user_request_id integer NOT NULL,
+    faculty_id integer NOT NULL,
+    university_id integer NOT NULL,
+    user_id integer NOT NULL,
+    service_id integer NOT NULL, 
+    date_created timestamp NOT NULL, 
+    status_id integer NOT NULL,
+    comment VARCHAR(255),
+    CONSTRAINT user_request_pk PRIMARY KEY(user_request_id));
+
+
+-- Create sequence to column user_request_id
+CREATE SEQUENCE IF NOT EXISTS user_request_id_seq AS bigint
+START WITH 1 INCREMENT BY 1; 
+
+
+ALTER TABLE user_request ALTER COLUMN user_request_id SET DEFAULT
+nextval('user_request_id_seq');
+
+
+-- foreign key from user_request table to service table
+ALTER TABLE user_request ADD CONSTRAINT user_request_service_fk
+FOREIGN KEY (service_id) REFERENCES service(service_id)
+MATCH FULL ON DELETE CASCADE ON UPDATE CASCADE;
+
+
+-- foreign key from user_request table to status table
+ALTER TABLE user_request ADD CONSTRAINT user_request_status_fk
+FOREIGN KEY (status_id) REFERENCES status(status_id)
+MATCH FULL ON DELETE SET NULL ON UPDATE CASCADE;
+
+
+-- foreign key from user_request table to faculty table
+ALTER TABLE user_request ADD CONSTRAINT user_request_faculty_fk
+FOREIGN KEY (faculty_id) REFERENCES faculty(faculty_id)
+MATCH FULL ON DELETE CASCADE ON UPDATE CASCADE;
+
+
+-- foreign key from user_request table to faculty table
+ALTER TABLE user_request ADD CONSTRAINT user_request_university_fk
+FOREIGN KEY (university_id) REFERENCES university(university_id)
+MATCH FULL ON DELETE CASCADE ON UPDATE CASCADE;
+
+
+-- foreign key from user_request table to user table
+ALTER TABLE user_request ADD CONSTRAINT user_request_user_fk
+FOREIGN KEY (user_id) REFERENCES "user"(user_id)
+MATCH FULL ON DELETE CASCADE ON UPDATE CASCADE;
+
+
+-- Create table user_document
+CREATE TABLE IF NOT EXISTS user_document(
+    user_document_id integer NOT NULL,
+    name varchar(255) NOT NULL, 
+    content varchar(255) NOT NULL, 
+    date_created timestamp NOT NULL, 
+    user_request_id integer NOT NULL,
+    CONSTRAINT user_document_pk PRIMARY KEY (user_document_id));
+
+
+-- Create sequence to column user_document_id
+CREATE SEQUENCE IF NOT EXISTS user_document_id_seq AS bigint
+START WITH 1 INCREMENT BY 1; 
+
+
+ALTER TABLE user_document ALTER COLUMN user_document_id SET DEFAULT
+nextval('user_document_id_seq');
