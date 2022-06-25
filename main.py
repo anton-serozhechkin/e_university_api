@@ -8,9 +8,20 @@ from handlers import me
 from handlers import user
 
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 
 
 app = FastAPI(openapi_tags=metadata)
+
+origins = ["*"]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 # Endpoints registration
 app.include_router(faculty.router)
