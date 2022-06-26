@@ -6,6 +6,7 @@ from handlers.authorization import registration
 from handlers.authorization import auth
 from handlers import me
 from handlers import user
+from handlers import user_request
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
@@ -30,6 +31,7 @@ app.include_router(registration.router)
 app.include_router(auth.router)
 app.include_router(me.router)
 app.include_router(user.router)
+app.include_router(user_request.router)
 
 
 
