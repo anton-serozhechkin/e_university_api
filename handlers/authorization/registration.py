@@ -17,7 +17,7 @@ from fastapi.responses import JSONResponse
 router = APIRouter()
 
 
-@router.post("/registration/", response_model=RegistrationOut, tags=["Authorization"])
+@router.post("/registration", response_model=RegistrationOut, tags=["Authorization"])
 async def registation(user: RegistrationIn):
 
     RegistrationIn(

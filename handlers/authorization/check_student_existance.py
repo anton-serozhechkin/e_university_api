@@ -15,7 +15,7 @@ from fastapi.responses import JSONResponse
 router = APIRouter()
 
 
-@router.post("/check-student-existance/", response_model=StudentCheckExistanceOut, tags=["Authorization"])
+@router.post("/check-student-existance", response_model=StudentCheckExistanceOut, tags=["Authorization"])
 async def check_student(student: StudentCheckExistanceIn):
 
     query = student_table.select().where(student_table.c.full_name == student.full_name, 
