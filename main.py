@@ -35,7 +35,6 @@ app.include_router(auth.router)
 app.include_router(me.router)
 app.include_router(user.router)
 app.include_router(user_request.router)
-app.include_router(role.router)
 app.include_router(bed_places.router)
 
 
