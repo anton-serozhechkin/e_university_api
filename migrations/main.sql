@@ -301,3 +301,43 @@ START WITH 1 INCREMENT BY 1;
 
 ALTER TABLE user_document ALTER COLUMN user_document_id SET DEFAULT
 nextval('user_document_id_seq');
+
+-- INSERT DATA TO table faculty
+INSERT INTO faculty(faculty_id, name, shortname, university_id)
+VALUES (1, 'Інформаційних технологій', 'ІТ', 1);
+
+INSERT INTO faculty(faculty_id, name, shortname, university_id)
+VALUES (2, 'Міжнародних відносин і журналістики', 'МВЖ', 1);
+
+INSERT INTO faculty(faculty_id, name, shortname, university_id)
+VALUES (3, 'Міжнародної економіки і підприємництва', 'МЕП', 1);
+
+INSERT INTO faculty(faculty_id, name, shortname, university_id)
+VALUES (4, 'Фінансів і обліку', 'ФіО', 1);
+
+INSERT INTO faculty(faculty_id, name, shortname, university_id)
+VALUES (5, 'Менеджмента і маркетингу', 'МіМ', 1);
+
+INSERT INTO faculty(faculty_id, name, shortname, university_id)
+VALUES (6, 'Економіки і права', 'ЕіП', 1);
+
+DROP VIEW IF EXISTS user_request_exist_view; 
+CREATE VIEW user_request_exist_view AS
+    SELECT
+        ur.user_request_id,
+        ur.user_id,
+        ur.faculty_id,
+        ur.university_id,
+        ur.service_id,
+        ur.status_id,
+        st.status_name
+    FROM 
+        user_request ur
+    LEFT JOIN status st ON
+        ur.status_id = st.status_id
+    WHERE
+        ur.status_id in (1, 3)
+    ORDER BY
+        ur.university_id,
+        ur.faculty_id,
+        ur.user_id;

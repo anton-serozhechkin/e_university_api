@@ -9,3 +9,9 @@ class CreateUserRequestIn(BaseModel):
 class CreateUserRequestOut(BaseModel):
     user_request_id: int
     status_id: int
+
+
+class UserRequestExistenceOut(BaseModel):
+    user_request_id: int = None
+    status_id: int = None
+    user_request_exist: bool
