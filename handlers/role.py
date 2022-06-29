@@ -9,8 +9,7 @@ from fastapi import Depends, APIRouter
 
 router = APIRouter()
 
-@router.get("/available-role/", response_model=List[AvailableRolesOut], tags=["SuperAdmin dashboard"])
+@router.get("/roles/", response_model=List[AvailableRolesOut], tags=["SuperAdmin dashboard"])
 async def available_roles(user = Depends(get_current_user)):
     query = role_table.select()
     return await database.fetch_all(query)
-    
