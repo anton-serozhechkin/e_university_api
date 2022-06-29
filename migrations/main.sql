@@ -341,3 +341,17 @@ CREATE VIEW user_request_exist_view AS
         ur.university_id,
         ur.faculty_id,
         ur.user_id;
+
+-- Create table bed_places
+CREATE TABLE IF NOT EXISTS bed_places(
+    bed_place_id integer NOT NULL,
+    bed_place_name varchar(50) NOT NULL, 
+    CONSTRAINT bed_place_pk PRIMARY KEY (bed_place_id));
+
+
+-- INSERT DATA to table bed_places
+INSERT INTO bed_places(bed_place_id, bed_place_name) VALUES (1, '0.75');
+
+INSERT INTO bed_places(bed_place_id, bed_place_name) VALUES (2, '1');
+
+INSERT INTO bed_places(bed_place_id, bed_place_name) VALUES (3, '1.5');
