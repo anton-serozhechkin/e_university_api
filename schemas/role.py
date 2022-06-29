@@ -1,5 +1,5 @@
 from pydantic import BaseModel
 
-class AvailableRoleOut(BaseModel):
+class AvailableRolesOut(BaseModel):
     role_id: int
     role_name: str
