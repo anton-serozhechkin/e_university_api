@@ -345,7 +345,7 @@ CREATE VIEW user_request_exist_view AS
 -- Create table bed_places
 CREATE TABLE IF NOT EXISTS bed_places(
     bed_place_id integer NOT NULL,
-    bed_place_name varchar(20) NOT NULL, 
+    bed_place_name varchar(50) NOT NULL, 
     CONSTRAINT bed_place_pk PRIMARY KEY (bed_place_id));
 
 

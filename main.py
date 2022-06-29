@@ -7,7 +7,6 @@ from handlers.authorization import auth
 from handlers import me
 from handlers import user
 from handlers import user_request
-from handlers import role
 from handlers import bed_places
 
 
