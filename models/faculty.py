@@ -1,4 +1,3 @@
-from ast import For
 from models.university import university
 
 from sqlalchemy import (MetaData, Column, Table, Integer, VARCHAR, ForeignKey)

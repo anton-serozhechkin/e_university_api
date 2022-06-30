@@ -378,7 +378,7 @@ INSERT INTO dekan(dekan_id, full_name) VALUES (6, 'Бріль Михайло С�
 
 -- Add column dekan_id to table faculty
 ALTER TABLE faculty 
-ADD dekan_id integer; 
+ADD dekan_id integer NOT NULL; 
 
 -- Mark faculty_dekan_fk as FK to dekan_id
 ALTER TABLE faculty ADD CONSTRAINT faculty_dekan_fk
