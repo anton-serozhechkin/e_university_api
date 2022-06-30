@@ -355,3 +355,80 @@ INSERT INTO bed_places(bed_place_id, bed_place_name) VALUES (1, '0.75');
 INSERT INTO bed_places(bed_place_id, bed_place_name) VALUES (2, '1');
 
 INSERT INTO bed_places(bed_place_id, bed_place_name) VALUES (3, '1.5');
+
+-- Create Table dekan
+CREATE TABLE IF NOT EXISTS dekan(
+    dekan_id integer NOT NULL, 
+    full_name varchar(255) NOT NULL,
+    CONSTRAINT dekan_pk PRIMARY KEY (dekan_id));
+
+-- INSERT DATA to table dekan
+INSERT INTO dekan(dekan_id, full_name) VALUES (1, 'Коц Григорій Павлович');
+
+INSERT INTO dekan(dekan_id, full_name) VALUES (2, 'Птащенко Олена Валеріївна');
+
+INSERT INTO dekan(dekan_id, full_name) VALUES (3, 'Шталь Тетяна Валеріївна');
+
+INSERT INTO dekan(dekan_id, full_name) VALUES (4, 'Проноза Павло Володимирович');
+
+INSERT INTO dekan(dekan_id, full_name) VALUES (5, 'Вовк Володимир Анатолійович');
+
+INSERT INTO dekan(dekan_id, full_name) VALUES (6, 'Бріль Михайло Сергійович');
+
+
+-- Add column dekan_id to table faculty
+ALTER TABLE faculty 
+ADD dekan_id integer; 
+
+-- Mark faculty_dekan_fk as FK to dekan_id
+ALTER TABLE faculty ADD CONSTRAINT faculty_dekan_fk
+FOREIGN KEY (dekan_id) REFERENCES dekan(dekan_id) 
+MATCH FULL ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- Update in table faculty column dekan_id  
+UPDATE faculty
+SET dekan_id = 1
+WHERE faculty_id = 1;
+
+UPDATE faculty
+SET dekan_id = 2
+WHERE faculty_id = 2;
+
+UPDATE faculty
+SET dekan_id = 3
+WHERE faculty_id = 3;
+
+UPDATE faculty
+SET dekan_id = 4
+WHERE faculty_id = 4;
+
+UPDATE faculty
+SET dekan_id = 5
+WHERE faculty_id = 5;
+
+UPDATE faculty
+SET dekan_id = 6
+WHERE faculty_id = 6;
+
+-- Create table rector
+CREATE TABLE IF NOT EXISTS rector(
+    rector_id integer NOT NULL, 
+    full_name varchar(255) NOT NULL,
+    CONSTRAINT rector_pk PRIMARY KEY (rector_id));
+
+-- INSERT DATA to rector table
+INSERT INTO rector(rector_id, full_name) VALUES (1, 'Пономаренко Володимир Степанович');
+
+-- Add column rector_id to table university
+ALTER TABLE university
+ADD rector_id integer NOT NULL; 
+
+-- Mark university_rector_fk as FK to rector_id
+ALTER TABLE university ADD CONSTRAINT university_rector_fk
+FOREIGN KEY (rector_id) REFERENCES rector(rector_id) 
+MATCH FULL ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- Update in table university column rector_id  
+UPDATE university
+SET rector_id = 1
+WHERE university_id = 1;
