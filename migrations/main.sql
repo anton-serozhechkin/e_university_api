@@ -432,3 +432,26 @@ MATCH FULL ON DELETE CASCADE ON UPDATE CASCADE;
 UPDATE university
 SET rector_id = 1
 WHERE university_id = 1;
+
+-- Create view for descibe faculty_list_view
+DROP VIEW IF EXISTS faculty_list_view; 
+CREATE VIEW faculty_list_view AS
+    SELECT
+        f.faculty_id,
+        f.name,
+        f.shortname,
+        f.main_email,
+        f.dekan_id,
+        d.full_name,
+        f.university_id
+    FROM 
+        faculty f
+    LEFT JOIN dekan d ON
+        f.dekan_id = d.dekan_id
+    WHERE 
+        f.dekan_id in (1, 2, 3, 4, 5, 6)
+    ORDER BY
+        f.university_id,
+        f.faculty_id,
+        f.dekan_id;
+
