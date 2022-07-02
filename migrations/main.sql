@@ -436,3 +436,76 @@ CREATE VIEW faculty_list_view AS
         f.university_id,
         f.faculty_id,
         f.dekan_id;
+
+
+CREATE TABLE IF NOT EXISTS speciality(
+    speciality_id integer NOT NULL,
+    university_id integer NOT NULL,
+    code integer NOT NULL,
+    name VARCHAR(255) NOT NULL, 
+    CONSTRAINT speciality_pk PRIMARY KEY(speciality_id));
+
+
+ALTER TABLE student ADD COLUMN speciality_id INTEGER;
+
+
+ALTER TABLE student ADD CONSTRAINT student_speciality_fk
+FOREIGN KEY (speciality_id) REFERENCES speciality(speciality_id) 
+MATCH FULL ON DELETE CASCADE ON UPDATE CASCADE;
+
+
+CREATE TABLE IF NOT EXISTS course(
+    course_id integer NOT NULL,
+    value integer NOT NULL,
+    CONSTRAINT course_pk PRIMARY KEY(course_id)
+);
+
+INSERT INTO course(course_id, value) VALUES (1, 1);
+INSERT INTO course(course_id, value) VALUES (2, 2);
+INSERT INTO course(course_id, value) VALUES (3, 3);
+INSERT INTO course(course_id, value) VALUES (4, 4);
+INSERT INTO course(course_id, value) VALUES (5, 5);
+INSERT INTO course(course_id, value) VALUES (6, 6);
+
+
+ALTER TABLE student ADD COLUMN course_id INTEGER;
+
+
+ALTER TABLE student ADD CONSTRAINT student_course_fk
+FOREIGN KEY (course_id) REFERENCES course(course_id) 
+MATCH FULL ON DELETE CASCADE ON UPDATE CASCADE;
+
+
+-- Create view for descibe faculty_list_view
+DROP VIEW IF EXISTS user_request_booking_hostel_view; 
+CREATE VIEW user_request_booking_hostel_view AS
+    SELECT
+        s.full_name,
+        s.user_id,
+        f.name as faculty_name,
+        u.university_id,
+        u.short_university_name,
+        r.full_name as rector_full_name,
+        sp.code as speciality_code,
+        sp.name as speciality_name,
+        co.value as course,
+        CASE 
+            WHEN co.value in (1, 2, 3, 4) THEN 'B'
+            ELSE 'M'
+        END AS educ_level,
+        CURRENT_DATE as date_today
+    FROM
+        student s
+    LEFT JOIN faculty f ON
+        s.faculty_id = f.faculty_id
+    LEFT JOIN university u ON
+        f.university_id = u.university_id
+    LEFT JOIN rector r ON
+        u.rector_id = u.rector_id
+    LEFT JOIN speciality sp ON
+        s.speciality_id = sp.speciality_id
+    LEFT JOIN course co ON
+        s.course_id = co.course_id
+    ORDER BY
+        u.university_id,
+        s.user_id;
