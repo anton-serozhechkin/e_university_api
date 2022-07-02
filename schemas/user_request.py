@@ -31,3 +31,5 @@ class UserRequestBookingHostelOut(BaseModel):
     finish_year: int
     speciality_code: int = None # delete it after table speciality won't be empty
     speciality_name: str = None # delete it after table speciality won't be empty
+    course: int
+    educ_level: str
