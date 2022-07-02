@@ -60,4 +60,21 @@ async def create_user_request(university_id: int, user_request: CreateUserReques
 async def read_user_request_booking_hostel(university_id: int, user = Depends(get_current_user)):
     query = user_request_booking_hostel_view.select().where(user_request_booking_hostel_view.c.user_id == user.user_id, 
                                             user_request_booking_hostel_view.c.university_id == university_id)
-    return await database.fetch_one(query)
+    query_result = await database.fetch_one(query)
+
+    now_year = datetime.now().year
+    now_month = datetime.now().month
+
+    if now_month >= 7:
+        start_year = now_year
+        finish_year = now_year + 1
+    else:
+        start_year = now_year - 1
+        finish_year = now_year
+
+    response = {
+        "start_year": start_year,
+        "finish_year": finish_year,
+        **query_result
+    }
+    return response

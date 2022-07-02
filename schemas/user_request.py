@@ -27,3 +27,5 @@ class UserRequestBookingHostelOut(BaseModel):
     short_university_name: str
     rector_full_name: str
     date_today: date
+    start_year: int
+    finish_year: int
