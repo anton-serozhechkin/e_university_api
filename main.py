@@ -4,9 +4,8 @@ from handlers import faculty
 from handlers.authorization import check_student_existance 
 from handlers.authorization import registration
 from handlers.authorization import auth
-from handlers import me
-from handlers import user
-from handlers import user_request
+from handlers import me, user, user_request, bed_places, role
+
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
@@ -32,6 +31,8 @@ app.include_router(auth.router)
 app.include_router(me.router)
 app.include_router(user.router)
 app.include_router(user_request.router)
+app.include_router(bed_places.router)
+app.include_router(role.router)
 
 
 
