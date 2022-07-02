@@ -509,3 +509,24 @@ CREATE VIEW user_request_booking_hostel_view AS
     ORDER BY
         u.university_id,
         s.user_id;
+
+
+-- Create view for display user_request_list
+DROP VIEW IF EXISTS user_request_list_view;
+CREATE VIEW user_request_list_view AS 
+    SELECT
+        ur.university_id,
+        ur.user_id,
+        ur.user_request_id,
+        sr.service_name,
+        st.status_name,
+        ur.date_created
+    FROM 
+        user_request ur
+    LEFT JOIN status st ON
+        ur.status_id = st.status_id
+    LEFT JOIN service sr ON
+        ur.service_id = sr.service_id
+    ORDER BY
+        ur.university_id,
+        ur.user_id;

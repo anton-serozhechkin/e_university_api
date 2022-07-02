@@ -1,4 +1,5 @@
-from datetime import date
+from datetime import date, datetime
+
 
 from pydantic import BaseModel
 
@@ -33,3 +34,12 @@ class UserRequestBookingHostelOut(BaseModel):
     speciality_name: str = None # delete it after table speciality won't be empty
     course: int
     educ_level: str
+
+
+class UserRequestsListOut(BaseModel):
+    university_id: int
+    user_id: int
+    user_request_id: int
+    service_name: str
+    status_name: str
+    date_created: datetime
