@@ -37,7 +37,7 @@ async def check_user_request_existence(university_id: int, service_id: int, user
     return response
 
 
-@router.post("/{university_id}/create-user-request/", response_model=CreateUserRequestOut, tags=["Student dashboard"])
+@router.post("/{university_id}/user-request/", response_model=CreateUserRequestOut, tags=["Student dashboard"])
 async def create_user_request(university_id: int, user_request: CreateUserRequestIn, user = Depends(get_current_user)):
     query = user_faculty_table.select().where(user_faculty_table.c.user_id == user.user_id)
     user_faculty_result = await database.fetch_one(query)
