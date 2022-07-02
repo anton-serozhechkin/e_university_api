@@ -436,3 +436,23 @@ CREATE VIEW faculty_list_view AS
         f.university_id,
         f.faculty_id,
         f.dekan_id;
+
+-- Create view for dispay user_request_list
+DROP VIEW IF EXISTS user_request_list_view;
+CREATE VIEW user_request_list_view AS 
+    SELECT
+        ur.university_id,
+        ur.user_id,
+        ur.user_request_id,
+        sr.service_name,
+        st.status_name,
+        ur.date_created
+    FROM 
+        user_request ur
+    LEFT JOIN status st ON
+        ur.status_id = st.status_id
+    LEFT JOIN service sr ON
+        ur.service_id = sr.service_id
+    ORDER BY
+        ur.university_id,
+        ur.user_id;

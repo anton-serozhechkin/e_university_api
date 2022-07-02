@@ -1,13 +1,15 @@
 from models.user_faculty import user_faculty as user_faculty_table
 from models.user_request import user_request as user_request_table
 from models.user_request_exist_view import user_request_exist_view
+from models.user_request_list_view import user_request_list_view
 from models.status import STATUS_MAPPING
 from schemas.user_request import (CreateUserRequestIn, CreateUserRequestOut, 
-                                  UserRequestExistenceOut)
+                                  UserRequestExistenceOut, UserRequestsListOut)
 from handlers.current_user import get_current_user
 from db import database
 
 from datetime import datetime
+from typing import List
 
 from fastapi import Depends, APIRouter
 
@@ -34,6 +36,14 @@ async def check_user_request_existence(university_id: int, service_id: int, user
             "user_request_exist": False
         }
     return response
+
+
+@router.get("/{university_id}/user-request/", response_model=List[UserRequestsListOut], tags=["Student dashboard"])
+async def read_user_request_list(university_id: int, user = Depends(get_current_user)):
+    query = user_request_list_view.select().where(user_request_list_view.c.user_id == user.user_id, 
+                                            user_request_list_view.c.university_id == university_id)                                  
+    return await database.fetch_all(query)
+
 
 @router.post("/{university_id}/create-user-request/", response_model=CreateUserRequestOut, tags=["Student dashboard"])
 async def create_user_request(university_id: int, user_request: CreateUserRequestIn, user = Depends(get_current_user)):
