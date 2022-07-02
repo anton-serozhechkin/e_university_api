@@ -436,3 +436,26 @@ CREATE VIEW faculty_list_view AS
         f.university_id,
         f.faculty_id,
         f.dekan_id;
+
+-- Create view for descibe faculty_list_view
+DROP VIEW IF EXISTS user_request_booking_hostel_view; 
+CREATE VIEW user_request_booking_hostel_view AS
+    SELECT
+        s.full_name,
+        s.user_id,
+        f.name as faculty_name,
+        u.university_id,
+        u.short_university_name,
+        r.full_name as rector_full_name,
+        CURRENT_DATE as date_today
+    FROM
+        student s
+    LEFT JOIN faculty f ON
+        s.faculty_id = f.faculty_id
+    LEFT JOIN university u ON
+        f.university_id = u.university_id
+    LEFT JOIN rector r ON
+        u.rector_id = u.rector_id
+    ORDER BY
+        u.university_id,
+        s.user_id;
