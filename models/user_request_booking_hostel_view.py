@@ -11,4 +11,6 @@ user_request_booking_hostel_view = Table('user_request_booking_hostel_view', met
           Column('university_id', Integer),
           Column('short_university_name', VARCHAR(50)),
           Column('rector_full_name', VARCHAR(255)),
+          Column('speciality_code', Integer),
+          Column('speciality_name', VARCHAR(255)),
           Column('date_today', DATETIME))

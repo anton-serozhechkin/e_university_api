@@ -29,3 +29,5 @@ class UserRequestBookingHostelOut(BaseModel):
     date_today: date
     start_year: int
     finish_year: int
+    speciality_code: int = None # delete it after table speciality won't be empty
+    speciality_name: str = None # delete it after table speciality won't be empty
