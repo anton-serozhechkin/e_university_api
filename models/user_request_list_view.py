@@ -1,7 +1,9 @@
 
 from sqlalchemy import (MetaData, Column, Table, Integer, VARCHAR, DateTime)
 
+
 metadata_obj = MetaData()
+
 
 user_request_list_view = Table('user_request_list_view', metadata_obj,
           Column('university_id', Integer),

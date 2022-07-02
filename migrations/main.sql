@@ -437,7 +437,7 @@ CREATE VIEW faculty_list_view AS
         f.faculty_id,
         f.dekan_id;
 
--- Create view for dispay user_request_list
+-- Create view for display user_request_list
 DROP VIEW IF EXISTS user_request_list_view;
 CREATE VIEW user_request_list_view AS 
     SELECT
