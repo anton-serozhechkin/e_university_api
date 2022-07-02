@@ -1,6 +1,8 @@
 from sqlalchemy import (MetaData, Column, Table, Integer, VARCHAR)
 
+
 metadata_obj = MetaData()
+
 
 faculty_list_view = Table('faculty_list_view', metadata_obj,
           Column('faculty_id', Integer),
@@ -9,4 +11,4 @@ faculty_list_view = Table('faculty_list_view', metadata_obj,
           Column('main_email', VARCHAR(50)),
           Column('university_id', Integer),
           Column('dekan_id', Integer),
-          Column('full_name', VARCHAR(255)))
+          Column('decan_full_name', VARCHAR(255)))

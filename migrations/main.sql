@@ -377,8 +377,7 @@ INSERT INTO dekan(dekan_id, full_name) VALUES (6, 'Бріль Михайло С�
 
 
 -- Add column dekan_id to table faculty
-ALTER TABLE faculty 
-ADD dekan_id integer NOT NULL; 
+ALTER TABLE faculty ADD dekan_id integer; 
 
 -- Mark faculty_dekan_fk as FK to dekan_id
 ALTER TABLE faculty ADD CONSTRAINT faculty_dekan_fk
@@ -386,29 +385,17 @@ FOREIGN KEY (dekan_id) REFERENCES dekan(dekan_id)
 MATCH FULL ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- Update in table faculty column dekan_id  
-UPDATE faculty
-SET dekan_id = 1
-WHERE faculty_id = 1;
+UPDATE faculty SET dekan_id = 1 WHERE faculty_id = 1;
 
-UPDATE faculty
-SET dekan_id = 2
-WHERE faculty_id = 2;
+UPDATE faculty SET dekan_id = 2 WHERE faculty_id = 2;
 
-UPDATE faculty
-SET dekan_id = 3
-WHERE faculty_id = 3;
+UPDATE faculty SET dekan_id = 3 WHERE faculty_id = 3;
 
-UPDATE faculty
-SET dekan_id = 4
-WHERE faculty_id = 4;
+UPDATE faculty SET dekan_id = 4 WHERE faculty_id = 4;
 
-UPDATE faculty
-SET dekan_id = 5
-WHERE faculty_id = 5;
+UPDATE faculty SET dekan_id = 5 WHERE faculty_id = 5;
 
-UPDATE faculty
-SET dekan_id = 6
-WHERE faculty_id = 6;
+UPDATE faculty SET dekan_id = 6 WHERE faculty_id = 6;
 
 -- Create table rector
 CREATE TABLE IF NOT EXISTS rector(
@@ -420,8 +407,7 @@ CREATE TABLE IF NOT EXISTS rector(
 INSERT INTO rector(rector_id, full_name) VALUES (1, 'Пономаренко Володимир Степанович');
 
 -- Add column rector_id to table university
-ALTER TABLE university
-ADD rector_id integer NOT NULL; 
+ALTER TABLE university ADD rector_id integer;
 
 -- Mark university_rector_fk as FK to rector_id
 ALTER TABLE university ADD CONSTRAINT university_rector_fk
@@ -429,29 +415,24 @@ FOREIGN KEY (rector_id) REFERENCES rector(rector_id)
 MATCH FULL ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- Update in table university column rector_id  
-UPDATE university
-SET rector_id = 1
-WHERE university_id = 1;
+UPDATE university SET rector_id = 1 WHERE university_id = 1;
 
 -- Create view for descibe faculty_list_view
 DROP VIEW IF EXISTS faculty_list_view; 
 CREATE VIEW faculty_list_view AS
     SELECT
+        f.university_id,
         f.faculty_id,
         f.name,
         f.shortname,
         f.main_email,
         f.dekan_id,
-        d.full_name,
-        f.university_id
-    FROM 
+        d.full_name as decan_full_name
+    FROM
         faculty f
     LEFT JOIN dekan d ON
-        f.dekan_id = d.dekan_id
-    WHERE 
-        f.dekan_id in (1, 2, 3, 4, 5, 6)
+        d.dekan_id = f.dekan_id
     ORDER BY
         f.university_id,
         f.faculty_id,
         f.dekan_id;
-
