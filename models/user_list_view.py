@@ -1,6 +1,8 @@
 from sqlalchemy import (MetaData, Column, Table, Integer, VARCHAR, TIMESTAMP, JSON, BOOLEAN)
 
+
 metadata_obj = MetaData()
+
 
 user_list_view = Table('user_list_view', metadata_obj,
           Column('user_id', Integer),

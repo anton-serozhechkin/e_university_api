@@ -1,5 +1,5 @@
 from datetime import date, datetime
-
+from typing import Dict, Union
 
 from pydantic import BaseModel
 
@@ -16,7 +16,7 @@ class CreateUserRequestOut(BaseModel):
 
 class UserRequestExistenceOut(BaseModel):
     user_request_id: int = None
-    status_id: int = None
+    status: Dict[str, Union[int, str]] = None
     user_request_exist: bool
 
 
@@ -41,5 +41,5 @@ class UserRequestsListOut(BaseModel):
     user_id: int
     user_request_id: int
     service_name: str
-    status_name: str
+    status: Dict[str, Union[int, str]]
     date_created: datetime
