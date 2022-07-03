@@ -1,5 +1,6 @@
 from pydantic import BaseModel
 
+
 class HostelListOut(BaseModel):
     university_id: int
     hostel_id: str
