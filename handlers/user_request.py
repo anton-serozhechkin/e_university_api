@@ -1,5 +1,7 @@
 from models.user_faculty import user_faculty as user_faculty_table
 from models.user_request import user_request as user_request_table
+from models.user_document import (user_document as user_document_table, 
+                                                generate_document_name)
 from models.user_request_exist_view import user_request_exist_view
 from models.user_request_booking_hostel_view import user_request_booking_hostel_view
 from models.status import STATUS_MAPPING
@@ -11,6 +13,7 @@ from db import database
 from datetime import datetime
 
 from fastapi import Depends, APIRouter
+from docxtpl import DocxTemplate
 
 
 router = APIRouter()
@@ -50,6 +53,17 @@ async def create_user_request(university_id: int, user_request: CreateUserReques
                                                 status_id=STATUS_MAPPING.get("Розглядається"))
 
     last_record_id = await database.execute(query)
+
+    document_name = await generate_document_name(user_request.service_id)
+    content = DocxTemplate
+    doc = DocxTemplate("templates.docx")
+    context = { 'company_name' : "World company" }
+    doc.render(context)
+    doc.save("generated_doc.docx")
+    query = user_document_table.insert().values(user_request_id=last_record_id,
+                                                date_created=datetime.now(),
+                                                name=document_name,
+    )
     return {
         "status_id": STATUS_MAPPING.get("Розглядається"),
         "user_request_id": last_record_id
