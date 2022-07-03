@@ -329,14 +329,20 @@ CREATE VIEW user_request_exist_view AS
         ur.faculty_id,
         ur.university_id,
         ur.service_id,
-        ur.status_id,
-        st.status_name
+        jsonb_build_object('status_id', ur.status_id, 'status_name', st.status_name) as status
     FROM 
         user_request ur
     LEFT JOIN status st ON
         ur.status_id = st.status_id
     WHERE
         ur.status_id in (1, 3)
+    GROUP BY
+        ur.user_request_id,
+        ur.user_id,
+        ur.faculty_id,
+        ur.university_id,
+        ur.service_id,
+        st.status_name
     ORDER BY
         ur.university_id,
         ur.faculty_id,
@@ -519,7 +525,7 @@ CREATE VIEW user_request_list_view AS
         ur.user_id,
         ur.user_request_id,
         sr.service_name,
-        st.status_name,
+        jsonb_build_object('status_id', ur.status_id, 'status_name', st.status_name) as status,
         ur.date_created
     FROM 
         user_request ur
@@ -527,6 +533,13 @@ CREATE VIEW user_request_list_view AS
         ur.status_id = st.status_id
     LEFT JOIN service sr ON
         ur.service_id = sr.service_id
+     GROUP BY
+        ur.user_request_id,
+        ur.user_id,
+        ur.university_id,
+        ur.service_id,
+        st.status_name,
+        sr.service_name
     ORDER BY
         ur.university_id,
         ur.user_id;

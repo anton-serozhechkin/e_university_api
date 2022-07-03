@@ -12,6 +12,7 @@ from db import database
 
 from datetime import datetime
 from typing import List
+import json
 
 from fastapi import Depends, APIRouter
 
@@ -28,13 +29,13 @@ async def check_user_request_existence(university_id: int, service_id: int, user
     if user_request_result:
         response = {
             "user_request_id": user_request_result.user_request_id,
-            "status_id": user_request_result.status_id,
+            "status": json.loads(user_request_result.status),
             "user_request_exist": True
         }
     else:
         response = {
             "user_request_id": None,
-            "status_id": None,
+            "status": None,
             "user_request_exist": False
         }
     return response

@@ -1,6 +1,8 @@
-from sqlalchemy import (MetaData, Column, Table, Integer, VARCHAR)
+from sqlalchemy import (MetaData, Column, Table, Integer, JSON)
+
 
 metadata_obj = MetaData()
+
 
 user_request_exist_view = Table('user_request_exist_view', metadata_obj,
           Column('user_request_id', Integer),
@@ -8,5 +10,4 @@ user_request_exist_view = Table('user_request_exist_view', metadata_obj,
           Column('faculty_id', Integer),
           Column('university_id', Integer),
           Column('service_id', Integer),
-          Column('status_id', Integer),
-          Column('status_name', VARCHAR(50)))
+          Column('status', JSON))
