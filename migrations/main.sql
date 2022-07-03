@@ -534,28 +534,28 @@ CREATE VIEW user_request_list_view AS
 -- Create table commandant
 CREATE TABLE IF NOT EXISTS commandant(
     commandant_id integer NOT NULL,
-    full_name VARCHAR(255),
-    telephone_number varchar(255) NOT NULL UNIQUE,
+    full_name VARCHAR(50) NOT NULL,
+    telephone_number varchar(50) NOT NULL UNIQUE,
     CONSTRAINT commandant_pk PRIMARY KEY(commandant_id));
 
 -- Insert data to table commandant
-INSERT INTO commandant(commandant_id, full_name, telephone_number) VALUES (1, 'Ляшко Надія Михайлівна', '+380-(57)7107851');
-INSERT INTO commandant(commandant_id, full_name, telephone_number) VALUES (2, 'Любченко Володимир Віталійович', '+380-(57)7792654');
-INSERT INTO commandant(commandant_id, full_name, telephone_number) VALUES (3, 'Колосова Олена Іванівна', '+380-(57)3368350');
-INSERT INTO commandant(commandant_id, full_name, telephone_number) VALUES (4, 'Марченко Тетяна Федорівна', '+380-(57)3367757');
-INSERT INTO commandant(commandant_id, full_name, telephone_number) VALUES (5, 'Рилова Лариса Миколаївна', '+380-(57)7021194');
-INSERT INTO commandant(commandant_id, full_name, telephone_number) VALUES (6, 'Голубєва Надія Олександрівна', '+380-(57)3401082');
-INSERT INTO commandant(commandant_id, full_name, telephone_number) VALUES (7, 'Піпенко Світлана Миколаївна', '+380-(57)3910283');
+INSERT INTO commandant(commandant_id, full_name, telephone_number) VALUES (1, 'Ляшко Надія Михайлівна', '+380-(57)710-78-51');
+INSERT INTO commandant(commandant_id, full_name, telephone_number) VALUES (2, 'Любченко Володимир Віталійович', '+380-(57)779-26-54');
+INSERT INTO commandant(commandant_id, full_name, telephone_number) VALUES (3, 'Колосова Олена Іванівна', '+380-(57)336-83-50');
+INSERT INTO commandant(commandant_id, full_name, telephone_number) VALUES (4, 'Марченко Тетяна Федорівна', '+380-(57)336-77-57');
+INSERT INTO commandant(commandant_id, full_name, telephone_number) VALUES (5, 'Рилова Лариса Миколаївна', '+380-(57)702-11-94');
+INSERT INTO commandant(commandant_id, full_name, telephone_number) VALUES (6, 'Голубєва Надія Олександрівна', '+380-(57)340-10-82');
+INSERT INTO commandant(commandant_id, full_name, telephone_number) VALUES (7, 'Піпенко Світлана Миколаївна', '+380-(57)391-02-83');
 
 -- Create table hostel
 CREATE TABLE IF NOT EXISTS hostel(
     hostel_id integer NOT NULL,
     university_id integer NOT NULL,
-    number integer ,
-    name VARCHAR(100),
-    city VARCHAR(100),
-    street VARCHAR(100),
-    build VARCHAR(5), 
+    number integer NOT NULL,
+    name VARCHAR(100) NOT NULL,
+    city VARCHAR(100) NOT NULL,
+    street VARCHAR(100) NOT NULL,
+    build VARCHAR(5) NOT NULL, 
     commandant_id integer NOT NULL,
     CONSTRAINT hostel_pk PRIMARY KEY(hostel_id));
 
@@ -567,7 +567,7 @@ MATCH FULL ON DELETE SET NULL ON UPDATE CASCADE;
 -- link university_id from table hostel as FK to university.university_id
 ALTER TABLE hostel ADD CONSTRAINT hostel_university_fk
 FOREIGN KEY (university_id) REFERENCES university(university_id) 
-MATCH FULL ON DELETE SET NULL ON UPDATE CASCADE;
+MATCH FULL ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- Insert data to table hostel
 INSERT INTO hostel(hostel_id, university_id, number, name,  city, street, build, commandant_id) VALUES (1, 1, 1, 'Харків', 'Геліос','просп. Ювілейний', '52', 1);
@@ -583,6 +583,7 @@ DROP VIEW IF EXISTS hostel_list_view;
 CREATE VIEW hostel_list_view AS 
     SELECT
         ht.university_id,
+        ht.hostel_id,
         ht.number,
         ht.name,
         ht.city,
