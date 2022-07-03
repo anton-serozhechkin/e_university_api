@@ -534,18 +534,18 @@ CREATE VIEW user_request_list_view AS
 -- Create table commandant
 CREATE TABLE IF NOT EXISTS commandant(
     commandant_id integer NOT NULL,
-    full_name VARCHAR(50) NOT NULL,
+    full_name VARCHAR(255) NOT NULL,
     telephone_number varchar(50) NOT NULL UNIQUE,
     CONSTRAINT commandant_pk PRIMARY KEY(commandant_id));
 
 -- Insert data to table commandant
-INSERT INTO commandant(commandant_id, full_name, telephone_number) VALUES (1, 'Ляшко Надія Михайлівна', '+380-(57)710-78-51');
-INSERT INTO commandant(commandant_id, full_name, telephone_number) VALUES (2, 'Любченко Володимир Віталійович', '+380-(57)779-26-54');
-INSERT INTO commandant(commandant_id, full_name, telephone_number) VALUES (3, 'Колосова Олена Іванівна', '+380-(57)336-83-50');
-INSERT INTO commandant(commandant_id, full_name, telephone_number) VALUES (4, 'Марченко Тетяна Федорівна', '+380-(57)336-77-57');
-INSERT INTO commandant(commandant_id, full_name, telephone_number) VALUES (5, 'Рилова Лариса Миколаївна', '+380-(57)702-11-94');
-INSERT INTO commandant(commandant_id, full_name, telephone_number) VALUES (6, 'Голубєва Надія Олександрівна', '+380-(57)340-10-82');
-INSERT INTO commandant(commandant_id, full_name, telephone_number) VALUES (7, 'Піпенко Світлана Миколаївна', '+380-(57)391-02-83');
+INSERT INTO commandant(commandant_id, full_name, telephone_number) VALUES (1, 'Ляшко Надія Михайлівна', '+380-(57)-710-78-51');
+INSERT INTO commandant(commandant_id, full_name, telephone_number) VALUES (2, 'Любченко Володимир Віталійович', '+380-(57)-779-26-54');
+INSERT INTO commandant(commandant_id, full_name, telephone_number) VALUES (3, 'Колосова Олена Іванівна', '+380-(57)-336-83-50');
+INSERT INTO commandant(commandant_id, full_name, telephone_number) VALUES (4, 'Марченко Тетяна Федорівна', '+380-(57)-336-77-57');
+INSERT INTO commandant(commandant_id, full_name, telephone_number) VALUES (5, 'Рилова Лариса Миколаївна', '+380-(57)-702-11-94');
+INSERT INTO commandant(commandant_id, full_name, telephone_number) VALUES (6, 'Голубєва Надія Олександрівна', '+380-(57)-340-10-82');
+INSERT INTO commandant(commandant_id, full_name, telephone_number) VALUES (7, 'Піпенко Світлана Миколаївна', '+380-(57)-391-02-83');
 
 -- Create table hostel
 CREATE TABLE IF NOT EXISTS hostel(
@@ -555,7 +555,7 @@ CREATE TABLE IF NOT EXISTS hostel(
     name VARCHAR(100) NOT NULL,
     city VARCHAR(100) NOT NULL,
     street VARCHAR(100) NOT NULL,
-    build VARCHAR(5) NOT NULL, 
+    build VARCHAR(10) NOT NULL, 
     commandant_id integer NOT NULL,
     CONSTRAINT hostel_pk PRIMARY KEY(hostel_id));
 
@@ -596,4 +596,6 @@ CREATE VIEW hostel_list_view AS
     LEFT JOIN commandant co ON
         co.commandant_id = ht.commandant_id
     ORDER BY
-        ht.university_id;
+        ht.university_id,
+        ht.hostel_id,
+        ht.name;

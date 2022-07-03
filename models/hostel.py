@@ -11,5 +11,5 @@ hostel = Table('hostel', metadata_obj,
           Column('name', VARCHAR(100)),
           Column('city', VARCHAR(100)),
           Column('street', VARCHAR(100)),
-          Column('build', VARCHAR(5)),
+          Column('build', VARCHAR(10)),
           Column('commandant_id', Integer, ForeignKey("commandant.commandant.id")))
