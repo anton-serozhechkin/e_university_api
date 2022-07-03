@@ -457,8 +457,7 @@ MATCH FULL ON DELETE CASCADE ON UPDATE CASCADE;
 CREATE TABLE IF NOT EXISTS course(
     course_id integer NOT NULL,
     value integer NOT NULL,
-    CONSTRAINT course_pk PRIMARY KEY(course_id)
-);
+    CONSTRAINT course_pk PRIMARY KEY(course_id));
 
 INSERT INTO course(course_id, value) VALUES (1, 1);
 INSERT INTO course(course_id, value) VALUES (2, 2);
@@ -530,3 +529,71 @@ CREATE VIEW user_request_list_view AS
     ORDER BY
         ur.university_id,
         ur.user_id;
+
+
+-- Create table commandant
+CREATE TABLE IF NOT EXISTS commandant(
+    commandant_id integer,
+    full_name VARCHAR(255),
+    telephone_number varchar(255) NOT NULL UNIQUE,
+    CONSTRAINT commandant_pk PRIMARY KEY(commandant_id));
+
+-- Insert data to table commandant
+INSERT INTO commandant(commandant_id, full_name, telephone_number) VALUES (1, 'Ляшко Надія Михайлівна', '380577107851');
+INSERT INTO commandant(commandant_id, full_name, telephone_number) VALUES (2, 'Любченко Володимир Віталійович', '380577792654');
+INSERT INTO commandant(commandant_id, full_name, telephone_number) VALUES (3, 'Колосова Олена Іванівна', '380573368350');
+INSERT INTO commandant(commandant_id, full_name, telephone_number) VALUES (4, 'Марченко Тетяна Федорівна', '380573367757');
+INSERT INTO commandant(commandant_id, full_name, telephone_number) VALUES (5, 'Рилова Лариса Миколаївна', '380577021194');
+INSERT INTO commandant(commandant_id, full_name, telephone_number) VALUES (6, 'Голубєва Надія Олександрівна', '380573401082');
+INSERT INTO commandant(commandant_id, full_name, telephone_number) VALUES (7, 'Піпенко Світлана Миколаївна', '380573910283');
+
+-- Create table hostel
+CREATE TABLE IF NOT EXISTS hostel(
+    hostel_id integer,
+    university_id integer,
+    number integer,
+    name VARCHAR(50),
+    city VARCHAR(50),
+    street VARCHAR(100),
+    build VARCHAR(5), 
+    commandant_id integer,
+    CONSTRAINT hostel_pk PRIMARY KEY(hostel_id));
+
+-- link comandant_id from table hostel as FK to commandant.commandant_id
+ALTER TABLE hostel ADD CONSTRAINT hostel_commandant_fk
+FOREIGN KEY (commandant_id) REFERENCES commandant(commandant_id) 
+MATCH FULL ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- link university_id from table hostel as FK to university.university_id
+ALTER TABLE hostel ADD CONSTRAINT hostel_university_fk
+FOREIGN KEY (university_id) REFERENCES university(university_id) 
+MATCH FULL ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- Insert data to table hostel
+INSERT INTO hostel(hostel_id, university_id, number, name,  city, street, build, commandant_id) VALUES (1, 1, 1, 'Kharkiv', 'Геліос','просп. Ювілейний', '52', 1);
+INSERT INTO hostel(hostel_id, university_id, number, name,  city, street, build, commandant_id) VALUES (2, 1, 2, 'Kharkiv', 'Полюс', 'вул. Луї Пастера', '177', 2);
+INSERT INTO hostel(hostel_id, university_id, number, name,  city, street, build, commandant_id) VALUES (3, 1, 3, 'Kharkiv', 'ІТ', 'вул. Цілиноградська', '40', 3);
+INSERT INTO hostel(hostel_id, university_id, number, name,  city, street, build, commandant_id) VALUES (4, 1, 4, 'Kharkiv', 'Міжнародний', 'вул. Цілиноградська', '30', 4);
+INSERT INTO hostel(hostel_id, university_id, number, name,  city, street, build, commandant_id) VALUES (5, 1, 5, 'Kharkiv', 'П’ятірочка', 'пров. Інженерний', '4', 5);
+INSERT INTO hostel(hostel_id, university_id, number, name,  city, street, build, commandant_id) VALUES (6, 1, 6, 'Kharkiv', 'Сінергія', 'вул. Клочківська', '216а', 6);
+INSERT INTO hostel(hostel_id, university_id, number, name,  city, street, build, commandant_id) VALUES (7, 1, 7, 'Kharkiv', 'Академічний', 'вул. Ак. Філіппова', '42', 7);
+
+-- Create view for display user_request_list
+DROP VIEW IF EXISTS hostel_list_view;
+CREATE VIEW hostel_list_view AS 
+    SELECT
+        ht.university_id,
+        ht.number,
+        ht.name,
+        ht.city,
+        ht.street,
+        ht.build,
+        ht.commandant_id,
+        co.full_name as commandant_full_name
+    FROM 
+        hostel ht
+    LEFT JOIN commandant co ON
+        co.commandant_id = ht.commandant_id
+    ORDER BY
+        ht.university_id,
+        ht.commandant_id;
