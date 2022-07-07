@@ -12,3 +12,11 @@ ALGORITHM = "HS256"
 JWT_SECRET_KEY = os.environ['JWT_SECRET_KEY']
 
 JWT_REFRESH_SECRET_KEY = os.environ['JWT_REFRESH_SECRET_KEY']
+
+TEMPLATES_PATH = "templates"
+
+STORAGE_PATH = "storage"
+
+SETTLEMENT_HOSTEL_PATH = STORAGE_PATH + "/settlement_hostel"
+
+DATETIME_FORMAT = "%Y-%m-%d %H:%M:%S"
