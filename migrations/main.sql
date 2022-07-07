@@ -499,7 +499,13 @@ CREATE VIEW user_request_booking_hostel_view AS
             WHEN co.value in (1, 2, 3, 4) THEN 'B'
             ELSE 'M'
         END AS educ_level,
-        CURRENT_DATE as date_today
+        CURRENT_DATE as date_today,
+        CASE WHEN date_part('month', now()) >= 7 THEN date_part('year', now())::integer
+            ELSE date_part('year', now() - INTERVAL '1 YEAR')::integer
+        END AS start_year,
+        CASE WHEN date_part('month', now()) >= 7 THEN date_part('year', now() + INTERVAL '1 YEAR')::integer
+            ELSE date_part('year', now())::integer
+        END AS finish_year
     FROM
         student s
     LEFT JOIN faculty f ON
