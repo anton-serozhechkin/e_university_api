@@ -17,4 +17,5 @@ user_request_booking_hostel_view = Table('user_request_booking_hostel_view', met
           Column('educ_level', VARCHAR(1)),
           Column('date_today', DATETIME),
           Column('start_year', Integer),
-          Column('finish_year', Integer))
+          Column('finish_year', Integer),
+          Column('gender', VARCHAR(1)))

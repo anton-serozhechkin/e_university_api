@@ -505,7 +505,12 @@ CREATE VIEW user_request_booking_hostel_view AS
         END AS start_year,
         CASE WHEN date_part('month', now()) >= 7 THEN date_part('year', now() + INTERVAL '1 YEAR')::integer
             ELSE date_part('year', now())::integer
-        END AS finish_year
+        END AS finish_year,
+        CASE WHEN LOWER(s.gender) = 'ч' THEN 'M'
+            WHEN LOWER(s.gender) = 'ж' THEN 'F'
+            -- if student gender isn't defined, let's say that it's male by default
+            ELSE 'M'
+        END AS gender
     FROM
         student s
     LEFT JOIN faculty f ON
@@ -549,3 +554,5 @@ CREATE VIEW user_request_list_view AS
     ORDER BY
         ur.university_id,
         ur.user_id;
+
+ALTER TABLE student ADD COLUMN gender VARCHAR(1);

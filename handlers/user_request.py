@@ -1,6 +1,6 @@
 from models.user_faculty import user_faculty as user_faculty_table
 from models.user_request import user_request as user_request_table
-#from models.user_document import create_user_document
+from models.user_document import create_user_document
 from models.user_request_exist_view import user_request_exist_view
 from models.user_request_booking_hostel_view import user_request_booking_hostel_view
 from models.user_request_list_view import user_request_list_view
@@ -63,8 +63,18 @@ async def create_user_request(university_id: int, user_request: CreateUserReques
 
     last_record_id = await database.execute(query)
 
-    #document_name = await generate_document_name(user_request.service_id)
-    #create_user_document()
+    query = user_request_booking_hostel_view.select().where(user_request_booking_hostel_view.c.user_id == user.user_id, 
+                                            user_request_booking_hostel_view.c.university_id == university_id)
+    result = await database.fetch_one(query)
+
+    prepared_data = {
+        "context": result,
+        "service_id": user_request.service_id,
+        "user_request_id": last_record_id
+    }
+
+    await create_user_document(**prepared_data)
+
 
     return {
         "status_id": STATUS_MAPPING.get("Розглядається"),
@@ -76,6 +86,4 @@ async def create_user_request(university_id: int, user_request: CreateUserReques
 async def read_user_request_booking_hostel(university_id: int, user = Depends(get_current_user)):
     query = user_request_booking_hostel_view.select().where(user_request_booking_hostel_view.c.user_id == user.user_id, 
                                             user_request_booking_hostel_view.c.university_id == university_id)
-    query_result = await database.fetch_one(query)
-
-    return query_result
+    return await database.fetch_one(query)
