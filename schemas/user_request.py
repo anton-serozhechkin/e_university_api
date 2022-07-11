@@ -34,6 +34,7 @@ class UserRequestBookingHostelOut(BaseModel):
     speciality_name: str = None # delete it after table speciality won't be empty
     course: int
     educ_level: str
+    gender: str
 
 
 class UserRequestsListOut(BaseModel):

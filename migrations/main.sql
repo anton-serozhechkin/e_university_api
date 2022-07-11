@@ -656,8 +656,4 @@ CREATE VIEW user_documents_view AS
         u.university_id,
         us.user_id,
         ur.user_request_id;
-
-         
-    
-
-
+            
