@@ -298,9 +298,13 @@ CREATE TABLE IF NOT EXISTS user_document(
 CREATE SEQUENCE IF NOT EXISTS user_document_id_seq AS bigint
 START WITH 1 INCREMENT BY 1; 
 
-
 ALTER TABLE user_document ALTER COLUMN user_document_id SET DEFAULT
 nextval('user_document_id_seq');
+
+-- foreign key from user_document to user_request
+ALTER TABLE user_document ADD CONSTRAINT user_document_user_request_fk
+FOREIGN KEY (user_request_id) REFERENCES user_request(user_request_id)
+MATCH FULL ON DELETE CASCADE ON UPDATE CASCADE;  
 
 -- INSERT DATA TO table faculty
 INSERT INTO faculty(faculty_id, name, shortname, university_id)
@@ -480,6 +484,7 @@ ALTER TABLE student ADD CONSTRAINT student_course_fk
 FOREIGN KEY (course_id) REFERENCES course(course_id) 
 MATCH FULL ON DELETE CASCADE ON UPDATE CASCADE;
 
+ALTER TABLE student ADD COLUMN gender VARCHAR(1);
 
 -- Create view for descibe faculty_list_view
 DROP VIEW IF EXISTS user_request_booking_hostel_view; 
@@ -498,7 +503,18 @@ CREATE VIEW user_request_booking_hostel_view AS
             WHEN co.value in (1, 2, 3, 4) THEN 'B'
             ELSE 'M'
         END AS educ_level,
-        CURRENT_DATE as date_today
+        CURRENT_DATE as date_today,
+        CASE WHEN date_part('month', now()) >= 7 THEN date_part('year', now())::integer
+            ELSE date_part('year', now() - INTERVAL '1 YEAR')::integer
+        END AS start_year,
+        CASE WHEN date_part('month', now()) >= 7 THEN date_part('year', now() + INTERVAL '1 YEAR')::integer
+            ELSE date_part('year', now())::integer
+        END AS finish_year,
+        CASE WHEN LOWER(s.gender) = 'ч' THEN 'M'
+            WHEN LOWER(s.gender) = 'ж' THEN 'F'
+            -- if student gender isn't defined, let's say that it's male by default
+            ELSE 'M'
+        END AS gender
     FROM
         student s
     LEFT JOIN faculty f ON
@@ -612,3 +628,36 @@ CREATE VIEW hostel_list_view AS
         ht.university_id,
         ht.hostel_id,
         ht.name;
+
+-- Create view for display users documents 
+DROP VIEW IF EXISTS user_documents_view; 
+CREATE VIEW user_documents_view AS
+    SELECT
+        ud.user_document_id,
+        ud.name,
+        ud.date_created,
+        ud.content,
+        us.user_id,
+        u.university_id
+    FROM 
+        user_document ud 
+    LEFT JOIN user_request ur ON
+        ur.user_request_id = ud.user_request_id AND 
+        ur.status_id in (1, 2, 3)  
+    LEFT JOIN "user" us ON 
+        us.user_id = ur.user_id
+    LEFT JOIN user_faculty uf ON
+        uf.user_id = ur.user_id
+    LEFT JOIN faculty f ON 
+        f.faculty_id = uf.faculty_id
+    LEFT JOIN university u ON
+        u.university_id = f.university_id
+    ORDER BY
+        u.university_id,
+        us.user_id,
+        ur.user_request_id;
+
+         
+    
+
+
