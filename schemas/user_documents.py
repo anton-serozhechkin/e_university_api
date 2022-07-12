@@ -9,3 +9,7 @@ class DocumentsListOut(BaseModel):
     content: str
     user_id: int
     university_id: int
+
+
+class DocumentsList(BaseModel):
+    file_path: str
