@@ -1,7 +1,7 @@
 from datetime import date, datetime
 from typing import Dict, Union
 
-from pydantic import BaseModel
+from pydantic import BaseModel, validator
 
 
 class CreateUserRequestIn(BaseModel):
@@ -44,3 +44,19 @@ class UserRequestsListOut(BaseModel):
     service_name: str
     status: Dict[str, Union[int, str]]
     date_created: datetime
+
+
+class CancelRequestIn(BaseModel):
+    status_id: int
+
+    @validator('status_id')
+    def validate_status_id(cls, v):
+        if v != 4:
+            message = "Заяву можливо тільки скасувати."
+            raise ValueError(message)
+        return v
+
+
+class CancelRequestOut(BaseModel):
+    user_request_id: int
+    status_id: int

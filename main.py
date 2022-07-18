@@ -36,7 +36,6 @@ app.include_router(role.router)
 app.include_router(hostel.router)
 
 
-
 @app.on_event("startup")
 async def startup():
     await database.connect()

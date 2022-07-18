@@ -1,3 +1,4 @@
+from re import U
 from models.user_faculty import user_faculty as user_faculty_table
 from models.user_request import user_request as user_request_table
 from models.user_document import create_user_document
@@ -5,9 +6,9 @@ from models.user_request_exist_view import user_request_exist_view
 from models.user_request_booking_hostel_view import user_request_booking_hostel_view
 from models.user_request_list_view import user_request_list_view
 from models.status import STATUS_MAPPING
-from schemas.user_request import (CreateUserRequestIn, CreateUserRequestOut, 
+from schemas.user_request import (CancelRequestIn, CreateUserRequestIn, CreateUserRequestOut, 
                                   UserRequestExistenceOut, UserRequestBookingHostelOut,
-                                  UserRequestsListOut)
+                                  UserRequestsListOut, CancelRequestIn, CancelRequestOut)
 from handlers.current_user import get_current_user
 from db import database
 
@@ -87,3 +88,15 @@ async def read_user_request_booking_hostel(university_id: int, user = Depends(ge
     query = user_request_booking_hostel_view.select().where(user_request_booking_hostel_view.c.user_id == user.user_id, 
                                             user_request_booking_hostel_view.c.university_id == university_id)
     return await database.fetch_one(query)
+
+
+@router.put("/{university_id}/user-request/{user_request_id}", response_model=CancelRequestOut, tags=["Student dashboard"])
+async def cancel_request(university_id: int, user_request_id: int, cancel_request: CancelRequestIn, user = Depends(get_current_user)):
+    CancelRequestIn(status_id=cancel_request.status_id)
+    query = user_request_table.update().where(user_request_table.c.user_request_id == user_request_id).values(status_id=cancel_request.status_id)
+    await database.execute(query)
+
+    return {
+        "user_request_id": user_request_id,
+        "status_id": cancel_request.status_id
+    }
