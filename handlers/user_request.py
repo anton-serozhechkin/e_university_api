@@ -1,12 +1,13 @@
 from models.user_faculty import user_faculty as user_faculty_table
 from models.user_request import user_request as user_request_table
+from models.user_request_review import user_request_review as user_request_rev_table
 from models.user_document import create_user_document
 from models.user_request_exist_view import user_request_exist_view
 from models.user_request_booking_hostel_view import user_request_booking_hostel_view
 from models.user_request_list_view import user_request_list_view
 from models.status import STATUS_MAPPING
 from schemas.user_request import (CreateUserRequestIn, CreateUserRequestOut, 
-                                  UserRequestExistenceOut, UserRequestBookingHostelOut,
+                                  UserRequestExistenceOut, UserRequestBookingHostelOut, UserRequestReviewIn, UserRequestReviewOut,
                                   UserRequestsListOut)
 from handlers.current_user import get_current_user
 from db import database
@@ -87,3 +88,33 @@ async def read_user_request_booking_hostel(university_id: int, user = Depends(ge
     query = user_request_booking_hostel_view.select().where(user_request_booking_hostel_view.c.user_id == user.user_id, 
                                             user_request_booking_hostel_view.c.university_id == university_id)
     return await database.fetch_one(query)
+
+
+
+
+
+
+@router.post("/{university_id}/user-request-review/{user_request_id}/", response_model=UserRequestReviewOut, tags=["Admin dashboard"])
+async def create_user_request_review(university_id: int, user_request_id: int, user_request_review: UserRequestReviewIn, user = Depends(get_current_user)):
+    query = user_request_rev_table.insert().values(university_id=university_id,
+                                                user_request_id=user_request_id,
+                                                date_created=datetime.now(),
+                                                reviewer=user.user_id,
+                                                hostel_id=user_request_review.hostel_id,
+                                                room_number=user_request_review.room_number,
+                                                start_date_accommodation=user_request_review.start_date_accommodation,
+                                                end_date_accommodation=user_request_review.end_date_accommodation,
+                                                total_sum=user_request_review.total_sum,
+                                                payment_deadline=user_request_review.payment_deadline,
+                                                remark=user_request_review.remark,
+                                                date_review=datetime.now(),
+                                                bed_place_id=user_request_review.bed_place_id)
+
+    last_record_id = await database.execute(query)
+
+    query = user_request_table.update().values(status_id=user_request_review.status_id).where(user_request_table.c.user_request_id == user_request_id)
+    await database.execute(query)
+
+    return{
+        "status_id": user_request_review.status_id,
+        "user_request_review_id": last_record_id}

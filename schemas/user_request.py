@@ -44,3 +44,25 @@ class UserRequestsListOut(BaseModel):
     service_name: str
     status: Dict[str, Union[int, str]]
     date_created: datetime
+
+class UserRequestReviewIn(BaseModel):
+    status_id: int
+    room_number: int = None
+    start_date_accommodation: datetime = None
+    end_date_accommodation: datetime = None
+    total_sum: float = None
+    payment_deadline: datetime = None
+    remark: str = None
+    hostel_id: int = None
+    bed_place_id: int = None
+
+class UserRequestReviewOut(BaseModel):
+    status_id: int
+    user_request_review_id: int
+
+
+    
+
+
+
+    
