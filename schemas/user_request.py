@@ -1,7 +1,7 @@
 from datetime import date, datetime
 from typing import Dict, Union
 
-from pydantic import BaseModel
+from pydantic import BaseModel, validator
 
 
 class CreateUserRequestIn(BaseModel):
@@ -55,6 +55,13 @@ class UserRequestReviewIn(BaseModel):
     remark: str = None
     hostel_id: int = None
     bed_place_id: int = None
+
+    @validator('status_id')
+    def validate_status_id(cls, v):
+        if v not in [1,2]:
+            message = "Заяву можливо тільки ухвалити або відхилити."
+            raise ValueError(message)
+        return v
 
 class UserRequestReviewOut(BaseModel):
     status_id: int
