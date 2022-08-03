@@ -4,10 +4,11 @@ from models.user_document import create_user_document
 from models.user_request_exist_view import user_request_exist_view
 from models.user_request_booking_hostel_view import user_request_booking_hostel_view
 from models.user_request_list_view import user_request_list_view
+from models.hostel_accommodation_view import hostel_accommodation_view
 from models.status import STATUS_MAPPING
 from schemas.user_request import (CreateUserRequestIn, CreateUserRequestOut, 
                                   UserRequestExistenceOut, UserRequestBookingHostelOut,
-                                  UserRequestsListOut, CancelRequestIn, CancelRequestOut)
+                                  UserRequestsListOut, CancelRequestIn, CancelRequestOut, HostelAccomodationViewOut)
 from handlers.current_user import get_current_user
 from db import database
 
@@ -99,3 +100,15 @@ async def cancel_request(university_id: int, user_request_id: int, cancel_reques
         "user_request_id": user_request_id,
         "status_id": cancel_request.status_id
     }
+
+
+@router.get("/{university_id}/hostel-accommodation/{user_request_id}", response_model=HostelAccomodationViewOut, tags=["Student dashboard"])
+async def read_hostel_accommodation(university_id: int, user_request_id: int, user = Depends(get_current_user)):
+    query = hostel_accommodation_view.select().where(hostel_accommodation_view.c.university_id == university_id,
+                                                    hostel_accommodation_view.c.user_request_id == user_request_id)                         
+    response = await database.fetch_one(query)
+    
+    response.documents = json.loads(response.documents)
+    response.hostel_name = json.loads(response.hostel_name)
+    response.hostel_address = json.loads(response.hostel_address)
+    return response
