@@ -626,3 +626,51 @@ CREATE VIEW hostel_list_view AS
 
 
 ALTER TABLE student ADD COLUMN gender VARCHAR(1);
+
+-- Create table user_request_review
+CREATE TABLE IF NOT EXISTS user_request_review(
+    user_request_review_id integer NOT NULL,
+    university_id integer NOT NULL,
+    user_request_id integer NOT NULL,
+    date_created timestamp NOT NULL, 
+    reviewer integer NOT NULL,
+    hostel_id integer, 
+    room_number integer,
+    start_date_accommodation timestamp,
+    end_date_accommodation timestamp,
+    total_sum float,
+    payment_deadline timestamp,
+    remark varchar(255),
+    date_review timestamp NOT NULL,
+    bed_place_id integer,
+    CONSTRAINT user_req_rew_pk PRIMARY KEY(user_request_review_id));
+
+-- Create sequence to column user_request_review_id
+CREATE SEQUENCE IF NOT EXISTS user_request_review_id_seq AS bigint
+START WITH 1 INCREMENT BY 1; 
+
+ALTER TABLE user_request_review ALTER COLUMN user_request_review_id SET DEFAULT
+nextval('user_request_review_id_seq');
+
+-- FK to university_id
+ALTER TABLE user_request_review ADD CONSTRAINT user_request_review_university_fk
+FOREIGN KEY (university_id) REFERENCES university(university_id) 
+MATCH FULL ON DELETE CASCADE ON UPDATE CASCADE;
+
+ALTER TABLE user_request_review ADD CONSTRAINT user_request_review_user_request_fk
+FOREIGN KEY (user_request_id) REFERENCES user_request(user_request_id) 
+MATCH FULL ON DELETE CASCADE ON UPDATE CASCADE;
+
+ALTER TABLE user_request_review ADD CONSTRAINT user_request_review_user_fk
+FOREIGN KEY (reviewer) REFERENCES "user"(user_id) 
+MATCH FULL ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- FK to hostel.hostel_id
+ALTER TABLE user_request_review ADD CONSTRAINT user_request_review_hostel_fk
+FOREIGN KEY (hostel_id) REFERENCES hostel(hostel_id) 
+MATCH FULL ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- FK to hostel.hostel_id
+ALTER TABLE user_request_review ADD CONSTRAINT user_request_review_bed_place_fk
+FOREIGN KEY (bed_place_id) REFERENCES bed_places(bed_place_id) 
+MATCH FULL ON DELETE SET NULL ON UPDATE CASCADE;
