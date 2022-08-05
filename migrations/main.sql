@@ -481,7 +481,7 @@ FOREIGN KEY (course_id) REFERENCES course(course_id)
 MATCH FULL ON DELETE CASCADE ON UPDATE CASCADE;
 
 
--- Create view for descibe faculty_list_view
+-- Create view for descibe user_request_booking_hostel_view
 DROP VIEW IF EXISTS user_request_booking_hostel_view; 
 CREATE VIEW user_request_booking_hostel_view AS
     SELECT
@@ -594,13 +594,13 @@ FOREIGN KEY (university_id) REFERENCES university(university_id)
 MATCH FULL ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- Insert data to table hostel
-INSERT INTO hostel(hostel_id, university_id, number, name,  city, street, build, commandant_id) VALUES (1, 1, 1, 'Харків', 'Геліос','просп. Ювілейний', '52', 1);
-INSERT INTO hostel(hostel_id, university_id, number, name,  city, street, build, commandant_id) VALUES (2, 1, 2, 'Харків', 'Полюс', 'вул. Луї Пастера', '177', 2);
-INSERT INTO hostel(hostel_id, university_id, number, name,  city, street, build, commandant_id) VALUES (3, 1, 3, 'Харків', 'ІТ', 'вул. Цілиноградська', '40', 3);
-INSERT INTO hostel(hostel_id, university_id, number, name,  city, street, build, commandant_id) VALUES (4, 1, 4, 'Харків', 'Міжнародний', 'вул. Цілиноградська', '30', 4);
-INSERT INTO hostel(hostel_id, university_id, number, name,  city, street, build, commandant_id) VALUES (5, 1, 5, 'Харків', 'П’ятірочка', 'пров. Інженерний', '4', 5);
-INSERT INTO hostel(hostel_id, university_id, number, name,  city, street, build, commandant_id) VALUES (6, 1, 6, 'Харків', 'Сінергія', 'вул. Клочківська', '216а', 6);
-INSERT INTO hostel(hostel_id, university_id, number, name,  city, street, build, commandant_id) VALUES (7, 1, 7, 'Харків', 'Академічний', 'вул. Ак. Філіппова', '42', 7);
+INSERT INTO hostel(hostel_id, university_id, number, name,  city, street, build, commandant_id) VALUES (1, 1, 1, 'Геліос', 'Харків', 'просп. Ювілейний', '52', 1);
+INSERT INTO hostel(hostel_id, university_id, number, name,  city, street, build, commandant_id) VALUES (2, 1, 2, 'Полюс', 'Харків',  'вул. Луї Пастера', '177', 2);
+INSERT INTO hostel(hostel_id, university_id, number, name,  city, street, build, commandant_id) VALUES (3, 1, 3, 'ІТ', 'Харків', 'вул. Цілиноградська', '40', 3);
+INSERT INTO hostel(hostel_id, university_id, number, name,  city, street, build, commandant_id) VALUES (4, 1, 4, 'Міжнародний', 'Харків', 'вул. Цілиноградська', '30', 4);
+INSERT INTO hostel(hostel_id, university_id, number, name,  city, street, build, commandant_id) VALUES (5, 1, 5, 'П’ятірочка', 'Харків', 'пров. Інженерний', '4', 5);
+INSERT INTO hostel(hostel_id, university_id, number, name,  city, street, build, commandant_id) VALUES (6, 1, 6, 'Сінергія', 'Харків',  'вул. Клочківська', '216а', 6);
+INSERT INTO hostel(hostel_id, university_id, number, name,  city, street, build, commandant_id) VALUES (7, 1, 7, 'Академічний', 'Харків',  'вул. Ак. Філіппова', '42', 7);
 
 -- Create view for display user_request_list
 DROP VIEW IF EXISTS hostel_list_view;
@@ -674,3 +674,139 @@ MATCH FULL ON DELETE SET NULL ON UPDATE CASCADE;
 ALTER TABLE user_request_review ADD CONSTRAINT user_request_review_bed_place_fk
 FOREIGN KEY (bed_place_id) REFERENCES bed_places(bed_place_id) 
 MATCH FULL ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- add column month_price to table hostel
+ALTER TABLE hostel ADD COLUMN month_price float;
+
+-- update values hostel.month_price
+UPDATE hostel SET month_price = 800.00 WHERE hostel_id = 1;
+UPDATE hostel SET month_price = 800.00 WHERE hostel_id = 2;
+UPDATE hostel SET month_price = 800.00 WHERE hostel_id = 3;
+UPDATE hostel SET month_price = 800.00 WHERE hostel_id = 4;
+UPDATE hostel SET month_price = 800.00 WHERE hostel_id = 5;
+UPDATE hostel SET month_price = 800.00 WHERE hostel_id = 6;
+UPDATE hostel SET month_price = 800.00 WHERE hostel_id = 7;
+
+-- create table requisites
+CREATE TABLE IF NOT EXISTS requisites(
+    requisites_id integer NOT NULL,
+    iban VARCHAR(100),
+    university_id integer NOT NULL, 
+    organisation_code VARCHAR(50), 
+    service_id integer NOT NULL, 
+    payment_recognation VARCHAR(255),
+    CONSTRAINT requisites_pk PRIMARY KEY(requisites_id));
+
+-- FK to university_id
+ALTER TABLE requisites ADD CONSTRAINT requisites_university_fk
+FOREIGN KEY (university_id) REFERENCES university(university_id) 
+MATCH FULL ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- FK to service_id
+ALTER TABLE requisites ADD CONSTRAINT requisites_service_fk
+FOREIGN KEY (service_id) REFERENCES service(service_id) 
+MATCH FULL ON DELETE CASCADE ON UPDATE CASCADE;
+
+
+
+INSERT INTO requisites(requisites_id, iban, university_id, organisation_code, service_id, payment_recognation) 
+VALUES (1, 'UA826482364382748327483', 1, 'ЄДРПОУ 753485385', 1, 'Призначення платежу: За проживання в гуртожитку. Назва Гуртожитку. ПІБ студента.');
+
+-- Add column social_network to table hostel
+ALTER TABLE hostel ADD instagram varchar(255);
+ALTER TABLE hostel ADD telegram varchar(255);
+
+UPDATE hostel  
+SET instagram = 'https://www.instagram.com/_polus2_khneu/?igshid=YmMyMTA2M2Y=' 
+WHERE hostel_id = 2;
+
+UPDATE hostel  
+SET instagram = 'https://www.instagram.com/hostelit3_hneu/?igshid=YmMyMTA2M2Y%3D' 
+WHERE hostel_id = 3;
+
+UPDATE hostel 
+SET instagram = 'https://www.instagram.com/4etverka_style/?igshid=YmMyMTA2M2Y%3D' 
+WHERE hostel_id = 4;
+
+UPDATE hostel 
+SET telegram = 'https://t.me/+UtvxydkWGlb3Vt9x' 
+WHERE hostel_id = 4;
+
+UPDATE hostel 
+SET instagram = 'https://www.instagram.com/fivetirochka_2.0/?igshid=YmMyMTA2M2Y%3D' 
+WHERE hostel_id = 5;
+
+UPDATE hostel 
+SET instagram = 'https://www.instagram.com/sinergia.house.6/?igshid=YmMyMTA2M2Y%3D' 
+WHERE hostel_id = 6;
+
+UPDATE hostel 
+SET telegram = 'https://t.me/+Sp1tojwYbLaCvGJG ' 
+WHERE hostel_id = 7;
+
+CREATE TABLE IF NOT EXISTS service_document(
+    service_document_id integer NOT NULL,
+    service_id INTEGER NOT NULL,
+    university_id INTEGER NOT NULL,
+    documents JSON NOT NULL,
+    CONSTRAINT service_document_pk PRIMARY KEY(service_document_id));
+
+ALTER TABLE service_document ADD CONSTRAINT service_document_service_fk
+FOREIGN KEY (service_id) REFERENCES service(service_id)
+MATCH FULL ON DELETE CASCADE ON UPDATE CASCADE;
+
+ALTER TABLE service_document ADD CONSTRAINT service_document_university_fk
+FOREIGN KEY (university_id) REFERENCES university(university_id)    
+MATCH FULL ON DELETE CASCADE ON UPDATE CASCADE;
+
+INSERT INTO service_document(service_document_id, service_id, university_id, 
+documents)
+VALUES(1, 1, 1, '{"1": "Паспорт громадянина України (оригінал)",
+                "2": "6 фотокарток 3х4",
+                "3": "Результат флюрографії, з терміном видач до одного року (оригінал)",
+                "4": "Квитанція про сплату за проживання не менше ніж за 4 місяці (копія)"}'::JSON);
+
+-- Create view for describe hostel_accommodation_view
+DROP VIEW IF EXISTS hostel_accommodation_view;
+CREATE VIEW hostel_accommodation_view AS
+    SELECT 
+    urr.user_request_review_id,
+    urr.university_id,
+    urr.user_request_id,
+    urr.room_number, 
+    urr.start_date_accommodation,
+    urr.end_date_accommodation,
+    ht.month_price,
+    jsonb_build_object('name', ht.name, 'number', ht.number) 
+        as hostel_name,
+    jsonb_build_object('city', ht.city, 'street', ht.street, 'build', ht.build ) 
+        as hostel_address,
+    bd.bed_place_name,
+    urr.total_sum,
+    re.iban,
+    un.university_name,
+    re.organisation_code,
+    re.payment_recognation,
+    co.full_name as commandant_full_name,
+    co.telephone_number,
+    sd.documents
+    FROM 
+        user_request_review urr
+    LEFT JOIN hostel ht ON
+        ht.hostel_id = urr.hostel_id
+    LEFT JOIN bed_places bd ON
+        bd.bed_place_id = urr.bed_place_id
+    LEFT JOIN user_request ur ON
+        ur.user_request_id = urr.user_request_id
+    LEFT JOIN service se ON
+        se.service_id = ur.service_id
+    LEFT JOIN requisites re ON
+        re.service_id = re.service_id AND 
+        re.university_id = urr.university_id
+    LEFT JOIN university un ON
+        un.university_id = urr.university_id
+    LEFT JOIN commandant co ON
+        co.commandant_id = ht.commandant_id
+    LEFT JOIN service_document sd ON
+        sd.service_id = se.service_id AND 
+        sd.university_id = urr.university_id;

@@ -1,4 +1,4 @@
-from sqlalchemy import (MetaData, Column, Table, Integer, VARCHAR, ForeignKey)
+from sqlalchemy import (MetaData, Column, Table, Integer, VARCHAR, ForeignKey, FLOAT)
 
 
 metadata_obj = MetaData()
@@ -12,4 +12,5 @@ hostel = Table('hostel', metadata_obj,
           Column('city', VARCHAR(100)),
           Column('street', VARCHAR(100)),
           Column('build', VARCHAR(10)),
+          Column('month_price', FLOAT),
           Column('commandant_id', Integer, ForeignKey("commandant.commandant.id")))
