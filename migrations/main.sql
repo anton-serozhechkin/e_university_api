@@ -685,7 +685,7 @@ UPDATE hostel SET month_price = 800.00 WHERE hostel_id = 3;
 UPDATE hostel SET month_price = 800.00 WHERE hostel_id = 4;
 UPDATE hostel SET month_price = 800.00 WHERE hostel_id = 5;
 UPDATE hostel SET month_price = 800.00 WHERE hostel_id = 6;
-UPDATE hostel SET month_price = 800.88 WHERE hostel_id = 7;
+UPDATE hostel SET month_price = 800.00 WHERE hostel_id = 7;
 
 -- create table requisites
 CREATE TABLE IF NOT EXISTS requisites(
