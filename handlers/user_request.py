@@ -90,10 +90,6 @@ async def read_user_request_booking_hostel(university_id: int, user = Depends(ge
     return await database.fetch_one(query)
 
 
-
-
-
-
 @router.post("/{university_id}/user-request-review/{user_request_id}/", response_model=UserRequestReviewOut, tags=["Admin dashboard"])
 async def create_user_request_review(university_id: int, user_request_id: int, user_request_review: UserRequestReviewIn, user = Depends(get_current_user)):
     query = user_request_rev_table.insert().values(university_id=university_id,
@@ -117,4 +113,5 @@ async def create_user_request_review(university_id: int, user_request_id: int, u
 
     return{
         "status_id": user_request_review.status_id,
-        "user_request_review_id": last_record_id}
+        "user_request_review_id": last_record_id
+    }

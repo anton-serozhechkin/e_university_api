@@ -66,10 +66,3 @@ class UserRequestReviewIn(BaseModel):
 class UserRequestReviewOut(BaseModel):
     status_id: int
     user_request_review_id: int
-
-
-    
-
-
-
-    
