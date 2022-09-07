@@ -103,3 +103,6 @@ class HostelAccomodationViewOut(BaseModel):
     commandant_full_name: str
     telephone_number: str
     documents: Dict[str, str]
+
+class AccommodationOrderIn(BaseModel):
+    user_request_review_id: int
