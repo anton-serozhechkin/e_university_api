@@ -1,15 +1,18 @@
+from unittest import result
 from models.user_faculty import user_faculty as user_faculty_table
 from models.user_request import user_request as user_request_table
 from models.user_request_review import user_request_review as user_request_rev_table
 from models.user_document import create_user_document
+from models.accomodation_order_view import create_accommodation_order_content
 from models.user_request_exist_view import user_request_exist_view
 from models.user_request_booking_hostel_view import user_request_booking_hostel_view
 from models.user_request_list_view import user_request_list_view
 from models.hostel_accommodation_view import hostel_accommodation_view
+from models.accomodation_order_view import accommodation_order_view
 from models.status import STATUS_MAPPING
 from schemas.user_request import (CreateUserRequestIn, CreateUserRequestOut, 
                                   UserRequestExistenceOut, UserRequestBookingHostelOut, UserRequestReviewIn, UserRequestReviewOut,
-                                  UserRequestsListOut, CancelRequestIn, CancelRequestOut, HostelAccomodationViewOut)
+                                  UserRequestsListOut, CancelRequestIn, CancelRequestOut, HostelAccomodationViewOut, AccommodationOrderIn)
 from handlers.current_user import get_current_user
 from db import database
 
@@ -139,3 +142,16 @@ async def read_hostel_accommodation(university_id: int, user_request_id: int, us
     response.hostel_name = json.loads(response.hostel_name)
     response.hostel_address = json.loads(response.hostel_address)
     return response
+
+
+@router.post("{university_id}/accommodation-order/", tags=["Admin dashboard"])
+async def create_accommodation_order(university_id: int, accommodation_order: AccommodationOrderIn, user = Depends(get_current_user))
+    query = accommodation_order_view.select().where(hostel_accommodation_view.c.university_id == university_id,
+                                                    hostel_accommodation_view.c.user_request_review_id == accommodation_order.user_request_review_id)
+    result = await database.fetch_one(query)
+
+    prepared_data = {
+        "context": result}
+
+    
+    await create_accommodation_order_content(**prepared_data)

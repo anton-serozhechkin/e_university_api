@@ -811,32 +811,36 @@ CREATE VIEW hostel_accommodation_view AS
         sd.service_id = se.service_id AND 
         sd.university_id = urr.university_id;
 
--- Create accomodation_order_view
-DROP VIEW IF EXISTS accomodation_order_view;
-CREATE VIEW accomodation_order_view AS 
+-- Create accommodation_order_view
+DROP VIEW IF EXISTS accommodation_order_view;
+CREATE VIEW accommodation_order_view AS 
     SELECT
-    urr.university_id,
     un.university_name,
     un.short_university_name,
-    f.name as faculty_name,
+    st.full_name,
+    f.shortname as faculty_shortname,
     h.city as city,
-    h.name as hostel_name,
+    urr.room_number,
     h.number as hostel_number,
-    h.street as hostel_street, 
-    h.build as hostel_build_number,
+    jsonb_build_object('street', h.street, 'build', h.build) 
+        as hostel_address,
     d.full_name as dekan_full_name
     FROM
         user_request_review urr
     LEFT JOIN university un ON
         un.university_id = urr.university_id
+    LEFT JOIN user_request ur ON
+        ur.user_request_id = urr.user_request_id
+    LEFT JOIN "user" u ON
+        u.user_id = ur.user_id
+    LEFT JOIN student st ON
+        st.user_id = u.user_id
     LEFT JOIN faculty f ON
-        f.university_id = un.university_id
-		AND
-		f.faculty_id = f.faculty_id
-    LEFT JOIN hostel h ON
-	    h.hostel_id = un.hostel_id
+        f.faculty_id = st.faculty_id
+	LEFT JOIN hostel h ON
+	    h.hostel_id = urr.hostel_id
 	LEFT JOIN dekan d ON
-	    d.dekan_id = f.dekan_id
+	    d.dekan_id = f.dekan_id;
 
 
 
