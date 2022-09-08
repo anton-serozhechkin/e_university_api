@@ -134,7 +134,7 @@ async def read_hostel_accommodation(university_id: int, user_request_id: int, us
     query = hostel_accommodation_view.select().where(hostel_accommodation_view.c.university_id == university_id,
                                                     hostel_accommodation_view.c.user_request_id == user_request_id)                         
     response = await database.fetch_one(query)
-    
+
     response.documents = json.loads(response.documents)
     response.hostel_name = json.loads(response.hostel_name)
     response.hostel_address = json.loads(response.hostel_address)

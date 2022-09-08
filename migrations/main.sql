@@ -810,3 +810,13 @@ CREATE VIEW hostel_accommodation_view AS
     LEFT JOIN service_document sd ON
         sd.service_id = se.service_id AND 
         sd.university_id = urr.university_id;
+
+-- Create view speciality_list
+DROP VIEW IF EXISTS speciality_list_view;
+CREATE VIEW speciality_list_view AS 
+    SELECT
+    s.university_id,
+    s.speciality_id,
+    jsonb_build_object('code', s.code, 'full_name', s.name) as speciality_info
+    FROM 
+        speciality s;

@@ -4,7 +4,8 @@ from handlers import faculty
 from handlers.authorization import check_student_existance 
 from handlers.authorization import registration
 from handlers.authorization import auth
-from handlers import me, user, user_request, bed_places, role, hostel, course
+from handlers import me, user, user_request, bed_places, role, hostel, course, speciality
+
 
 
 from fastapi import FastAPI
@@ -35,6 +36,7 @@ app.include_router(bed_places.router)
 app.include_router(role.router)
 app.include_router(hostel.router)
 app.include_router(course.router)
+app.include_router(speciality.router)
 
 
 @app.on_event("startup")
