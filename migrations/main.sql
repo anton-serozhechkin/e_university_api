@@ -811,57 +811,12 @@ CREATE VIEW hostel_accommodation_view AS
         sd.service_id = se.service_id AND 
         sd.university_id = urr.university_id;
 
--- Create accommodation_order_view
-DROP VIEW IF EXISTS accommodation_order_view;
-CREATE VIEW accommodation_order_view AS 
-    SELECT
-    un.university_name,
-    un.short_university_name,
-    st.full_name,
-    f.shortname as faculty_shortname,
-    h.city as city,
-    urr.room_number,
-    h.number as hostel_number,
-    jsonb_build_object('street', h.street, 'build', h.build) 
-        as hostel_address,
-    d.full_name as dekan_full_name
-    FROM
-        user_request_review urr
-    LEFT JOIN university un ON
-        un.university_id = urr.university_id
-    LEFT JOIN user_request ur ON
-        ur.user_request_id = urr.user_request_id
-    LEFT JOIN "user" u ON
-        u.user_id = ur.user_id
-    LEFT JOIN student st ON
-        st.user_id = u.user_id
-    LEFT JOIN faculty f ON
-        f.faculty_id = st.faculty_id
-	LEFT JOIN hostel h ON
-	    h.hostel_id = urr.hostel_id
-	LEFT JOIN dekan d ON
-	    d.dekan_id = f.dekan_id;
-
 -- Create view speciality_list
 DROP VIEW IF EXISTS speciality_list_view;
 CREATE VIEW speciality_list_view AS 
     SELECT
-    un.university_id,
+    s.university_id,
     s.speciality_id,
     jsonb_build_object('code', s.code, 'full_name', s.name) as speciality_info
     FROM 
-        speciality s
-    LEFT JOIN university un ON
-        un.university_id = s.university_id
-
-
-
-    
- 
-    
-
-    
-
-    
-  
-
+        speciality s;
