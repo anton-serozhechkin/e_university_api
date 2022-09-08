@@ -83,26 +83,3 @@ class UserRequestReviewIn(BaseModel):
 class UserRequestReviewOut(BaseModel):
     status_id: int
     user_request_review_id: int
-
-
-class HostelAccomodationViewOut(BaseModel):
-    university_id: int
-    user_request_review_id: int
-    user_request_id: int
-    hostel_name: Dict[str, Union[int, str]]
-    hostel_address: Dict[str, str]
-    bed_place_name: str
-    month_price: float
-    start_date_accommodation: datetime
-    end_date_accommodation: datetime
-    total_sum: float
-    iban: str
-    university_name: str
-    organisation_code: str
-    payment_recognation: str
-    commandant_full_name: str
-    telephone_number: str
-    documents: Dict[str, str]
-
-class AccommodationOrderIn(BaseModel):
-    user_request_review_id: int
