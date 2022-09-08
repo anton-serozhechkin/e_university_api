@@ -810,3 +810,13 @@ CREATE VIEW hostel_accommodation_view AS
     LEFT JOIN service_document sd ON
         sd.service_id = se.service_id AND 
         sd.university_id = urr.university_id;
+
+
+-- Create view cource_list
+DROP VIEW IF EXISTS course_list_view;
+CREATE VIEW course_list_view AS 
+    SELECT 
+    co.course_id,
+    co.value as cource_number
+    FROM
+        course co
