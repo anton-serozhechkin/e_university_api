@@ -9,7 +9,7 @@ from models.hostel_accommodation_view import hostel_accommodation_view
 from models.status import STATUS_MAPPING
 from schemas.user_request import (CreateUserRequestIn, CreateUserRequestOut, 
                                   UserRequestExistenceOut, UserRequestBookingHostelOut, UserRequestReviewIn, UserRequestReviewOut,
-                                  UserRequestsListOut, CancelRequestIn, CancelRequestOut)
+                                  UserRequestsListOut, CancelRequestIn, CancelRequestOut, HostelAccomodationViewOut)
 from handlers.current_user import get_current_user
 from db import database
 
@@ -127,3 +127,15 @@ async def create_user_request_review(university_id: int, user_request_id: int, u
         "status_id": user_request_review.status_id,
         "user_request_review_id": last_record_id
     }
+
+
+@router.get("/{university_id}/hostel-accommodation/{user_request_id}", response_model=HostelAccomodationViewOut, tags=["Student dashboard"])
+async def read_hostel_accommodation(university_id: int, user_request_id: int, user = Depends(get_current_user)):
+    query = hostel_accommodation_view.select().where(hostel_accommodation_view.c.university_id == university_id,
+                                                    hostel_accommodation_view.c.user_request_id == user_request_id)                         
+    response = await database.fetch_one(query)
+
+    response.documents = json.loads(response.documents)
+    response.hostel_name = json.loads(response.hostel_name)
+    response.hostel_address = json.loads(response.hostel_address)
+    return response
