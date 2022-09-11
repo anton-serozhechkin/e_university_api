@@ -15,85 +15,59 @@ class StudentCheckExistanceOut(BaseModel):
     expires: datetime
 
 class CreateStudentIn(BaseModel):
-    full_name: Dict[str, str]
+    full_name: str
     telephone_number: str
     course_id: int
     faculty_id: int
     speciality_id: int
     gender: str
 
-@validator('full_name')
-def validate_full_name(value):
-    full_name = value.split()
-    if not full_name:
-        
-        raise ValueError("Прізвище та ім'я студента обовязкові до заповнення!")
-    elif len(full_name) < 2:
-        raise ValueError("Прізвище та ім'я студента обовязкові до заповнення!")
+    @validator('full_name')
+    def validate_full_name(value):
+        full_name = value.split()
+        if not full_name:
+            raise ValueError("Прізвище та ім'я студента обов'язкові до заповнення!")
+        elif len(full_name) < 2:
+            raise ValueError("Прізвище та ім'я студента обов'язкові до заповнення!")
+        return value
     
-    return value
-    
-@validator('telephone_number')
-def validate_telephone_number(value, number_len=9):
-    if not value:
-        raise ValueError('Телефонний номер не може бути порожнім')
+    @validator('telephone_number')
+    def validate_telephone_number(value):
+        if not value:
+            raise ValueError('Телефонний номер не може бути порожнім!')
+        elif len(str(value)) != 12:
+            raise ValueError('Телефонний номер має містити в собі 12 цифр!')
+        return value
 
-    elif len(str(value)) != number_len or len(str(value)) <= 1:
-        raise ValueError('Телефонний номер має містити в собі 9 символів без коду країни')
+    @validator('course_id')
+    def validate_course_id(value):
+        if not value:
+            raise ValueError('Курс не може бути порожнім!')
+        elif value not in range(1, 7):
+            raise ValueError('Курс моє бути між 1 та 6!')
+        return value
 
-    return value
+    @validator('speciality_id')
+    def validate_speciality_id(value):
+        if not value:
+            raise ValueError('Cпеціальність не може бути порожньою!')
+        return value
 
-@validator('course_id')
-def validate_course_id(value):
-    if not value:
-        raise ValueError('Курс не може бути порожнім')
-    elif value < 1 or value > 6:
-        raise ValueError('Курс моє бути між 1 та 6!')
-    
-    return value
+    @validator('faculty_id')
+    def validate_faculty_id(value):
+        if not value:
+            raise ValueError('Факультет не може бути порожнім')
+        return value
 
-@validator('speciality_id')
-def validate_speciality_id(value):
-    if not value:
-        raise ValueError('Cпеціальність не може бути порожня')
-
-    elif value < 1 or value > 25:
-        raise ValueError('Має бути обрана 1 із 25 спеціальностей Університету')
-    
-    return value
-
-@validator('faculty_id')
-def validate_faculty_id(value):
-    if not value:
-        raise ValueError('Факультет не може бути порожнім')
-    
-    elif value < 1 or value > 6:
-        raise ValueError('Має бути обран 1 із 6 діючих факультетів Університету')
-
-    return value
-
-@validator('gender')
-def validate_gender(value):
-    exists_genders = ['Ч', 'М']
-    if not value: 
-        raise ValueError('Стать студента не може бути порожня')
-
-    if value not in exists_genders:
-        raise ValueError('Оберіть стать із запропонованого списку')
-    
-    return value
+    @validator('gender')
+    def validate_gender(value):
+        exists_genders = ['Ч', 'М']
+        if not value: 
+            raise ValueError('Стать студента не може бути порожня')
+        if value.upper() not in exists_genders:
+            raise ValueError('Оберіть стать із запропонованого списку')
+        return value
 
 
 class CreateStudentOut(BaseModel):
-    user_id: int
-
-
-    
-       
-
-
-    
-
-
-
-
+    student_id: int       
