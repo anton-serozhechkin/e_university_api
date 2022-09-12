@@ -77,6 +77,7 @@ class StudentsListOut(BaseModel):
     student_id: int       
     student_full_name: str
     telephone_number: str
+    user_id: int = None
     university_id: int
     faculty_id: int
     speciality_id: int

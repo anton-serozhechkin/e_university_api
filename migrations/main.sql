@@ -825,15 +825,15 @@ CREATE VIEW speciality_list_view AS
 DROP VIEW IF EXISTS students_list_view;
 CREATE VIEW students_list_view AS 
     SELECT
-    st.student_id,
-    st.full_name as student_full_name,
-    st.telephone_number,
-    st.user_id, 
-	f.university_id,
-    st.faculty_id,
-    st.speciality_id,
-    st.course_id,
-    st.gender
+        st.student_id,
+        st.full_name as student_full_name,
+        st.telephone_number,
+        st.user_id, 
+	    f.university_id,
+        st.faculty_id,
+        st.speciality_id,
+        st.course_id,
+        st.gender
     FROM 
         student st
     LEFT JOIN faculty f ON
@@ -841,4 +841,4 @@ CREATE VIEW students_list_view AS
     ORDER BY
         f.university_id,
         st.faculty_id,
-        st.student_full_name;
+        st.full_name;
