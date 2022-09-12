@@ -33,7 +33,7 @@ async def create_student(university_id: int, student: CreateStudentIn, auth = De
        "student_id": student_id
     }
 
-@router.get("/{university_id}/students-list", response_model=List[StudentsListOut], tags=["Admin dashboard"])
+@router.get("/{university_id}/students", response_model=List[StudentsListOut], tags=["Admin dashboard"])
 async def read_students_list(university_id: int, faculty_id: Union[int, None] = None , user = Depends(get_current_user)):
     if faculty_id: 
         query = students_list_view.select().where(students_list_view.c.faculty_id == faculty_id)
