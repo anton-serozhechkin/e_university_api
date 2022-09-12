@@ -71,3 +71,14 @@ class CreateStudentIn(BaseModel):
 
 class CreateStudentOut(BaseModel):
     student_id: int       
+
+
+class StudentsListOut(BaseModel):
+    student_id: int       
+    student_full_name: str
+    telephone_number: str
+    university_id: int
+    faculty_id: int
+    speciality_id: int
+    course_id: int
+    gender: str
