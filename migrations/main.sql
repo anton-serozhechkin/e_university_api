@@ -820,3 +820,25 @@ CREATE VIEW speciality_list_view AS
     jsonb_build_object('code', s.code, 'full_name', s.name) as speciality_info
     FROM 
         speciality s;
+
+-- Create view to return students_list
+DROP VIEW IF EXISTS students_list_view;
+CREATE VIEW students_list_view AS 
+    SELECT
+        st.student_id,
+        st.full_name as student_full_name,
+        st.telephone_number,
+        st.user_id, 
+	    f.university_id,
+        st.faculty_id,
+        st.speciality_id,
+        st.course_id,
+        st.gender
+    FROM 
+        student st
+    LEFT JOIN faculty f ON
+        st.faculty_id = f.faculty_id
+    ORDER BY
+        f.university_id,
+        st.faculty_id,
+        st.full_name;

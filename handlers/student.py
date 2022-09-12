@@ -1,10 +1,12 @@
 from models.student import student as student_table
-from schemas.student import CreateStudentOut, CreateStudentIn
+from models.students_list_view import students_list_view
+from schemas.student import CreateStudentOut, CreateStudentIn, StudentsListOut
 from handlers.current_user import get_current_user
 
 from db import database
+from typing import List, Union
 
-from fastapi import Depends, APIRouter 
+from fastapi import Depends, APIRouter
 
 
 router = APIRouter()
@@ -30,3 +32,12 @@ async def create_student(university_id: int, student: CreateStudentIn, auth = De
     return {
        "student_id": student_id
     }
+
+@router.get("/{university_id}/students-list", response_model=List[StudentsListOut], tags=["Admin dashboard"])
+async def read_students_list(university_id: int, faculty_id: Union[int, None] = None , user = Depends(get_current_user)):
+    if faculty_id: 
+        query = students_list_view.select().where(students_list_view.c.faculty_id == faculty_id)
+    else:
+        query = students_list_view.select().where(students_list_view.c.university_id == university_id)
+        
+    return await database.fetch_all(query)
