@@ -1,5 +1,4 @@
-from schemas.user import UsersListViewOut
-from schemas.user import CreateUserIn, CreateUserOut
+from schemas.user import UsersListViewOut, CreateUserIn, CreateUserOut, DeleteUserIn
 from models.user_list_view import user_list_view
 from models.user import user as user_table
 from models.user_faculty import user_faculty
@@ -51,4 +50,15 @@ async def create_user(university_id: int, user: CreateUserIn, auth = Depends(get
 
     return {
        "user_id": last_record_id
+    }
+
+
+@router.delete("/{university_id}/user/", tags=["SuperAdmin dashboard"])
+async def delete_user(university_id: int, delete_user: DeleteUserIn, auth = Depends(get_current_user)):
+    query = user_table.delete().where(user_table.c.user_id == delete_user.user_id)
+    
+    await database.fetch_one(query)
+
+    return {
+        "user_id": delete_user.user_id
     }

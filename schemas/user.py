@@ -139,3 +139,7 @@ class UserOut(BaseModel):
 
 class UserIn(TokenPayload):
     user_id: int
+
+
+class DeleteUserIn(BaseModel):
+    user_id: int
