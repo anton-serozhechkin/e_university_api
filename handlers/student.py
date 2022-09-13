@@ -1,6 +1,6 @@
 from models.student import student as student_table
 from models.students_list_view import students_list_view
-from schemas.student import CreateStudentOut, CreateStudentIn, StudentsListOut
+from schemas.student import CreateStudentOut, CreateStudentIn, StudentsListOut, DeleteStudentIn
 from handlers.current_user import get_current_user
 
 from db import database
@@ -33,6 +33,7 @@ async def create_student(university_id: int, student: CreateStudentIn, auth = De
        "student_id": student_id
     }
 
+
 @router.get("/{university_id}/students", response_model=List[StudentsListOut], tags=["Admin dashboard"])
 async def read_students_list(university_id: int, faculty_id: Union[int, None] = None , user = Depends(get_current_user)):
     if faculty_id: 
@@ -41,3 +42,14 @@ async def read_students_list(university_id: int, faculty_id: Union[int, None] = 
         query = students_list_view.select().where(students_list_view.c.university_id == university_id)
         
     return await database.fetch_all(query)
+
+
+@router.delete("/{university_id}/user/", tags=["SuperAdmin dashboard"])
+async def delete_user(university_id: int, delete_student: DeleteStudentIn, auth = Depends(get_current_user)):
+    query = student_table.delete().where(student_table.c.student_id == delete_student.student_id)
+    
+    await database.fetch_one(query)
+
+    return {
+        "user_id": delete_student.student_id
+    }

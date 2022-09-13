@@ -83,3 +83,7 @@ class StudentsListOut(BaseModel):
     speciality_id: int
     course_id: int
     gender: str
+
+
+class DeleteStudentIn(BaseModel):
+    student_id: int
