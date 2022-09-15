@@ -12,7 +12,7 @@ from fastapi import Depends, APIRouter
 router = APIRouter()
 
 
-@router.post("/{university_id}/create-student/", response_model=CreateStudentOut, tags=["Admin dashboard"])
+@router.post("/{university_id}/students/", response_model=CreateStudentOut, tags=["Admin dashboard"])
 async def create_student(university_id: int, student: CreateStudentIn, auth = Depends(get_current_user)):
     
     CreateStudentIn(
@@ -45,11 +45,11 @@ async def read_students_list(university_id: int, faculty_id: Union[int, None] = 
 
 
 @router.delete("/{university_id}/students/", tags=["SuperAdmin dashboard"])
-async def delete_user(university_id: int, delete_student: DeleteStudentIn, auth = Depends(get_current_user)):
+async def delete_student(university_id: int, delete_student: DeleteStudentIn, auth = Depends(get_current_user)):
     query = student_table.delete().where(student_table.c.student_id == delete_student.student_id)
     
-    await database.fetch_one(query)
+    await database.execute(query)
 
     return {
-        "user_id": delete_student.student_id
+        "student_id": delete_student.student_id
     }
