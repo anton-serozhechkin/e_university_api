@@ -57,7 +57,7 @@ async def create_user(university_id: int, user: CreateUserIn, auth = Depends(get
 async def delete_user(university_id: int, delete_user: DeleteUserIn, auth = Depends(get_current_user)):
     query = user_table.delete().where(user_table.c.user_id == delete_user.user_id)
     
-    await database.fetch_one(query)
+    await database.execute(query)
 
     return {
         "user_id": delete_user.user_id
