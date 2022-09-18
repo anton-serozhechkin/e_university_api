@@ -842,3 +842,51 @@ CREATE VIEW students_list_view AS
         f.university_id,
         st.faculty_id,
         st.full_name;
+
+
+-- Create view to return user_request information
+DROP VIEW IF EXISTS user_request_details_view;
+CREATE VIEW user_request_details_view AS 
+    SELECT
+        ur.user_request_id,
+        ur.university_id,
+        ur.date_created,
+        sr.service_name,
+        st.status_name,
+        ur.status_id,
+        ur.comment,
+        jsonb_build_object('name', ht.name, 'number', ht.number) 
+        as hostel_name, 
+        urr.room_number, 
+        bd.bed_place_name,
+        urr.date_review,
+        urr.remark,
+        jsonb_build_object('name', ud.name, 'content', ud.content)
+        as documents
+    FROM   
+        user_request ur
+    LEFT JOIN user_request_review urr ON
+        ur.user_request_id = urr.user_request_id
+    LEFT JOIN status st ON
+        ur.status_id = st.status_id
+	LEFT JOIN service sr ON
+		ur.service_id = sr.service_id
+	LEFT JOIN hostel ht ON
+		ht.hostel_id = urr.hostel_id
+	LEFT JOIN bed_places bd ON
+		bd.bed_place_id = urr.bed_place_id
+    LEFT JOIN user_document ud ON
+		ud.user_request_id = urr.user_request_id
+     ORDER BY
+        ur.university_id,
+        sr.service_id,
+        ur.status_id;
+        
+	
+
+        
+
+        
+
+     
+        

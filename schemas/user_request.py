@@ -103,3 +103,18 @@ class HostelAccomodationViewOut(BaseModel):
     commandant_full_name: str
     telephone_number: str
     documents: Dict[str, str]
+
+
+class UserRequestDetailsViewOut(BaseModel):
+    user_request_id: int
+    date_created: datetime
+    service_name: str
+    status_name: str
+    status_id: int
+    comment: str
+    hostel_name: Dict[str, Union[int, str]]
+    room_number: int
+    bed_place_name: str
+    date_review: datetime
+    remark: str
+    documents: Dict[str, str]
