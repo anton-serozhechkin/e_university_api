@@ -16,5 +16,5 @@ user_request_details_view = Table('user_request_details_view', metadata_obj,
         Column('room_number', Integer),
         Column('bed_place_name', VARCHAR(50)),
         Column('date_review', DateTime),
-        Column('remark', VARCHAR(50)),
+        Column('remark', VARCHAR(255)),
         Column('documents', JSON))

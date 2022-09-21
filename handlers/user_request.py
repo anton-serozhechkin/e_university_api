@@ -141,6 +141,7 @@ async def read_hostel_accommodation(university_id: int, user_request_id: int, us
     response.hostel_address = json.loads(response.hostel_address)
     return response
 
+
 @router.get("/{university_id}/user-request/{user_request_id}", response_model=UserRequestDetailsViewOut, tags=["Student dashboard"])
 async def read_request_details(university_id: int, user_request_id: int, user = Depends(get_current_user)):
     query = user_request_details_view.select().where(user_request_details_view.c.university_id == university_id, 
