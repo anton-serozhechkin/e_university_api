@@ -8,4 +8,4 @@ speciality = Table('speciality', metadata_obj,
           Column('speciality_id', Integer, primary_key=True),
           Column('code', Integer),
           Column('name', VARCHAR(255)),
-          Column('university_id', Integer, ForeignKey("university.university_id"), nullable=False))
+          Column('faculty_id', Integer, ForeignKey("faculty.faculty_id"), nullable=False))

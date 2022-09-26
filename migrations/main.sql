@@ -707,8 +707,6 @@ ALTER TABLE requisites ADD CONSTRAINT requisites_service_fk
 FOREIGN KEY (service_id) REFERENCES service(service_id) 
 MATCH FULL ON DELETE CASCADE ON UPDATE CASCADE;
 
-
-
 INSERT INTO requisites(requisites_id, iban, university_id, organisation_code, service_id, payment_recognation) 
 VALUES (1, 'UA826482364382748327483', 1, 'ЄДРПОУ 753485385', 1, 'Призначення платежу: За проживання в гуртожитку. Назва Гуртожитку. ПІБ студента.');
 
@@ -811,15 +809,53 @@ CREATE VIEW hostel_accommodation_view AS
         sd.service_id = se.service_id AND 
         sd.university_id = urr.university_id;
 
+ALTER TABLE speciality DROP COLUMN IF EXISTS university_id CASCADE;
+ALTER TABLE speciality ADD COLUMN IF NOT EXISTS faculty_id INTEGER NOT NULL;
+ALTER TABLE speciality ADD CONSTRAINT speciality_faculty_fk FOREIGN KEY (faculty_id) REFERENCES faculty(faculty_id);
+
 -- Create view speciality_list
 DROP VIEW IF EXISTS speciality_list_view;
 CREATE VIEW speciality_list_view AS 
     SELECT
-    s.university_id,
+    s.faculty_id,
     s.speciality_id,
-    jsonb_build_object('code', s.code, 'full_name', s.name) as speciality_info
-    FROM 
-        speciality s;
+    f.university_id,
+    json_build_object('code', s.code, 'full_name', s.name) as speciality_info
+    FROM
+        speciality s
+    LEFT JOIN faculty f ON
+        f.faculty_id = s.faculty_id
+    ORDER BY s.code, s.name;
+
+-- Insert data into speciality table
+INSERT INTO speciality(speciality_id, faculty_id, code, name) VALUES (1, 1, 051, 'Економіка');
+INSERT INTO speciality(speciality_id, faculty_id, code, name) VALUES (2, 1, 121, 'Інженерія програмного забезпечення');
+INSERT INTO speciality(speciality_id, faculty_id, code, name) VALUES (3, 1, 122, 'Комп’ютерні науки');
+INSERT INTO speciality(speciality_id, faculty_id, code, name) VALUES (4, 1, 124, 'Системний аналіз');
+INSERT INTO speciality(speciality_id, faculty_id, code, name) VALUES (5, 1, 125, 'Кібербезпека');
+INSERT INTO speciality(speciality_id, faculty_id, code, name) VALUES (6, 1, 126, 'Інформаційні системи та технології');
+INSERT INTO speciality(speciality_id, faculty_id, code, name) VALUES (7, 1, 186, 'Видавництво та поліграфія');
+INSERT INTO speciality(speciality_id, faculty_id, code, name) VALUES (8, 6, 051, 'Економіка');
+INSERT INTO speciality(speciality_id, faculty_id, code, name) VALUES (9, 6, 053, 'Психологія');
+INSERT INTO speciality(speciality_id, faculty_id, code, name) VALUES (10, 6, 081, 'Право, освітня програма');
+INSERT INTO speciality(speciality_id, faculty_id, code, name) VALUES (11, 6, 232, 'Соціальне забезпечення');
+INSERT INTO speciality(speciality_id, faculty_id, code, name) VALUES (12, 6, 281, 'Публічне управління та адміністрування');
+INSERT INTO speciality(speciality_id, faculty_id, code, name) VALUES (13, 5, 073, 'Менеджмент');
+INSERT INTO speciality(speciality_id, faculty_id, code, name) VALUES (14, 5, 075, 'Маркетинг');
+INSERT INTO speciality(speciality_id, faculty_id, code, name) VALUES (15, 5, 022, 'Дизайн');
+INSERT INTO speciality(speciality_id, faculty_id, code, name) VALUES (16, 4, 072, 'Фінанси, банківська справа та страхування');
+INSERT INTO speciality(speciality_id, faculty_id, code, name) VALUES (17, 4, 071, 'Облік і оподаткування');
+INSERT INTO speciality(speciality_id, faculty_id, code, name) VALUES (18, 2, 011, 'Освітні, педагогічні науки');
+INSERT INTO speciality(speciality_id, faculty_id, code, name) VALUES (19, 2, 052, 'Політологія');
+INSERT INTO speciality(speciality_id, faculty_id, code, name) VALUES (20, 2, 061, 'Журналістика');
+INSERT INTO speciality(speciality_id, faculty_id, code, name) VALUES (21, 2, 073, 'Менеджмент');
+INSERT INTO speciality(speciality_id, faculty_id, code, name) VALUES (22, 2, 291, 'Міжнародні відносини, суспільні комунікації та регіональні студії');
+INSERT INTO speciality(speciality_id, faculty_id, code, name) VALUES (23, 2, 292, 'Міжнародні економічні відносини');
+INSERT INTO speciality(speciality_id, faculty_id, code, name) VALUES (24, 3, 051, 'Економіка');
+INSERT INTO speciality(speciality_id, faculty_id, code, name) VALUES (25, 3, 073, 'Менеджмент');
+INSERT INTO speciality(speciality_id, faculty_id, code, name) VALUES (26, 3, 076, 'Підприємництво, торгівля та біржова діяльність');
+INSERT INTO speciality(speciality_id, faculty_id, code, name) VALUES (27, 3, 241, 'Готельно-ресторанна справа');
+INSERT INTO speciality(speciality_id, faculty_id, code, name) VALUES (28, 3, 242, 'Туризм');
 
 -- Create view to return students_list
 DROP VIEW IF EXISTS students_list_view;
