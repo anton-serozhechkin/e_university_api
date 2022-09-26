@@ -822,6 +822,7 @@ CREATE VIEW speciality_list_view AS
     SELECT
     s.faculty_id,
     s.speciality_id,
+<<<<<<< HEAD
     f.university_id,
     json_build_object('code', s.code, 'full_name', s.name) as speciality_info
     FROM
@@ -865,3 +866,80 @@ INSERT INTO speciality(speciality_id, faculty_id, code, name) VALUES(28, 3, 242,
 
 
 
+=======
+    jsonb_build_object('code', s.code, 'full_name', s.name) as speciality_info
+    FROM 
+        speciality s;
+
+-- Create view to return students_list
+DROP VIEW IF EXISTS students_list_view;
+CREATE VIEW students_list_view AS 
+    SELECT
+        st.student_id,
+        st.full_name as student_full_name,
+        st.telephone_number,
+        st.user_id, 
+	    f.university_id,
+        st.faculty_id,
+        st.speciality_id,
+        st.course_id,
+        st.gender
+    FROM 
+        student st
+    LEFT JOIN faculty f ON
+        st.faculty_id = f.faculty_id
+    ORDER BY
+        f.university_id,
+        st.faculty_id,
+        st.full_name;
+
+
+-- Create view to return user_request information
+DROP VIEW IF EXISTS user_request_details_view;
+CREATE VIEW user_request_details_view AS 
+    SELECT
+        ur.user_request_id,
+        ur.university_id,
+        ur.date_created,
+        sr.service_name,
+        st.status_name,
+        ur.status_id,
+        ur.comment,
+        jsonb_build_object('name', ht.name, 'number', ht.number) as hostel_name, 
+        urr.room_number, 
+        bd.bed_place_name,
+        urr.date_review,
+        urr.remark,
+        jsonb_agg(jsonb_build_object('name', ud.name, 'content', ud.content)) as documents
+    FROM   
+        user_request ur
+    LEFT JOIN user_request_review urr ON
+        ur.user_request_id = urr.user_request_id
+    LEFT JOIN status st ON
+        ur.status_id = st.status_id
+	LEFT JOIN service sr ON
+		ur.service_id = sr.service_id
+	LEFT JOIN hostel ht ON
+		ht.hostel_id = urr.hostel_id
+	LEFT JOIN bed_places bd ON
+		bd.bed_place_id = urr.bed_place_id
+    LEFT JOIN user_document ud ON
+		ud.user_request_id = urr.user_request_id
+	GROUP BY
+		ur.user_request_id,
+        ur.university_id,
+        ur.date_created,
+        sr.service_name,
+        st.status_name,
+        ur.status_id,
+        ur.comment,
+		ht.name,
+		ht.number,
+        urr.room_number, 
+        bd.bed_place_name,
+        urr.date_review,
+        urr.remark
+    ORDER BY
+        ur.university_id,
+        ur.user_request_id;
+>>>>>>> origin/main

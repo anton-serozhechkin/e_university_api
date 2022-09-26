@@ -1,5 +1,5 @@
 from datetime import date, datetime
-from typing import Dict, Union
+from typing import Dict, Union, List
 
 from pydantic import BaseModel, validator
 
@@ -103,3 +103,19 @@ class HostelAccomodationViewOut(BaseModel):
     commandant_full_name: str
     telephone_number: str
     documents: Dict[str, str]
+
+
+class UserRequestDetailsViewOut(BaseModel):
+    user_request_id: int
+    university_id: int
+    date_created: datetime
+    service_name: str
+    status_name: str
+    status_id: int
+    comment: str = None
+    hostel_name: Dict[str, Union[int, str]] = None
+    room_number: int = None
+    bed_place_name: str = None
+    date_review: datetime = None 
+    remark: str = None
+    documents: List[Dict[str, str]]
