@@ -860,16 +860,6 @@ INSERT INTO speciality(speciality_id, faculty_id, code, name) VALUES(26, 3, 076,
 INSERT INTO speciality(speciality_id, faculty_id, code, name) VALUES(27, 3, 241, 'Готельно-ресторанна справа');
 INSERT INTO speciality(speciality_id, faculty_id, code, name) VALUES(28, 3, 242, 'Туризм');
 
-
-
-
-
-
-=======
-    jsonb_build_object('code', s.code, 'full_name', s.name) as speciality_info
-    FROM 
-        speciality s;
-
 -- Create view to return students_list
 DROP VIEW IF EXISTS students_list_view;
 CREATE VIEW students_list_view AS 
