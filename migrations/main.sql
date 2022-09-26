@@ -822,7 +822,6 @@ CREATE VIEW speciality_list_view AS
     SELECT
     s.faculty_id,
     s.speciality_id,
-<<<<<<< HEAD
     f.university_id,
     json_build_object('code', s.code, 'full_name', s.name) as speciality_info
     FROM
@@ -942,4 +941,3 @@ CREATE VIEW user_request_details_view AS
     ORDER BY
         ur.university_id,
         ur.user_request_id;
->>>>>>> origin/main
