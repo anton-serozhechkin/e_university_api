@@ -707,8 +707,6 @@ ALTER TABLE requisites ADD CONSTRAINT requisites_service_fk
 FOREIGN KEY (service_id) REFERENCES service(service_id) 
 MATCH FULL ON DELETE CASCADE ON UPDATE CASCADE;
 
-
-
 INSERT INTO requisites(requisites_id, iban, university_id, organisation_code, service_id, payment_recognation) 
 VALUES (1, 'UA826482364382748327483', 1, 'ЄДРПОУ 753485385', 1, 'Призначення платежу: За проживання в гуртожитку. Назва Гуртожитку. ПІБ студента.');
 
@@ -811,7 +809,6 @@ CREATE VIEW hostel_accommodation_view AS
         sd.service_id = se.service_id AND 
         sd.university_id = urr.university_id;
 
--- Modify specialty/faculty tables
 ALTER TABLE speciality DROP COLUMN IF EXISTS university_id CASCADE;
 ALTER TABLE speciality ADD COLUMN IF NOT EXISTS faculty_id INTEGER NOT NULL;
 ALTER TABLE speciality ADD CONSTRAINT speciality_faculty_fk FOREIGN KEY (faculty_id) REFERENCES faculty(faculty_id);
