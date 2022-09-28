@@ -11,7 +11,7 @@ from handlers import me, user, user_request, bed_places, role, hostel, course, s
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-
+# main:app
 app = FastAPI(openapi_tags=metadata)
 
 origins = ["*"]

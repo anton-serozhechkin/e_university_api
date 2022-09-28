@@ -1,3 +1,35 @@
 __pycache__/
-*.pyc
-.DS_Store
+*.py[cod]
+.DS_store
+*$py.class
+.ipynb_checkpoints/
+*.key
+.vscode/*
+.mypy_cache/*
+.idea/*
+outputs/history.csv
+.env
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+.hypothesis/
+.pytest_cache/
+
+# Translations
+*.mo
+*.pot
+*.swp
+package-lock.json
+.venv
+*.egg-info
+
+db_data/
+pgadmin_data/
+
