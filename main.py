@@ -11,6 +11,7 @@ from handlers import me, user, user_request, bed_places, role, hostel, course, s
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
+from settings.settings import Settings
 
 app = FastAPI(openapi_tags=metadata)
 
@@ -18,10 +19,10 @@ origins = ["*"]
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    Settings.CORS_ALLOW_ORIGINS,
+    Settings.CORS_ALLOW_CREDENTIALS,
+    Settings.CORS_ALLOW_METHODS,
+    Settings.CORS_ALLOW_HEADERS,
 )
 
 # Endpoints registration

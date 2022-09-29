@@ -1,10 +1,9 @@
 import os
-
 import databases
 import sqlalchemy 
+from settings.settings import Settings
 
-
-DATABASE_URL = os.getenv("DATABASE_URL", None)
+DATABASE_URL = Settings.POSTGRES_DSN
 
 database = databases.Database(DATABASE_URL)
 

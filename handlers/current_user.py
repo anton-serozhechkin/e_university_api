@@ -1,9 +1,6 @@
 from models.user import user as user_table
 from models.user_list_view import user_list_view
-from settings.globals import (
-    ALGORITHM,
-    JWT_SECRET_KEY
-)
+
 from db import database
 from schemas.user import TokenPayload, UserOut
 
@@ -14,7 +11,7 @@ from fastapi.security import OAuth2PasswordBearer
 from jose import jwt
 from pydantic import ValidationError
 
-
+from settings.settings import Settings
 reuseable_oauth = OAuth2PasswordBearer(
     tokenUrl="/login",
     scheme_name="JWT"
@@ -24,7 +21,7 @@ reuseable_oauth = OAuth2PasswordBearer(
 async def get_current_user(token: str = Depends(reuseable_oauth)) -> UserOut:
     try:
         payload = jwt.decode(
-            token, JWT_SECRET_KEY, algorithms=[ALGORITHM]
+            token, Settings.JWT_SECRET_KEY, algorithms=[Settings.ALGORITHM]
         )
         token_data = TokenPayload(**payload)
         
