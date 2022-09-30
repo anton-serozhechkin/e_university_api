@@ -1,0 +1,24 @@
+version: '3'
+
+services:
+  database:
+    image: 'postgres:latest'
+    env_file:
+      - .env  # must define POSTGRES_USER, POSTGRES_PASSWORD and POSTGRES_DB
+    volumes:
+      - database-data:/var/lib/postgresql/data/  # persist data
+  backend:
+    build: .
+    environment:
+      DATABASE_URL: "postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@database:5432/${POSTGRES_DB}"
+    env_file:
+      - .env
+    depends_on:
+      - database
+    command: uvicorn --host 0.0.0.0 --port 8000 main:app
+    ports:
+      - '8000:8000'
+
+volumes:
+  database-data:
+
