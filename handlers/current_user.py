@@ -11,7 +11,8 @@ from fastapi.security import OAuth2PasswordBearer
 from jose import jwt
 from pydantic import ValidationError
 
-from settings.settings import Settings
+from settings import ProjectSettings
+
 reuseable_oauth = OAuth2PasswordBearer(
     tokenUrl="/login",
     scheme_name="JWT"
@@ -21,7 +22,7 @@ reuseable_oauth = OAuth2PasswordBearer(
 async def get_current_user(token: str = Depends(reuseable_oauth)) -> UserOut:
     try:
         payload = jwt.decode(
-            token, Settings.JWT_SECRET_KEY, algorithms=[Settings.ALGORITHM]
+            token, Settings.JWT_SECRET_KEY, algorithms=[ProjectSettings.ALGORITHM]
         )
         token_data = TokenPayload(**payload)
         

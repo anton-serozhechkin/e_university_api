@@ -10,7 +10,7 @@ import os
 from fastapi import APIRouter
 from fastapi.responses import JSONResponse
 
-from settings.settings import Settings
+from settings import ProjectSettings
 
 router = APIRouter()
 
@@ -29,7 +29,7 @@ async def check_student(student: StudentCheckExistanceIn):
     student_id = result.student_id
 
     token = hashlib.sha1(os.urandom(128)).hexdigest()
-    expires = datetime.utcnow() + timedelta(seconds=Settings.TOKEN_LIFE_TIME)
+    expires = datetime.utcnow() + timedelta(seconds=ProjectSettings.TOKEN_LIFE_TIME)
 
     query = one_time_token.insert().values(student_id=student_id, token=token,
                                            expires=expires).returning(one_time_token.c.token_id)                      

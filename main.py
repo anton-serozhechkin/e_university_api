@@ -1,4 +1,5 @@
 from db import database
+from settings import ProjectSettings
 from tags_metadata import metadata
 from handlers import faculty
 from handlers.authorization import check_student_existance 
@@ -11,18 +12,16 @@ from handlers import me, user, user_request, bed_places, role, hostel, course, s
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from settings.settings import Settings
-
 app = FastAPI(openapi_tags=metadata)
 
 origins = ["*"]
 
 app.add_middleware(
     CORSMiddleware,
-    Settings.CORS_ALLOW_ORIGINS,
-    Settings.CORS_ALLOW_CREDENTIALS,
-    Settings.CORS_ALLOW_METHODS,
-    Settings.CORS_ALLOW_HEADERS,
+    ProjectSettings.CORS_ALLOW_CREDENTIALS,
+    ProjectSettings.CORS_ALLOW_HEADERS,
+    ProjectSettings.CORS_ALLOW_METHODS,
+    ProjectSettings.CORS_ALLOW_ORIGINS,
 )
 
 # Endpoints registration

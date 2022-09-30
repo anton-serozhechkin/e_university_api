@@ -1,9 +1,8 @@
-import os
 import databases
 import sqlalchemy 
-from settings.settings import Settings
+from settings import ProjectSettings
 
-DATABASE_URL = Settings.POSTGRES_DSN
+DATABASE_URL = ProjectSettings.POSTGRES_DSN
 
 database = databases.Database(DATABASE_URL)
 
