@@ -1,13 +1,13 @@
+from settings import Settings
+
 import databases
 import sqlalchemy 
-from settings import ProjectSettings
 
-DATABASE_URL = ProjectSettings.POSTGRES_DSN
 
-database = databases.Database(DATABASE_URL)
+database = databases.Database(Settings.POSTGRES_DSN)
 
 metadata = sqlalchemy.MetaData()
 
-engine = sqlalchemy.create_engine(DATABASE_URL)
+engine = sqlalchemy.create_engine(Settings.POSTGRES_DSN)
 
 metadata.create_all(engine)
