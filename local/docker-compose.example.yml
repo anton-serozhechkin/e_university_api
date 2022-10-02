@@ -1,7 +1,7 @@
 version: '3'
 
 services:
-  database:
+  postgres:
     image: 'postgres:latest'
     env_file:
       - .env  # must define POSTGRES_USER, POSTGRES_PASSWORD and POSTGRES_DB
@@ -12,11 +12,11 @@ services:
   backend:
     build: .
     environment:
-      DATABASE_URL: "postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@database:5432/${POSTGRES_DB}"
+      DATABASE_URL: "postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}"
     env_file:
       - .env
     depends_on:
-      - database
+      - postgres
     command: uvicorn --host 0.0.0.0 --port 8000 main:app
     ports:
       - '8000:8000'

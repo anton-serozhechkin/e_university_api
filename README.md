@@ -19,9 +19,9 @@
 1. Ensure `.env` file has at least `POSTGRES_USER`, `POSTGRES_PASSWORD` and `POSTGRES_DB` variables
    set to any string values.
 
-2. Run _database_ and _backend_ in docker containers:
+2. Run _postgres_ and _backend_ in docker containers:
 
-       docker-compose up backend  # automatically runs database service as dependency
+       docker-compose up backend  # automatically runs postgres service as dependency
 
    or (shorter)
 
@@ -29,7 +29,7 @@
 
    > :warning: If you see an error messages about failing to connect database, try running database *first*:
    >
-   >     docker-compose up database  # wait several seconds until database is up
+   >     docker-compose up postgres  # wait several seconds until database is up
    >     docker-compose up backend  # in separate terminal
 
 3. Open <http://localhost:8000> to access API (port is specified in docker-compose file).
@@ -47,7 +47,7 @@ During development it may be useful to run application outside of docker contain
 
 3. Run database in docker container using docker-compose:
 
-       docker-compose up database
+       docker-compose up postgres
 
    Now database is accessible via localhost:5432.
 
