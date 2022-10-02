@@ -11,7 +11,9 @@ services:
     ports:
       - '5432:5432'  # required to access DB from host system
   backend:
-    build: .
+    build:
+      context: .
+      dockerfile: ./Dockerfile
     container_name: e_university_api-backend
     environment:
       DATABASE_URL: "postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}"
