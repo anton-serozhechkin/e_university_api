@@ -2,14 +2,14 @@ from pathlib import Path
 
 from models.service import service
 from db import database
+from settings import Settings, TEMPLATES_PATH, SETTLEMENT_HOSTEL_PATH
 
 from datetime import datetime
-import os
 
 from sqlalchemy import (MetaData, Column, Table, Integer, VARCHAR, ForeignKey, DateTime)
 from docxtpl import DocxTemplate
 
-from settings import ProjectSettings, TEMPLATES_PATH, SETTLEMENT_HOSTEL_PATH
+HOSTEL_BOOKING_TEMPLATE_URL = "hostel_booking_template.docx"
 
 metadata_obj = MetaData()
 
@@ -30,7 +30,7 @@ async def generate_document_name(service_id: int) -> str:
 
 async def create_user_document_content(**kwargs) -> str:
     if kwargs.get("service_id") == 1:
-        path_to_template = Path(TEMPLATES_PATH) / "hostel_booking_template.docx"
+        path_to_template = Path(TEMPLATES_PATH) / HOSTEL_BOOKING_TEMPLATE_URL
         doc = DocxTemplate(path_to_template)
         context = kwargs.get("context")
         doc.render(context)
@@ -43,8 +43,8 @@ async def create_user_document_content(**kwargs) -> str:
 async def create_user_document(**kwargs):
     service_id = kwargs.get("service_id")
     name = await generate_document_name(service_id)
-    date_created = datetime.strptime(datetime.now().strftime(ProjectSettings.DATETIME_FORMAT),
-                                     ProjectSettings.DATETIME_FORMAT)
+    date_created = datetime.strptime(datetime.now().strftime(Settings.DATETIME_FORMAT),
+                                     Settings.DATETIME_FORMAT)
     kwargs["date_created"] = date_created
     content = await create_user_document_content(**kwargs)
     query = user_document.insert().values(date_created=date_created, 
