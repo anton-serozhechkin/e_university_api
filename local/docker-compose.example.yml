@@ -3,6 +3,7 @@ version: '3'
 services:
   postgres:
     image: 'postgres:latest'
+    container_name: e_university_api-postgres
     env_file:
       - .env  # must define POSTGRES_USER, POSTGRES_PASSWORD and POSTGRES_DB
     volumes:
@@ -11,6 +12,7 @@ services:
       - '5432:5432'  # required to access DB from host system
   backend:
     build: .
+    container_name: e_university_api-backend
     environment:
       DATABASE_URL: "postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}"
     env_file:
