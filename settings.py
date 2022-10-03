@@ -1,5 +1,6 @@
 import logging
 from pathlib import Path
+from typing import Union
 from functools import lru_cache
 
 from sqlalchemy.engine.url import URL
@@ -67,14 +68,14 @@ class MainSettings(BaseSettings):
     LOG_USE_COLORS: bool = Field(default=False)
 
     @validator("POSTGRES_URL", always=True)
-    def validate_database_url(cls, value: str, values: dict) -> 'URL' | str:
+    def validate_database_url(cls, value: str, values: dict) -> Union[URL, str]:
         """Construct PostgreSQL DSN"""
         if value is None:
             return _build_db_dsn(values=values)
         return value
 
     @validator("POSTGRES_URL_ASYNC", always=True)
-    def validate_database_url_async(cls, value: str, values: dict) -> 'URL' | str:
+    def validate_database_url_async(cls, value: str, values: dict) -> Union[URL, str]:
         """Construct async (with asyncpg driver) PostgreSQL DSN"""
         if value is None:
             return _build_db_dsn(values=values, async_dsn=True)
