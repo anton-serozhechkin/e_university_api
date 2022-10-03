@@ -5,7 +5,6 @@ from settings import (Settings, TEMPLATES_PATH, SETTLEMENT_HOSTEL_PATH)
 from datetime import datetime
 from pathlib import Path
 
-
 from sqlalchemy import (MetaData, Column, Table, Integer, VARCHAR, ForeignKey, DateTime)
 from docxtpl import DocxTemplate
 
