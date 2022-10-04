@@ -480,6 +480,7 @@ ALTER TABLE student ADD CONSTRAINT student_course_fk
 FOREIGN KEY (course_id) REFERENCES course(course_id) 
 MATCH FULL ON DELETE CASCADE ON UPDATE CASCADE;
 
+ALTER TABLE student ADD COLUMN gender VARCHAR(1);
 
 -- Create view for descibe user_request_booking_hostel_view
 DROP VIEW IF EXISTS user_request_booking_hostel_view; 
@@ -624,8 +625,6 @@ CREATE VIEW hostel_list_view AS
         ht.hostel_id,
         ht.name;
 
-
-ALTER TABLE student ADD COLUMN gender VARCHAR(1);
 
 -- Create table user_request_review
 CREATE TABLE IF NOT EXISTS user_request_review(
