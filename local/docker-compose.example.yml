@@ -1,0 +1,30 @@
+version: '3'
+
+services:
+  postgres:
+    image: 'postgres:latest'
+    container_name: e_university_api-postgres
+    env_file:
+      - .env  # must define POSTGRES_USER, POSTGRES_PASSWORD and POSTGRES_DB
+    volumes:
+      - database-data:/var/lib/postgresql/data/  # persist data
+    ports:
+      - '5432:5432'  # required to access DB from host system
+  backend:
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    container_name: e_university_api-backend
+    environment:
+      DATABASE_URL: "postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}"
+    env_file:
+      - .env
+    depends_on:
+      - postgres
+    command: uvicorn --host 0.0.0.0 --port 8000 main:app
+    ports:
+      - '8000:8000'
+
+volumes:
+  database-data:
+
