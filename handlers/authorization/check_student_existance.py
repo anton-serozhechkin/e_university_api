@@ -1,8 +1,8 @@
 from models.student import student as student_table
 from models.one_time_token import one_time_token
 from db import database
-from schemas.student import StudentCheckExistanceIn, StudentCheckExistanceOut
 from settings import Settings
+from schemas.student import StudentCheckExistanceIn, StudentCheckExistanceOut
 
 from datetime import datetime, timedelta
 import hashlib

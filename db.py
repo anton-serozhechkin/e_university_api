@@ -1,7 +1,7 @@
 from settings import Settings
 
 import databases
-import sqlalchemy 
+import sqlalchemy
 
 
 database = databases.Database(Settings.POSTGRES_DSN)

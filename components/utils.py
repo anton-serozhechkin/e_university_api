@@ -1,5 +1,5 @@
-from settings import Settings
 from datetime import datetime, timedelta
+from settings import Settings
 from typing import Union, Any
 
 from jose import jwt

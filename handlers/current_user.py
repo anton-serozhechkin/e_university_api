@@ -1,7 +1,6 @@
 from models.user import user as user_table
 from models.user_list_view import user_list_view
 from settings import Settings
-
 from db import database
 from schemas.user import TokenPayload, UserOut
 

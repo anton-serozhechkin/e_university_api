@@ -12,6 +12,7 @@ HOSTEL_BOOKING_TEMPLATE_URL = "hostel_booking_template.docx"
 
 metadata_obj = MetaData()
 
+HOSTEL_BOOKING_TEMPLATE_URL = "hostel_booking_template.docx"
 
 user_document = Table('user_document', metadata_obj,
           Column('user_document_id', Integer, primary_key=True),
