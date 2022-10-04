@@ -1,14 +1,15 @@
 import logging
 from pathlib import Path
-from typing import Union
+from typing import Union, List
 from functools import lru_cache
 
 from sqlalchemy.engine.url import URL
-from pydantic import BaseSettings, PostgresDsn, Field, validator
+
+from pydantic import BaseSettings, PostgresDsn, Field, validator, Extra
 
 __all__ = ['BASE_DIR', 'Settings', 'TEMPLATES_PATH', 'STORAGE_PATH', 'SETTLEMENT_HOSTEL_PATH']
 
-BASE_DIR = pathlib.Path(__file__).resolve().parent
+BASE_DIR = Path(__file__).resolve().parent
 
 TEMPLATES_PATH = BASE_DIR / "templates"
 STORAGE_PATH = BASE_DIR / "storage"
