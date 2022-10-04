@@ -15,16 +15,16 @@ STORAGE_PATH = BASE_DIR / "storage"
 SETTLEMENT_HOSTEL_PATH = BASE_DIR / (Path(STORAGE_PATH) / "settlement_hostel")
 
 
-def _build_db_dsn(values: dict, async_dsn: bool = False) -> 'URL':
+def _build_db_dsn(values: dict, async_dsn: bool = False) -> URL:
     driver_name = "postgresql"
     if async_dsn:
         driver_name += "+asyncpg"
     return URL.create(
         drivername=driver_name,
-        user=values["POSTGRES_USER"],
+        username=values["POSTGRES_USER"],
         password=values["POSTGRES_PASSWORD"],
         host=values["POSTGRES_HOST"],
-        port=f"{values['POSTGRES_PORT']}",
+        port=values["POSTGRES_PORT"],
         database=values["POSTGRES_DB"]
     )
 
@@ -33,9 +33,9 @@ class MainSettings(BaseSettings):
     # DATABASE SETTINGS
     POSTGRES_ECHO: bool = Field(default=False)
     POSTGRES_DB: str = Field(default="postgres")
-    POSTGRES_USER: str = Field(default='postgres')
-    POSTGRES_HOST: str = Field(default='0.0.0.0')
-    POSTGRES_PASSWORD: str = Field(default='postgres')
+    POSTGRES_USER: str = Field(default="postgres")
+    POSTGRES_HOST: str = Field(default="0.0.0.0")
+    POSTGRES_PASSWORD: str = Field(default="postgres")
     POSTGRES_PORT: int = Field(default=5432)
     POSTGRES_DSN: PostgresDsn = Field(default=None)
     POSTGRES_DSN_ASYNC: PostgresDsn = Field(default=None)
