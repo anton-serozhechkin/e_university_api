@@ -67,16 +67,20 @@ class MainSettings(BaseSettings):
     LOG_LEVEL: int = Field(default=logging.WARNING)
     LOG_USE_COLORS: bool = Field(default=False)
 
-    @validator("POSTGRES_URL", always=True)
-    def validate_database_url(cls, value: str, values: dict) -> Union[URL, str]:
-        """Construct PostgreSQL DSN"""
+    class Config(BaseSettings.Config):
+        extra = Extra.ignore
+        env_file = ".env"
+        env_file_encoding = "UTF-8"
+        env_nested_delimiter = "__"
+
+    @validator("POSTGRES_DSN", always=True)
+    def validate_database_url(cls, value: Union[str, int], values: dict) -> Union[URL, str]:
         if value is None:
             return _build_db_dsn(values=values)
         return value
 
-    @validator("POSTGRES_URL_ASYNC", always=True)
-    def validate_database_url_async(cls, value: str, values: dict) -> Union[URL, str]:
-        """Construct async (with asyncpg driver) PostgreSQL DSN"""
+    @validator("POSTGRES_DSN_ASYNC", always=True)
+    def validate_database_url_async(cls, value: Union[str, int], values: dict) -> Union[URL, str]:
         if value is None:
             return _build_db_dsn(values=values, async_dsn=True)
         return value
@@ -88,7 +92,7 @@ class MainSettings(BaseSettings):
 
 @lru_cache()
 def get_settings() -> MainSettings:
-    return Settings()
+    return MainSettings()
 
 
 Settings: MainSettings = get_settings()
