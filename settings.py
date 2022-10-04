@@ -46,7 +46,7 @@ class MainSettings(BaseSettings):
     HOST: str = Field(default="0.0.0.0")
     PORT: int = Field(default=8000)
     WORKERS_COUNT: int = Field(default=1)
-    TRUSTED_HOSTS: list[str] = Field(default=["*"])
+    TRUSTED_HOSTS: List[str] = Field(default=["*"])
     DATETIME_FORMAT: str = Field("%Y-%m-%d %H:%M:%S")
 
     # JWT SETTINGS
@@ -59,9 +59,9 @@ class MainSettings(BaseSettings):
 
     # CORE SETTINGS
     CORS_ALLOW_CREDENTIALS: bool = Field(default=True)
-    CORS_ALLOW_HEADERS: list[str] = Field(default=["*"])
-    CORS_ALLOW_METHODS: list[str] = Field(default=["*"])
-    CORS_ALLOW_ORIGINS: list[str] = Field(default=["*"])
+    CORS_ALLOW_HEADERS: List[str] = Field(default=["*"])
+    CORS_ALLOW_METHODS: List[str] = Field(default=["*"])
+    CORS_ALLOW_ORIGINS: List[str] = Field(default=["*"])
 
     # LOGGING SETTINGS
     LOG_LEVEL: int = Field(default=logging.WARNING)
