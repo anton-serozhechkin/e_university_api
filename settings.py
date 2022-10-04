@@ -1,11 +1,12 @@
 import logging
+import os
 from pathlib import Path
 from typing import Union, List
 from functools import lru_cache
-
 from sqlalchemy.engine.url import URL
 
 from pydantic import BaseSettings, PostgresDsn, Field, validator, Extra
+
 
 __all__ = ['BASE_DIR', 'Settings', 'TEMPLATES_PATH', 'STORAGE_PATH', 'SETTLEMENT_HOSTEL_PATH']
 
@@ -86,17 +87,14 @@ class MainSettings(BaseSettings):
             return _build_db_dsn(values=values, async_dsn=True)
         return value
 
-    class Config:
-        env_file = '.env'
-        env_file_encoding = 'utf-8'
-
 
 @lru_cache()
 def get_settings() -> MainSettings:
-    return MainSettings()
+    return MainSettings(_env_file='.env', _env_file_encoding='utf-8')
 
 
 Settings: MainSettings = get_settings()
+
 
 if Settings.DEBUG:
     import pprint  # noqa
