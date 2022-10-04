@@ -1,5 +1,4 @@
 import logging
-import os
 from pathlib import Path
 from typing import Union, List
 from functools import lru_cache
@@ -90,7 +89,7 @@ class MainSettings(BaseSettings):
 
 @lru_cache()
 def get_settings() -> MainSettings:
-    return MainSettings(_env_file='.env', _env_file_encoding='utf-8')
+    return MainSettings()
 
 
 Settings: MainSettings = get_settings()
