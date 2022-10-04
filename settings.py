@@ -1,30 +1,31 @@
 import logging
 from pathlib import Path
-from typing import Union
+from typing import Union, List
 from functools import lru_cache
 
 from sqlalchemy.engine.url import URL
-from pydantic import BaseSettings, PostgresDsn, Field, validator
+
+from pydantic import BaseSettings, PostgresDsn, Field, validator, Extra
 
 __all__ = ['BASE_DIR', 'Settings', 'TEMPLATES_PATH', 'STORAGE_PATH', 'SETTLEMENT_HOSTEL_PATH']
 
-BASE_DIR = pathlib.Path(__file__).resolve().parent
+BASE_DIR = Path(__file__).resolve().parent
 
 TEMPLATES_PATH = BASE_DIR / "templates"
 STORAGE_PATH = BASE_DIR / "storage"
 SETTLEMENT_HOSTEL_PATH = BASE_DIR / (Path(STORAGE_PATH) / "settlement_hostel")
 
 
-def _build_db_dsn(values: dict, async_dsn: bool = False) -> 'URL':
+def _build_db_dsn(values: dict, async_dsn: bool = False) -> URL:
     driver_name = "postgresql"
     if async_dsn:
         driver_name += "+asyncpg"
     return URL.create(
         drivername=driver_name,
-        user=values["POSTGRES_USER"],
+        username=values["POSTGRES_USER"],
         password=values["POSTGRES_PASSWORD"],
         host=values["POSTGRES_HOST"],
-        port=f"{values['POSTGRES_PORT']}",
+        port=values["POSTGRES_PORT"],
         database=values["POSTGRES_DB"]
     )
 
@@ -33,9 +34,9 @@ class MainSettings(BaseSettings):
     # DATABASE SETTINGS
     POSTGRES_ECHO: bool = Field(default=False)
     POSTGRES_DB: str = Field(default="postgres")
-    POSTGRES_USER: str = Field(default='postgres')
-    POSTGRES_HOST: str = Field(default='0.0.0.0')
-    POSTGRES_PASSWORD: str = Field(default='postgres')
+    POSTGRES_USER: str = Field(default="postgres")
+    POSTGRES_HOST: str = Field(default="0.0.0.0")
+    POSTGRES_PASSWORD: str = Field(default="postgres")
     POSTGRES_PORT: int = Field(default=5432)
     POSTGRES_DSN: PostgresDsn = Field(default=None)
     POSTGRES_DSN_ASYNC: PostgresDsn = Field(default=None)
@@ -46,7 +47,7 @@ class MainSettings(BaseSettings):
     HOST: str = Field(default="0.0.0.0")
     PORT: int = Field(default=8000)
     WORKERS_COUNT: int = Field(default=1)
-    TRUSTED_HOSTS: list[str] = Field(default=["*"])
+    TRUSTED_HOSTS: List[str] = Field(default=["*"])
     DATETIME_FORMAT: str = Field("%Y-%m-%d %H:%M:%S")
 
     # JWT SETTINGS
@@ -59,24 +60,28 @@ class MainSettings(BaseSettings):
 
     # CORE SETTINGS
     CORS_ALLOW_CREDENTIALS: bool = Field(default=True)
-    CORS_ALLOW_HEADERS: list[str] = Field(default=["*"])
-    CORS_ALLOW_METHODS: list[str] = Field(default=["*"])
-    CORS_ALLOW_ORIGINS: list[str] = Field(default=["*"])
+    CORS_ALLOW_HEADERS: List[str] = Field(default=["*"])
+    CORS_ALLOW_METHODS: List[str] = Field(default=["*"])
+    CORS_ALLOW_ORIGINS: List[str] = Field(default=["*"])
 
     # LOGGING SETTINGS
     LOG_LEVEL: int = Field(default=logging.WARNING)
     LOG_USE_COLORS: bool = Field(default=False)
 
-    @validator("POSTGRES_URL", always=True)
-    def validate_database_url(cls, value: str, values: dict) -> Union[URL, str]:
-        """Construct PostgreSQL DSN"""
+    class Config(BaseSettings.Config):
+        extra = Extra.ignore
+        env_file = ".env"
+        env_file_encoding = "UTF-8"
+        env_nested_delimiter = "__"
+
+    @validator("POSTGRES_DSN", always=True)
+    def validate_database_url(cls, value: Union[str, int], values: dict) -> Union[URL, str]:
         if value is None:
             return _build_db_dsn(values=values)
         return value
 
-    @validator("POSTGRES_URL_ASYNC", always=True)
-    def validate_database_url_async(cls, value: str, values: dict) -> Union[URL, str]:
-        """Construct async (with asyncpg driver) PostgreSQL DSN"""
+    @validator("POSTGRES_DSN_ASYNC", always=True)
+    def validate_database_url_async(cls, value: Union[str, int], values: dict) -> Union[URL, str]:
         if value is None:
             return _build_db_dsn(values=values, async_dsn=True)
         return value
@@ -88,7 +93,7 @@ class MainSettings(BaseSettings):
 
 @lru_cache()
 def get_settings() -> MainSettings:
-    return Settings()
+    return MainSettings()
 
 
 Settings: MainSettings = get_settings()
