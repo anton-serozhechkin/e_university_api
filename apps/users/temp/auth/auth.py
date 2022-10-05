@@ -3,12 +3,12 @@ from components.utils import (
     create_refresh_token,
     verify_password
 )
-from models.user import user as user_table
+from apps.users.models import user as user_table
 from db import database
 
 from fastapi import status, HTTPException, Depends, APIRouter
 from fastapi.security import OAuth2PasswordRequestForm
-from schemas.user import AuthOut
+from apps.users.schemas import AuthOut
 
 
 router = APIRouter()

@@ -1,25 +1,74 @@
-from apps.users.schemas import UsersListViewOut, CreateUserIn, CreateUserOut, DeleteUserIn, RegistrationIn, RegistrationOut
-from apps.users.schemas import CreateStudentOut, CreateStudentIn, StudentsListOut, DeleteStudentIn
-from models.user_list_view import user_list_view
-from models.students_list_view import students_list_view
-from apps.users.models import user as user_table
-from apps.users.models import student as student_table
-from apps.users.models import user_faculty
-from apps.users.models import one_time_token
-from handlers.current_user import get_current_user
+from users.schemas import TokenPayload, UserOut
+from users.schemas import UsersListViewOut, CreateUserIn, CreateUserOut, DeleteUserIn, RegistrationIn, RegistrationOut
+from users.schemas import CreateStudentOut, CreateStudentIn, StudentsListOut, DeleteStudentIn
+from users.temp.user_list_view import user_list_view
+from users.temp.students_list_view import students_list_view
+from users.models import user as user_table
+from users.models import student as student_table
+from users.models import user_faculty
+from users.models import one_time_token
 from components.utils import get_hashed_password
 from db import database
 
 from random import randint
 from typing import List, Union
 from datetime import datetime
+from jose import jwt
 
 from translitua import translit
-from fastapi import Depends, APIRouter
+from fastapi import Depends, APIRouter, HTTPException, status
+from fastapi.security import OAuth2PasswordBearer
 from fastapi.responses import JSONResponse
+from pydantic import ValidationError
 
 
 router = APIRouter()
+
+
+from settings.globals import (
+    ALGORITHM,
+    JWT_SECRET_KEY
+)
+
+reuseable_oauth = OAuth2PasswordBearer(
+    tokenUrl="/login",
+    scheme_name="JWT"
+)
+
+
+async def get_current_user(token: str = Depends(reuseable_oauth)) -> UserOut:
+    try:
+        payload = jwt.decode(
+            token, JWT_SECRET_KEY, algorithms=[ALGORITHM]
+        )
+        token_data = TokenPayload(**payload)
+        
+        if datetime.fromtimestamp(token_data.exp) < datetime.now():
+            raise HTTPException(
+                status_code = status.HTTP_401_UNAUTHORIZED,
+                detail="Термін дії токена закінчився",
+                headers={"WWW-Authenticate": "Bearer"},
+            )
+    except(jwt.JWTError, ValidationError):
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Не вдалося перевірити облікові дані",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+        
+    query = user_table.select().where(user_table.c.email == token_data.sub)
+    user = await database.fetch_one(query)
+
+    if user is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Користувача не знайдено",
+        )
+
+    query = user_list_view.select(user_list_view.c.user_id == user.user_id)
+    user = await database.fetch_one(query)
+
+    return user
 
 
 @router.get("/{university_id}/users/", response_model=List[UsersListViewOut], tags=["SuperAdmin dashboard"])
