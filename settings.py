@@ -30,10 +30,10 @@ def _build_db_dsn(values: dict, async_dsn: bool = False) -> URL:
     # )
     # TODO: Remove when "databases" dependency will be removed.
     username = values["POSTGRES_USER"]
-    password=values["POSTGRES_PASSWORD"]
-    host=values["POSTGRES_HOST"]
-    port=values["POSTGRES_PORT"]
-    database=values["POSTGRES_DB"]
+    password = values["POSTGRES_PASSWORD"]
+    host = values["POSTGRES_HOST"]
+    port = values["POSTGRES_PORT"]
+    database = values["POSTGRES_DB"]
     return f"{driver_name}://{username}:{password}@{host}:{port}/{database}"
 
 
