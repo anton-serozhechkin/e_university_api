@@ -4,6 +4,7 @@ from pathlib import Path
 from typing import Union, List
 
 from pydantic import BaseSettings, Field, validator, Extra, PostgresDsn
+
 from sqlalchemy.engine.url import URL
 
 __all__ = ['BASE_DIR', 'Settings', 'TEMPLATES_PATH', 'STORAGE_PATH', 'SETTLEMENT_HOSTEL_PATH']
@@ -67,7 +68,7 @@ class MainSettings(BaseSettings):
     JWT_REFRESH_TOKEN_EXPIRE_SECONDS: int = Field(default=(60 * 60 * 24 * 7))  # 7 days
     JWT_ALGORITHM: str = Field(default="HS256")
 
-    # CORE SETTINGS
+    # CORS SETTINGS
     CORS_ALLOW_CREDENTIALS: bool = Field(default=True)
     CORS_ALLOW_HEADERS: List[str] = Field(default=["*"])
     CORS_ALLOW_METHODS: List[str] = Field(default=["*"])
