@@ -29,7 +29,7 @@ async def check_student(student: StudentCheckExistanceIn):
     student_id = result.student_id
 
     token = hashlib.sha1(os.urandom(128)).hexdigest()
-    expires = datetime.utcnow() + timedelta(seconds=Settings.JWT_TOKEN_LIFE_TIME)
+    expires = datetime.utcnow() + timedelta(seconds=Settings.TOKEN_LIFE_TIME)
 
     query = one_time_token.insert().values(student_id=student_id, token=token,
                                            expires=expires).returning(one_time_token.c.token_id)                      
