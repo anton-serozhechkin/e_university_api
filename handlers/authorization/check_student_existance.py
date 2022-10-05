@@ -1,8 +1,8 @@
 from models.student import student as student_table
 from models.one_time_token import one_time_token
 from db import database
-from settings.globals import TOKEN_LIFE_TIME
 from schemas.student import StudentCheckExistanceIn, StudentCheckExistanceOut
+from settings import Settings
 
 from datetime import datetime, timedelta
 import hashlib
@@ -29,7 +29,7 @@ async def check_student(student: StudentCheckExistanceIn):
     student_id = result.student_id
 
     token = hashlib.sha1(os.urandom(128)).hexdigest()
-    expires = datetime.utcnow() + timedelta(seconds=TOKEN_LIFE_TIME)
+    expires = datetime.utcnow() + timedelta(seconds=Settings.TOKEN_LIFE_TIME)
 
     query = one_time_token.insert().values(student_id=student_id, token=token,
                                            expires=expires).returning(one_time_token.c.token_id)                      
