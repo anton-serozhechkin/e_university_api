@@ -7,8 +7,6 @@ from db import database
 from models.service import service
 from settings import (Settings, TEMPLATES_PATH, SETTLEMENT_HOSTEL_PATH)
 
-HOSTEL_BOOKING_TEMPLATE_URL = "hostel_booking_template.docx"
-
 metadata_obj = MetaData()
 
 user_document = Table('user_document', metadata_obj,
