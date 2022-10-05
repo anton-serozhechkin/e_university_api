@@ -1,12 +1,11 @@
 import logging
-import os
+from functools import lru_cache
 from pathlib import Path
 from typing import Union, List
-from functools import lru_cache
+
+from pydantic import BaseSettings, Field, validator, Extra, PostgresDsn
+
 from sqlalchemy.engine.url import URL
-
-from pydantic import BaseSettings, PostgresDsn, Field, validator, Extra
-
 
 __all__ = ['BASE_DIR', 'Settings', 'TEMPLATES_PATH', 'STORAGE_PATH', 'SETTLEMENT_HOSTEL_PATH']
 
@@ -14,21 +13,29 @@ BASE_DIR = Path(__file__).resolve().parent
 
 TEMPLATES_PATH = BASE_DIR / "templates"
 STORAGE_PATH = BASE_DIR / "storage"
-SETTLEMENT_HOSTEL_PATH = BASE_DIR / (Path(STORAGE_PATH) / "settlement_hostel")
+SETTLEMENT_HOSTEL_PATH = BASE_DIR / STORAGE_PATH / "settlement_hostel"
 
 
 def _build_db_dsn(values: dict, async_dsn: bool = False) -> URL:
     driver_name = "postgresql"
     if async_dsn:
         driver_name += "+asyncpg"
-    return URL.create(
-        drivername=driver_name,
-        username=values["POSTGRES_USER"],
-        password=values["POSTGRES_PASSWORD"],
-        host=values["POSTGRES_HOST"],
-        port=values["POSTGRES_PORT"],
-        database=values["POSTGRES_DB"]
-    )
+    # TODO: Uncomment when "databases" dependency will be removed.
+    # return URL.create(
+    #     drivername=driver_name,
+    #     username=values["POSTGRES_USER"],
+    #     password=values["POSTGRES_PASSWORD"],
+    #     host=values["POSTGRES_HOST"],
+    #     port=values["POSTGRES_PORT"],
+    #     database=values["POSTGRES_DB"]
+    # )
+    # TODO: Remove when "databases" dependency will be removed.
+    username = values["POSTGRES_USER"]
+    password = values["POSTGRES_PASSWORD"]
+    host = values["POSTGRES_HOST"]
+    port = values["POSTGRES_PORT"]
+    database = values["POSTGRES_DB"]
+    return f"{driver_name}://{username}:{password}@{host}:{port}/{database}"
 
 
 class MainSettings(BaseSettings):
@@ -51,15 +58,17 @@ class MainSettings(BaseSettings):
     TRUSTED_HOSTS: List[str] = Field(default=["*"])
     DATETIME_FORMAT: str = Field("%Y-%m-%d %H:%M:%S")
 
+    # ONE-TIME TOKEN SETTINGS
+    TOKEN_LIFE_TIME: int = Field(default=3600)
+
     # JWT SETTINGS
     JWT_SECRET_KEY: str = Field('JWT_SECRET_KEY')
     JWT_REFRESH_SECRET_KEY: str = Field('JWT_REFRESH_SECRET_KEY')
-    JWT_TOKEN_LIFE_TIME: str = Field(default="TOKEN_LIFE_TIME")
     JWT_ACCESS_TOKEN_EXPIRE_SECONDS: int = Field(default=3660)  # 1 hour
     JWT_REFRESH_TOKEN_EXPIRE_SECONDS: int = Field(default=(60 * 60 * 24 * 7))  # 7 days
     JWT_ALGORITHM: str = Field(default="HS256")
 
-    # CORE SETTINGS
+    # CORS SETTINGS
     CORS_ALLOW_CREDENTIALS: bool = Field(default=True)
     CORS_ALLOW_HEADERS: List[str] = Field(default=["*"])
     CORS_ALLOW_METHODS: List[str] = Field(default=["*"])
@@ -90,7 +99,7 @@ class MainSettings(BaseSettings):
 
 @lru_cache()
 def get_settings() -> MainSettings:
-    return MainSettings(_env_file='.env', _env_file_encoding='utf-8')
+    return MainSettings()
 
 
 Settings: MainSettings = get_settings()
