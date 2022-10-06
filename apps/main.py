@@ -1,7 +1,7 @@
 from db import database
 from tags_metadata import metadata
 from hostel.handlers import hostel_router
-from educational_institutions.handlers import educational_instructions_router
+from educational_institutions.handlers import educational_institutions_router
 from users.handlers import users_router
 
 

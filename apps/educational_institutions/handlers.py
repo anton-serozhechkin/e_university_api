@@ -11,16 +11,16 @@ from typing import List
 from fastapi import Depends, APIRouter 
 
 
-educational_instructions_router = APIRouter()
+educational_institutions_router = APIRouter()
 
 
-@educational_instructions_router.get("/{university_id}/faculties/", response_model=List[FacultyOut], tags=["SuperAdmin dashboard"])
+@educational_institutions_router.get("/{university_id}/faculties/", response_model=List[FacultyOut], tags=["SuperAdmin dashboard"])
 async def read_faculties(university_id: int, user = Depends(get_current_user)):
     query = faculty_list_view.select().where(faculty_list_view.c.university_id == university_id)
     return await database.fetch_all(query)
 
 
-@educational_instructions_router.post("/{university_id}/faculties/", response_model=FacultyOut, tags=["SuperAdmin dashboard"])
+@educational_institutions_router.post("/{university_id}/faculties/", response_model=FacultyOut, tags=["SuperAdmin dashboard"])
 async def create_faculty(university_id: int, faculty: FacultyIn, user = Depends(get_current_user)):
     query = faculty_table.insert().values(name=faculty.name, shortname=faculty.shortname, 
                                     main_email=faculty.main_email, 
@@ -33,13 +33,13 @@ async def create_faculty(university_id: int, faculty: FacultyIn, user = Depends(
     }
 
 
-@educational_instructions_router.get("/{university_id}/speciality/", response_model=List[SpecialityListOut], tags=["Admin dashboard"])
+@educational_institutions_router.get("/{university_id}/speciality/", response_model=List[SpecialityListOut], tags=["Admin dashboard"])
 async def read_speciality_list(university_id: int, auth = Depends(get_current_user)):
     query = speciality_list_view.select().where(speciality_list_view.c.university_id == university_id)                                  
     return await database.fetch_all(query)
 
 
-@educational_instructions_router.get("/courses/", response_model=List[CourseListOut], tags=["Admin dashboard"])
+@educational_institutions_router.get("/courses/", response_model=List[CourseListOut], tags=["Admin dashboard"])
 async def read_courses_list(auth = Depends(get_current_user)):
     query = course.select()
     return await database.fetch_all(query)
