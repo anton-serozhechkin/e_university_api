@@ -1,10 +1,8 @@
 from db import database
 from tags_metadata import metadata
-#from handlers.authorization import check_student_existance 
-#from handlers.authorization import auth
 from hostel.handlers import hostel_router
-from educational_instuctions.handlers import educational_instructions_router
-#from handlers import me
+from educational_institutions.handlers import educational_instructions_router
+from users.handlers import users_router
 
 
 from fastapi import FastAPI
@@ -24,8 +22,9 @@ app.add_middleware(
 )
 
 # Endpoints registration
+app.include_router(users_router)
 app.include_router(hostel_router)
-app.include_router(educational_instructions_router)
+app.include_router(educational_institutions_router)
 #
 
 

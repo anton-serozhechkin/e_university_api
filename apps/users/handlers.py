@@ -22,7 +22,7 @@ from fastapi.responses import JSONResponse
 from pydantic import ValidationError
 
 
-router = APIRouter()
+users_router = APIRouter()
 
 
 from settings.globals import (
@@ -71,14 +71,14 @@ async def get_current_user(token: str = Depends(reuseable_oauth)) -> UserOut:
     return user
 
 
-@router.get("/{university_id}/users/", response_model=List[UsersListViewOut], tags=["SuperAdmin dashboard"])
+@users_router.get("/{university_id}/users/", response_model=List[UsersListViewOut], tags=["SuperAdmin dashboard"])
 async def users_list(university_id: int, user = Depends(get_current_user)):
     query = user_list_view.select().where(user_list_view.c.university_id == university_id)
     response = await database.fetch_all(query)
     return response
 
 
-@router.post("/{university_id}/users/", response_model=CreateUserOut, tags=["SuperAdmin dashboard"])
+@users_router.post("/{university_id}/users/", response_model=CreateUserOut, tags=["SuperAdmin dashboard"])
 async def create_user(university_id: int, user: CreateUserIn, auth = Depends(get_current_user)):
     
     CreateUserIn(
@@ -109,7 +109,7 @@ async def create_user(university_id: int, user: CreateUserIn, auth = Depends(get
     }
 
 
-@router.delete("/{university_id}/users/", tags=["SuperAdmin dashboard"])
+@users_router.delete("/{university_id}/users/", tags=["SuperAdmin dashboard"])
 async def delete_user(university_id: int, delete_user: DeleteUserIn, auth = Depends(get_current_user)):
     query = user_table.delete().where(user_table.c.user_id == delete_user.user_id)
     
@@ -119,7 +119,7 @@ async def delete_user(university_id: int, delete_user: DeleteUserIn, auth = Depe
         "user_id": delete_user.user_id
     }
 
-@router.post("/registration/", response_model=RegistrationOut, tags=["Authorization"])
+@users_router.post("/registration/", response_model=RegistrationOut, tags=["Authorization"])
 async def registation(user: RegistrationIn):
 
     RegistrationIn(
@@ -186,7 +186,7 @@ async def registation(user: RegistrationIn):
     return response
 
 
-@router.post("/{university_id}/students/", response_model=CreateStudentOut, tags=["Admin dashboard"])
+@users_router.post("/{university_id}/students/", response_model=CreateStudentOut, tags=["Admin dashboard"])
 async def create_student(university_id: int, student: CreateStudentIn, auth = Depends(get_current_user)):
     
     CreateStudentIn(
@@ -208,7 +208,7 @@ async def create_student(university_id: int, student: CreateStudentIn, auth = De
     }
 
 
-@router.get("/{university_id}/students/", response_model=List[StudentsListOut], tags=["Admin dashboard"])
+@users_router.get("/{university_id}/students/", response_model=List[StudentsListOut], tags=["Admin dashboard"])
 async def read_students_list(university_id: int, faculty_id: Union[int, None] = None , user = Depends(get_current_user)):
     if faculty_id: 
         query = students_list_view.select().where(students_list_view.c.faculty_id == faculty_id)
@@ -218,7 +218,7 @@ async def read_students_list(university_id: int, faculty_id: Union[int, None] = 
     return await database.fetch_all(query)
 
 
-@router.delete("/{university_id}/students/", tags=["SuperAdmin dashboard"])
+@users_router.delete("/{university_id}/students/", tags=["SuperAdmin dashboard"])
 async def delete_student(university_id: int, delete_student: DeleteStudentIn, auth = Depends(get_current_user)):
     query = student_table.delete().where(student_table.c.student_id == delete_student.student_id)
     
