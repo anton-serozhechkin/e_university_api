@@ -1,19 +1,25 @@
 from users.schemas import TokenPayload, UserOut
 from users.schemas import UsersListViewOut, CreateUserIn, CreateUserOut, DeleteUserIn, RegistrationIn, RegistrationOut
 from users.schemas import CreateStudentOut, CreateStudentIn, StudentsListOut, DeleteStudentIn
+from users.schemas import StudentCheckExistanceIn, StudentCheckExistanceOut
 from users.temp.user_list_view import user_list_view
 from users.temp.students_list_view import students_list_view
 from users.models import user as user_table
 from users.models import student as student_table
 from users.models import user_faculty
 from users.models import one_time_token
+from settings.globals import TOKEN_LIFE_TIME
 from components.utils import get_hashed_password
 from db import database
 
+
 from random import randint
 from typing import List, Union
-from datetime import datetime
+from datetime import datetime, timedelta
 from jose import jwt
+
+import hashlib
+import os
 
 from translitua import translit
 from fastapi import Depends, APIRouter, HTTPException, status
@@ -69,6 +75,40 @@ async def get_current_user(token: str = Depends(reuseable_oauth)) -> UserOut:
     user = await database.fetch_one(query)
 
     return user
+
+
+@users_router.post("/check-student-existance", response_model=StudentCheckExistanceOut, tags=["Authorization"])
+async def check_student(student: StudentCheckExistanceIn):
+
+    query = student_table.select().where(student_table.c.full_name == student.full_name, 
+                                    student_table.c.telephone_number == student.telephone_number)
+    result = await database.fetch_one(query)
+
+    if not result:
+        return JSONResponse(status_code=404, content={"message": "Дані про студента не знайдено. " \
+                                                                "Будь ласка, спробуйте ще раз."})
+
+    student_id = result.student_id
+
+    token = hashlib.sha1(os.urandom(128)).hexdigest()
+    expires = datetime.utcnow() + timedelta(seconds=TOKEN_LIFE_TIME)
+
+    query = one_time_token.insert().values(student_id=student_id, token=token,
+                                           expires=expires).returning(one_time_token.c.token_id)                      
+    last_record_id = await database.execute(query)
+
+    query = one_time_token.select().where(one_time_token.c.token_id == last_record_id)
+    result = await database.fetch_one(query)
+
+    response = {
+                'token': result.token,
+                'student': result.student_id, 
+                'expires': result.expires
+    }
+
+    return response
+
+
 
 
 @users_router.get("/{university_id}/users/", response_model=List[UsersListViewOut], tags=["SuperAdmin dashboard"])
