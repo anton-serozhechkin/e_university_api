@@ -25,7 +25,6 @@ app.add_middleware(
 app.include_router(users_router)
 app.include_router(hostel_router)
 app.include_router(educational_institutions_router)
-#
 
 
 @app.on_event("startup")
