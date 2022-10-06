@@ -1,17 +1,17 @@
-from apps.users.models import user_faculty as user_faculty_table
-from apps.services.models import user_request as user_request_table
-from apps.services.models import user_request_review as user_request_rev_table
-from apps.services.models  import create_user_document
-from models.user_request_exist_view import user_request_exist_view
-from models.user_request_booking_hostel_view import user_request_booking_hostel_view
-from models.user_request_list_view import user_request_list_view
-from models.hostel_accommodation_view import hostel_accommodation_view
-from models.user_request_details_view import user_request_details_view
+from users.models import user_faculty as user_faculty_table
+from services.models import user_request as user_request_table
+from services.models import user_request_review as user_request_rev_table
+from services.models  import create_user_document
+from services.temp.user_request_booking_hostel_view import user_request_exist_view
+from services.temp.user_request_booking_hostel_view import user_request_booking_hostel_view
+from services.temp.user_request_list_view import user_request_list_view
+from hostel.temp.hostel_accommodation_view import hostel_accommodation_view
+from services.temp.user_request_details_view import user_request_details_view
 from apps.services.models import STATUS_MAPPING
 from apps.services.schemas import (CreateUserRequestIn, CreateUserRequestOut, 
                                   UserRequestExistenceOut, UserRequestBookingHostelOut, UserRequestReviewIn, UserRequestReviewOut,
                                   UserRequestsListOut, CancelRequestIn, CancelRequestOut, HostelAccomodationViewOut, UserRequestDetailsViewOut)
-from handlers.current_user import get_current_user
+from users.handlers import get_current_user
 from db import database
 
 from datetime import datetime

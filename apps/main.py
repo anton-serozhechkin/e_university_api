@@ -3,6 +3,7 @@ from tags_metadata import metadata
 from hostel.handlers import hostel_router
 from educational_institutions.handlers import educational_institutions_router
 from users.handlers import users_router
+#from authorization.handlers import auth_router
 
 
 from fastapi import FastAPI
@@ -25,6 +26,7 @@ app.add_middleware(
 app.include_router(users_router)
 app.include_router(hostel_router)
 app.include_router(educational_institutions_router)
+#app.include_router(auth_router)
 
 
 @app.on_event("startup")
