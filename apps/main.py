@@ -4,7 +4,7 @@ from hostel.handlers import hostel_router
 from educational_institutions.handlers import educational_institutions_router
 from users.handlers import users_router
 from services.handlers import services_router
-#from authorization.handlers import authorization_router
+from authorization.handlers import authorization_router
 
 
 from fastapi import FastAPI
@@ -28,7 +28,7 @@ app.include_router(users_router)
 app.include_router(hostel_router)
 app.include_router(educational_institutions_router)
 app.include_router(services_router)
-#app.include_router(authorization_router)
+app.include_router(authorization_router)
 
 
 @app.on_event("startup")
