@@ -7,7 +7,7 @@ from models.user_request_booking_hostel_view import user_request_booking_hostel_
 from models.user_request_list_view import user_request_list_view
 from models.hostel_accommodation_view import hostel_accommodation_view
 from models.user_request_details_view import user_request_details_view
-from models.status import STATUS_MAPPING
+from models.user_request_status import STATUS_MAPPING
 from schemas.user_request import (CreateUserRequestIn, CreateUserRequestOut, 
                                   UserRequestExistenceOut, UserRequestBookingHostelOut, UserRequestReviewIn, UserRequestReviewOut,
                                   UserRequestsListOut, CancelRequestIn, CancelRequestOut, HostelAccomodationViewOut, UserRequestDetailsViewOut)
@@ -33,13 +33,13 @@ async def check_user_request_existence(university_id: int, service_id: int, user
     if user_request_result:
         response = {
             "user_request_id": user_request_result.user_request_id,
-            "status": json.loads(user_request_result.status),
+            "user_request_status": json.loads(user_request_result.user_request_status),
             "user_request_exist": True
         }
     else:
         response = {
             "user_request_id": None,
-            "status": None,
+            "user_request_status": None,
             "user_request_exist": False
         }
     return response
@@ -62,7 +62,7 @@ async def create_user_request(university_id: int, user_request: CreateUserReques
                                                 comment=user_request.comment, 
                                                 faculty_id=user_faculty_result.faculty_id,
                                                 university_id=university_id,
-                                                status_id=STATUS_MAPPING.get("Розглядається"))
+                                                user_request_status_id=STATUS_MAPPING.get("Розглядається"))
 
     last_record_id = await database.execute(query)
 
@@ -80,7 +80,7 @@ async def create_user_request(university_id: int, user_request: CreateUserReques
 
 
     return {
-        "status_id": STATUS_MAPPING.get("Розглядається"),
+        "user_request_status_id": STATUS_MAPPING.get("Розглядається"),
         "user_request_id": last_record_id
     }
 
@@ -93,13 +93,13 @@ async def read_user_request_booking_hostel(university_id: int, user = Depends(ge
 
 @router.put("/{university_id}/user-request/{user_request_id}", response_model=CancelRequestOut, tags=["Student dashboard"])
 async def cancel_request(university_id: int, user_request_id: int, cancel_request: CancelRequestIn, user = Depends(get_current_user)):
-    CancelRequestIn(status_id=cancel_request.status_id)
-    query = user_request_table.update().where(user_request_table.c.user_request_id == user_request_id).values(status_id=cancel_request.status_id)
+    CancelRequestIn(user_request_status_id=cancel_request.user_request_status_id)
+    query = user_request_table.update().where(user_request_table.c.user_request_id == user_request_id).values(user_request_status_id=cancel_request.user_request_status_id)
     await database.execute(query)
 
     return {
         "user_request_id": user_request_id,
-        "status_id": cancel_request.status_id
+        "user_request_status_id": cancel_request.user_request_status_id
     }
 
 
@@ -121,11 +121,11 @@ async def create_user_request_review(university_id: int, user_request_id: int, u
 
     last_record_id = await database.execute(query)
 
-    query = user_request_table.update().values(status_id=user_request_review.status_id).where(user_request_table.c.user_request_id == user_request_id)
+    query = user_request_table.update().values(user_request_status_id=user_request_review.user_request_status_id).where(user_request_table.c.user_request_id == user_request_id)
     await database.execute(query)
 
     return{
-        "status_id": user_request_review.status_id,
+        "user_request_status_id": user_request_review.user_request_status_id,
         "user_request_review_id": last_record_id
     }
 

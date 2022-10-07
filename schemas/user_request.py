@@ -11,12 +11,12 @@ class CreateUserRequestIn(BaseModel):
 
 class CreateUserRequestOut(BaseModel):
     user_request_id: int
-    status_id: int
+    user_request_status_id: int
 
 
 class UserRequestExistenceOut(BaseModel):
     user_request_id: int = None
-    status: Dict[str, Union[int, str]] = None
+    user_request_status: Dict[str, Union[int, str]] = None
     user_request_exist: bool
 
 
@@ -42,15 +42,15 @@ class UserRequestsListOut(BaseModel):
     user_id: int
     user_request_id: int
     service_name: str
-    status: Dict[str, Union[int, str]]
+    user_request_status: Dict[str, Union[int, str]]
     date_created: datetime
 
 
 class CancelRequestIn(BaseModel):
-    status_id: int
+    user_request_status_id: int
 
-    @validator('status_id')
-    def validate_status_id(cls, v):
+    @validator('user_request_status_id')
+    def validate_user_request_status_id(cls, v):
         if v != 4:
             message = "Заяву можливо тільки скасувати."
             raise ValueError(message)
@@ -59,11 +59,11 @@ class CancelRequestIn(BaseModel):
 
 class CancelRequestOut(BaseModel):
     user_request_id: int
-    status_id: int
+    user_request_status_id: int
 
 
 class UserRequestReviewIn(BaseModel):
-    status_id: int
+    user_request_status_id: int
     room_number: int = None
     start_date_accommodation: datetime = None
     end_date_accommodation: datetime = None
@@ -73,15 +73,15 @@ class UserRequestReviewIn(BaseModel):
     hostel_id: int = None
     bed_place_id: int = None
 
-    @validator('status_id')
-    def validate_status_id(cls, v):
-        if v not in [1,2]:
+    @validator('user_request_status_id')
+    def validate_user_request_status_id(cls, v):
+        if v not in [1, 2]:
             message = "Заяву можливо тільки ухвалити або відхилити."
             raise ValueError(message)
         return v
 
 class UserRequestReviewOut(BaseModel):
-    status_id: int
+    user_request_status_id: int
     user_request_review_id: int
 
 
@@ -110,8 +110,8 @@ class UserRequestDetailsViewOut(BaseModel):
     university_id: int
     date_created: datetime
     service_name: str
-    status_name: str
-    status_id: int
+    user_request_status_name: str
+    user_request_status_id: int
     comment: str = None
     hostel_name: Dict[str, Union[int, str]] = None
     room_number: int = None
