@@ -10,5 +10,5 @@ user_request_list_view = Table('user_request_list_view', metadata_obj,
           Column('user_id', Integer),
           Column('user_request_id', Integer),
           Column('service_name', VARCHAR(255)),
-          Column('status', JSON),
+          Column('user_request_status', JSON),
           Column('date_created', DateTime))

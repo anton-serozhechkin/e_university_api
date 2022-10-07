@@ -18,7 +18,7 @@ router = APIRouter()
 
 
 @router.post("/registration", response_model=RegistrationOut, tags=["Authorization"])
-async def registation(user: RegistrationIn):
+async def registration(user: RegistrationIn):
 
     RegistrationIn(
         token=user.token,

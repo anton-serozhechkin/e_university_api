@@ -10,4 +10,4 @@ user_request_exist_view = Table('user_request_exist_view', metadata_obj,
           Column('faculty_id', Integer),
           Column('university_id', Integer),
           Column('service_id', Integer),
-          Column('status', JSON))
+          Column('user_request_status', JSON))

@@ -11,4 +11,4 @@ user_request = Table('user_request', metadata_obj,
           Column('comment', VARCHAR(255)),
           Column('faculty_id', Integer, ForeignKey("faculty.faculty_id")),
           Column('university_id', Integer, ForeignKey("university.university_id")),
-          Column('status_id', Integer, ForeignKey("status.status_id")))
+          Column('user_request_status_id', Integer, ForeignKey("user_request_status.user_request_status_id")))
