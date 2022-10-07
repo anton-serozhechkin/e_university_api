@@ -1,4 +1,4 @@
-from models.course import course
+from models.course import Course as course
 from schemas.course import CourseListOut
 from handlers.current_user import get_current_user
 

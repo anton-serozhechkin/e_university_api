@@ -1,5 +1,5 @@
-from models.student import student as student_table
-from models.one_time_token import one_time_token
+from models.student import Student as student_table
+from models.one_time_token import OneTimeToken as one_time_token
 from db import database
 from schemas.student import StudentCheckExistanceIn, StudentCheckExistanceOut
 from settings import Settings

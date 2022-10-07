@@ -1,8 +1,19 @@
-from sqlalchemy import (MetaData, Column, Table, Integer, VARCHAR, ForeignKey)
+from sqlalchemy import (Column, ForeignKey, VARCHAR, INTEGER)
+from sqlalchemy.orm import relationship
 
-metadata_obj = MetaData()
+from db import Base
 
-action = Table('action', metadata_obj,
-          Column('action_id', Integer, primary_key=True),
-          Column('action_name', VARCHAR(50)),
-          Column('role_id', Integer, ForeignKey("role.role_id", nullable=False)))
+
+class Action(Base):
+    __tablename__ = 'action'
+
+    action_id = Column(INTEGER, primary_key=True)
+    action_name = Column(VARCHAR(length=50))
+    role_id = Column(INTEGER, ForeignKey("role.role_id"), nullable=False)
+
+    roles = relationship("Role", back_populates="actions")
+
+    def __repr__(self):
+        return (f'{self.__class__.__name__}(action_id="{self.action_id}",action_name="{self.action_name}", '
+                f'role_id="{self.role_id}")')
+
