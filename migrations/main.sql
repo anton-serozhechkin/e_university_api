@@ -599,7 +599,7 @@ INSERT INTO hostel(hostel_id, university_id, number, name,  city, street, build,
 INSERT INTO hostel(hostel_id, university_id, number, name,  city, street, build, commandant_id) VALUES (2, 1, 2, 'Полюс', 'Харків',  'вул. Луї Пастера', '177', 2);
 INSERT INTO hostel(hostel_id, university_id, number, name,  city, street, build, commandant_id) VALUES (3, 1, 3, 'ІТ', 'Харків', 'вул. Цілиноградська', '40', 3);
 INSERT INTO hostel(hostel_id, university_id, number, name,  city, street, build, commandant_id) VALUES (4, 1, 4, 'Міжнародний', 'Харків', 'вул. Цілиноградська', '30', 4);
-INSERT INTO hostel(hostel_id, university_id, number, name,  city, street, build, commandant_id) VALUES (5, 1, 5, 'П’ятірочка', 'Харків', 'пров. Інженерний', '4', 5);
+INSERT INTO hostel(hostel_id, university_id, number, name,  city, street, build, commandant_id) VALUES (5, 1, 5, 'П''ятірочка', 'Харків', 'пров. Інженерний', '4', 5);
 INSERT INTO hostel(hostel_id, university_id, number, name,  city, street, build, commandant_id) VALUES (6, 1, 6, 'Сінергія', 'Харків',  'вул. Клочківська', '216а', 6);
 INSERT INTO hostel(hostel_id, university_id, number, name,  city, street, build, commandant_id) VALUES (7, 1, 7, 'Академічний', 'Харків',  'вул. Ак. Філіппова', '42', 7);
 
@@ -828,7 +828,7 @@ CREATE VIEW speciality_list_view AS
 -- Insert data into speciality table
 INSERT INTO speciality(speciality_id, faculty_id, code, name) VALUES (1, 1, 051, 'Економіка');
 INSERT INTO speciality(speciality_id, faculty_id, code, name) VALUES (2, 1, 121, 'Інженерія програмного забезпечення');
-INSERT INTO speciality(speciality_id, faculty_id, code, name) VALUES (3, 1, 122, 'Комп’ютерні науки');
+INSERT INTO speciality(speciality_id, faculty_id, code, name) VALUES (3, 1, 122, 'Комп''ютерні науки');
 INSERT INTO speciality(speciality_id, faculty_id, code, name) VALUES (4, 1, 124, 'Системний аналіз');
 INSERT INTO speciality(speciality_id, faculty_id, code, name) VALUES (5, 1, 125, 'Кібербезпека');
 INSERT INTO speciality(speciality_id, faculty_id, code, name) VALUES (6, 1, 126, 'Інформаційні системи та технології');
