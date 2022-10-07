@@ -1,4 +1,4 @@
-from models.speciality_list_view import speciality_list_view
+from models.speciality_list_view import speciality_list_view as speciality_list_view
 from schemas.speciality import SpecialityListOut
 from handlers.current_user import get_current_user
 

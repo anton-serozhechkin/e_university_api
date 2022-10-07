@@ -1,6 +1,6 @@
 from handlers.current_user import get_current_user
 from schemas.bed_places import BedPlacesOut
-from models.bed_places import bed_places
+from models.bed_places import BedPlaces as bed_places
 from db import database
 
 from typing import List

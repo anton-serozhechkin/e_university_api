@@ -1,12 +1,12 @@
-from models.user_faculty import user_faculty as user_faculty_table
-from models.user_request import user_request as user_request_table
-from models.user_request_review import user_request_review as user_request_rev_table
+from models.user_faculty import UserFaculty as user_faculty_table
+from models.user_request import UserRequest as user_request_table
+from models.user_request_review import UserRequestReview as user_request_rev_table
 from models.user_document import create_user_document
 from models.user_request_exist_view import user_request_exist_view
 from models.user_request_booking_hostel_view import user_request_booking_hostel_view
 from models.user_request_list_view import user_request_list_view
-from models.hostel_accommodation_view import hostel_accommodation_view
-from models.user_request_details_view import user_request_details_view
+from models.hostel_accommodation_view import hostel_accommodation_view as hostel_accommodation_view
+from models.user_request_details_view import user_request_details_view as user_request_details_view
 from models.status import STATUS_MAPPING
 from schemas.user_request import (CreateUserRequestIn, CreateUserRequestOut, 
                                   UserRequestExistenceOut, UserRequestBookingHostelOut, UserRequestReviewIn, UserRequestReviewOut,

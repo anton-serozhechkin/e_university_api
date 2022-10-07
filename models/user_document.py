@@ -1,20 +1,33 @@
+from models import user_request
+
 from datetime import datetime
 
 from docxtpl import DocxTemplate
-from sqlalchemy import (MetaData, Column, Table, Integer, VARCHAR, ForeignKey, DateTime)
+from sqlalchemy import (Column,  INTEGER, VARCHAR, ForeignKey, DateTime)
+from sqlalchemy.orm import relationship
 
-from db import database
-from models.service import service
+from db import database, Base
+from models.service import Service as service
 from settings import (Settings, TEMPLATES_PATH, SETTLEMENT_HOSTEL_PATH)
 
-metadata_obj = MetaData()
 
-user_document = Table('user_document', metadata_obj,
-          Column('user_document_id', Integer, primary_key=True),
-          Column('date_created', DateTime),
-          Column('name', VARCHAR(255)),
-          Column('content', VARCHAR(255)),
-          Column('user_request_id', Integer, ForeignKey("user_request.user_request_id")))
+HOSTEL_BOOKING_TEMPLATE_URL = "hostel_booking_template.docx"
+
+
+class UserDocument(Base):
+    __tablename__ = "user_document"
+
+    user_document_id = Column(INTEGER, primary_key=True)
+    date_created = Column(DateTime)
+    name = Column(VARCHAR(length=255))
+    content = Column(VARCHAR(length=255))
+    user_request_id = Column(INTEGER, ForeignKey("user_request.user_request_id"))
+
+    user_request = relationship("UserDocument", back_populates="user_documents")
+
+    def __repr__(self):
+        return f'{self.__class__.__name__}(user_document_id="{self.user_document_id}", date_created="{self.date_created}", ' \
+               f'name="{self.name}", content="{self.content}", user_request_id="{self.user_request_id}")'
 
 
 async def generate_document_name(service_id: int) -> str:
@@ -43,8 +56,8 @@ async def create_user_document(**kwargs):
                                      Settings.DATETIME_FORMAT)
     kwargs["date_created"] = date_created
     content = await create_user_document_content(**kwargs)
-    query = user_document.insert().values(date_created=date_created, 
-                                          name=name,
-                                          content=content, 
-                                          user_request_id=kwargs.get("user_request_id"))
+    query = UserDocument.insert().values(date_created=date_created,
+                                         name=name,
+                                         content=content,
+                                         user_request_id=kwargs.get("user_request_id"))
     return await database.execute(query)

@@ -1,5 +1,5 @@
-from models.student import student as student_table
-from models.students_list_view import students_list_view
+from models.student import Student as student_table
+from models.students_list_view import students_list_view as students_list_view
 from schemas.student import CreateStudentOut, CreateStudentIn, StudentsListOut, DeleteStudentIn
 from handlers.current_user import get_current_user
 
