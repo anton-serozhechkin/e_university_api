@@ -14,3 +14,6 @@ class UserFaculty(Base):
 
     users = relationship("User", back_populates="user_faculty")
     faculties = relationship("Faculty", back_populates="faculty")
+
+    def __repr__(self):
+        return f'{self.__class__.__name__}(user_id="{self.user_id}", faculty_id="{self.faculty_id}")'
