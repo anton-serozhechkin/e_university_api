@@ -15,7 +15,7 @@ class Speciality(Base):
     faculty_id = Column(INTEGER, ForeignKey("faculty.faculty_id"))
 
     faculties = relationship("Faculty", back_populates="speciality")
-    student = relationship("Student", back_populates="speciality")
+    student = relationship("Student", back_populates="specialties")
 
     def __repr__(self):
         return f'{self.__class__.__name__}(speciality_id="{self.speciality_id}",code="{self.code}",name="{self.name}",faculty="{self.faculty}")'

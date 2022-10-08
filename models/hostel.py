@@ -16,8 +16,8 @@ class Hostel(Base):
     street = Column(VARCHAR(length=100))
     build = Column(VARCHAR(length=10))
     month_price = Column(FLOAT)
-    university_id = Column(INTEGER, ForeignKey("university.university.id"))
-    commandant_id = Column(INTEGER, ForeignKey("commandant.commandant.id"))
+    university_id = Column(INTEGER, ForeignKey("university.university_id"))
+    commandant_id = Column(INTEGER, ForeignKey("commandant.commandant_id"))
 
     university = relationship('University', back_populates='hostels')
     commandant = relationship('Commandant', back_populates='hostel')
@@ -25,7 +25,7 @@ class Hostel(Base):
 
 
     def __repr__(self):
-        return f'{self.__class__.__name__}(hostel_id="{self.hostel_id}",university="{self.university}",' \
+        return f'{self.__class__.__name__}(hostel_id="{self.hostel_id}",university="{self.university_id}",' \
                f'number="{self.number}",name="{self.name}",city="{self.city}",street="{self.street}",' \
-               f'build="{self.build}",month_price="{self.month_price}",commandant="{self.commandant}")'
+               f'build="{self.build}",month_price="{self.month_price}",commandant="{self.commandant_id}")'
 

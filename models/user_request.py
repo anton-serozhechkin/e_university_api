@@ -19,7 +19,7 @@ class UserRequest(Base):
     status_id = Column(INTEGER, ForeignKey("status.status_id"))
 
     user_documents = relationship("UserDocument", back_populates="user_request")
-    user_request_reviews = relationship("UserDocument", back_populates="user_request")
+    user_request_reviews = relationship("UserRequestReview", back_populates="user_request")
 
     def __repr__(self):
         return f'{self.__class__.__name__}(user_request_id="{self.user_request_id}", user_id="{self.user_id}", ' \

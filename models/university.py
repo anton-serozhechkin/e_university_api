@@ -18,7 +18,7 @@ class University(Base):
     faculties = relationship("Faculty", back_populates="university")
     hostels = relationship("Hostel", back_populates="university")
     requisites = relationship("Requisites", back_populates="university")
-    user_request_reviews = relationship("UserRequestReviews", back_populates="university")
+    user_request_reviews = relationship("UserRequestReview", back_populates="university")
 
     def __repr__(self):
         return f'{self.__class__.__name__}(university_id="{self.university_id}", university_name="{self.university_name}",' \

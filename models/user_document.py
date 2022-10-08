@@ -23,7 +23,7 @@ class UserDocument(Base):
     content = Column(VARCHAR(length=255))
     user_request_id = Column(INTEGER, ForeignKey("user_request.user_request_id"))
 
-    user_request = relationship("UserDocument", back_populates="user_documents")
+    user_request = relationship("UserRequest", back_populates="user_documents")
 
     def __repr__(self):
         return f'{self.__class__.__name__}(user_document_id="{self.user_document_id}", date_created="{self.date_created}", ' \

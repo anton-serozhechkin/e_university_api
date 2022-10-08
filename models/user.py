@@ -18,7 +18,7 @@ class User(Base):
     role_id = Column(INTEGER, ForeignKey("role.role_id"), nullable=True)
 
     student = relationship("Student", back_populates="users")
-    reviewer = relationship("UserRequestReviews", back_populates="reviewer_user")
+    reviewer = relationship("UserRequestReview", back_populates="users")
     user_faculty = relationship("UserFaculty", back_populates="users")
 
     def __repr__(self):

@@ -25,7 +25,7 @@ class UserRequestReview(Base):
     user_request_id = Column(INTEGER, ForeignKey("user_request.user_request_id"))
 
     bed_places = relationship("BedPlaces", back_populates='user_request_reviews')
-    reviewer_user = relationship("User", back_populates='reviewer')
+    users = relationship("User", back_populates='reviewer')
     hostels = relationship("Hostel", back_populates='user_request_reviews')
     university = relationship("University", back_populates='user_request_reviews')
     user_request = relationship("UserRequest", back_populates='user_request_reviews')

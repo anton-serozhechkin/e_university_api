@@ -11,7 +11,7 @@ class Commandant(Base):
     full_name = Column(VARCHAR(length=255))
     telephone_number = Column(VARCHAR(length=50))
 
-    hostel = relationship("Hostel", back_populates="commandant")
+    hostel = relationship("Hostel", back_populates="commandant", uselist=False)
 
     def __repr__(self):
         return (f'{self.__class__.__name__}(commandant_id="{self.commandant_id}",full_name="{self.full_name}",'
