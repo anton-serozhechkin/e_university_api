@@ -3,7 +3,7 @@ from components.utils import (
     create_refresh_token,
     verify_password
 )
-from models.user import user as user_table
+from models.user import User as user_table
 from db import database
 
 from fastapi import status, HTTPException, Depends, APIRouter

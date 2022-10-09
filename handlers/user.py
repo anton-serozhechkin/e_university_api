@@ -1,7 +1,7 @@
 from schemas.user import UsersListViewOut, CreateUserIn, CreateUserOut, DeleteUserIn
 from models.user_list_view import user_list_view
-from models.user import user as user_table
-from models.user_faculty import user_faculty
+from models.user import User as user_table
+from models.user_faculty import UserFaculty as user_faculty
 from handlers.current_user import get_current_user
 from components.utils import get_hashed_password
 from db import database

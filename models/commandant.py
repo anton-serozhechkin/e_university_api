@@ -1,10 +1,20 @@
-from sqlalchemy import (MetaData, Column, Table, Integer, VARCHAR)
+from models import hostel
+
+from sqlalchemy import (Column, INTEGER, VARCHAR)
+from sqlalchemy.orm import relationship
+
+from db import Base
 
 
-metadata_obj = MetaData()
+class Commandant(Base):
+    __tablename__ = 'commandant'
 
+    commandant_id = Column(INTEGER, primary_key=True)
+    full_name = Column(VARCHAR(length=255))
+    telephone_number = Column(VARCHAR(length=50))
 
-commandant = Table('commandant', metadata_obj,
-          Column('commandant_id', Integer, primary_key=True),
-          Column('full_name', VARCHAR(255)),
-          Column('telephone_number', VARCHAR(50)))
+    hostel = relationship("Hostel", back_populates="commandant")
+
+    def __repr__(self):
+        return (f'{self.__class__.__name__}(commandant_id="{self.commandant_id}",full_name="{self.full_name}",'
+                f'telephone_number="{self.telephone_number}")')

@@ -1,4 +1,4 @@
-from models.faculty import faculty as faculty_table
+from models.faculty import Faculty as faculty_table
 from models.faculty_list_view import faculty_list_view
 from schemas.faculty import FacultyOut, FacultyIn
 from handlers.current_user import get_current_user

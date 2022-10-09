@@ -1,7 +1,7 @@
-from models.user import user as user_table
-from models.student import student as student_table
-from models.one_time_token import one_time_token
-from models.user_faculty import user_faculty
+from models.user import User as user_table
+from models.student import Student as student_table
+from models.one_time_token import OneTimeToken as one_time_token
+from models.user_faculty import UserFaculty as user_faculty
 from db import database
 from components.utils import get_hashed_password
 from schemas.user import RegistrationIn, RegistrationOut

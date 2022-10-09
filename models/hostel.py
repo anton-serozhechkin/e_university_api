@@ -1,16 +1,30 @@
-from sqlalchemy import (MetaData, Column, Table, Integer, VARCHAR, ForeignKey, FLOAT)
+from models import university, commandant, user_request_review
+
+from sqlalchemy import (Column, INTEGER, VARCHAR, ForeignKey, FLOAT)
+from sqlalchemy.orm import relationship
+
+from db import Base
 
 
-metadata_obj = MetaData()
+class Hostel(Base):
+    __tablename__ = 'hostel'
+
+    hostel_id = Column(INTEGER, primary_key=True)
+    number = Column(INTEGER)
+    name = Column(VARCHAR(length=100))
+    city = Column(VARCHAR(length=100))
+    street = Column(VARCHAR(length=100))
+    build = Column(VARCHAR(length=10))
+    month_price = Column(FLOAT)
+    university_id = Column(INTEGER, ForeignKey("university.university_id"))
+    commandant_id = Column(INTEGER, ForeignKey("commandant.commandant_id"))
+
+    university = relationship('University', back_populates='hostels')
+    commandant = relationship('Commandant', back_populates='hostel')
+    user_request_reviews = relationship('UserRequestReview', back_populates='hostels')
 
 
-hostel = Table('hostel', metadata_obj,
-          Column('hostel_id', Integer, primary_key=True),
-          Column('university_id', Integer, ForeignKey("university.university_id")),
-          Column('number', Integer),
-          Column('name', VARCHAR(100)),
-          Column('city', VARCHAR(100)),
-          Column('street', VARCHAR(100)),
-          Column('build', VARCHAR(10)),
-          Column('month_price', FLOAT),
-          Column('commandant_id', Integer, ForeignKey("commandant.commandant.id")))
+    def __repr__(self):
+        return f'{self.__class__.__name__}(hostel_id="{self.hostel_id}",university="{self.university}",' \
+               f'number="{self.number}",name="{self.name}",city="{self.city}",street="{self.street}",' \
+               f'build="{self.build}",month_price="{self.month_price}",commandant="{self.commandant}")'
