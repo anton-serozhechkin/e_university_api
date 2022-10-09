@@ -6,27 +6,13 @@ from handlers.authorization import registration
 from handlers.authorization import auth
 from handlers import me, user, user_request, bed_places, role, hostel, course, speciality, student
 
-import logging
-from logging.config import dictConfig
-from loggers import dict_config
-
-dictConfig(dict_config)
-
-logger = logging.getLogger('root-logger')
 
 
-
-from fastapi import FastAPI, APIRouter
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-router = APIRouter()
 
 app = FastAPI(openapi_tags=metadata)
-
-
-@app.get('/test-log/')
-async def test_log():
-    logger.debug('Log starts')
 
 origins = ["*"]
 
@@ -52,7 +38,6 @@ app.include_router(hostel.router)
 app.include_router(course.router)
 app.include_router(speciality.router)
 app.include_router(student.router)
-app.include_router(router)
 
 
 @app.on_event("startup")

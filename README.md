@@ -51,21 +51,16 @@ During development it may be useful to run application outside of docker contain
 
    Now database is accessible via localhost:5432.
 
-4. Ensure that all required environment variables are defined in current environment and
-   DATABASE_URL has the form of
-   "postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@localhost:5432/${POSTGRES_DB}",
-   e. g.
-
-       export DATABASE_URL=postgresql://postgres:postgres@localhost:5432/postgres
+4. Ensure that `.env` file has `POSTGRES_HOST=localhost` and `POSTGRES_PORT=5432`.
 
    Run application (one-liner):
 
-       poetry run uvicorn --port 8778 main:app
-   
+       poetry run main:app uvicorn --port 8778
+
    or
 
        poetry shell  # activate virtual environment; spawns a subshell
-       uvicorn --port 8778 main:app
+       uvicorn main:app --port 8778
 
    Now API must be accessible at <http:/localhost:8778> and docs at <http:/localhost:8778/docs>
 

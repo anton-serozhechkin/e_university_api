@@ -480,6 +480,7 @@ ALTER TABLE student ADD CONSTRAINT student_course_fk
 FOREIGN KEY (course_id) REFERENCES course(course_id) 
 MATCH FULL ON DELETE CASCADE ON UPDATE CASCADE;
 
+ALTER TABLE student ADD COLUMN gender VARCHAR(1);
 
 -- Create view for descibe user_request_booking_hostel_view
 DROP VIEW IF EXISTS user_request_booking_hostel_view; 
@@ -625,8 +626,6 @@ CREATE VIEW hostel_list_view AS
         ht.name;
 
 
-ALTER TABLE student ADD COLUMN gender VARCHAR(1);
-
 -- Create table user_request_review
 CREATE TABLE IF NOT EXISTS user_request_review(
     user_request_review_id integer NOT NULL,
@@ -757,8 +756,7 @@ ALTER TABLE service_document ADD CONSTRAINT service_document_university_fk
 FOREIGN KEY (university_id) REFERENCES university(university_id)    
 MATCH FULL ON DELETE CASCADE ON UPDATE CASCADE;
 
-INSERT INTO service_document(service_document_id, service_id, university_id, 
-documents)
+INSERT INTO service_document(service_document_id, service_id, university_id, documents)
 VALUES(1, 1, 1, '{"1": "Паспорт громадянина України (оригінал)",
                 "2": "6 фотокарток 3х4",
                 "3": "Результат флюрографії, з терміном видач до одного року (оригінал)",
