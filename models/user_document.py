@@ -3,7 +3,7 @@ from models import service, user_request
 from datetime import datetime
 
 from docxtpl import DocxTemplate
-from sqlalchemy import (Column, INTEGER, VARCHAR, ForeignKey, DATETIME)
+from sqlalchemy import (Column, INTEGER, VARCHAR, ForeignKey, DATETIME, select, insert)
 from sqlalchemy.orm import relationship
 
 from db import database, Base
@@ -29,7 +29,7 @@ class UserDocument(Base):
 
 
 async def generate_document_name(service_id: int) -> str:
-    query = service.select().where(service.c.service_id == service_id)
+    query = select(service).where(service.c.service_id == service_id)
     query_result = await database.fetch_one(query)
     return f"Заява на {query_result.service_name.lower()}"
 
@@ -54,7 +54,7 @@ async def create_user_document(**kwargs):
                                      Settings.DATETIME_FORMAT)
     kwargs["date_created"] = date_created
     content = await create_user_document_content(**kwargs)
-    query = UserDocument.insert().values(date_created=date_created,
+    query = insert(UserDocument).values(date_created=date_created,
                                           name=name,
                                           content=content, 
                                           user_request_id=kwargs.get("user_request_id"))

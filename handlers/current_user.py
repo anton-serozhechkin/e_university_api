@@ -1,3 +1,5 @@
+from sqlalchemy import select
+
 from models.user import User as user_table
 from models.user_list_view import user_list_view
 from settings import Settings
@@ -37,7 +39,7 @@ async def get_current_user(token: str = Depends(reuseable_oauth)) -> UserOut:
             headers={"WWW-Authenticate": "Bearer"},
         )
 
-    query = user_table.select().where(user_table.c.email == token_data.sub)
+    query = select(user_table).where(user_table.c.email == token_data.sub)
     user = await database.fetch_one(query)
 
     if user is None:

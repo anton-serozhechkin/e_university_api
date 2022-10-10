@@ -1,3 +1,5 @@
+from sqlalchemy import select, delete, insert
+
 from schemas.user import UsersListViewOut, CreateUserIn, CreateUserOut, DeleteUserIn
 from models.user_list_view import user_list_view
 from models.user import User as user_table
@@ -15,14 +17,16 @@ router = APIRouter()
 
 
 @router.get("/{university_id}/users/", response_model=List[UsersListViewOut], tags=["SuperAdmin dashboard"])
-async def users_list(university_id: int, user=Depends(get_current_user)):
-    query = user_list_view.select().where(user_list_view.c.university_id == university_id)
+# async def users_list(university_id: int, user=Depends(get_current_user)):
+async def users_list(university_id: int):
+    query = select(user_list_view).where(user_list_view.university_id == university_id)
     response = await database.fetch_all(query)
     return response
 
 
 @router.post("/{university_id}/users/", response_model=CreateUserOut, tags=["SuperAdmin dashboard"])
-async def create_user(university_id: int, user: CreateUserIn, auth=Depends(get_current_user)):
+# async def create_user(university_id: int, user: CreateUserIn, auth=Depends(get_current_user)):
+async def create_user(university_id: int, user: CreateUserIn):
     CreateUserIn(
         email=user.email,
         password=user.password,
@@ -35,14 +39,14 @@ async def create_user(university_id: int, user: CreateUserIn, auth=Depends(get_c
 
     login = f"{(user.email[:4])}-{randint(100, 999)}".lower()
 
-    query = user_table.insert().values(login=login, password=hashed_password,
+    query = insert(user_table).values(login=login, password=hashed_password,
                                        email=user.email, role_id=user.role_id,
                                        is_active=False)
 
     last_record_id = await database.execute(query)
 
     for faculty_id in user.faculty_id:
-        query = user_faculty.insert().values(user_id=last_record_id,
+        query = insert(user_faculty).values(user_id=last_record_id,
                                              faculty_id=faculty_id)
         await database.execute(query)
 
@@ -52,8 +56,9 @@ async def create_user(university_id: int, user: CreateUserIn, auth=Depends(get_c
 
 
 @router.delete("/{university_id}/users/", tags=["SuperAdmin dashboard"])
-async def delete_user(university_id: int, delete_user: DeleteUserIn, auth=Depends(get_current_user)):
-    query = user_table.delete().where(user_table.c.user_id == delete_user.user_id)
+# async def delete_user(university_id: int, delete_user: DeleteUserIn, auth=Depends(get_current_user)):
+async def delete_user(university_id: int, delete_user: DeleteUserIn):
+    query = delete(user_table).where(user_table.user_id == delete_user.user_id)
 
     await database.execute(query)
 

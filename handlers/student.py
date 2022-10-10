@@ -1,3 +1,5 @@
+from sqlalchemy import select, delete, insert
+
 from models.student import Student as student_table
 from models.students_list_view import students_list_view
 from schemas.student import CreateStudentOut, CreateStudentIn, StudentsListOut, DeleteStudentIn
@@ -21,7 +23,7 @@ async def create_student(university_id: int, student: CreateStudentIn, auth=Depe
         speciality_id=student.speciality_id,
         gender=student.gender)
 
-    query = student_table.insert().values(full_name=student.full_name, telephone_number=student.telephone_number,
+    query = insert(student_table).values(full_name=student.full_name, telephone_number=student.telephone_number,
                                           course_id=student.course_id, faculty_id=student.faculty_id,
                                           speciality_id=student.speciality_id, gender=student.gender.upper())
 
@@ -33,18 +35,20 @@ async def create_student(university_id: int, student: CreateStudentIn, auth=Depe
 
 
 @router.get("/{university_id}/students/", response_model=List[StudentsListOut], tags=["Admin dashboard"])
-async def read_students_list(university_id: int, faculty_id: Union[int, None] = None, user=Depends(get_current_user)):
+# async def read_students_list(university_id: int, faculty_id: Union[int, None] = None, user=Depends(get_current_user)):
+async def read_students_list(university_id: int, faculty_id: Union[int, None] = None):
     if faculty_id:
-        query = students_list_view.select().where(students_list_view.c.faculty_id == faculty_id)
+        query = select(students_list_view).where(students_list_view.faculty_id == faculty_id)
     else:
-        query = students_list_view.select().where(students_list_view.c.university_id == university_id)
+        query = select(students_list_view).where(students_list_view.university_id == university_id)
 
     return await database.fetch_all(query)
 
 
 @router.delete("/{university_id}/students/", tags=["SuperAdmin dashboard"])
-async def delete_student(university_id: int, delete_student: DeleteStudentIn, auth=Depends(get_current_user)):
-    query = student_table.delete().where(student_table.c.student_id == delete_student.student_id)
+# async def delete_student(university_id: int, delete_student: DeleteStudentIn, auth=Depends(get_current_user)):
+async def delete_student(university_id: int, delete_student: DeleteStudentIn):
+    query = delete(student_table).where(student_table.student_id == delete_student.student_id)
 
     await database.execute(query)
 
