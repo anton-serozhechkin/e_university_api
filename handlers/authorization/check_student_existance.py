@@ -1,4 +1,4 @@
-from sqlalchemy import select
+from sqlalchemy import select, insert
 
 from models.student import Student as student_table
 from models.one_time_token import OneTimeToken as one_time_token
@@ -21,7 +21,7 @@ router = APIRouter()
 async def check_student(student: StudentCheckExistanceIn):
 
     query = select(student_table).where(student_table.c.full_name == student.full_name,
-                                    student_table.c.telephone_number == student.telephone_number)
+                                        student_table.c.telephone_number == student.telephone_number)
     result = await database.fetch_one(query)
 
     if not result:
@@ -33,8 +33,8 @@ async def check_student(student: StudentCheckExistanceIn):
     token = hashlib.sha1(os.urandom(128)).hexdigest()
     expires = datetime.utcnow() + timedelta(seconds=Settings.TOKEN_LIFE_TIME)
 
-    query = one_time_token.insert().values(student_id=student_id, token=token,
-                                           expires=expires).returning(one_time_token.c.token_id)                      
+    query = insert(one_time_token).values(student_id=student_id, token=token,
+                                          expires=expires).returning(one_time_token.c.token_id)
     last_record_id = await database.execute(query)
 
     query = select(one_time_token).where(one_time_token.c.token_id == last_record_id)

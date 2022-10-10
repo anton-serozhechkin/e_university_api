@@ -1,4 +1,4 @@
-from sqlalchemy import select
+from sqlalchemy import select, insert, update
 
 from models.user_faculty import UserFaculty as user_faculty_table
 from models.user_request import UserRequest as user_request_table
@@ -60,13 +60,13 @@ async def read_user_request_list(university_id: int, user=Depends(get_current_us
 async def create_user_request(university_id: int, user_request: CreateUserRequestIn, user=Depends(get_current_user)):
     query = select(user_faculty_table).where(user_faculty_table.c.user_id == user.user_id)
     user_faculty_result = await database.fetch_one(query)
-    query = user_request_table.insert().values(user_id=user.user_id,
-                                               service_id=user_request.service_id,
-                                               date_created=datetime.now(),
-                                               comment=user_request.comment,
-                                               faculty_id=user_faculty_result.faculty_id,
-                                               university_id=university_id,
-                                               status_id=STATUS_MAPPING.get("Розглядається"))
+    query = insert(user_request_table).values(user_id=user.user_id,
+                                              service_id=user_request.service_id,
+                                              date_created=datetime.now(),
+                                              comment=user_request.comment,
+                                              faculty_id=user_faculty_result.faculty_id,
+                                              university_id=university_id,
+                                              status_id=STATUS_MAPPING.get("Розглядається"))
 
     last_record_id = await database.execute(query)
 
@@ -101,7 +101,7 @@ async def read_user_request_booking_hostel(university_id: int, user=Depends(get_
 async def cancel_request(university_id: int, user_request_id: int, cancel_request: CancelRequestIn,
                          user=Depends(get_current_user)):
     CancelRequestIn(status_id=cancel_request.status_id)
-    query = user_request_table.update().where(user_request_table.c.user_request_id == user_request_id).values(
+    query = update(user_request_table).where(user_request_table.c.user_request_id == user_request_id).values(
         status_id=cancel_request.status_id)
     await database.execute(query)
 
@@ -115,23 +115,23 @@ async def cancel_request(university_id: int, user_request_id: int, cancel_reques
              tags=["Admin dashboard"])
 async def create_user_request_review(university_id: int, user_request_id: int, user_request_review: UserRequestReviewIn,
                                      user=Depends(get_current_user)):
-    query = user_request_rev_table.insert().values(university_id=university_id,
-                                                   user_request_id=user_request_id,
-                                                   date_created=datetime.now(),
-                                                   reviewer=user.user_id,
-                                                   hostel_id=user_request_review.hostel_id,
-                                                   room_number=user_request_review.room_number,
-                                                   start_date_accommodation=user_request_review.start_date_accommodation,
-                                                   end_date_accommodation=user_request_review.end_date_accommodation,
-                                                   total_sum=user_request_review.total_sum,
-                                                   payment_deadline=user_request_review.payment_deadline,
-                                                   remark=user_request_review.remark,
-                                                   date_review=datetime.now(),
-                                                   bed_place_id=user_request_review.bed_place_id)
+    query = insert(user_request_rev_table).values(university_id=university_id,
+                                                  user_request_id=user_request_id,
+                                                  date_created=datetime.now(),
+                                                  reviewer=user.user_id,
+                                                  hostel_id=user_request_review.hostel_id,
+                                                  room_number=user_request_review.room_number,
+                                                  start_date_accommodation=user_request_review.start_date_accommodation,
+                                                  end_date_accommodation=user_request_review.end_date_accommodation,
+                                                  total_sum=user_request_review.total_sum,
+                                                  payment_deadline=user_request_review.payment_deadline,
+                                                  remark=user_request_review.remark,
+                                                  date_review=datetime.now(),
+                                                  bed_place_id=user_request_review.bed_place_id)
 
     last_record_id = await database.execute(query)
 
-    query = user_request_table.update().values(status_id=user_request_review.status_id).where(
+    query = update(user_request_table).values(status_id=user_request_review.status_id).where(
         user_request_table.c.user_request_id == user_request_id)
     await database.execute(query)
 

@@ -29,7 +29,7 @@ async def get_current_user(token: str = Depends(reuseable_oauth)) -> UserOut:
         
         if datetime.fromtimestamp(token_data.exp) < datetime.now():
             raise HTTPException(
-                status_code = status.HTTP_401_UNAUTHORIZED,
+                status_code=status.HTTP_401_UNAUTHORIZED,
                 detail="Термін дії токена закінчився",
                 headers={"WWW-Authenticate": "Bearer"},
             )
