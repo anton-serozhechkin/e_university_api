@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from models import user_document, user_request_review
 
 from sqlalchemy import (Column, INTEGER, VARCHAR, ForeignKey, DateTime)
@@ -9,7 +11,7 @@ class UserRequest(Base):
     __tablename__ = "user_request"
 
     user_request_id = Column(INTEGER, primary_key=True)
-    date_created = Column(DateTime)
+    date_created = Column(DateTime, default=datetime.utcnow)
     comment = Column(VARCHAR(length=255))
     user_id = Column(INTEGER, ForeignKey("user.user_id"))
     service_id = Column(INTEGER, ForeignKey("service.service_id"))
