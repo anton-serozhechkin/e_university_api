@@ -1,3 +1,5 @@
+from sqlalchemy import select
+
 from models.student import Student as student_table
 from models.one_time_token import OneTimeToken as one_time_token
 from db import database
@@ -18,7 +20,7 @@ router = APIRouter()
 @router.post("/check-student-existance", response_model=StudentCheckExistanceOut, tags=["Authorization"])
 async def check_student(student: StudentCheckExistanceIn):
 
-    query = student_table.select().where(student_table.c.full_name == student.full_name, 
+    query = select(student_table).where(student_table.c.full_name == student.full_name,
                                     student_table.c.telephone_number == student.telephone_number)
     result = await database.fetch_one(query)
 
@@ -35,7 +37,7 @@ async def check_student(student: StudentCheckExistanceIn):
                                            expires=expires).returning(one_time_token.c.token_id)                      
     last_record_id = await database.execute(query)
 
-    query = one_time_token.select().where(one_time_token.c.token_id == last_record_id)
+    query = select(one_time_token).where(one_time_token.c.token_id == last_record_id)
     result = await database.fetch_one(query)
 
     response = {

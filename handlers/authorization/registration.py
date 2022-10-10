@@ -24,10 +24,10 @@ async def registation(user: RegistrationIn):
         token=user.token,
         email=user.email,
         password=user.password,
-        password_re_check = user.password_re_check)
+        password_re_check=user.password_re_check)
     
-    query = one_time_token.select().where(one_time_token.c.token == user.token)
-    token_data = await database.fetch_all(query)
+    query = select(one_time_token).where(one_time_token.c.token == user.token)
+    token_data = await database.execute(query)
 
     if not token_data:
         return JSONResponse(status_code=404, content={"message": "Для реєстрації" \
@@ -45,8 +45,8 @@ async def registation(user: RegistrationIn):
                                             "Будь ласка, перейдіть на посилання для перевірки " \
                                             "наявності студентав реєстрі."})
 
-    query = student_table.select().where(student_table.c.student_id == student_id)
-    student = await database.fetch_all(query)
+    query = select(student_table).where(student_table.c.student_id == student_id)
+    student = await database.execute(query)
  
     if not student:
         return JSONResponse(status_code=404, content={"message": "Студента не знайдено"})
@@ -72,7 +72,7 @@ async def registation(user: RegistrationIn):
     query = student_table.update().values(user_id=last_record_id).where(student_table.c.student_id == student_id)
     await database.execute(query)
 
-    query = user_faculty.insert().values(user_id=last_record_id, faculty_id = faculty_id).returning(user_faculty.c.faculty_id)    
+    query = user_faculty.insert().values(user_id=last_record_id, faculty_id=faculty_id).returning(user_faculty.c.faculty_id)
     user_faculty_data = await database.execute(query)
 
     response = {

@@ -1,3 +1,5 @@
+from sqlalchemy import select
+
 from models.student import Student as student_table
 from models.students_list_view import students_list_view
 from schemas.student import CreateStudentOut, CreateStudentIn, StudentsListOut, DeleteStudentIn
@@ -37,11 +39,11 @@ async def create_student(university_id: int, student: CreateStudentIn, auth = De
 @router.get("/{university_id}/students/", response_model=List[StudentsListOut], tags=["Admin dashboard"])
 async def read_students_list(university_id: int, faculty_id: Union[int, None] = None , user = Depends(get_current_user)):
     if faculty_id: 
-        query = students_list_view.select().where(students_list_view.c.faculty_id == faculty_id)
+        query = select(students_list_view).where(students_list_view.c.faculty_id == faculty_id)
     else:
-        query = students_list_view.select().where(students_list_view.c.university_id == university_id)
+        query = select(students_list_view).where(students_list_view.c.university_id == university_id)
         
-    return await database.fetch_all(query)
+    return await database.execute(query)
 
 
 @router.delete("/{university_id}/students/", tags=["SuperAdmin dashboard"])

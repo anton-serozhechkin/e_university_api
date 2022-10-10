@@ -1,3 +1,5 @@
+from sqlalchemy import select
+
 from models.faculty import Faculty as faculty_table
 from models.faculty_list_view import faculty_list_view
 from schemas.faculty import FacultyOut, FacultyIn
@@ -14,8 +16,8 @@ router = APIRouter()
 
 @router.get("/{university_id}/faculties/", response_model=List[FacultyOut], tags=["SuperAdmin dashboard"])
 async def read_faculties(university_id: int, user = Depends(get_current_user)):
-    query = faculty_list_view.select().where(faculty_list_view.c.university_id == university_id)
-    return await database.fetch_all(query)
+    query = select(faculty_list_view).where(faculty_list_view.c.university_id == university_id)
+    return await database.execute(query)
 
 
 @router.post("/{university_id}/faculties/", response_model=FacultyOut, tags=["SuperAdmin dashboard"])
