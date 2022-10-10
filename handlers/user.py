@@ -1,3 +1,5 @@
+from sqlalchemy import select
+
 from schemas.user import UsersListViewOut, CreateUserIn, CreateUserOut, DeleteUserIn
 from models.user_list_view import user_list_view
 from models.user import User as user_table
@@ -17,8 +19,8 @@ router = APIRouter()
 
 @router.get("/{university_id}/users/", response_model=List[UsersListViewOut], tags=["SuperAdmin dashboard"])
 async def users_list(university_id: int, user = Depends(get_current_user)):
-    query = user_list_view.select().where(user_list_view.c.university_id == university_id)
-    response = await database.fetch_all(query)
+    query = select(user_list_view).where(user_list_view.c.university_id == university_id)
+    response = await database.execute(query)
     return response
 
 
