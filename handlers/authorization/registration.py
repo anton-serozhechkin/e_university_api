@@ -1,5 +1,3 @@
-from sqlalchemy import select, insert, update
-
 from models.user import User as user_table
 from models.student import Student as student_table
 from models.one_time_token import OneTimeToken as one_time_token
@@ -26,8 +24,8 @@ async def registation(user: RegistrationIn):
         password=user.password,
         password_re_check=user.password_re_check)
 
-    query = select(one_time_token).where(one_time_token.c.token == user.token)
-    token_data = await database.execute(query)
+    query = one_time_token.select().where(one_time_token.c.token == user.token)
+    token_data = await database.fetch_all(query)
 
     if not token_data:
         return JSONResponse(status_code=404, content={"message": "Для реєстрації" \
@@ -45,8 +43,8 @@ async def registation(user: RegistrationIn):
                                                                  "Будь ласка, перейдіть на посилання для перевірки " \
                                                                  "наявності студентав реєстрі."})
 
-    query = select(student_table).where(student_table.c.student_id == student_id)
-    student = await database.execute(query)
+    query = student_table.select().where(student_table.c.student_id == student_id)
+    student = await database.fetch_all(query)
 
     if not student:
         return JSONResponse(status_code=404, content={"message": "Студента не знайдено"})
@@ -66,14 +64,14 @@ async def registation(user: RegistrationIn):
     # Encoding password
     encoded_user_password = get_hashed_password(user.password)
 
-    query = insert(user_table).values(login=login, email=user.email, password=encoded_user_password, role_id=1,
-                                      is_active=True)
+    query = user_table.insert().values(login=login, email=user.email, password=encoded_user_password, role_id=1,
+                                       is_active=True)
     last_record_id = await database.execute(query)
 
-    query = update(student_table).values(user_id=last_record_id).where(student_table.c.student_id == student_id)
+    query = student_table.update().values(user_id=last_record_id).where(student_table.c.student_id == student_id)
     await database.execute(query)
 
-    query = insert(user_faculty).values(user_id=last_record_id, faculty_id=faculty_id).returning(
+    query = user_faculty.insert().values(user_id=last_record_id, faculty_id=faculty_id).returning(
         user_faculty.c.faculty_id)
     user_faculty_data = await database.execute(query)
 

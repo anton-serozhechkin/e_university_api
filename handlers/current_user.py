@@ -1,5 +1,3 @@
-from sqlalchemy import select
-
 from models.user import User as user_table
 from models.user_list_view import user_list_view
 from settings import Settings
@@ -13,7 +11,6 @@ from fastapi.security import OAuth2PasswordBearer
 from jose import jwt
 from pydantic import ValidationError
 
-
 reuseable_oauth = OAuth2PasswordBearer(
     tokenUrl="/login",
     scheme_name="JWT"
@@ -26,7 +23,7 @@ async def get_current_user(token: str = Depends(reuseable_oauth)) -> UserOut:
             token, Settings.JWT_SECRET_KEY, algorithms=[Settings.JWT_ALGORITHM]
         )
         token_data = TokenPayload(**payload)
-        
+
         if datetime.fromtimestamp(token_data.exp) < datetime.now():
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
@@ -39,9 +36,9 @@ async def get_current_user(token: str = Depends(reuseable_oauth)) -> UserOut:
             detail="Не вдалося перевірити облікові дані",
             headers={"WWW-Authenticate": "Bearer"},
         )
-        
-    query = select(user_table).where(user_table.c.email == token_data.sub)
-    user = await database.execute(query)
+
+    query = user_table.select().where(user_table.c.email == token_data.sub)
+    user = await database.fetch_one(query)
 
     if user is None:
         raise HTTPException(
@@ -50,6 +47,6 @@ async def get_current_user(token: str = Depends(reuseable_oauth)) -> UserOut:
         )
 
     query = user_list_view.select(user_list_view.c.user_id == user.user_id)
-    user = await database.execute(query)
+    user = await database.fetch_one(query)
 
     return user
