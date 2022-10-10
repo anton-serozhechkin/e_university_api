@@ -3,7 +3,7 @@ from models import service, user_request
 from datetime import datetime
 
 from docxtpl import DocxTemplate
-from sqlalchemy import (Column, INTEGER, VARCHAR, ForeignKey, DateTime)
+from sqlalchemy import (Column, INTEGER, VARCHAR, ForeignKey, DATETIME)
 from sqlalchemy.orm import relationship
 
 from db import database, Base
@@ -16,7 +16,7 @@ class UserDocument(Base):
     __tablename__ = "user_document"
 
     user_document_id = Column(INTEGER, primary_key=True)
-    date_created = Column(DateTime)
+    date_created = Column(DATETIME, default=datetime.utcnow)
     name = Column(VARCHAR(length=255))
     content = Column(VARCHAR(length=255))
     user_request_id = Column(INTEGER, ForeignKey("user_request.user_request_id"))
