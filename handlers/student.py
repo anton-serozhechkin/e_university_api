@@ -35,19 +35,17 @@ async def create_student(university_id: int, student: CreateStudentIn, auth=Depe
 
 
 @router.get("/{university_id}/students/", response_model=List[StudentsListOut], tags=["Admin dashboard"])
-# async def read_students_list(university_id: int, faculty_id: Union[int, None] = None, user=Depends(get_current_user)):
-async def read_students_list(university_id: int, faculty_id: Union[int, None] = None):
+async def read_students_list(university_id: int, faculty_id: Union[int, None] = None, user=Depends(get_current_user)):
     if faculty_id:
-        query = select(students_list_view).where(students_list_view.faculty_id == faculty_id)
+        query = select(students_list_view).where(students_list_view.c.faculty_id == faculty_id)
     else:
-        query = select(students_list_view).where(students_list_view.university_id == university_id)
+        query = select(students_list_view).where(students_list_view.c.university_id == university_id)
 
     return await database.fetch_all(query)
 
 
 @router.delete("/{university_id}/students/", tags=["SuperAdmin dashboard"])
-# async def delete_student(university_id: int, delete_student: DeleteStudentIn, auth=Depends(get_current_user)):
-async def delete_student(university_id: int, delete_student: DeleteStudentIn):
+async def delete_student(university_id: int, delete_student: DeleteStudentIn, auth=Depends(get_current_user)):
     query = delete(student_table).where(student_table.student_id == delete_student.student_id)
 
     await database.execute(query)

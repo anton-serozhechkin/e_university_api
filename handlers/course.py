@@ -14,7 +14,6 @@ router = APIRouter()
 
 
 @router.get("/courses/", response_model=List[CourseListOut], tags=["Admin dashboard"])
-# async def read_courses_list(auth = Depends(get_current_user)):
-async def read_courses_list():
+async def read_courses_list(auth=Depends(get_current_user)):
     query = select(course)
     return await database.fetch_all(query)

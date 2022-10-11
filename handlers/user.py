@@ -17,16 +17,14 @@ router = APIRouter()
 
 
 @router.get("/{university_id}/users/", response_model=List[UsersListViewOut], tags=["SuperAdmin dashboard"])
-# async def users_list(university_id: int, user=Depends(get_current_user)):
-async def users_list(university_id: int):
-    query = select(user_list_view).where(user_list_view.university_id == university_id)
+async def users_list(university_id: int, user=Depends(get_current_user)):
+    query = select(user_list_view).where(user_list_view.c.university_id == university_id)
     response = await database.fetch_all(query)
     return response
 
 
 @router.post("/{university_id}/users/", response_model=CreateUserOut, tags=["SuperAdmin dashboard"])
-# async def create_user(university_id: int, user: CreateUserIn, auth=Depends(get_current_user)):
-async def create_user(university_id: int, user: CreateUserIn):
+async def create_user(university_id: int, user: CreateUserIn, auth=Depends(get_current_user)):
     CreateUserIn(
         email=user.email,
         password=user.password,
@@ -56,8 +54,7 @@ async def create_user(university_id: int, user: CreateUserIn):
 
 
 @router.delete("/{university_id}/users/", tags=["SuperAdmin dashboard"])
-# async def delete_user(university_id: int, delete_user: DeleteUserIn, auth=Depends(get_current_user)):
-async def delete_user(university_id: int, delete_user: DeleteUserIn):
+async def delete_user(university_id: int, delete_user: DeleteUserIn, auth=Depends(get_current_user)):
     query = delete(user_table).where(user_table.user_id == delete_user.user_id)
 
     await database.execute(query)

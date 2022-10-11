@@ -1,4 +1,4 @@
-from sqlalchemy import select
+from sqlalchemy import select, insert
 
 from models.student import Student as student_table
 from models.one_time_token import OneTimeToken as one_time_token
@@ -21,7 +21,7 @@ router = APIRouter()
 async def check_student(student: StudentCheckExistanceIn):
 
     query = select(student_table).where(student_table.full_name == student.full_name,
-                                    student_table.telephone_number == student.telephone_number)
+                                        student_table.telephone_number == student.telephone_number)
     result = await database.fetch_one(query)
 
     if not result:
