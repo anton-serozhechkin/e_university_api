@@ -19,5 +19,5 @@ class Speciality(Base):
 
     def __repr__(self):
         return f'{self.__class__.__name__}(speciality_id="{self.speciality_id}",code="{self.code}",name="{self.name}",' \
-               f'faculty="{self.faculty}")'
+               f'faculty_id="{self.faculty_id}")'
 

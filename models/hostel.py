@@ -25,6 +25,6 @@ class Hostel(Base):
 
 
     def __repr__(self):
-        return f'{self.__class__.__name__}(hostel_id="{self.hostel_id}",university="{self.university}",' \
+        return f'{self.__class__.__name__}(hostel_id="{self.hostel_id}",' \
                f'number="{self.number}",name="{self.name}",city="{self.city}",street="{self.street}",' \
-               f'build="{self.build}",month_price="{self.month_price}",commandant="{self.commandant}")'
+               f'build="{self.build}",month_price="{self.month_price}",university_id="{self.university_id}",commandant_id="{self.commandant_id}")'

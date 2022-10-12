@@ -25,5 +25,5 @@ class Student(Base):
 
     def __repr__(self):
         return f'{self.__class__.__name__}(student_id="{self.student_id}",full_name="{self.full_name}",' \
-               f'telephone_number="{self.telephone_number}",gender="{self.gender}",faculty="{self.faculty}",' \
-               f'course="{self.course}",speciality="{self.speciality}",user="{self.user}")'
+               f'telephone_number="{self.telephone_number}",gender="{self.gender}",' \
+               f'course_id="{self.course_id}",speciality_id="{self.speciality_id}",user_id="{self.user_id}",faculty_id="{self.faculty_id}")'

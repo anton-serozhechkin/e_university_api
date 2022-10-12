@@ -25,4 +25,4 @@ class Faculty(Base):
 
     def __repr__(self):
         return f'{self.__class__.__name__}(faculty_id="{self.faculty_id}", name="{self.name}", shortname="{self.shortname}", ' \
-               f'main_email="{self.main_email}", dekan="{self.dekan}", university="{self.university}")'
+               f'main_email="{self.main_email}", dekan_id="{self.dekan_id}", university_id="{self.university_id}")'

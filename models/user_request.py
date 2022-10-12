@@ -28,6 +28,6 @@ class UserRequest(Base):
     user_request_reviews = relationship("UserRequestReview", back_populates='user_request')
 
     def __repr__(self):
-        return f'{self.__class__.__name__}(user_request_id="{self.user_request_id}", user_id="{self.user_id}", ' \
-               f'service_id="{self.service_id}", date_created="{self.date_created}", comment="{self.comment}",' \
+        return f'{self.__class__.__name__}(user_request_id="{self.user_request_id}",' \
+               f'date_created="{self.date_created}", comment="{self.comment}",user_id="{self.user_id}", service_id="{self.service_id}",' \
                f'faculty_id="{self.faculty_id}", university_id="{self.university_id}", status_id="{self.status_id}")'
