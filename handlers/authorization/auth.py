@@ -1,16 +1,11 @@
-from sqlalchemy import select
-
-from components.utils import (
-    create_access_token,
-    create_refresh_token,
-    verify_password
-)
-from models.user import User as user_table
+from models.user import User
 from db import database
+from components.utils import (create_access_token, create_refresh_token, verify_password)
+from schemas.user import AuthOut
 
+from sqlalchemy import select
 from fastapi import status, HTTPException, Depends, APIRouter
 from fastapi.security import OAuth2PasswordRequestForm
-from schemas.user import AuthOut
 
 router = APIRouter()
 
@@ -18,7 +13,7 @@ router = APIRouter()
 @router.post('/login', summary="Створення доступу та оновлення токена користувача", response_model=AuthOut,
              tags=["Authorization"])
 async def login(form_data: OAuth2PasswordRequestForm = Depends()):
-    query = select(user_table).where(user_table.login == form_data.username)
+    query = select(User).where(User.login == form_data.username)
     user = await database.fetch_one(query)
     if not user:
         raise HTTPException(

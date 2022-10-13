@@ -1,8 +1,8 @@
 from sqlalchemy import select, update, insert
 
-from models.user_faculty import UserFaculty as user_faculty_table
-from models.user_request import UserRequest as user_request_table
-from models.user_request_review import UserRequestReview as user_request_rev_table
+from models.user_faculty import UserFaculty
+from models.user_request import UserRequest
+from models.user_request_review import UserRequestReview
 from models.user_document import create_user_document
 from models.user_request_exist_view import user_request_exist_view
 from models.user_request_booking_hostel_view import user_request_booking_hostel_view
@@ -29,8 +29,8 @@ router = APIRouter()
 @router.get("/{university_id}/user-request-existence/{service_id}/", response_model=UserRequestExistenceOut, tags=["Student dashboard"])
 async def check_user_request_existence(university_id: int, service_id: int, user=Depends(get_current_user)):
     query = select(user_request_exist_view).where(user_request_exist_view.c.user_id == user.user_id,
-                                            user_request_exist_view.c.university_id == university_id,
-                                            user_request_exist_view.c.service_id == service_id)
+                                                  user_request_exist_view.c.university_id == university_id,
+                                                  user_request_exist_view.c.service_id == service_id)
     user_request_result = await database.fetch_one(query)
     if user_request_result:
         response = {
@@ -48,28 +48,28 @@ async def check_user_request_existence(university_id: int, service_id: int, user
 
 
 @router.get("/{university_id}/user-request/", response_model=List[UserRequestsListOut], tags=["Student dashboard"])
-async def read_user_request_list(university_id: int, user = Depends(get_current_user)):
+async def read_user_request_list(university_id: int, user=Depends(get_current_user)):
     query = select(user_request_list_view).where(user_request_list_view.c.user_id == user.user_id,
-                                            user_request_list_view.c.university_id == university_id)
+                                                 user_request_list_view.c.university_id == university_id)
     return await database.fetch_all(query)
 
 
 @router.post("/{university_id}/user-request/", response_model=CreateUserRequestOut, tags=["Student dashboard"])
 async def create_user_request(university_id: int, user_request: CreateUserRequestIn, user=Depends(get_current_user)):
-    query = select(user_faculty_table).where(user_faculty_table.c.user_id == user.user_id)
+    query = select(UserFaculty).where(UserFaculty.c.user_id == user.user_id)
     user_faculty_result = await database.fetch_one(query)
-    query = insert(user_request_table).values(user_id=user.user_id,
-                                                service_id=user_request.service_id,
-                                                date_created=datetime.now(),
-                                                comment=user_request.comment,
-                                                faculty_id=user_faculty_result.faculty_id,
-                                                university_id=university_id,
-                                                status_id=STATUS_MAPPING.get("Розглядається"))
+    query = insert(UserRequest).values(user_id=user.user_id,
+                                       service_id=user_request.service_id,
+                                       date_created=datetime.now(),
+                                       comment=user_request.comment,
+                                       faculty_id=user_faculty_result.faculty_id,
+                                       university_id=university_id,
+                                       status_id=STATUS_MAPPING.get("Розглядається"))
 
     last_record_id = await database.execute(query)
 
     query = select(user_request_booking_hostel_view).where(user_request_booking_hostel_view.c.user_id == user.user_id,
-                                            user_request_booking_hostel_view.c.university_id == university_id)
+                                                           user_request_booking_hostel_view.c.university_id == university_id)
     result = await database.fetch_one(query)
 
     prepared_data = {
@@ -97,7 +97,7 @@ async def read_user_request_booking_hostel(university_id: int, user=Depends(get_
 @router.put("/{university_id}/user-request/{user_request_id}", response_model=CancelRequestOut, tags=["Student dashboard"])
 async def cancel_request(university_id: int, user_request_id: int, cancel_request: CancelRequestIn, user=Depends(get_current_user)):
     CancelRequestIn(status_id=cancel_request.status_id)
-    query = update(user_request_table).where(user_request_table.c.user_request_id == user_request_id).values(status_id=cancel_request.status_id)
+    query = update(UserRequest).where(UserRequest.c.user_request_id == user_request_id).values(status_id=cancel_request.status_id)
     await database.execute(query)
 
     return {
@@ -108,23 +108,23 @@ async def cancel_request(university_id: int, user_request_id: int, cancel_reques
 
 @router.post("/{university_id}/user-request-review/{user_request_id}/", response_model=UserRequestReviewOut, tags=["Admin dashboard"])
 async def create_user_request_review(university_id: int, user_request_id: int, user_request_review: UserRequestReviewIn, user = Depends(get_current_user)):
-    query = insert(user_request_rev_table).values(university_id=university_id,
-                                                  user_request_id=user_request_id,
-                                                  date_created=datetime.now(),
-                                                  reviewer=user.user_id,
-                                                  hostel_id=user_request_review.hostel_id,
-                                                  room_number=user_request_review.room_number,
-                                                  start_date_accommodation=user_request_review.start_date_accommodation,
-                                                  end_date_accommodation=user_request_review.end_date_accommodation,
-                                                  total_sum=user_request_review.total_sum,
-                                                  payment_deadline=user_request_review.payment_deadline,
-                                                  remark=user_request_review.remark,
-                                                  date_review=datetime.now(),
-                                                  bed_place_id=user_request_review.bed_place_id)
+    query = insert(UserRequestReview).values(university_id=university_id,
+                                             user_request_id=user_request_id,
+                                             date_created=datetime.now(),
+                                             reviewer=user.user_id,
+                                             hostel_id=user_request_review.hostel_id,
+                                             room_number=user_request_review.room_number,
+                                             start_date_accommodation=user_request_review.start_date_accommodation,
+                                             end_date_accommodation=user_request_review.end_date_accommodation,
+                                             total_sum=user_request_review.total_sum,
+                                             payment_deadline=user_request_review.payment_deadline,
+                                             remark=user_request_review.remark,
+                                             date_review=datetime.now(),
+                                             bed_place_id=user_request_review.bed_place_id)
 
     last_record_id = await database.execute(query)
 
-    query = update(user_request_table).values(status_id=user_request_review.status_id).where(user_request_table.c.user_request_id == user_request_id)
+    query = update(UserRequest).values(status_id=user_request_review.status_id).where(UserRequest.c.user_request_id == user_request_id)
     await database.execute(query)
 
     return{
