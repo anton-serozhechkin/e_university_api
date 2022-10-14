@@ -14,7 +14,8 @@ router = APIRouter()
 
 
 @router.post("/{university_id}/students/", response_model=CreateStudentOut, tags=["Admin dashboard"])
-async def create_student(university_id: int, student: CreateStudentIn, auth=Depends(get_current_user)):
+# async def create_student(university_id: int, student: CreateStudentIn, auth=Depends(get_current_user)):
+async def create_student(university_id: int, student: CreateStudentIn):
     CreateStudentIn(
         full_name=student.full_name,
         telephone_number=student.telephone_number,
@@ -35,7 +36,8 @@ async def create_student(university_id: int, student: CreateStudentIn, auth=Depe
 
 
 @router.get("/{university_id}/students/", response_model=List[StudentsListOut], tags=["Admin dashboard"])
-async def read_students_list(university_id: int, faculty_id: Union[int, None] = None, user=Depends(get_current_user)):
+# async def read_students_list(university_id: int, faculty_id: Union[int, None] = None, user=Depends(get_current_user)):
+async def read_students_list(university_id: int, faculty_id: Union[int, None] = None):
     if faculty_id:
         query = select(students_list_view).where(students_list_view.c.faculty_id == faculty_id)
     else:

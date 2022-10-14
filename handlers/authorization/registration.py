@@ -67,14 +67,14 @@ async def registation(user: RegistrationIn):
     encoded_user_password = get_hashed_password(user.password)
 
     query = insert(User).values(login=login, email=user.email, password=encoded_user_password, role_id=1,
-                                      is_active=True)
+                                is_active=True)
     last_record_id = await database.execute(query)
 
-    query = update(Student).values(user_id=last_record_id).where(Student.c.student_id == student_id)
+    query = update(Student).values(user_id=last_record_id).where(Student.student_id == student_id)
     await database.execute(query)
 
     query = insert(UserFaculty).values(user_id=last_record_id, faculty_id=faculty_id).returning(
-        UserFaculty.c.faculty_id)
+        UserFaculty.faculty_id)
     user_faculty_data = await database.execute(query)
 
     response = {

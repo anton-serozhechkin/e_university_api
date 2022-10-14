@@ -1,4 +1,4 @@
-from models import requisites
+from models import requisites, user_request
 
 from sqlalchemy import (Column, INTEGER, VARCHAR)
 from sqlalchemy.orm import relationship

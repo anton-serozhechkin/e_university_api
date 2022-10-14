@@ -7,6 +7,7 @@ from sqlalchemy.orm import relationship
 
 from db import Base
 
+
 class UserRequest(Base):
     __tablename__ = "user_request"
 

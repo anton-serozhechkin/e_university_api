@@ -39,7 +39,7 @@ async def get_current_user(token: str = Depends(reuseable_oauth)) -> UserOut:
             headers={"WWW-Authenticate": "Bearer"},
         )
 
-    query = select(User).where(User.c.email == token_data.sub)
+    query = select(User).where(User.email == token_data.sub)
     user = await database.fetch_one(query)
 
     if user is None:

@@ -14,6 +14,7 @@ router = APIRouter()
 
 
 @router.get("/{university_id}/hostels/", response_model=List[HostelListOut], tags=["Admin dashboard"])
-async def read_hostels(university_id: int, user=Depends(get_current_user)):
+# async def read_hostels(university_id: int, user=Depends(get_current_user)):
+async def read_hostels(university_id: int):
     query = select(hostel_list_view).where(hostel_list_view.c.university_id == university_id)
     return await database.fetch_all(query)
