@@ -22,7 +22,7 @@ from components.utils import (
 authorization_router = APIRouter()
 
 
-@authorization_router.post('/login', summary="Створення доступу та оновлення токена користувача", response_model=AuthOut, tags=["Authorization"])
+@authorization_router.post('/login/', summary="Створення доступу та оновлення токена користувача", response_model=AuthOut, tags=["Authorization"])
 async def login(form_data: OAuth2PasswordRequestForm = Depends()):
     query = user_table.select().where(user_table.c.login == form_data.username)
     user = await database.fetch_one(query)

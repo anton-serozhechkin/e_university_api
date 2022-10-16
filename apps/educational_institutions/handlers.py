@@ -1,7 +1,7 @@
 from educational_institutions.models import faculty as faculty_table
 from educational_institutions.models import course
-from educational_institutions.temp.faculty_list_view import faculty_list_view
-from educational_institutions.temp.speciality_list_view import speciality_list_view
+from educational_institutions.models import faculty_list_view
+from educational_institutions.models import speciality_list_view
 from educational_institutions.schemas import FacultyOut, FacultyIn, SpecialityListOut, CourseListOut
 from users.handlers import get_current_user
 from db import database

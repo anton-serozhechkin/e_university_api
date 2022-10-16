@@ -1,5 +1,5 @@
 from hostel.schemas import HostelListOut, BedPlacesOut
-from hostel.temp.hostel_list_view import hostel_list_view
+from hostel.models import hostel_list_view
 from hostel.models import bed_places
 from db import database
 from users.handlers import get_current_user

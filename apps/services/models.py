@@ -1,4 +1,4 @@
-from sqlalchemy import (MetaData, Column, Table, Integer, VARCHAR, FLOAT, ForeignKey, DateTime)
+from sqlalchemy import (MetaData, Column, Table, Integer, VARCHAR, FLOAT, ForeignKey, DateTime, JSON, TIMESTAMP)
 from db import database
 from settings.globals import (TEMPLATES_PATH, SETTLEMENT_HOSTEL_PATH, DATETIME_FORMAT)
 
@@ -90,10 +90,81 @@ user_request_review = Table('user_request_review', metadata_obj,
           Column('bed_place_id', Integer, ForeignKey("bed_places.bed_place_id")))
 
 
-
 user_document = Table('user_document', metadata_obj,
           Column('user_document_id', Integer, primary_key=True),
           Column('date_created', DateTime),
           Column('name', VARCHAR(255)),
           Column('content', VARCHAR(255)),
           Column('user_request_id', Integer, ForeignKey("user_request.user_request_id")))
+
+
+user_request_booking_hostel_view = Table('user_request_booking_hostel_view', metadata_obj,
+          Column('full_name', VARCHAR(255)),
+          Column('user_id', Integer),
+          Column('faculty_name', VARCHAR(255)),
+          Column('university_id', Integer),
+          Column('short_university_name', VARCHAR(50)),
+          Column('rector_full_name', VARCHAR(255)),
+          Column('speciality_code', Integer),
+          Column('speciality_name', VARCHAR(255)),
+          Column('course', Integer),
+          Column('educ_level', VARCHAR(1)),
+          Column('date_today', DateTime),
+          Column('start_year', Integer),
+          Column('finish_year', Integer),
+          Column('gender', VARCHAR(1)))
+
+
+user_request_details_view = Table('user_request_details_view', metadata_obj,
+        Column('user_request_id', Integer),
+        Column('university_id', Integer),
+        Column('date_created', DateTime),
+        Column('service_name', VARCHAR(255)),
+        Column('status_name', VARCHAR(50)),
+        Column('status_id', Integer),
+        Column('comment', VARCHAR(255)),
+        Column('hostel_name', JSON),
+        Column('room_number', Integer),
+        Column('bed_place_name', VARCHAR(50)),
+        Column('date_review', DateTime),
+        Column('remark', VARCHAR(255)),
+        Column('documents', JSON))
+
+
+user_request_exist_view = Table('user_request_exist_view', metadata_obj,
+          Column('user_request_id', Integer),
+          Column('user_id', Integer),
+          Column('faculty_id', Integer),
+          Column('university_id', Integer),
+          Column('service_id', Integer),
+          Column('status', JSON))
+
+
+user_request_list_view = Table('user_request_list_view', metadata_obj,
+          Column('university_id', Integer),
+          Column('user_id', Integer),
+          Column('user_request_id', Integer),
+          Column('service_name', VARCHAR(255)),
+          Column('status', JSON),
+          Column('date_created', DateTime))
+
+
+hostel_accommodation_view = Table('hostel_accommodation_view', metadata_obj,
+          Column('university_id', Integer),
+          Column('user_request_review_id', Integer),
+          Column('user_request_id', Integer),
+          Column('hostel_name', JSON),
+          Column('hostel_address', JSON),
+          Column('room_number', Integer),
+          Column('bed_place_name', VARCHAR(50)),
+          Column('month_price', FLOAT),
+          Column('start_date_accommodation', TIMESTAMP),
+          Column('end_date_accommodation', TIMESTAMP),
+          Column('total_sum', FLOAT),         
+          Column('iban', VARCHAR(100)),
+          Column('university_name', VARCHAR(255)),
+          Column('organisation_code', VARCHAR(50)),
+          Column('payment_recognation', VARCHAR(255)),
+          Column('commandant_full_name', VARCHAR(255)),
+          Column('telephone_number', VARCHAR(50)),
+          Column('documents', JSON))

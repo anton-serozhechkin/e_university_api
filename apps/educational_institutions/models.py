@@ -1,4 +1,4 @@
-from sqlalchemy import (MetaData, Column, Table, Integer, VARCHAR, ForeignKey)
+from sqlalchemy import (MetaData, Column, Table, Integer, VARCHAR, ForeignKey, JSON)
 
 
 metadata_obj = MetaData()
@@ -40,3 +40,20 @@ rector = Table('rector', metadata_obj,
 course = Table('course', metadata_obj,
           Column('course_id', Integer, primary_key=True),
           Column('value', Integer))
+
+
+faculty_list_view = Table('faculty_list_view', metadata_obj,
+          Column('faculty_id', Integer),
+          Column('name', VARCHAR(255)),
+          Column('shortname', VARCHAR(20)),
+          Column('main_email', VARCHAR(50)),
+          Column('university_id', Integer),
+          Column('dekan_id', Integer),
+          Column('decan_full_name', VARCHAR(255)))
+
+
+speciality_list_view = Table('speciality_list_view', metadata_obj,
+          Column('faculty_id', Integer),
+          Column('speciality_id', Integer),
+          Column('university_id', Integer),
+          Column('speciality_info', JSON))

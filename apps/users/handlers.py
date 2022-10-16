@@ -1,9 +1,6 @@
-from users.schemas import TokenPayload, UserOut
-from users.schemas import UsersListViewOut, CreateUserIn, CreateUserOut, DeleteUserIn, RegistrationIn, RegistrationOut
-from users.schemas import CreateStudentOut, CreateStudentIn, StudentsListOut, DeleteStudentIn
-from users.schemas import StudentCheckExistanceIn, StudentCheckExistanceOut
-from users.temp.user_list_view import user_list_view
-from users.temp.students_list_view import students_list_view
+from users.schemas import *
+from users.models import user_list_view
+from users.models import students_list_view
 from users.models import user as user_table
 from users.models import student as student_table
 from users.models import user_faculty
@@ -11,7 +8,6 @@ from users.models import one_time_token
 from settings.globals import TOKEN_LIFE_TIME
 from components.utils import get_hashed_password
 from db import database
-
 
 from random import randint
 from typing import List, Union
@@ -37,7 +33,7 @@ from settings.globals import (
 )
 
 reuseable_oauth = OAuth2PasswordBearer(
-    tokenUrl="/login",
+    tokenUrl="/login/",
     scheme_name="JWT"
 )
 
@@ -77,8 +73,8 @@ async def get_current_user(token: str = Depends(reuseable_oauth)) -> UserOut:
     return user
 
 
-@users_router.post("/check-student-existance", response_model=StudentCheckExistanceOut, tags=["Authorization"])
-async def check_student(student: StudentCheckExistanceIn):
+@users_router.post("/check-student-existence/", response_model=StudentCheckExistenceOut, tags=["Authorization"])
+async def check_student(student: StudentCheckExistenceIn):
 
     query = student_table.select().where(student_table.c.full_name == student.full_name, 
                                     student_table.c.telephone_number == student.telephone_number)
@@ -107,8 +103,6 @@ async def check_student(student: StudentCheckExistanceIn):
     }
 
     return response
-
-
 
 
 @users_router.get("/{university_id}/users/", response_model=List[UsersListViewOut], tags=["SuperAdmin dashboard"])
@@ -267,3 +261,8 @@ async def delete_student(university_id: int, delete_student: DeleteStudentIn, au
     return {
         "student_id": delete_student.student_id
     }
+
+
+@users_router.get('/me/', summary='Get information about current user', response_model=UserOut, tags=["Authorization"])
+async def get_me(user: UserIn = Depends(get_current_user)):
+    return user

@@ -2,11 +2,11 @@ from users.models import user_faculty as user_faculty_table
 from services.models import user_request as user_request_table
 from services.models import user_request_review as user_request_rev_table
 from services.models  import create_user_document
-from services.temp.user_request_exist_view import user_request_exist_view
-from services.temp.user_request_booking_hostel_view import user_request_booking_hostel_view
-from services.temp.user_request_list_view import user_request_list_view
-from hostel.temp.hostel_accommodation_view import hostel_accommodation_view
-from services.temp.user_request_details_view import user_request_details_view
+from services.models import user_request_exist_view
+from services.models import user_request_booking_hostel_view
+from services.models import user_request_list_view
+from services.models import hostel_accommodation_view
+from services.models import user_request_details_view
 from services.models import STATUS_MAPPING
 from services.schemas import (CreateUserRequestIn, CreateUserRequestOut, 
                                   UserRequestExistenceOut, UserRequestBookingHostelOut, UserRequestReviewIn, UserRequestReviewOut,
@@ -91,7 +91,8 @@ async def read_user_request_booking_hostel(university_id: int, user = Depends(ge
                                             user_request_booking_hostel_view.c.university_id == university_id)
     return await database.fetch_one(query)
 
-@services_router.put("/{university_id}/user-request/{user_request_id}", response_model=CancelRequestOut, tags=["Student dashboard"])
+
+@services_router.put("/{university_id}/user-request/{user_request_id}/", response_model=CancelRequestOut, tags=["Student dashboard"])
 async def cancel_request(university_id: int, user_request_id: int, cancel_request: CancelRequestIn, user = Depends(get_current_user)):
     CancelRequestIn(status_id=cancel_request.status_id)
     query = user_request_table.update().where(user_request_table.c.user_request_id == user_request_id).values(status_id=cancel_request.status_id)
@@ -130,7 +131,7 @@ async def create_user_request_review(university_id: int, user_request_id: int, u
     }
 
 
-@services_router.get("/{university_id}/hostel-accommodation/{user_request_id}", response_model=HostelAccomodationViewOut, tags=["Student dashboard"])
+@services_router.get("/{university_id}/hostel-accommodation/{user_request_id}/", response_model=HostelAccomodationViewOut, tags=["Student dashboard"])
 async def read_hostel_accommodation(university_id: int, user_request_id: int, user = Depends(get_current_user)):
     query = hostel_accommodation_view.select().where(hostel_accommodation_view.c.university_id == university_id,
                                                     hostel_accommodation_view.c.user_request_id == user_request_id)                         
@@ -142,7 +143,7 @@ async def read_hostel_accommodation(university_id: int, user_request_id: int, us
     return response
 
 
-@services_router.get("/{university_id}/user-request/{user_request_id}", response_model=UserRequestDetailsViewOut, tags=["Student dashboard"])
+@services_router.get("/{university_id}/user-request/{user_request_id}/", response_model=UserRequestDetailsViewOut, tags=["Student dashboard"])
 async def read_request_details(university_id: int, user_request_id: int, user = Depends(get_current_user)):
     query = user_request_details_view.select().where(user_request_details_view.c.university_id == university_id, 
                                                     user_request_details_view.c.user_request_id == user_request_id)

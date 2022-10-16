@@ -145,12 +145,12 @@ class DeleteUserIn(BaseModel):
     user_id: int
 
 
-class StudentCheckExistanceIn(BaseModel):
+class StudentCheckExistenceIn(BaseModel):
     full_name: str
     telephone_number: str
 
 
-class StudentCheckExistanceOut(BaseModel):
+class StudentCheckExistenceOut(BaseModel):
     student: int
     token: str
     expires: datetime

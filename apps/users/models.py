@@ -1,5 +1,5 @@
 from sqlalchemy import (MetaData, Column, Table, Integer, VARCHAR, ForeignKey, 
-                        BOOLEAN, TIMESTAMP)
+                        BOOLEAN, TIMESTAMP, JSON)
 
 metadata_obj = MetaData()
 
@@ -34,3 +34,26 @@ student = Table('student', metadata_obj,
 user_faculty = Table('user_faculty', metadata_obj,
           Column('user_id', Integer, ForeignKey("user.user_id"), nullable=False, primary_key=True),
           Column('faculty_id', Integer, ForeignKey("faculty.faculty_id"), nullable=False, primary_key=True))
+
+
+students_list_view = Table('students_list_view', metadata_obj,
+          Column('student_id', Integer),
+          Column('student_full_name', VARCHAR(255)),
+          Column('telephone_number', Integer),
+          Column('user_id', Integer),
+          Column('university_id', Integer),
+          Column('faculty_id', Integer),
+          Column('speciality_id', Integer),
+          Column('course_id', Integer),
+          Column('gender',VARCHAR(1)))
+
+
+user_list_view = Table('user_list_view', metadata_obj,
+          Column('user_id', Integer),
+          Column('login', VARCHAR(50)),
+          Column('last_visit', TIMESTAMP),
+          Column('email', VARCHAR(50)),
+          Column('role', JSON),
+          Column('is_active', BOOLEAN),
+          Column('university_id', Integer),
+          Column('faculties', JSON))

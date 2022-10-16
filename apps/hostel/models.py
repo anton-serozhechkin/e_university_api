@@ -26,3 +26,14 @@ bed_places = Table('bed_places', metadata_obj,
           Column('bed_place_id', Integer, primary_key=True),
           Column('bed_place_name', VARCHAR(50)))
 
+
+hostel_list_view = Table('hostel_list_view', metadata_obj,
+          Column('university_id', Integer),
+          Column('hostel_id', Integer),
+          Column('number', Integer),
+          Column('name', VARCHAR(100)),
+          Column('city', VARCHAR(100)),
+          Column('street', VARCHAR(100)),
+          Column('build', VARCHAR(10)),
+          Column('commandant_id', Integer),
+          Column('commandant_full_name', VARCHAR(255)))
