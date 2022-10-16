@@ -78,14 +78,14 @@ async def create_user_request(university_id: int, user_request: CreateUserReques
     prepared_data = {
         "context": result,
         "service_id": user_request.service_id,
-        "user_request_id": last_record_id.scalars().all()
+        "user_request_id": last_record_id
     }
 
     await create_user_document(**prepared_data)
 
     return {
         "status_id": STATUS_MAPPING.get("Розглядається"),
-        "user_request_id": last_record_id.scalars().all()
+        "user_request_id": last_record_id
     }
 
 
@@ -99,8 +99,7 @@ async def read_user_request_booking_hostel(university_id: int, user=Depends(get_
 
 @router.put("/{university_id}/user-request/{user_request_id}", response_model=CancelRequestOut,
             tags=["Student dashboard"])
-# async def cancel_request(university_id: int, user_request_id: int, cancel_request: CancelRequestIn, user=Depends(get_current_user)):
-async def cancel_request(university_id: int, user_request_id: int, cancel_request: CancelRequestIn):
+async def cancel_request(university_id: int, user_request_id: int, cancel_request: CancelRequestIn, user=Depends(get_current_user)):
     CancelRequestIn(status_id=cancel_request.status_id)
     query = update(UserRequest).where(UserRequest.user_request_id == user_request_id).values(
         status_id=cancel_request.status_id)
@@ -143,8 +142,7 @@ async def create_user_request_review(university_id: int, user_request_id: int, u
 
 @router.get("/{university_id}/hostel-accommodation/{user_request_id}", response_model=HostelAccomodationViewOut,
             tags=["Student dashboard"])
-# async def read_hostel_accommodation(university_id: int, user_request_id: int, user=Depends(get_current_user)):
-async def read_hostel_accommodation(university_id: int, user_request_id: int):
+async def read_hostel_accommodation(university_id: int, user_request_id: int, user=Depends(get_current_user)):
     query = select(hostel_accommodation_view).where(hostel_accommodation_view.c.university_id == university_id,
                                                     hostel_accommodation_view.c.user_request_id == user_request_id)
     response = await database.fetch_one(query)

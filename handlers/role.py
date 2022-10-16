@@ -13,7 +13,6 @@ router = APIRouter()
 
 
 @router.get("/roles/", response_model=List[AvailableRolesOut], tags=["SuperAdmin dashboard"])
-# async def available_roles(user=Depends(get_current_user)):
-async def available_roles():
+async def available_roles(user=Depends(get_current_user)):
     query = select(Role)
     return await database.fetch_all(query)

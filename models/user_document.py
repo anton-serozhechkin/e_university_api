@@ -1,5 +1,5 @@
-from models import service, user_request
-
+from models import user_request
+from models.service import Service
 from datetime import datetime
 
 from docxtpl import DocxTemplate
@@ -8,6 +8,7 @@ from sqlalchemy.orm import relationship
 
 from db import database, Base
 from settings import (Settings, TEMPLATES_PATH, SETTLEMENT_HOSTEL_PATH)
+
 
 HOSTEL_BOOKING_TEMPLATE_URL = "hostel_booking_template.docx"
 
@@ -29,7 +30,7 @@ class UserDocument(Base):
 
 
 async def generate_document_name(service_id: int) -> str:
-    query = select(service).where(service.c.service_id == service_id)
+    query = select(Service).where(Service.service_id == service_id)
     query_result = await database.fetch_one(query)
     return f"Заява на {query_result.service_name.lower()}"
 
