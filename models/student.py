@@ -1,15 +1,29 @@
-from sqlalchemy import (MetaData, Column, Table, Integer, VARCHAR, ForeignKey)
+from models import course, speciality, user, faculty, one_time_token
 
+from sqlalchemy import (Column, INTEGER, VARCHAR, ForeignKey)
+from sqlalchemy.orm import relationship
 
-metadata_obj = MetaData()
+from db import Base
 
+class Student(Base):
+    __tablename__ = 'student'
 
-student = Table('student', metadata_obj,
-          Column('student_id', Integer, primary_key=True),
-          Column('full_name', VARCHAR(255)),
-          Column('telephone_number', Integer),
-          Column('gender', VARCHAR(1)),
-          Column('faculty_id', Integer, ForeignKey("faculty.faculty_id")),
-          Column('course_id', Integer, ForeignKey("course.course_id")),
-          Column('speciality_id', Integer, ForeignKey("speciality.speciality_id")),
-          Column('user_id', Integer, ForeignKey("user.user_id"), nullable=True))
+    student_id = Column(INTEGER, primary_key=True)
+    full_name = Column(VARCHAR(length=255))
+    telephone_number = Column(INTEGER)
+    gender = Column(VARCHAR(length=1))
+    course_id = Column(INTEGER, ForeignKey("course.course_id"))
+    speciality_id = Column(INTEGER, ForeignKey("speciality.speciality_id"))
+    user_id = Column(INTEGER, ForeignKey("user.user_id"))
+    faculty_id = Column(INTEGER, ForeignKey("faculty.faculty_id"))
+
+    courses = relationship("Course", back_populates="student")
+    specialties = relationship("Speciality", back_populates="student")
+    users = relationship("User", back_populates="student")
+    faculties = relationship("Faculty", back_populates="student")
+    one_time_token = relationship("OneTimeToken", back_populates="student")
+
+    def __repr__(self):
+        return f'{self.__class__.__name__}(student_id="{self.student_id}",full_name="{self.full_name}",' \
+               f'telephone_number="{self.telephone_number}",gender="{self.gender}",' \
+               f'course_id="{self.course_id}",speciality_id="{self.speciality_id}",user_id="{self.user_id}",faculty_id="{self.faculty_id}")'

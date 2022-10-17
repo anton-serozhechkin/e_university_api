@@ -1,11 +1,21 @@
-from sqlalchemy import (MetaData, Column, Table, Integer, VARCHAR, ForeignKey, TIMESTAMP)
+from models import student
+
+from sqlalchemy import (Column, INTEGER, VARCHAR, ForeignKey, TIMESTAMP)
+from sqlalchemy.orm import relationship
+
+from db import Base
 
 
-metadata_obj = MetaData()
+class OneTimeToken(Base):
+    __tablename__ = 'one_time_token'
 
+    token_id = Column(INTEGER, primary_key=True)
+    token = Column(VARCHAR(length=255), nullable=False)
+    expires = Column(TIMESTAMP, nullable=False)
+    student_id = Column(INTEGER, ForeignKey("student.student_id"), nullable=False)
 
-one_time_token = Table('one_time_token', metadata_obj,
-          Column('student_id', Integer, ForeignKey("student.student_id"), nullable=False),
-          Column('token_id', Integer, primary_key=True),
-          Column('token', VARCHAR(255), nullable=False),
-          Column('expires', TIMESTAMP, nullable=False))
+    student = relationship("Student", back_populates="one_time_token")
+
+    def __repr__(self):
+        return f'{self.__class__.__name__}(token_id="{self.token_id}",token="{self.token}",expires="{self.expires}",student_id="{self.student_id}")'
+

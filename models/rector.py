@@ -1,9 +1,19 @@
-from sqlalchemy import (MetaData, Column, Table, Integer, VARCHAR)
+from models import university
+
+from sqlalchemy import (Column, INTEGER, VARCHAR)
+from sqlalchemy.orm import relationship
+
+from db import Base
 
 
-metadata_obj = MetaData()
+class Rector(Base):
+    __tablename__ = 'rector'
+
+    rector_id = Column(INTEGER, primary_key=True)
+    full_name = Column(VARCHAR(length=255))
+
+    university = relationship("University", back_populates="rector")
+    def __str__(self):
+        return f'{self.__class__.__name__}(rector_id="{self.rector_id}",full_name="{self.full_name}")'
 
 
-dekan = Table('rector', metadata_obj,
-          Column('rector_id', Integer, primary_key=True),
-          Column('full_name', VARCHAR(255)))
