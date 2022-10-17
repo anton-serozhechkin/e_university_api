@@ -8,13 +8,13 @@ STATUS_MAPPING = {"Схвалено": 1, "Відхилено": 2, "Розгля�
 
 
 class Status(Base):
-    __tablename__ = "status"
+    __tablename__ = "user_request_status"
 
-    status_id = Column(INTEGER, primary_key=True)
-    status_name = Column(VARCHAR(length=50))
+    id = Column(INTEGER, primary_key=True)
+    name = Column(VARCHAR(length=50))
 
-    user_request = relationship("UserRequest", back_populates="status")
+    user_request = relationship("UserRequest", back_populates="user_request_status")
 
     def __repr__(self):
-        return f'{self.__class__.__name__}(status_id="{self.status_id}",status_name="{self.status_name}")'
+        return f'{self.__class__.__name__}(user_request_status_id="{self.id}",user_request_status_name="{self.name}")'
 

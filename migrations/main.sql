@@ -219,17 +219,17 @@ CREATE TABLE IF NOT EXISTS service(
 INSERT INTO service(service_id, service_name) VALUES (1, 'Поселення в гуртожиток');
 
 
--- Create table status
-CREATE TABLE IF NOT EXISTS status(
-    status_id integer NOT NULL,
-    status_name varchar(50) NOT NULL,
-    CONSTRAINT status_pk PRIMARY KEY (status_id));
+-- Create table user_request_status
+CREATE TABLE IF NOT EXISTS user_request_status(
+    id integer NOT NULL,
+    name varchar(50) NOT NULL,
+    CONSTRAINT pk PRIMARY KEY (id));
 
 
-INSERT INTO status(status_id, status_name) VALUES (1, 'Схвалено');
-INSERT INTO status(status_id, status_name) VALUES (2, 'Відхилено');
-INSERT INTO status(status_id, status_name) VALUES (3, 'Розглядається');
-INSERT INTO status(status_id, status_name) VALUES (4, 'Скасовано');
+INSERT INTO user_request_status(id, name) VALUES (1, 'Схвалено');
+INSERT INTO user_request_status(id, name) VALUES (2, 'Відхилено');
+INSERT INTO user_request_status(id, name) VALUES (3, 'Розглядається');
+INSERT INTO user_request_status(id, name) VALUES (4, 'Скасовано');
 
 
 -- Create table user_request
@@ -240,7 +240,7 @@ CREATE TABLE IF NOT EXISTS user_request(
     user_id integer NOT NULL,
     service_id integer NOT NULL,
     date_created timestamp NOT NULL,
-    status_id integer NOT NULL,
+    user_request_status_id integer NOT NULL,
     comment VARCHAR(255),
     CONSTRAINT user_request_pk PRIMARY KEY(user_request_id));
 
@@ -260,9 +260,9 @@ FOREIGN KEY (service_id) REFERENCES service(service_id)
 MATCH FULL ON DELETE CASCADE ON UPDATE CASCADE;
 
 
--- foreign key from user_request table to status table
+-- foreign key from user_request table to user_request_status table
 ALTER TABLE user_request ADD CONSTRAINT user_request_status_fk
-FOREIGN KEY (status_id) REFERENCES status(status_id)
+FOREIGN KEY (user_request_status_id) REFERENCES user_request_status(id)
 MATCH FULL ON DELETE SET NULL ON UPDATE CASCADE;
 
 
@@ -329,20 +329,20 @@ CREATE VIEW user_request_exist_view AS
         ur.faculty_id,
         ur.university_id,
         ur.service_id,
-        jsonb_build_object('status_id', ur.status_id, 'status_name', st.status_name) as status
+        jsonb_build_object('user_request_status_id', ur.user_request_status_id, 'user_request_status_name', st.name) as user_request_status
     FROM
         user_request ur
-    LEFT JOIN status st ON
-        ur.status_id = st.status_id
+    LEFT JOIN user_request_status st ON
+        ur.user_request_status_id = st.id
     WHERE
-        ur.status_id in (1, 3)
+        ur.user_request_status_id in (1, 3)
     GROUP BY
         ur.user_request_id,
         ur.user_id,
         ur.faculty_id,
         ur.university_id,
         ur.service_id,
-        st.status_name
+        st.name
     ORDER BY
         ur.university_id,
         ur.faculty_id,
@@ -536,12 +536,12 @@ CREATE VIEW user_request_list_view AS
         ur.user_id,
         ur.user_request_id,
         sr.service_name,
-        jsonb_build_object('status_id', ur.status_id, 'status_name', st.status_name) as status,
+        jsonb_build_object('user_request_status_id', ur.user_request_status_id, 'user_request_status_name', st.name) as user_request_status,
         ur.date_created
     FROM
         user_request ur
-    LEFT JOIN status st ON
-        ur.status_id = st.status_id
+    LEFT JOIN user_request_status st ON
+        ur.user_request_status_id = st.id
     LEFT JOIN service sr ON
         ur.service_id = sr.service_id
      GROUP BY
@@ -549,7 +549,7 @@ CREATE VIEW user_request_list_view AS
         ur.user_id,
         ur.university_id,
         ur.service_id,
-        st.status_name,
+        st.name,
         sr.service_name
     ORDER BY
         ur.university_id,
@@ -886,8 +886,8 @@ CREATE VIEW user_request_details_view AS
         ur.university_id,
         ur.date_created,
         sr.service_name,
-        st.status_name,
-        ur.status_id,
+        st.name,
+        ur.user_request_status_id,
         ur.comment,
         jsonb_build_object('name', ht.name, 'number', ht.number) as hostel_name,
         urr.room_number,
@@ -899,8 +899,8 @@ CREATE VIEW user_request_details_view AS
         user_request ur
     LEFT JOIN user_request_review urr ON
         ur.user_request_id = urr.user_request_id
-    LEFT JOIN status st ON
-        ur.status_id = st.status_id
+    LEFT JOIN user_request_status st ON
+        ur.user_request_status_id = st.id
 	LEFT JOIN service sr ON
 		ur.service_id = sr.service_id
 	LEFT JOIN hostel ht ON
@@ -914,8 +914,8 @@ CREATE VIEW user_request_details_view AS
         ur.university_id,
         ur.date_created,
         sr.service_name,
-        st.status_name,
-        ur.status_id,
+        st.name,
+        ur.user_request_status_id,
         ur.comment,
 		ht.name,
 		ht.number,
