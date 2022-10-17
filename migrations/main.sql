@@ -355,12 +355,12 @@ CREATE TABLE IF NOT EXISTS bed_places(
     CONSTRAINT bed_place_pk PRIMARY KEY (bed_place_id));
 
 
--- INSERT DATA to table bed_places
-INSERT INTO bed_places(bed_place_id, bed_place_name) VALUES (1, '0.75');
+-- INSERT DATA to table bed_place
+INSERT INTO bed_place(bed_place_id, bed_place_name) VALUES (1, '0.75');
 
-INSERT INTO bed_places(bed_place_id, bed_place_name) VALUES (2, '1');
+INSERT INTO bed_place(bed_place_id, bed_place_name) VALUES (2, '1');
 
-INSERT INTO bed_places(bed_place_id, bed_place_name) VALUES (3, '1.5');
+INSERT INTO bed_place(bed_place_id, bed_place_name) VALUES (3, '1.5');
 
 -- Create Table dekan
 CREATE TABLE IF NOT EXISTS dekan(
@@ -671,7 +671,7 @@ MATCH FULL ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- FK to hostel.hostel_id
 ALTER TABLE user_request_review ADD CONSTRAINT user_request_review_bed_place_fk
-FOREIGN KEY (bed_place_id) REFERENCES bed_places(bed_place_id) 
+FOREIGN KEY (bed_place_id) REFERENCES bed_place(bed_place_id)
 MATCH FULL ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- add column month_price to table hostel
@@ -790,7 +790,7 @@ CREATE VIEW hostel_accommodation_view AS
         user_request_review urr
     LEFT JOIN hostel ht ON
         ht.hostel_id = urr.hostel_id
-    LEFT JOIN bed_places bd ON
+    LEFT JOIN bed_place bd ON
         bd.bed_place_id = urr.bed_place_id
     LEFT JOIN user_request ur ON
         ur.user_request_id = urr.user_request_id
@@ -905,7 +905,7 @@ CREATE VIEW user_request_details_view AS
 		ur.service_id = sr.service_id
 	LEFT JOIN hostel ht ON
 		ht.hostel_id = urr.hostel_id
-	LEFT JOIN bed_places bd ON
+	LEFT JOIN bed_place bd ON
 		bd.bed_place_id = urr.bed_place_id
     LEFT JOIN user_document ud ON
 		ud.user_request_id = urr.user_request_id
@@ -926,3 +926,7 @@ CREATE VIEW user_request_details_view AS
     ORDER BY
         ur.university_id,
         ur.user_request_id;
+
+
+-- Rename bed_places into bed_place
+ALTER TABLE bed_places RENAME TO bed_place;

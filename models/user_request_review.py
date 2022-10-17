@@ -18,6 +18,6 @@ user_request_review = Table('user_request_review', metadata_obj,
           Column('payment_deadline', DateTime),
           Column('remark', VARCHAR(255)),
           Column('date_review', DateTime),
-          Column('bed_place_id', Integer, ForeignKey("bed_places.bed_place_id")))
+          Column('bed_place_id', Integer, ForeignKey("bed_place.bed_place_id")))
 
 
