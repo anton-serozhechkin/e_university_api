@@ -9,10 +9,11 @@ from db import Base
 class Requisites(Base):
     __tablename__ = 'requisites'
 
+    requisites_id = Column(INTEGER, primary_key=True, nullable=False)
     iban = Column(VARCHAR(length=100))
     organisation_code = Column(VARCHAR(length=50))
     payment_recognition = Column(VARCHAR(length=255))
-    university_id = Column(INTEGER, ForeignKey("university.university_id"), primary_key=True, nullable=False)
+    university_id = Column(INTEGER, ForeignKey("university.university_id"), nullable=False)
     service_id = Column(INTEGER, ForeignKey("service.service_id"), nullable=False)
 
     university = relationship("University", back_populates="requisites")
