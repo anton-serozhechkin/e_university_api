@@ -13,7 +13,6 @@ router = APIRouter()
 
 
 @router.get("/bed-places/", response_model=List[BedPlacesOut], tags=["Admin dashboard"])
-# async def available_bed_places(user=Depends(get_current_user)):
-async def available_bed_places():
+async def available_bed_places(user=Depends(get_current_user)):
     query = select(BedPlaces)
     return await database.fetch_all(query)

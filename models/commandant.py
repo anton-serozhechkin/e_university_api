@@ -9,9 +9,9 @@ from db import Base
 class Commandant(Base):
     __tablename__ = 'commandant'
 
-    commandant_id = Column(INTEGER, primary_key=True)
-    full_name = Column(VARCHAR(length=255))
-    telephone_number = Column(VARCHAR(length=50))
+    commandant_id = Column(INTEGER, primary_key=True, nullable=False)
+    full_name = Column(VARCHAR(length=255), nullable=False)
+    telephone_number = Column(VARCHAR(length=50), nullable=False, unique=True)
 
     hostel = relationship("Hostel", back_populates="commandant")
 

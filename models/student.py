@@ -8,14 +8,14 @@ from db import Base
 class Student(Base):
     __tablename__ = 'student'
 
-    student_id = Column(INTEGER, primary_key=True)
-    full_name = Column(VARCHAR(length=255))
-    telephone_number = Column(INTEGER)
+    student_id = Column(INTEGER, primary_key=True, nullable=False)
+    full_name = Column(VARCHAR(length=255), nullable=False)
+    telephone_number = Column(INTEGER, nullable=False, unique=True)
     gender = Column(VARCHAR(length=1))
     course_id = Column(INTEGER, ForeignKey("course.course_id"))
     speciality_id = Column(INTEGER, ForeignKey("speciality.speciality_id"))
     user_id = Column(INTEGER, ForeignKey("user.user_id"))
-    faculty_id = Column(INTEGER, ForeignKey("faculty.faculty_id"))
+    faculty_id = Column(INTEGER, ForeignKey("faculty.faculty_id"), nullable=False)
 
     courses = relationship("Course", back_populates="student")
     specialties = relationship("Speciality", back_populates="student")

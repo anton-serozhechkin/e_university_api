@@ -9,8 +9,8 @@ from db import Base
 class Rector(Base):
     __tablename__ = 'rector'
 
-    rector_id = Column(INTEGER, primary_key=True)
-    full_name = Column(VARCHAR(length=255))
+    rector_id = Column(INTEGER, primary_key=True, nullable=False)
+    full_name = Column(VARCHAR(length=255), nullable=False)
 
     university = relationship("University", back_populates="rector")
     def __str__(self):

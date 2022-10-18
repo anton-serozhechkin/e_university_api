@@ -9,8 +9,8 @@ from db import Base
 class Action(Base):
     __tablename__ = 'action'
 
-    action_id = Column(INTEGER, primary_key=True)
-    action_name = Column(VARCHAR(length=50))
+    action_id = Column(INTEGER, primary_key=True, nullable=False)
+    action_name = Column(VARCHAR(length=50), nullable=False)
     role_id = Column(INTEGER, ForeignKey("role.role_id"), nullable=False)
 
     roles = relationship("Role", back_populates="actions")

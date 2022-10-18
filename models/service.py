@@ -9,8 +9,8 @@ from db import Base
 class Service(Base):
     __tablename__ = 'service'
 
-    service_id = Column(INTEGER, primary_key=True)
-    service_name = Column(VARCHAR(length=255))
+    service_id = Column(INTEGER, primary_key=True, nullable=False)
+    service_name = Column(VARCHAR(length=255), nullable=False)
 
     requisites = relationship("Requisites", back_populates="service")
     user_request = relationship("UserRequest", back_populates="service")

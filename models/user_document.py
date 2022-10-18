@@ -16,11 +16,11 @@ HOSTEL_BOOKING_TEMPLATE_URL = "hostel_booking_template.docx"
 class UserDocument(Base):
     __tablename__ = "user_document"
 
-    user_document_id = Column(INTEGER, primary_key=True)
-    date_created = Column(DATETIME)
-    name = Column(VARCHAR(length=255))
-    content = Column(VARCHAR(length=255))
-    user_request_id = Column(INTEGER, ForeignKey("user_request.user_request_id"))
+    user_document_id = Column(INTEGER, primary_key=True, nullable=False)
+    date_created = Column(DATETIME, nullable=False)
+    name = Column(VARCHAR(length=255), nullable=False)
+    content = Column(VARCHAR(length=255), nullable=False)
+    user_request_id = Column(INTEGER, ForeignKey("user_request.user_request_id"), nullable=False)
 
     user_request = relationship("UserRequest", back_populates="user_documents")
 

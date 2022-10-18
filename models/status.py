@@ -10,8 +10,8 @@ STATUS_MAPPING = {"Схвалено": 1, "Відхилено": 2, "Розгля�
 class Status(Base):
     __tablename__ = "status"
 
-    status_id = Column(INTEGER, primary_key=True)
-    status_name = Column(VARCHAR(length=50))
+    status_id = Column(INTEGER, primary_key=True, nullable=False)
+    status_name = Column(VARCHAR(length=50), nullable=False)
 
     user_request = relationship("UserRequest", back_populates="status")
 

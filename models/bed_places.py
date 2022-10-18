@@ -9,8 +9,8 @@ from db import Base
 class BedPlaces(Base):
     __tablename__ = 'bed_places'
 
-    bed_place_id = Column(INTEGER, primary_key=True)
-    bed_place_name = Column(VARCHAR(length=50))
+    bed_place_id = Column(INTEGER, primary_key=True, nullable=False)
+    bed_place_name = Column(VARCHAR(length=50), nullable=False)
 
     user_request_reviews = relationship("UserRequestReview", back_populates='bed_places')
 

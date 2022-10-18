@@ -9,8 +9,8 @@ from db import Base
 class Course(Base):
     __tablename__ = 'course'
 
-    course_id = Column(INTEGER, primary_key=True)
-    value = Column(INTEGER)
+    course_id = Column(INTEGER, primary_key=True, nullable=False)
+    value = Column(INTEGER, nullable=False)
 
     student = relationship('Student', back_populates='courses')
     def __repr__(self):

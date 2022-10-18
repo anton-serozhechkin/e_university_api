@@ -9,7 +9,7 @@ from db import Base
 class Faculty(Base):
     __tablename__ = 'faculty'
 
-    faculty_id = Column(INTEGER, primary_key=True)
+    faculty_id = Column(INTEGER, primary_key=True, nullable=False)
     name = Column(VARCHAR(length=255), nullable=False)
     shortname = Column(VARCHAR(length=20))
     main_email = Column(VARCHAR(length=50))

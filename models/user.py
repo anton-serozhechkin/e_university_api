@@ -9,12 +9,12 @@ from db import Base
 class User(Base):
     __tablename__ = "user"
 
-    user_id = Column(INTEGER, primary_key=True)
-    login = Column(VARCHAR(length=50))
-    password = Column(VARCHAR(length=50))
+    user_id = Column(INTEGER, primary_key=True, nullable=False)
+    login = Column(VARCHAR(length=50), nullable=False, unique=True)
+    password = Column(VARCHAR(length=50), nullable=False)
     last_visit = Column(TIMESTAMP)
-    email = Column(VARCHAR(length=100))
-    is_active = Column(BOOLEAN)
+    email = Column(VARCHAR(length=100), nullable=False, unique=True)
+    is_active = Column(BOOLEAN, default=False)
     role_id = Column(INTEGER, ForeignKey("role.role_id"), nullable=True)
 
     student = relationship("Student", back_populates="users")

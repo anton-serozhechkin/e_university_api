@@ -9,7 +9,7 @@ from db import Base
 class OneTimeToken(Base):
     __tablename__ = 'one_time_token'
 
-    token_id = Column(INTEGER, primary_key=True)
+    token_id = Column(INTEGER, primary_key=True, nullable=False)
     token = Column(VARCHAR(length=255), nullable=False)
     expires = Column(TIMESTAMP, nullable=False)
     student_id = Column(INTEGER, ForeignKey("student.student_id"), nullable=False)

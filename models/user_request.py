@@ -11,14 +11,14 @@ from db import Base
 class UserRequest(Base):
     __tablename__ = "user_request"
 
-    user_request_id = Column(INTEGER, primary_key=True)
-    date_created = Column(DATETIME)
+    user_request_id = Column(INTEGER, primary_key=True, nullable=False)
+    date_created = Column(DATETIME, nullable=False)
     comment = Column(VARCHAR(length=255))
-    user_id = Column(INTEGER, ForeignKey("user.user_id"))
-    service_id = Column(INTEGER, ForeignKey("service.service_id"))
-    faculty_id = Column(INTEGER, ForeignKey("faculty.faculty_id"))
-    university_id = Column(INTEGER, ForeignKey("university.university_id"))
-    status_id = Column(INTEGER, ForeignKey("status.status_id"))
+    user_id = Column(INTEGER, ForeignKey("user.user_id"), nullable=False)
+    service_id = Column(INTEGER, ForeignKey("service.service_id"), nullable=False)
+    faculty_id = Column(INTEGER, ForeignKey("faculty.faculty_id"), nullable=False)
+    university_id = Column(INTEGER, ForeignKey("university.university_id"), nullable=False)
+    status_id = Column(INTEGER, ForeignKey("status.status_id"), nullable=False)
 
     users = relationship("User", back_populates="user_request")
     service = relationship("Service", back_populates="user_request")

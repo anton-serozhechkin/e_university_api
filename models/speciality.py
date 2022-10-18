@@ -9,10 +9,10 @@ from db import Base
 class Speciality(Base):
     __tablename__ = 'speciality'
 
-    speciality_id = Column(INTEGER, primary_key=True)
-    code = Column(INTEGER)
-    name = Column(VARCHAR(length=255))
-    faculty_id = Column(INTEGER, ForeignKey("faculty.faculty_id"))
+    speciality_id = Column(INTEGER, primary_key=True, nullable=False)
+    code = Column(INTEGER, nullable=False)
+    name = Column(VARCHAR(length=255), nullable=False)
+    faculty_id = Column(INTEGER, ForeignKey("faculty.faculty_id"), nullable=False)
 
     faculties = relationship("Faculty", back_populates="speciality")
     student = relationship("Student", back_populates="specialties")

@@ -9,8 +9,8 @@ from db import Base
 class Dekan(Base):
     __tablename__ = 'dekan'
 
-    dekan_id = Column(INTEGER, primary_key=True)
-    full_name = Column(VARCHAR(length=255))
+    dekan_id = Column(INTEGER, primary_key=True, nullable=False)
+    full_name = Column(VARCHAR(length=255), nullable=False)
 
     faculties = relationship("Faculty", back_populates="dekan")
 

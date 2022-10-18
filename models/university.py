@@ -8,8 +8,8 @@ from db import Base
 class University(Base):
     __tablename__ = "university"
 
-    university_id = Column(INTEGER, primary_key=True)
-    university_name = Column(VARCHAR(length=255))
+    university_id = Column(INTEGER, primary_key=True, nullable=False)
+    university_name = Column(VARCHAR(length=255), nullable=False)
     logo = Column(VARCHAR(length=255))
     rector_id = Column(INTEGER, ForeignKey("rector.rector_id"))
 

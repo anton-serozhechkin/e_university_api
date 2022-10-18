@@ -12,8 +12,8 @@ class Requisites(Base):
     iban = Column(VARCHAR(length=100))
     organisation_code = Column(VARCHAR(length=50))
     payment_recognition = Column(VARCHAR(length=255))
-    university_id = Column(INTEGER, ForeignKey("university.university_id"), primary_key=True)
-    service_id = Column(INTEGER, ForeignKey("service.service_id"))
+    university_id = Column(INTEGER, ForeignKey("university.university_id"), primary_key=True, nullable=False)
+    service_id = Column(INTEGER, ForeignKey("service.service_id"), nullable=False)
 
     university = relationship("University", back_populates="requisites")
     service = relationship("Service", back_populates="requisites")
