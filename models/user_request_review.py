@@ -1,6 +1,6 @@
-from datetime import datetime
+from models import bed_places, user, hostel, university, user_request
 
-from models import bed_places, user,hostel, university, user_request
+from datetime import datetime
 
 from sqlalchemy import (Column, INTEGER, DATETIME, ForeignKey, VARCHAR, FLOAT)
 from sqlalchemy.orm import relationship
@@ -10,16 +10,15 @@ from db import Base
 
 class UserRequestReview(Base):
     __tablename__ = "user_request_review"
-
     user_request_review_id = Column(INTEGER, primary_key=True)
-    date_created = Column(DATETIME, default=datetime.utcnow)
+    date_created = Column(DATETIME)
     room_number = Column(INTEGER)
-    start_date_accommodation = Column(DATETIME, default=datetime.utcnow)
-    end_date_accommodation = Column(DATETIME, default=datetime.utcnow)
+    start_date_accommodation = Column(DATETIME)
+    end_date_accommodation = Column(DATETIME)
     total_sum = Column(FLOAT)
-    payment_deadline = Column(DATETIME, default=datetime.utcnow)
+    payment_deadline = Column(DATETIME)
     remark = Column(VARCHAR(length=255))
-    date_review = Column(DATETIME, default=datetime.utcnow)
+    date_review = Column(DATETIME)
     bed_place_id = Column(INTEGER, ForeignKey("bed_places.bed_place_id"))
     reviewer = Column(INTEGER, ForeignKey("user.user_id"))
     hostel_id = Column(INTEGER, ForeignKey("hostel.hostel_id"))

@@ -1,4 +1,5 @@
-from models import service, user_request
+from models import user_request
+from models.service import Service
 
 from datetime import datetime
 
@@ -16,7 +17,7 @@ class UserDocument(Base):
     __tablename__ = "user_document"
 
     user_document_id = Column(INTEGER, primary_key=True)
-    date_created = Column(DATETIME, default=datetime.utcnow)
+    date_created = Column(DATETIME)
     name = Column(VARCHAR(length=255))
     content = Column(VARCHAR(length=255))
     user_request_id = Column(INTEGER, ForeignKey("user_request.user_request_id"))
@@ -29,7 +30,7 @@ class UserDocument(Base):
 
 
 async def generate_document_name(service_id: int) -> str:
-    query = select(service).where(service.c.service_id == service_id)
+    query = select(Service).where(Service.service_id == service_id)
     query_result = await database.fetch_one(query)
     return f"Заява на {query_result.service_name.lower()}"
 
@@ -55,7 +56,7 @@ async def create_user_document(**kwargs):
     kwargs["date_created"] = date_created
     content = await create_user_document_content(**kwargs)
     query = insert(UserDocument).values(date_created=date_created,
-                                          name=name,
-                                          content=content, 
-                                          user_request_id=kwargs.get("user_request_id"))
+                                        name=name,
+                                        content=content,
+                                        user_request_id=kwargs.get("user_request_id"))
     return await database.execute(query)

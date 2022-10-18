@@ -1,8 +1,8 @@
-from datetime import datetime
-
 from models import user_document, user_request_review
 
-from sqlalchemy import (Column, INTEGER, VARCHAR, ForeignKey, DateTime)
+from datetime import datetime
+
+from sqlalchemy import (Column, INTEGER, VARCHAR, ForeignKey, DATETIME)
 from sqlalchemy.orm import relationship
 
 from db import Base
@@ -12,7 +12,7 @@ class UserRequest(Base):
     __tablename__ = "user_request"
 
     user_request_id = Column(INTEGER, primary_key=True)
-    date_created = Column(DateTime, default=datetime.utcnow)
+    date_created = Column(DATETIME)
     comment = Column(VARCHAR(length=255))
     user_id = Column(INTEGER, ForeignKey("user.user_id"))
     service_id = Column(INTEGER, ForeignKey("service.service_id"))

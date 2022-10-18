@@ -61,7 +61,7 @@ async def read_user_request_list(university_id: int, user=Depends(get_current_us
 async def create_user_request(university_id: int, user_request: CreateUserRequestIn, user=Depends(get_current_user)):
     query = select(UserFaculty).where(UserFaculty.user_id == user.user_id)
     user_faculty_result = await database.fetch_one(query)
-    query = insert(UserRequest).values(date_created=datetime.utcnow(),
+    query = insert(UserRequest).values(date_created=datetime.now(),
                                        comment=user_request.comment,
                                        user_id=user.user_id,
                                        service_id=user_request.service_id,
@@ -73,19 +73,20 @@ async def create_user_request(university_id: int, user_request: CreateUserReques
 
     query = select(user_request_booking_hostel_view).where(user_request_booking_hostel_view.c.user_id == user.user_id,
                                                            user_request_booking_hostel_view.c.university_id == university_id)
+
     result = await database.fetch_one(query)
 
     prepared_data = {
         "context": result,
         "service_id": user_request.service_id,
-        "user_request_id": last_record_id.scalars().all()
+        "user_request_id": last_record_id
     }
 
     await create_user_document(**prepared_data)
 
     return {
         "status_id": STATUS_MAPPING.get("Розглядається"),
-        "user_request_id": last_record_id.scalars().all()
+        "user_request_id": last_record_id
     }
 
 
@@ -118,16 +119,16 @@ async def create_user_request_review(university_id: int, user_request_id: int, u
                                      user=Depends(get_current_user)):
     query = insert(UserRequestReview).values(university_id=university_id,
                                              user_request_id=user_request_id,
-                                             date_created=datetime.utcnow(),
+                                             date_created=datetime.now(),
                                              reviewer=user.user_id,
                                              hostel_id=user_request_review.hostel_id,
                                              room_number=user_request_review.room_number,
-                                             start_date_accommodation=user_request_review.start_date_accommodation,
-                                             end_date_accommodation=user_request_review.end_date_accommodation,
+                                             start_date_accommodation=user_request_review.start_date_accommodation.now(),
+                                             end_date_accommodation=user_request_review.end_date_accommodation.now(),
                                              total_sum=user_request_review.total_sum,
-                                             payment_deadline=user_request_review.payment_deadline,
+                                             payment_deadline=user_request_review.payment_deadline.now(),
                                              remark=user_request_review.remark,
-                                             date_review=datetime.utcnow(),
+                                             date_review=datetime.now(),
                                              bed_place_id=user_request_review.bed_place_id)
 
     last_record_id = await database.execute(query)
