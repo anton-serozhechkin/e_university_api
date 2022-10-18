@@ -11,7 +11,7 @@ class Student(Base):
     student_id = Column(INTEGER, primary_key=True, nullable=False)
     full_name = Column(VARCHAR(length=255), nullable=False)
     telephone_number = Column(INTEGER, nullable=False, unique=True)
-    gender = Column(VARCHAR(length=1))
+    gender = Column(VARCHAR(length=1), nullable=False)
     course_id = Column(INTEGER, ForeignKey("course.course_id"))
     speciality_id = Column(INTEGER, ForeignKey("speciality.speciality_id"))
     user_id = Column(INTEGER, ForeignKey("user.user_id"))
