@@ -1,15 +1,15 @@
 from datetime import datetime
 from typing import List, Dict, Union
 import re
-
 from pydantic import BaseModel, validator
+from components.exceptions import BackendException
 
 
 class UsersListViewOut(BaseModel):
 
     user_id: int
     login: str
-    last_vist: datetime = None
+    last_vist: datetime = None      # TODO syntax error
     email: str
     is_active: bool = None
     role: List[Dict[str, Union[int, str]]]
@@ -51,8 +51,7 @@ class RegistrationIn(BaseModel):
             message = f"Невірний формат адресу електронної пошти: {v}."
 
         if message:
-            raise ValueError(message)
-
+            raise BackendException(message=message)
         return v
 
     @validator('password_re_check')
@@ -60,11 +59,9 @@ class RegistrationIn(BaseModel):
         password = values.get('password')
 
         if not password or not v:
-            raise ValueError('Паролі не можуть бути порожніми')
-
+            raise BackendException(message='Паролі не можуть бути порожніми')
         if password != v:
-            raise ValueError('Введені паролі не співпадають')
-
+            raise BackendException(message='Введені паролі не співпадають')
         return v
 
 
@@ -100,8 +97,7 @@ class CreateUserIn(BaseModel):
         elif not re.fullmatch(regex, v):
             message = f"Невірний формат адреси електронної пошти: {v}."
         if message:
-            raise ValueError(message)
-        
+            raise BackendException(message=message)
         return v
 
     @validator('password_re_check')
@@ -109,11 +105,9 @@ class CreateUserIn(BaseModel):
         password = values.get('password')
 
         if not password or not v:
-            raise ValueError('Паролі не можуть бути порожніми')
-
+            raise BackendException(message='Паролі не можуть бути порожніми')
         if password != v:
-            raise ValueError('Введені паролі не співпадають')
-
+            raise BackendException(message='Введені паролі не співпадають')
         return v
 
 
