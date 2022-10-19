@@ -10,7 +10,12 @@ from components.exceptions import BackendException
 
 from fastapi import FastAPI, status
 from fastapi.middleware.cors import CORSMiddleware
-from components.ecxeption_handlers import backend_exception_handler
+from components.ecxeption_handlers import (
+    backend_exception_handler,
+    http_exception_handler,
+    validation_exception_handler)
+from starlette.exceptions import HTTPException as StarletteHTTPException
+from fastapi.exceptions import RequestValidationError
 
 
 app = FastAPI(openapi_tags=metadata)
@@ -28,6 +33,8 @@ app.add_middleware(
 
 # Add exception handlers
 app.add_exception_handler(BackendException, backend_exception_handler)
+app.add_exception_handler(StarletteHTTPException, http_exception_handler)
+app.add_exception_handler(RequestValidationError, validation_exception_handler)
 
 
 # Endpoints registration
