@@ -29,7 +29,7 @@ class RegistrationIn(BaseModel):
     email: str
     password: str
     password_re_check: str
-    
+
     @validator('email')
     def validate_email(cls, v):
         """
@@ -55,7 +55,7 @@ class RegistrationIn(BaseModel):
         return v
 
     @validator('password_re_check')
-    def validate_password(cls, v, values):
+    def validate_password(cls, v, values):  # TODO may be there is need to use classmethod decorator
         password = values.get('password')
 
         if not password or not v:
@@ -72,7 +72,7 @@ class AuthOut(BaseModel):
 
 
 class CreateUserIn(BaseModel):
-    
+
     email: str
     password: str
     password_re_check: str

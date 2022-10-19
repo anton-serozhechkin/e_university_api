@@ -2,6 +2,7 @@ from datetime import date, datetime
 from typing import Dict, Union, List
 
 from pydantic import BaseModel, validator
+from components.exceptions import BackendException
 
 
 class CreateUserRequestIn(BaseModel):
@@ -30,8 +31,8 @@ class UserRequestBookingHostelOut(BaseModel):
     date_today: date
     start_year: int
     finish_year: int
-    speciality_code: int = None # delete it after table speciality won't be empty
-    speciality_name: str = None # delete it after table speciality won't be empty
+    speciality_code: int = None  # delete it after table speciality won't be empty
+    speciality_name: str = None  # delete it after table speciality won't be empty
     course: int
     educ_level: str
     gender: str
@@ -50,10 +51,9 @@ class CancelRequestIn(BaseModel):
     status_id: int
 
     @validator('status_id')
-    def validate_status_id(cls, v):
+    def validate_status_id(cls, v):  # TODO may be there is need to use classmethod decorator
         if v != 4:
-            message = "Заяву можливо тільки скасувати."
-            raise ValueError(message)
+            raise BackendException(message="Заяву можливо тільки скасувати.")
         return v
 
 
@@ -74,11 +74,11 @@ class UserRequestReviewIn(BaseModel):
     bed_place_id: int = None
 
     @validator('status_id')
-    def validate_status_id(cls, v):
-        if v not in [1,2]:
-            message = "Заяву можливо тільки ухвалити або відхилити."
-            raise ValueError(message)
+    def validate_status_id(cls, v):  # TODO may be there is need to use classmethod decorator
+        if v not in [1, 2]:
+            raise BackendException(message="Заяву можливо тільки ухвалити або відхилити.")
         return v
+
 
 class UserRequestReviewOut(BaseModel):
     status_id: int
@@ -99,7 +99,7 @@ class HostelAccomodationViewOut(BaseModel):
     iban: str
     university_name: str
     organisation_code: str
-    payment_recognation: str
+    payment_recognation: str  # TODO syntax error
     commandant_full_name: str
     telephone_number: str
     documents: Dict[str, str]
@@ -116,6 +116,6 @@ class UserRequestDetailsViewOut(BaseModel):
     hostel_name: Dict[str, Union[int, str]] = None
     room_number: int = None
     bed_place_name: str = None
-    date_review: datetime = None 
+    date_review: datetime = None
     remark: str = None
     documents: List[Dict[str, str]]
