@@ -53,7 +53,7 @@ class CancelRequestIn(BaseModel):
     @validator('status_id')
     def validate_status_id(cls, v):  # TODO may be there is need to use classmethod decorator
         if v != 4:
-            raise BackendException(message="Заяву можливо тільки скасувати.")
+            raise BackendException(message="The application can only be canceled.")
         return v
 
 
@@ -76,7 +76,7 @@ class UserRequestReviewIn(BaseModel):
     @validator('status_id')
     def validate_status_id(cls, v):  # TODO may be there is need to use classmethod decorator
         if v not in [1, 2]:
-            raise BackendException(message="Заяву можливо тільки ухвалити або відхилити.")
+            raise BackendException(message="The application can only be approved or rejected.")
         return v
 
 

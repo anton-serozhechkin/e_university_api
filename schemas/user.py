@@ -45,10 +45,10 @@ class RegistrationIn(BaseModel):
         message = False
 
         if not v:
-            message = "Електронний адрес не може бути порожнім"
+            message = "The email address cannot be empty."
 
         elif not re.fullmatch(regex, v):
-            message = f"Невірний формат адресу електронної пошти: {v}."
+            message = f"Invalid email address format: {v}."
 
         if message:
             raise BackendException(message=message)
@@ -59,9 +59,9 @@ class RegistrationIn(BaseModel):
         password = values.get('password')
 
         if not password or not v:
-            raise BackendException(message='Паролі не можуть бути порожніми')
+            raise BackendException(message='Passwords cannot be empty.')
         if password != v:
-            raise BackendException(message='Введені паролі не співпадають')
+            raise BackendException(message='The entered passwords do not match.')
         return v
 
 
@@ -93,9 +93,9 @@ class CreateUserIn(BaseModel):
                            '[A-Za-z0-9' + specials + ']+(?<!['+ specials + '])@[A-Za-z0-9.-]+\.[A-Za-z]{2,4}$')
         message = False
         if not v:
-            message = "Електронний адрес не може бути порожнім"
+            message = "The email address cannot be empty."
         elif not re.fullmatch(regex, v):
-            message = f"Невірний формат адреси електронної пошти: {v}."
+            message = f"Invalid email address format: {v}."
         if message:
             raise BackendException(message=message)
         return v
@@ -105,9 +105,9 @@ class CreateUserIn(BaseModel):
         password = values.get('password')
 
         if not password or not v:
-            raise BackendException(message='Паролі не можуть бути порожніми')
+            raise BackendException(message='Passwords cannot be empty.')
         if password != v:
-            raise BackendException(message='Введені паролі не співпадають')
+            raise BackendException(message='The entered passwords do not match.')
         return v
 
 
