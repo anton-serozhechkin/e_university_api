@@ -5,6 +5,7 @@ from sqlalchemy.orm import relationship
 
 from db import Base
 
+
 class Student(Base):
     __tablename__ = 'student'
 
@@ -12,8 +13,8 @@ class Student(Base):
     full_name = Column(VARCHAR(length=255), nullable=False)
     telephone_number = Column(INTEGER, nullable=False, unique=True)
     gender = Column(VARCHAR(length=1), nullable=False)
-    course_id = Column(INTEGER, ForeignKey("course.course_id"))
-    speciality_id = Column(INTEGER, ForeignKey("speciality.speciality_id"))
+    course_id = Column(INTEGER, ForeignKey("course.course_id"), nullable=False)
+    speciality_id = Column(INTEGER, ForeignKey("speciality.speciality_id"), nullable=False)
     user_id = Column(INTEGER, ForeignKey("user.user_id"))
     faculty_id = Column(INTEGER, ForeignKey("faculty.faculty_id"), nullable=False)
 

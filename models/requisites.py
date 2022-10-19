@@ -20,5 +20,5 @@ class Requisites(Base):
     service = relationship("Service", back_populates="requisites")
 
     def __repr__(self):
-        return f'{self.__class__.__name__}(iban="{self.iban}",organisation_code="{self.organisation_code}",' \
+        return f'{self.__class__.__name__}(requisites_id="{self.requisites_id}",iban="{self.iban}",organisation_code="{self.organisation_code}",' \
                f'payment_recognition="{self.payment_recognation}",university_id="{self.university_id}",service_id="{self.service_id}")'
