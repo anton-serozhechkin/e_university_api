@@ -7,11 +7,16 @@ from typing import List
 
 from fastapi import APIRouter, Depends
 
+from schemas.jsend import JSENDOutSchema
+
 
 router = APIRouter()
 
 
-@router.get("/courses/", response_model=List[CourseListOut], tags=["Admin dashboard"])
-async def read_courses_list(auth = Depends(get_current_user)):
+@router.get("/courses/", response_model=JSENDOutSchema[List[CourseListOut]], tags=["Admin dashboard"])
+async def read_courses_list(auth=Depends(get_current_user)):
     query = course.select()
-    return await database.fetch_all(query)
+    return JSENDOutSchema[List[CourseListOut]](
+        data=await database.fetch_all(query),
+        message="Get all courses"
+    )

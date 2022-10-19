@@ -7,9 +7,15 @@ from typing import List
 
 from fastapi import Depends, APIRouter
 
+from schemas.jsend import JSENDOutSchema
+
 router = APIRouter()
 
-@router.get("/bed-places/", response_model=List[BedPlacesOut], tags=["Admin dashboard"])
-async def available_bed_places(user = Depends(get_current_user)):
+
+@router.get("/bed-places/", response_model=JSENDOutSchema[List[BedPlacesOut]], tags=["Admin dashboard"])
+async def available_bed_places(user=Depends(get_current_user)):
     query = bed_places.select()
-    return await database.fetch_all(query)
+    return JSENDOutSchema[List[BedPlacesOut]](
+        data=await database.fetch_all(query),
+        message="Get available bed places"
+    )

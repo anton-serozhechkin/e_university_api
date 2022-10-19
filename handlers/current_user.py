@@ -6,16 +6,18 @@ from schemas.user import TokenPayload, UserOut
 
 from datetime import datetime
 
-from fastapi import Depends, HTTPException, status
+from fastapi import Depends, status
 from fastapi.security import OAuth2PasswordBearer
 from jose import jwt
 from pydantic import ValidationError
+
+from components.exceptions import BackendException
 
 
 reuseable_oauth = OAuth2PasswordBearer(
     tokenUrl="/login",
     scheme_name="JWT"
-)
+)       # TODO syntax error
 
 
 async def get_current_user(token: str = Depends(reuseable_oauth)) -> UserOut:
@@ -26,25 +28,24 @@ async def get_current_user(token: str = Depends(reuseable_oauth)) -> UserOut:
         token_data = TokenPayload(**payload)
         
         if datetime.fromtimestamp(token_data.exp) < datetime.now():
-            raise HTTPException(
-                status_code = status.HTTP_401_UNAUTHORIZED,
-                detail="Термін дії токена закінчився",
-                headers={"WWW-Authenticate": "Bearer"},
-            )
+            raise BackendException(
+                message="Token data has expired",
+                code=status.HTTP_401_UNAUTHORIZED
+            )       # TODO didn't include headers, did it need?
+
     except(jwt.JWTError, ValidationError):
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="Не вдалося перевірити облікові дані",
-            headers={"WWW-Authenticate": "Bearer"},
-        )
+        raise BackendException(
+            message="Credential verification failed",
+            code=status.HTTP_403_FORBIDDEN
+        )       # TODO didn't include headers, did it need?
         
     query = user_table.select().where(user_table.c.email == token_data.sub)
     user = await database.fetch_one(query)
 
     if user is None:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Користувача не знайдено",
+        raise BackendException(
+            message="User not found",
+            code=status.HTTP_404_NOT_FOUND
         )
 
     query = user_list_view.select(user_list_view.c.user_id == user.user_id)

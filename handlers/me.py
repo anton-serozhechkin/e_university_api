@@ -3,10 +3,15 @@ from schemas.user import UserOut, UserIn
 
 from fastapi import Depends, APIRouter
 
+from schemas.jsend import JSENDOutSchema
+
 
 router = APIRouter()
 
 
-@router.get('/me', summary='Отримати інформацію про поточного користувача, який увійшов у систему', response_model=UserOut, tags=["Authorization"])
+@router.get('/me', summary='Отримати інформацію про поточного користувача, який увійшов у систему', response_model=JSENDOutSchema[UserOut], tags=["Authorization"])
 async def get_me(user: UserIn = Depends(get_current_user)):
-    return user
+    return JSENDOutSchema[UserOut](
+        data=user,
+        message="Get user information"
+    )
