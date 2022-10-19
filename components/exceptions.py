@@ -10,7 +10,7 @@ class BackendException(Exception):
         status: JSENDStatus = JSENDStatus.FAIL,
         data: typing.Union[None, int, str, list, dict] = None,
         message: str,
-        code: int = http_status.HTTP_400_BAD_REQUEST
+        code: int = http_status.HTTP_422_UNPROCESSABLE_ENTITY
     ):
         self.status = status
         self.data = data
