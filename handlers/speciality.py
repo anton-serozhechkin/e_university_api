@@ -18,5 +18,5 @@ async def read_speciality_list(university_id: int, auth=Depends(get_current_user
     query = speciality_list_view.select().where(speciality_list_view.c.university_id == university_id)                                  
     return JSENDOutSchema[List[SpecialityListOut]](
         data=await database.fetch_all(query),
-        message=f"Get speciality of the university with id {university_id}"
+        message=f"Get speciality list of the university with id {university_id}"
     )

@@ -59,7 +59,7 @@ async def read_user_request_list(university_id: int, user=Depends(get_current_us
                                                   user_request_list_view.c.university_id == university_id)
     return JSENDOutSchema[List[UserRequestsListOut]](
         data=await database.fetch_all(query),
-        message="Get user request"
+        message="Get user requests list"
     )
 
 
@@ -95,7 +95,7 @@ async def create_user_request(university_id: int, user_request: CreateUserReques
             "status_id": STATUS_MAPPING.get("Розглядається"),
             "user_request_id": last_record_id
         },
-        message="Created user request"
+        message=f"Created user request with id {last_record_id}"
     )
 
 
@@ -124,7 +124,7 @@ async def cancel_request(university_id: int, user_request_id: int, cancel_reques
             "user_request_id": user_request_id,
             "status_id": cancel_request.status_id
         },
-        message="Canceled request"
+        message=f"Canceled request with id {user_request_id}"
     )
 
 

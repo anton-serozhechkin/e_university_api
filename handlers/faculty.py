@@ -19,7 +19,7 @@ async def read_faculties(university_id: int, user=Depends(get_current_user)):
     query = faculty_list_view.select().where(faculty_list_view.c.university_id == university_id)
     return JSENDOutSchema[List[FacultyOut]](
         data=await database.fetch_all(query),
-        message=f"Get faculties of the university with id {university_id}"
+        message=f"Get faculty list of the university with id {university_id}"
     )
 
 
