@@ -6,7 +6,7 @@ from schemas.user import TokenPayload, UserOut
 
 from datetime import datetime
 
-from fastapi import Depends, status
+from fastapi import Depends, status, HTTPException
 from fastapi.security import OAuth2PasswordBearer
 from jose import jwt
 from pydantic import ValidationError
@@ -28,16 +28,18 @@ async def get_current_user(token: str = Depends(reuseable_oauth)) -> UserOut:
         token_data = TokenPayload(**payload)
         
         if datetime.fromtimestamp(token_data.exp) < datetime.now():
-            raise BackendException(
-                message="Token data has expired",
-                code=status.HTTP_401_UNAUTHORIZED
-            )       # TODO didn't include headers, did it need?
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Token data has expired",
+                headers={"WWW-Authenticate": "Bearer"}
+            )
 
     except(jwt.JWTError, ValidationError):
-        raise BackendException(
-            message="Credential verification failed",
-            code=status.HTTP_403_FORBIDDEN
-        )       # TODO didn't include headers, did it need?
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Credential verification failed",
+            headers={"WWW-Authenticate": "Bearer"}
+        )
         
     query = user_table.select().where(user_table.c.email == token_data.sub)
     user = await database.fetch_one(query)

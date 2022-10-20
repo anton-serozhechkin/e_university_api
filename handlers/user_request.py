@@ -46,10 +46,10 @@ async def check_user_request_existence(university_id: int, service_id: int, user
             "status": None,
             "user_request_exist": False
         }
-    return JSENDOutSchema[UserRequestExistenceOut](
-        data=response,
-        message="Get user request existence"
-    )
+    return {
+        "data": response,
+        "message": "Get user request existence"
+    }
 
 
 @router.get("/{university_id}/user-request/", response_model=JSENDOutSchema[List[UserRequestsListOut]],
@@ -57,10 +57,10 @@ async def check_user_request_existence(university_id: int, service_id: int, user
 async def read_user_request_list(university_id: int, user=Depends(get_current_user)):
     query = user_request_list_view.select().where(user_request_list_view.c.user_id == user.user_id,
                                                   user_request_list_view.c.university_id == university_id)
-    return JSENDOutSchema[List[UserRequestsListOut]](
-        data=await database.fetch_all(query),
-        message="Get user request"
-    )
+    return {
+        "data": await database.fetch_all(query),
+        "message": "Get user requests list"
+    }
 
 
 @router.post("/{university_id}/user-request/", response_model=JSENDOutSchema[CreateUserRequestOut],
@@ -90,13 +90,13 @@ async def create_user_request(university_id: int, user_request: CreateUserReques
 
     await create_user_document(**prepared_data)
 
-    return JSENDOutSchema[CreateUserRequestOut](
-        data={
+    return {
+        "data": {
             "status_id": STATUS_MAPPING.get("Розглядається"),
             "user_request_id": last_record_id
         },
-        message="Created user request"
-    )
+        "message": f"Created user request with id {last_record_id}"
+    }
 
 
 @router.get("/{university_id}/user-request-booking-hostel/", response_model=JSENDOutSchema[UserRequestBookingHostelOut],
@@ -104,10 +104,10 @@ async def create_user_request(university_id: int, user_request: CreateUserReques
 async def read_user_request_booking_hostel(university_id: int, user=Depends(get_current_user)):
     query = user_request_booking_hostel_view.select().where(user_request_booking_hostel_view.c.user_id == user.user_id,
                                                             user_request_booking_hostel_view.c.university_id == university_id)
-    return JSENDOutSchema[UserRequestBookingHostelOut](
-        data=await database.fetch_one(query),
-        message="Get user request booking hostel"
-    )
+    return {
+        "data": await database.fetch_one(query),
+        "message": "Get user request booking hostel"
+    }
 
 
 @router.put("/{university_id}/user-request/{user_request_id}", response_model=JSENDOutSchema[CancelRequestOut],
@@ -119,13 +119,13 @@ async def cancel_request(university_id: int, user_request_id: int, cancel_reques
         status_id=cancel_request.status_id)
     await database.execute(query)
 
-    return JSENDOutSchema[CancelRequestOut](
-        data={
+    return {
+        "data": {
             "user_request_id": user_request_id,
             "status_id": cancel_request.status_id
         },
-        message="Canceled request"
-    )
+        "message": f"Canceled request with id {user_request_id}"
+    }
 
 
 @router.post("/{university_id}/user-request-review/{user_request_id}/",
@@ -153,13 +153,13 @@ async def create_user_request_review(university_id: int, user_request_id: int, u
         user_request_table.c.user_request_id == user_request_id)
     await database.execute(query)
 
-    return JSENDOutSchema[UserRequestReviewOut](
-        data={
+    return {
+        "data": {
             "status_id": user_request_review.status_id,
             "user_request_review_id": last_record_id
         },
-        message="Created user request review"
-    )
+        "message": "Created user request review"
+    }
 
 
 @router.get("/{university_id}/hostel-accommodation/{user_request_id}",
@@ -173,10 +173,10 @@ async def read_hostel_accommodation(university_id: int, user_request_id: int, us
 
     response.hostel_name = json.loads(response.hostel_name)
     response.hostel_address = json.loads(response.hostel_address)
-    return JSENDOutSchema[HostelAccomodationViewOut](
-        data=response,
-        message="Get hostel accommodation"
-    )
+    return {
+        "data": response,
+        "message": "Get hostel accommodation"
+    }
 
 
 @router.get("/{university_id}/user-request/{user_request_id}", response_model=JSENDOutSchema[UserRequestDetailsViewOut],
@@ -189,7 +189,7 @@ async def read_request_details(university_id: int, user_request_id: int, user=De
 
     response.documents = json.loads(response.documents)
     response.hostel_name = json.loads(response.hostel_name)
-    return JSENDOutSchema[UserRequestDetailsViewOut](
-        data=response,
-        message="Get request details"
-    )
+    return {
+        "data": response,
+        "message": "Get request details"
+    }
