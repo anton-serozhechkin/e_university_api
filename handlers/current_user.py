@@ -1,4 +1,6 @@
-from models.user import user as user_table
+from sqlalchemy import select
+
+from models.user import User
 from models.user_list_view import user_list_view
 from settings import Settings
 from db import database
@@ -26,7 +28,7 @@ async def get_current_user(token: str = Depends(reuseable_oauth)) -> UserOut:
             token, Settings.JWT_SECRET_KEY, algorithms=[Settings.JWT_ALGORITHM]
         )
         token_data = TokenPayload(**payload)
-        
+
         if datetime.fromtimestamp(token_data.exp) < datetime.now():
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
@@ -40,8 +42,8 @@ async def get_current_user(token: str = Depends(reuseable_oauth)) -> UserOut:
             detail="Credential verification failed",
             headers={"WWW-Authenticate": "Bearer"}
         )
-        
-    query = user_table.select().where(user_table.c.email == token_data.sub)
+
+    query = select(User).where(User.email == token_data.sub)
     user = await database.fetch_one(query)
 
     if user is None:

@@ -1,7 +1,9 @@
-from models.user import user as user_table
-from models.student import student as student_table
-from models.one_time_token import one_time_token
-from models.user_faculty import user_faculty
+from sqlalchemy import update, select, insert
+
+from models.user import User
+from models.student import Student
+from models.one_time_token import OneTimeToken
+from models.user_faculty import UserFaculty
 from db import database
 from components.utils import get_hashed_password
 from schemas.user import RegistrationIn, RegistrationOut
@@ -27,7 +29,7 @@ async def registation(user: RegistrationIn):  # TODO syntax error
         password=user.password,
         password_re_check=user.password_re_check)
 
-    query = one_time_token.select().where(one_time_token.c.token == user.token)
+    query = select(OneTimeToken).where(OneTimeToken.c.token == user.token)
     token_data = await database.fetch_all(query)
 
     if not token_data:
@@ -49,8 +51,7 @@ async def registation(user: RegistrationIn):  # TODO syntax error
             code=http_status.HTTP_403_FORBIDDEN
         )
 
-    query = student_table.select().where(
-        student_table.c.student_id == student_id)  # TODO Local variable 'student_id' might be referenced before assignment
+    query = select(Student).where(Student.student_id == student_id)
     student = await database.fetch_all(query)
 
     if not student:
@@ -70,22 +71,21 @@ async def registation(user: RegistrationIn):  # TODO syntax error
             code=http_status.HTTP_409_CONFLICT
         )
 
-    transliterated_full_name = translit(
-        full_name)  # TODO Local variable 'full_name' might be referenced before assignment
+    transliterated_full_name = translit(full_name)  # TODO Local variable 'full_name' might be referenced before assignment
     login = f"{(transliterated_full_name[:4])}-{randint(100, 999)}".lower()
 
     # Encoding password
     encoded_user_password = get_hashed_password(user.password)
 
-    query = user_table.insert().values(login=login, email=user.email, password=encoded_user_password, role_id=1,
-                                       is_active=True)
+    query = insert(User).values(login=login, email=user.email, password=encoded_user_password, role_id=1,
+                                is_active=True)
     last_record_id = await database.execute(query)
 
-    query = student_table.update().values(user_id=last_record_id).where(student_table.c.student_id == student_id)
+    query = update(Student).values(user_id=last_record_id).where(Student.student_id == student_id)
     await database.execute(query)
 
-    query = user_faculty.insert().values(user_id=last_record_id, faculty_id=faculty_id).returning(
-        user_faculty.c.faculty_id)  # TODO Local variable 'faculty_id' might be referenced before assignment
+    query = insert(UserFaculty).values(user_id=last_record_id, faculty_id=faculty_id).returning(
+        UserFaculty.faculty_id)     # TODO Local variable 'faculty_id' might be referenced before assignment
     user_faculty_data = await database.execute(query)
 
     return {
