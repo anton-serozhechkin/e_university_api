@@ -8,10 +8,9 @@ from handlers.authorization import auth
 from handlers import me, user, user_request, bed_places, role, hostel, course, speciality, student
 from components.exceptions import BackendException
 
-from fastapi import FastAPI, status
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from components.exception_handlers import backend_exception_handler
-from components.exception_handlers import http_exception_handler
+from components.exception_handlers import backend_exception_handler, http_exception_handler
 from starlette.exceptions import HTTPException as StarletteHTTPException
 
 

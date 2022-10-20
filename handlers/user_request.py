@@ -58,7 +58,7 @@ async def check_user_request_existence(university_id: int, service_id: int, user
             tags=["Student dashboard"])
 async def read_user_request_list(university_id: int, user=Depends(get_current_user)):
     query = select(user_request_list_view).where(user_request_list_view.c.user_id == user.user_id,
-                                                  user_request_list_view.c.university_id == university_id)
+                                                 user_request_list_view.c.university_id == university_id)
     return {
         "data": await database.fetch_all(query),
         "message": "Get user requests list"
