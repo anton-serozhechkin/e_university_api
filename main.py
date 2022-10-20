@@ -10,7 +10,7 @@ from components.exceptions import BackendException
 
 from fastapi import FastAPI, status
 from fastapi.middleware.cors import CORSMiddleware
-from components.ecxeption_handlers import backend_exception_handler
+from components.exception_handlers import backend_exception_handler
 
 
 app = FastAPI(openapi_tags=metadata)

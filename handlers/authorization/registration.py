@@ -10,8 +10,7 @@ from random import randint
 from datetime import datetime
 
 from translitua import translit
-from fastapi import APIRouter
-from fastapi import status as http_status
+from fastapi import APIRouter, status as http_status
 
 from schemas.jsend import JSENDOutSchema
 from components.exceptions import BackendException
@@ -96,5 +95,5 @@ async def registation(user: RegistrationIn):  # TODO syntax error
 
     return JSENDOutSchema[RegistrationOut](
         data=response,
-        message=f"User with id {last_record_id} is registered"
+        message="Was registered successfully"
     )

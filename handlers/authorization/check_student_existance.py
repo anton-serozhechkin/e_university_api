@@ -8,8 +8,7 @@ from datetime import datetime, timedelta
 import hashlib
 import os
 
-from fastapi import APIRouter
-from fastapi import status as http_status
+from fastapi import APIRouter, status as http_status
 
 from schemas.jsend import JSENDOutSchema
 from components.exceptions import BackendException
@@ -26,7 +25,7 @@ async def check_student(student: StudentCheckExistanceIn):
 
     if not result:
         raise BackendException(
-            message="There is no students data. Please, try again.",
+            message="Student data was not found. Please, try again.",
             code=http_status.HTTP_404_NOT_FOUND
         )
 
