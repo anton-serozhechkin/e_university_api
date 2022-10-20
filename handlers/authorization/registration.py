@@ -95,5 +95,5 @@ async def registation(user: RegistrationIn):  # TODO syntax error
 
     return JSENDOutSchema[RegistrationOut](
         data=response,
-        message="Was registered successfully"
+        message=f"User with id {last_record_id} was registered successfully"
     )
