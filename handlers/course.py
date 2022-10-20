@@ -1,4 +1,6 @@
-from models.course import course
+from sqlalchemy import select
+
+from models.course import Course
 from schemas.course import CourseListOut
 from handlers.current_user import get_current_user
 
@@ -15,7 +17,7 @@ router = APIRouter()
 
 @router.get("/courses/", response_model=JSENDOutSchema[List[CourseListOut]], tags=["Admin dashboard"])
 async def read_courses_list(auth=Depends(get_current_user)):
-    query = course.select()
+    query = select(Course)
     return {
         "data": await database.fetch_all(query),
         "message": "Get all courses"
