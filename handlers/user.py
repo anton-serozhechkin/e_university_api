@@ -21,10 +21,10 @@ router = APIRouter()
 async def users_list(university_id: int, user=Depends(get_current_user)):
     query = user_list_view.select().where(user_list_view.c.university_id == university_id)
     response = await database.fetch_all(query)
-    return JSENDOutSchema[List[UsersListViewOut]](
-        data=response,
-        message=f"Get user list of the university with id {university_id}"
-    )
+    return {
+        "data": response,
+        "message": f"Get user list of the university with id {university_id}"
+    }
 
 
 @router.post("/{university_id}/users/", response_model=JSENDOutSchema[CreateUserOut], tags=["SuperAdmin dashboard"])
@@ -52,12 +52,12 @@ async def create_user(university_id: int, user: CreateUserIn, auth=Depends(get_c
                                              faculty_id=faculty_id)
         await database.execute(query)
 
-    return JSENDOutSchema[CreateUserOut](
-        data={
+    return {
+        "data": {
             "user_id": last_record_id
         },
-        message=f"Created user with id {last_record_id}"
-    )
+        "message": f"Created user with id {last_record_id}"
+    }
 
 
 @router.delete("/{university_id}/users/", response_model=JSENDOutSchema, tags=["SuperAdmin dashboard"])
@@ -66,9 +66,9 @@ async def delete_user(university_id: int, delete_user: DeleteUserIn, auth=Depend
 
     await database.execute(query)
 
-    return JSENDOutSchema(
-        data={
+    return {
+        "data": {
             "user_id": delete_user.user_id
         },
-        message=f"Deleted user with id {delete_user.user_id}"
-    )
+        "message": f"Deleted user with id {delete_user.user_id}"
+    }

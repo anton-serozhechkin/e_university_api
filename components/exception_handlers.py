@@ -17,7 +17,7 @@ def backend_exception_handler(request: Request, exc: BackendException) -> JSONRe
 
 
 def http_exception_handler(request: Request, exc: StarletteHTTPException) -> JSONResponse:
-    """Get the original 'detail' and 'status_code'."""
+    """Get the original 'detail', 'status_code' and 'headers'."""
     return JSONResponse(
         status_code=exc.status_code,
         content={

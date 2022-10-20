@@ -29,12 +29,12 @@ async def create_student(university_id: int, student: CreateStudentIn, auth=Depe
 
     student_id = await database.execute(query)
 
-    return JSENDOutSchema[CreateStudentOut](
-        data={
+    return {
+        "data": {
             "student_id": student_id
         },
-        message=f"Create student {student.full_name}"
-    )
+        "message": f"Create student {student.full_name}"
+    }
 
 
 @router.get("/{university_id}/students/", response_model=JSENDOutSchema[List[StudentsListOut]],
@@ -45,10 +45,10 @@ async def read_students_list(university_id: int, faculty_id: Union[int, None] = 
     else:
         query = students_list_view.select().where(students_list_view.c.university_id == university_id)
 
-    return JSENDOutSchema[List[StudentsListOut]](
-        data=await database.fetch_all(query),
-        message=f"Get students list of the university with id {university_id}"
-    )
+    return {
+        "data": await database.fetch_all(query),
+        "message": f"Get students list of the university with id {university_id}"
+    }
 
 
 @router.delete("/{university_id}/students/", response_model=JSENDOutSchema, tags=["SuperAdmin dashboard"])
@@ -57,9 +57,9 @@ async def delete_student(university_id: int, delete_student: DeleteStudentIn, au
 
     await database.execute(query)
 
-    return JSENDOutSchema(
-        data={
+    return {
+        "data": {
             "student_id": delete_student.student_id
         },
-        message=f"Deleted student with id {delete_student.student_id}"
-    )
+        "message": f"Deleted student with id {delete_student.student_id}"
+    }

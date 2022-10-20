@@ -17,10 +17,10 @@ router = APIRouter()
             tags=["SuperAdmin dashboard"])
 async def read_faculties(university_id: int, user=Depends(get_current_user)):
     query = faculty_list_view.select().where(faculty_list_view.c.university_id == university_id)
-    return JSENDOutSchema[List[FacultyOut]](
-        data=await database.fetch_all(query),
-        message=f"Get faculty list of the university with id {university_id}"
-    )
+    return {
+        "data": await database.fetch_all(query),
+        "message": f"Get faculty list of the university with id {university_id}"
+    }
 
 
 @router.post("/{university_id}/faculties/", response_model=JSENDOutSchema[FacultyOut], tags=["SuperAdmin dashboard"])
@@ -30,10 +30,10 @@ async def create_faculty(university_id: int, faculty: FacultyIn, user=Depends(ge
                                           university_id=faculty.university_id)
 
     last_record_id = await database.execute(query)
-    return JSENDOutSchema[FacultyOut](
-        data={
+    return {
+        "data": {
             **faculty.dict(),
             "faculty_id": last_record_id
         },
-        message=f"Successfully created faculty with id {last_record_id}"
-    )
+        "message": f"Successfully created faculty with id {last_record_id}"
+    }
