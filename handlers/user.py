@@ -22,9 +22,8 @@ router = APIRouter()
             tags=["SuperAdmin dashboard"])
 async def users_list(university_id: int, user=Depends(get_current_user)):
     query = select(user_list_view).where(user_list_view.c.university_id == university_id)
-    response = await database.fetch_all(query)
     return {
-        "data": response,
+        "data": await database.fetch_all(query),
         "message": f"Got user list of the university with id {university_id}"
     }
 
