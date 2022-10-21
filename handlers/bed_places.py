@@ -19,5 +19,5 @@ async def available_bed_places(user=Depends(get_current_user)):
     query = select(BedPlaces)
     return {
         "data": await database.fetch_all(query),
-        "message": "Get available bed places"
+        "message": "Got available bed places list"
     }

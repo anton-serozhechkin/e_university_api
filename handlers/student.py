@@ -35,7 +35,7 @@ async def create_student(university_id: int, student: CreateStudentIn, auth=Depe
         "data": {
             "student_id": student_id
         },
-        "message": f"Create student {student.full_name}"
+        "message": f"Created student {student.full_name}"
     }
 
 
@@ -49,7 +49,7 @@ async def read_students_list(university_id: int, faculty_id: Union[int, None] = 
 
     return {
         "data": await database.fetch_all(query),
-        "message": f"Get students list of the university with id {university_id}"
+        "message": f"Got students list of the university with id {university_id}"
     }
 
 

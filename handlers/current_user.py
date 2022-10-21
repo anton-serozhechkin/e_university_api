@@ -19,7 +19,7 @@ from components.exceptions import BackendException
 reuseable_oauth = OAuth2PasswordBearer(
     tokenUrl="/login",
     scheme_name="JWT"
-)       # TODO syntax error
+)       # TODO spelling mistake 'reusable'
 
 
 async def get_current_user(token: str = Depends(reuseable_oauth)) -> UserOut:

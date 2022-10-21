@@ -14,5 +14,5 @@ router = APIRouter()
 async def get_me(user: UserIn = Depends(get_current_user)):
     return {
         "data": user,
-        "message": "Get user information"
+        "message": "Got user information"
     }

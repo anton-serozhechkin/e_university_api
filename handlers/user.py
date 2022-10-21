@@ -25,7 +25,7 @@ async def users_list(university_id: int, user=Depends(get_current_user)):
     response = await database.fetch_all(query)
     return {
         "data": response,
-        "message": f"Get user list of the university with id {university_id}"
+        "message": f"Got user list of the university with id {university_id}"
     }
 
 

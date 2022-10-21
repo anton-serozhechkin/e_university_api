@@ -4,6 +4,15 @@ from components.enums import JSENDStatus
 
 
 class BackendException(Exception):
+    """
+    Used for custom output organization for fails and errors in a view like:
+    {
+    status: some_status
+    data: some_data
+    message: error or fail message
+    code: http_status_code
+    }
+    """
     def __init__(
         self,
         *,
