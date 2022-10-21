@@ -1,170 +1,192 @@
-from sqlalchemy import (MetaData, Column, Table, Integer, VARCHAR, FLOAT, ForeignKey, DateTime, JSON, TIMESTAMP)
-from db import database
-from settings.globals import (TEMPLATES_PATH, SETTLEMENT_HOSTEL_PATH, DATETIME_FORMAT)
+from apps.core.db import Base
 
-from datetime import datetime
-import os
-
-from docxtpl import DocxTemplate
+from sqlalchemy import (MetaData, Column, Table, INTEGER, VARCHAR, FLOAT, ForeignKey, DATETIME, JSON, TIMESTAMP)
+from sqlalchemy.orm import relationship
 
 
 metadata_obj = MetaData()
 
-
-service = Table('service', metadata_obj,
-          Column('service_id', Integer, primary_key=True),
-          Column('service_name', VARCHAR(255)))
-
-
-user_request = Table('user_request', metadata_obj,
-          Column('user_request_id', Integer, primary_key=True),
-          Column('user_id', Integer, ForeignKey("user.user_id")),
-          Column('service_id', Integer, ForeignKey("service.service_id")),
-          Column('date_created', DateTime),
-          Column('comment', VARCHAR(255)),
-          Column('faculty_id', Integer, ForeignKey("faculty.faculty_id")),
-          Column('university_id', Integer, ForeignKey("university.university_id")),
-          Column('status_id', Integer, ForeignKey("status.status_id")))
-
-
 STATUS_MAPPING = {"Схвалено": 1, "Відхилено": 2, "Розглядається": 3, "Скасовано": 4}
 
-user_request_status = Table('user_request_status', metadata_obj,
-          Column('status_id', Integer, primary_key=True),
-          Column('status_name', VARCHAR(50)))
+
+class Service(Base):
+    __tablename__ = 'service'
+
+    service_id = Column(INTEGER, primary_key=True, nullable=False)
+    service_name = Column(VARCHAR(length=255), nullable=False)
+
+    requisites = relationship("Requisites", back_populates="service")
+    user_request = relationship("UserRequest", back_populates="service")
+
+    def __repr__(self):
+        return f'{self.__class__.__name__}(service_id="{self.service_id}",service_name="{self.service_name}")'
 
 
-requisites = Table('requisites', metadata_obj,
-          Column('iban', VARCHAR(100)),
-          Column('university_id', Integer, ForeignKey("university.university_id")),
-          Column('organisation_code', VARCHAR(50)),
-          Column('service_id', Integer, ForeignKey("service.service_id")),
-          Column('payment_recognation', VARCHAR(255)))
+class UserRequest(Base):
+    __tablename__ = "user_request"
+
+    user_request_id = Column(INTEGER, primary_key=True, nullable=False)
+    date_created = Column(DATETIME, nullable=False)
+    comment = Column(VARCHAR(length=255))
+    user_id = Column(INTEGER, ForeignKey("user.user_id"), nullable=False)
+    service_id = Column(INTEGER, ForeignKey("service.service_id"), nullable=False)
+    faculty_id = Column(INTEGER, ForeignKey("faculty.faculty_id"), nullable=False)
+    university_id = Column(INTEGER, ForeignKey("university.university_id"), nullable=False)
+    status_id = Column(INTEGER, ForeignKey("status.status_id"), nullable=False)
+
+    users = relationship("User", back_populates="user_request")
+    service = relationship("Service", back_populates="user_request")
+    faculties = relationship("Faculty", back_populates="user_request")
+    university = relationship("University", back_populates="user_request")
+    status = relationship("Status", back_populates="user_request")
+    user_documents = relationship("UserDocument", back_populates="user_request")
+    user_request_reviews = relationship("UserRequestReview", back_populates='user_request')
+
+    def __repr__(self):
+        return f'{self.__class__.__name__}(user_request_id="{self.user_request_id}",' \
+               f'date_created="{self.date_created}", comment="{self.comment}",user_id="{self.user_id}", service_id="{self.service_id}",' \
+               f'faculty_id="{self.faculty_id}", university_id="{self.university_id}", status_id="{self.status_id}")'
 
 
-async def generate_document_name(service_id: int) -> str:
-    query = service.select().where(service.c.service_id == service_id)
-    query_result = await database.fetch_one(query)
-    return f"Заява на {query_result.service_name.lower()}"
+class Status(Base):
+    __tablename__ = "status"
+
+    status_id = Column(INTEGER, primary_key=True, nullable=False)
+    status_name = Column(VARCHAR(length=50), nullable=False)
+
+    user_request = relationship("UserRequest", back_populates="status")
+
+    def __repr__(self):
+        return f'{self.__class__.__name__}(status_id="{self.status_id}",status_name="{self.status_name}")'
 
 
-async def create_user_document_content(*args, **kwargs) -> str:
-    if kwargs.get("service_id") == 1:
-        path_to_template = os.path.join(TEMPLATES_PATH, "hostel_booking_template.docx")
-        doc = DocxTemplate(path_to_template)
-        context = kwargs.get("context")
-        doc.render(context)
-        document_name = f"hostel_settlement_{kwargs.get('date_created')}_{kwargs.get('user_request_id')}.docx"
-        path_to_storage = os.path.join(SETTLEMENT_HOSTEL_PATH, document_name)
-        doc.save(path_to_storage)
-    return path_to_storage
+class Requisites(Base):
+    __tablename__ = 'requisites'
+
+    requisites_id = Column(INTEGER, primary_key=True, nullable=False)
+    iban = Column(VARCHAR(length=100))
+    organisation_code = Column(VARCHAR(length=50))
+    payment_recognition = Column(VARCHAR(length=255))
+    university_id = Column(INTEGER, ForeignKey("university.university_id"), nullable=False)
+    service_id = Column(INTEGER, ForeignKey("service.service_id"), nullable=False)
+
+    university = relationship("University", back_populates="requisites")
+    service = relationship("Service", back_populates="requisites")
+
+    def __repr__(self):
+        return f'{self.__class__.__name__}(requisites_id="{self.requisites_id}",iban="{self.iban}",organisation_code="{self.organisation_code}",' \
+               f'payment_recognition="{self.payment_recognation}",university_id="{self.university_id}",service_id="{self.service_id}")'
 
 
-async def create_user_document(*args, **kwargs):
-    service_id = kwargs.get("service_id")
-    name = await generate_document_name(service_id)
-    date_created = datetime.strptime(datetime.now().strftime(DATETIME_FORMAT), DATETIME_FORMAT)
-    kwargs["date_created"] = date_created
-    content = await create_user_document_content(**kwargs)
-    query = user_document.insert().values(date_created=date_created, 
-                                          name=name,
-                                          content=content, 
-                                          user_request_id=kwargs.get("user_request_id"))
-    return await database.execute(query)
+class UserRequestReview(Base):
+    __tablename__ = "user_request_review"
+    user_request_review_id = Column(INTEGER, primary_key=True, nullable=False)
+    date_created = Column(DATETIME, nullable=False)
+    room_number = Column(INTEGER)
+    start_date_accommodation = Column(DATETIME)
+    end_date_accommodation = Column(DATETIME)
+    total_sum = Column(FLOAT)
+    payment_deadline = Column(DATETIME)
+    remark = Column(VARCHAR(length=255))
+    date_review = Column(DATETIME, nullable=False)
+    bed_place_id = Column(INTEGER, ForeignKey("bed_places.bed_place_id"))
+    reviewer = Column(INTEGER, ForeignKey("user.user_id"), nullable=False)
+    hostel_id = Column(INTEGER, ForeignKey("hostel.hostel_id"))
+    university_id = Column(INTEGER, ForeignKey("university.university_id"), nullable=False)
+    user_request_id = Column(INTEGER, ForeignKey("user_request.user_request_id"), nullable=False)
+
+    bed_places = relationship("BedPlaces", back_populates='user_request_reviews')
+    reviewer_user = relationship("User", back_populates='user_request_reviews')
+    hostels = relationship("Hostel", back_populates='user_request_reviews')
+    university = relationship("University", back_populates='user_request_reviews')
+    user_request = relationship("UserRequest", back_populates='user_request_reviews')
+
+    def __repr__(self):
+        return f'{self.__class__.__name__}(user_request_review_id="{self.user_request_review_id}",date_created="{self.date_created}",' \
+               f'room_number="{self.room_number}", start_date_accommodation="{self.start_date_accommodation}",end_date_accommodation="{self.end_date_accommodation}", total_sum="{self.total_sum}", payment_deadline="{self.payment_deadline}",' \
+               f'remark="{self.remark}", date_review="{self.date_review}", bed_place_id="{self.bed_place_id}",reviewer="{self.reviewer}",hostel_id="{self.hostel_id}",university_id="{self.university_id}",user_request_id="{self.user_request_id}")'
 
 
-user_request_review = Table('user_request_review', metadata_obj,
-          Column('user_request_review_id', Integer, primary_key=True),
-          Column('university_id', Integer, ForeignKey("university.university_id")),
-          Column('user_request_id', Integer, ForeignKey("user_request.user_request_id")),
-          Column('date_created', DateTime),
-          Column('reviewer', Integer, ForeignKey("user.user_id")),
-          Column('hostel_id', Integer, ForeignKey("hostel.hostel_id")),
-          Column('room_number', Integer),
-          Column('start_date_accommodation', DateTime),
-          Column('end_date_accommodation', DateTime),
-          Column('total_sum', FLOAT),
-          Column('payment_deadline', DateTime),
-          Column('remark', VARCHAR(255)),
-          Column('date_review', DateTime),
-          Column('bed_place_id', Integer, ForeignKey("bed_places.bed_place_id")))
+class UserDocument(Base):
+    __tablename__ = "user_document"
 
+    user_document_id = Column(INTEGER, primary_key=True, nullable=False)
+    date_created = Column(DATETIME, nullable=False)
+    name = Column(VARCHAR(length=255), nullable=False)
+    content = Column(VARCHAR(length=255), nullable=False)
+    user_request_id = Column(INTEGER, ForeignKey("user_request.user_request_id"), nullable=False)
 
-user_document = Table('user_document', metadata_obj,
-          Column('user_document_id', Integer, primary_key=True),
-          Column('date_created', DateTime),
-          Column('name', VARCHAR(255)),
-          Column('content', VARCHAR(255)),
-          Column('user_request_id', Integer, ForeignKey("user_request.user_request_id")))
+    user_request = relationship("UserRequest", back_populates="user_documents")
+
+    def __repr__(self):
+        return f'{self.__class__.__name__}(user_document_id="{self.user_document_id}", date_created="{self.date_created}", ' \
+               f'name="{self.name}", content="{self.content}", user_request_id="{self.user_request_id}")'
 
 
 user_request_booking_hostel_view = Table('user_request_booking_hostel_view', metadata_obj,
-          Column('full_name', VARCHAR(255)),
-          Column('user_id', Integer),
-          Column('faculty_name', VARCHAR(255)),
-          Column('university_id', Integer),
-          Column('short_university_name', VARCHAR(50)),
-          Column('rector_full_name', VARCHAR(255)),
-          Column('speciality_code', Integer),
-          Column('speciality_name', VARCHAR(255)),
-          Column('course', Integer),
-          Column('educ_level', VARCHAR(1)),
-          Column('date_today', DateTime),
-          Column('start_year', Integer),
-          Column('finish_year', Integer),
-          Column('gender', VARCHAR(1)))
-
+                                         Column('full_name', VARCHAR(255)),
+                                         Column('user_id', INTEGER),
+                                         Column('faculty_name', VARCHAR(255)),
+                                         Column('university_id', INTEGER),
+                                         Column('short_university_name', VARCHAR(50)),
+                                         Column('rector_full_name', VARCHAR(255)),
+                                         Column('speciality_code', INTEGER),
+                                         Column('speciality_name', VARCHAR(255)),
+                                         Column('course', INTEGER),
+                                         Column('educ_level', VARCHAR(1)),
+                                         Column('date_today', DATETIME),
+                                         Column('start_year', INTEGER),
+                                         Column('finish_year', INTEGER),
+                                         Column('gender', VARCHAR(1)))
 
 user_request_details_view = Table('user_request_details_view', metadata_obj,
-        Column('user_request_id', Integer),
-        Column('university_id', Integer),
-        Column('date_created', DateTime),
-        Column('service_name', VARCHAR(255)),
-        Column('status_name', VARCHAR(50)),
-        Column('status_id', Integer),
-        Column('comment', VARCHAR(255)),
-        Column('hostel_name', JSON),
-        Column('room_number', Integer),
-        Column('bed_place_name', VARCHAR(50)),
-        Column('date_review', DateTime),
-        Column('remark', VARCHAR(255)),
-        Column('documents', JSON))
-
+                                  Column('user_request_id', INTEGER),
+                                  Column('university_id', INTEGER),
+                                  Column('date_created', DATETIME),
+                                  Column('service_name', VARCHAR(255)),
+                                  Column('status_name', VARCHAR(50)),
+                                  Column('status_id', INTEGER),
+                                  Column('comment', VARCHAR(255)),
+                                  Column('hostel_name', JSON),
+                                  Column('room_number', INTEGER),
+                                  Column('bed_place_name', VARCHAR(50)),
+                                  Column('date_review', DATETIME),
+                                  Column('remark', VARCHAR(255)),
+                                  Column('documents', JSON))
 
 user_request_exist_view = Table('user_request_exist_view', metadata_obj,
-          Column('user_request_id', Integer),
-          Column('user_id', Integer),
-          Column('faculty_id', Integer),
-          Column('university_id', Integer),
-          Column('service_id', Integer),
-          Column('status', JSON))
-
+                                Column('user_request_id', INTEGER),
+                                Column('user_id', INTEGER),
+                                Column('faculty_id', INTEGER),
+                                Column('university_id', INTEGER),
+                                Column('service_id', INTEGER),
+                                Column('status', JSON))
 
 user_request_list_view = Table('user_request_list_view', metadata_obj,
-          Column('university_id', Integer),
-          Column('user_id', Integer),
-          Column('user_request_id', Integer),
-          Column('service_name', VARCHAR(255)),
-          Column('status', JSON),
-          Column('date_created', DateTime))
-
+                               Column('university_id', INTEGER),
+                               Column('user_id', INTEGER),
+                               Column('user_request_id', INTEGER),
+                               Column('service_name', VARCHAR(255)),
+                               Column('status', JSON),
+                               Column('date_created', DATETIME))
 
 hostel_accommodation_view = Table('hostel_accommodation_view', metadata_obj,
-          Column('university_id', Integer),
-          Column('user_request_review_id', Integer),
-          Column('user_request_id', Integer),
-          Column('hostel_name', JSON),
-          Column('hostel_address', JSON),
-          Column('room_number', Integer),
-          Column('bed_place_name', VARCHAR(50)),
-          Column('month_price', FLOAT),
-          Column('start_date_accommodation', TIMESTAMP),
-          Column('end_date_accommodation', TIMESTAMP),
-          Column('total_sum', FLOAT),         
-          Column('iban', VARCHAR(100)),
-          Column('university_name', VARCHAR(255)),
-          Column('organisation_code', VARCHAR(50)),
-          Column('payment_recognation', VARCHAR(255)),
-          Column('commandant_full_name', VARCHAR(255)),
-          Column('telephone_number', VARCHAR(50)),
-          Column('documents', JSON))
+                                  Column('university_id', INTEGER),
+                                  Column('user_request_review_id', INTEGER),
+                                  Column('user_request_id', INTEGER),
+                                  Column('hostel_name', JSON),
+                                  Column('hostel_address', JSON),
+                                  Column('room_number', INTEGER),
+                                  Column('bed_place_name', VARCHAR(50)),
+                                  Column('month_price', FLOAT),
+                                  Column('start_date_accommodation', TIMESTAMP),
+                                  Column('end_date_accommodation', TIMESTAMP),
+                                  Column('total_sum', FLOAT),
+                                  Column('iban', VARCHAR(100)),
+                                  Column('university_name', VARCHAR(255)),
+                                  Column('organisation_code', VARCHAR(50)),
+                                  Column('payment_recognation', VARCHAR(255)),
+                                  Column('commandant_full_name', VARCHAR(255)),
+                                  Column('telephone_number', VARCHAR(50)),
+                                  Column('documents', JSON))
+
