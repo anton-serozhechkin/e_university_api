@@ -1,4 +1,5 @@
 from db import database
+from settings import Settings
 from tags_metadata import metadata
 from hostel.handlers import hostel_router
 from educational_institutions.handlers import educational_institutions_router
@@ -17,10 +18,10 @@ origins = ["*"]
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_origins=Settings.CORS_ALLOW_ORIGINS,
+    allow_credentials=Settings.CORS_ALLOW_CREDENTIALS,
+    allow_methods=Settings.CORS_ALLOW_METHODS,
+    allow_headers=Settings.CORS_ALLOW_HEADERS,
 )
 
 # Endpoints registration
