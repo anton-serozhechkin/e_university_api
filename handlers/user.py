@@ -11,15 +11,21 @@ from db import database
 from random import randint
 from typing import List
 
-from fastapi import Depends, APIRouter
+from fastapi import APIRouter, Depends, status as http_status
 
-from schemas.jsend import JSENDOutSchema
+from schemas.jsend import JSENDOutSchema, JSENDErrorOutSchema
 
-router = APIRouter()
+router = APIRouter(
+    tags=["SuperAdmin dashboard"],
+    responses={422: {"model": JSENDErrorOutSchema, "description": "ValidationError"}}
+)
 
 
-@router.get("/{university_id}/users/", response_model=JSENDOutSchema[List[UsersListViewOut]],
-            tags=["SuperAdmin dashboard"])
+@router.get("/{university_id}/users/",
+            name="get_users_list",
+            response_model=JSENDOutSchema[List[UsersListViewOut]],
+            summary="Get university users list",
+            responses={200: {"description": "Get all users list of the university"}})
 async def users_list(university_id: int, user=Depends(get_current_user)):
     query = select(user_list_view).where(user_list_view.c.university_id == university_id)
     return {
@@ -28,7 +34,11 @@ async def users_list(university_id: int, user=Depends(get_current_user)):
     }
 
 
-@router.post("/{university_id}/users/", response_model=JSENDOutSchema[CreateUserOut], tags=["SuperAdmin dashboard"])
+@router.post("/{university_id}/users/",
+             name="post_user",
+             response_model=JSENDOutSchema[CreateUserOut],
+             summary="Create university user",
+             responses={200: {"description": "Create university user"}})
 async def create_user(university_id: int, user: CreateUserIn, auth=Depends(get_current_user)):
     CreateUserIn(
         email=user.email,
@@ -57,11 +67,16 @@ async def create_user(university_id: int, user: CreateUserIn, auth=Depends(get_c
         "data": {
             "user_id": last_record_id
         },
-        "message": f"Created user with id {last_record_id}"
+        "message": f"Created user with id {last_record_id}",
+        "code": http_status.HTTP_201_CREATED
     }
 
 
-@router.delete("/{university_id}/users/", response_model=JSENDOutSchema, tags=["SuperAdmin dashboard"])
+@router.delete("/{university_id}/users/",
+               name="delete_user",
+               response_model=JSENDOutSchema,
+               summary="Delete university user",
+               responses={200: {"description": "Delete university user"}})
 async def delete_user(university_id: int, delete_user: DeleteUserIn, auth=Depends(get_current_user)):
     query = delete(User).where(User.user_id == delete_user.user_id)
 
@@ -71,5 +86,6 @@ async def delete_user(university_id: int, delete_user: DeleteUserIn, auth=Depend
         "data": {
             "user_id": delete_user.user_id
         },
-        "message": f"Deleted user with id {delete_user.user_id}"
+        "message": f"Deleted user with id {delete_user.user_id}",
+        "code": http_status.HTTP_202_ACCEPTED
     }
