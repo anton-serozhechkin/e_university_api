@@ -37,7 +37,7 @@ async def generate_document_name(service_id: int) -> str:
 
 async def create_user_document_content(**kwargs) -> str:
     if kwargs.get("service_id") == 1:
-        path_to_template = TEMPLATES_PATH / HOSTEL_BOOKING_TEMPLATE_URL     #   TODO NameError
+        path_to_template = TEMPLATES_PATH / HOSTEL_BOOKING_TEMPLATE_URL
         doc = DocxTemplate(path_to_template)
         context = kwargs.get("context")
         doc.render(context)
