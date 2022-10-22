@@ -13,7 +13,7 @@ from schemas.jsend import JSENDErrorOutSchema, JSENDFailOutSchema
 router = APIRouter(
     tags=["Authorization"],
     responses={422: {"model": JSENDErrorOutSchema, "description": "ValidationError"},
-               401: {"model": JSENDFailOutSchema, "description": "Not authorized"}}
+               401: {"model": JSENDFailOutSchema, "description": "Not authorized response"}}
 )
 
 
