@@ -6,13 +6,16 @@ from fastapi import Depends, APIRouter
 from schemas.jsend import JSENDOutSchema
 
 
-router = APIRouter()
+router = APIRouter(tags=["Authorization"])
 
 
-@router.get('/me', summary='Отримати інформацію про поточного користувача, який увійшов у систему',
-            response_model=JSENDOutSchema[UserOut], tags=["Authorization"])
+@router.get('/me',
+            name="get_me",
+            response_model=JSENDOutSchema[UserOut],
+            summary='Get current user info',
+            responses={200: {"description": "Get current user information"}})
 async def get_me(user: UserIn = Depends(get_current_user)):
     return {
         "data": user,
-        "message": "Got user information"
+        "message": "Got current user information"
     }

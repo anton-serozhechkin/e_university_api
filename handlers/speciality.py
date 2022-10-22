@@ -9,14 +9,20 @@ from typing import List
 
 from fastapi import APIRouter, Depends
 
-from schemas.jsend import JSENDOutSchema
+from schemas.jsend import JSENDOutSchema, JSENDErrorOutSchema
 
 
-router = APIRouter()
+router = APIRouter(
+    tags=["Admin dashboard"],
+    responses={422: {"model": JSENDErrorOutSchema, "description": "ValidationError"}}
+)
 
 
-@router.get("/{university_id}/speciality/", response_model=JSENDOutSchema[List[SpecialityListOut]],
-            tags=["Admin dashboard"])
+@router.get("/{university_id}/speciality/",
+            name="get_speciality_list",
+            response_model=JSENDOutSchema[List[SpecialityListOut]],
+            summary="Get speciality list",
+            responses={200: {"description": "Get all speciality list of university"}})
 async def read_speciality_list(university_id: int, auth=Depends(get_current_user)):
     query = select(speciality_list_view).where(speciality_list_view.c.university_id == university_id)
     return {

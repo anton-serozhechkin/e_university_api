@@ -11,10 +11,14 @@ from fastapi import Depends, APIRouter
 
 from schemas.jsend import JSENDOutSchema
 
-router = APIRouter()
+router = APIRouter(tags=["SuperAdmin dashboard"])
 
 
-@router.get("/roles/", response_model=JSENDOutSchema[List[AvailableRolesOut]], tags=["SuperAdmin dashboard"])
+@router.get("/roles/",
+            name="get_available_roles",
+            response_model=JSENDOutSchema[List[AvailableRolesOut]],
+            summary="Get available roles",
+            responses={200: {"description": "Get list of available roles"}})
 async def available_roles(user=Depends(get_current_user)):
     query = select(Role)
     return {
