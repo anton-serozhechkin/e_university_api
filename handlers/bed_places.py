@@ -11,13 +11,24 @@ from fastapi import Depends, APIRouter
 
 from schemas.jsend import JSENDOutSchema
 
-router = APIRouter()
+router = APIRouter(tags=["Admin dashboard"])
 
 
-@router.get("/bed-places/", response_model=JSENDOutSchema[List[BedPlacesOut]], tags=["Admin dashboard"])
+@router.get("/bed-places/",
+            name="get_bed_places",
+            response_model=JSENDOutSchema[List[BedPlacesOut]],
+            summary="Get bed places list",
+            responses={200: {"description": "Get list of available bed places"}})
 async def available_bed_places(user=Depends(get_current_user)):
+    """
+    **Get available bed places list.**
+
+    **Auth**: only authenticated user can get courses list
+
+    **Return**: list of available bed places.
+    """
     query = select(BedPlaces)
     return {
         "data": await database.fetch_all(query),
-        "message": "Get available bed places"
+        "message": "Got available bed places list"
     }

@@ -15,3 +15,13 @@ class JSENDOutSchema(GenericModel, Generic[SchemaVar]):
     data: SchemaVar
     message: str
     code: int = Field(default=http_status.HTTP_200_OK)
+
+
+class JSENDFailOutSchema(JSENDOutSchema):
+    status: JSENDStatus = Field(default=JSENDStatus.FAIL)
+    data: Union[str, NoneType]
+
+
+class JSENDErrorOutSchema(JSENDOutSchema):
+    status: JSENDStatus = Field(default=JSENDStatus.ERROR)
+    data: Union[str, NoneType]
