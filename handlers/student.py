@@ -21,8 +21,8 @@ router = APIRouter(
              name="post_student",
              response_model=JSENDOutSchema[CreateStudentOut],
              summary="Create university student",
-             responses={200: {"description": "Create student of the university"}},
-             tags=["Admin dashboard"])   #TODO after input id of the non-existent university it creates student
+             responses={200: {"description": "Successful create student of the university response"}},
+             tags=["Admin dashboard"])   # TODO after input id of the non-existent university it creates student
 async def create_student(university_id: int, student: CreateStudentIn, auth=Depends(get_current_user)):
     CreateStudentIn(
         full_name=student.full_name,
@@ -49,9 +49,9 @@ async def create_student(university_id: int, student: CreateStudentIn, auth=Depe
             name="get_students_list",
             response_model=JSENDOutSchema[List[StudentsListOut]],
             summary="Get university students list",
-            responses={200: {"description": "Get all university students list"}},
+            responses={200: {"description": "Successful get all university students list response"}},
             tags=["Admin dashboard"])
-async def read_students_list(university_id: int, faculty_id: Union[int, None] = None, user=Depends(get_current_user)):  #TODO after input id of the non-existent university it returns the students
+async def read_students_list(university_id: int, faculty_id: Union[int, None] = None, user=Depends(get_current_user)):  # TODO after input id of the non-existent university it returns the students
     if faculty_id:
         query = select(students_list_view).where(students_list_view.c.faculty_id == faculty_id)
     else:
@@ -67,7 +67,7 @@ async def read_students_list(university_id: int, faculty_id: Union[int, None] = 
                name="delete_student",
                response_model=JSENDOutSchema,
                summary="Delete university student",
-               responses={200: {"description": "Delete university student"}},
+               responses={200: {"description": "Successful delete university student response"}},
                tags=["SuperAdmin dashboard"])
 async def delete_student(university_id: int, delete_student: DeleteStudentIn, auth=Depends(get_current_user)):
     query = delete(Student).where(Student.student_id == delete_student.student_id)

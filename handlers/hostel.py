@@ -22,7 +22,7 @@ router = APIRouter(
             name="get_university_hostels",
             response_model=JSENDOutSchema[List[HostelListOut]],
             summary="Get university hostels",
-            responses={200: {"description": "Get all university hostels"}})
+            responses={200: {"description": "Successful get all university hostels response"}})
 async def read_hostels(university_id: int, user=Depends(get_current_user)):
     query = select(hostel_list_view).where(hostel_list_view.c.university_id == university_id)
     return {

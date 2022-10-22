@@ -25,7 +25,7 @@ router = APIRouter(
             name="get_users_list",
             response_model=JSENDOutSchema[List[UsersListViewOut]],
             summary="Get university users list",
-            responses={200: {"description": "Get all users list of the university"}})
+            responses={200: {"description": "Successful get all users list of the university response"}})
 async def users_list(university_id: int, user=Depends(get_current_user)):
     query = select(user_list_view).where(user_list_view.c.university_id == university_id)
     return {
@@ -38,7 +38,7 @@ async def users_list(university_id: int, user=Depends(get_current_user)):
              name="post_user",
              response_model=JSENDOutSchema[CreateUserOut],
              summary="Create university user",
-             responses={200: {"description": "Create university user"}})
+             responses={200: {"description": "Successful create university user response"}})
 async def create_user(university_id: int, user: CreateUserIn, auth=Depends(get_current_user)):
     CreateUserIn(
         email=user.email,
@@ -76,7 +76,7 @@ async def create_user(university_id: int, user: CreateUserIn, auth=Depends(get_c
                name="delete_user",
                response_model=JSENDOutSchema,
                summary="Delete university user",
-               responses={200: {"description": "Delete university user"}})
+               responses={200: {"description": "Successful delete university user response"}})
 async def delete_user(university_id: int, delete_user: DeleteUserIn, auth=Depends(get_current_user)):
     query = delete(User).where(User.user_id == delete_user.user_id)
 

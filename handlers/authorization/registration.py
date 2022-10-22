@@ -19,9 +19,9 @@ from components.exceptions import BackendException
 
 router = APIRouter(
     responses={422: {"model": JSENDErrorOutSchema, "description": "ValidationError"},
-               403: {"model": JSENDFailOutSchema, "description": "Registration time has expired"},
-               404: {"model": JSENDFailOutSchema, "description": "Invalid input data"},
-               409: {"model": JSENDFailOutSchema, "description": "Input data are already exist"}}
+               403: {"model": JSENDFailOutSchema, "description": "Registration time expired fail response"},
+               404: {"model": JSENDFailOutSchema, "description": "Invalid input data response"},
+               409: {"model": JSENDFailOutSchema, "description": "Input data already exist response"}}
 )
 
 
@@ -29,7 +29,7 @@ router = APIRouter(
              name="registration",
              response_model=JSENDOutSchema[RegistrationOut],
              summary="User registration",
-             responses={200: {"description": "User registration"}},
+             responses={200: {"description": "Successful user registration response"}},
              tags=["Authorization"])
 async def registation(user: RegistrationIn):  # TODO spelling mistake 'registRation'
 

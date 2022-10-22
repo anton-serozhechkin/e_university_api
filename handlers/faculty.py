@@ -23,7 +23,7 @@ router = APIRouter(
             response_model=JSENDOutSchema[List[FacultyOut]],
             summary="Get faculty list",
             responses={
-                200: {"description": "Get faculty list of university"},
+                200: {"description": "Successful get faculty list of university response"},
             })  # TODO after input id of non-existent university it returns success
 async def read_faculties(university_id: int, user=Depends(get_current_user)):
     """
@@ -45,8 +45,11 @@ async def read_faculties(university_id: int, user=Depends(get_current_user)):
     }
 
 
-@router.post("/{university_id}/faculties/", name="create_faculty", response_model=JSENDOutSchema[FacultyOut],
-             summary="Create faculty", responses={200: {"description": "Create faculty in university"}})
+@router.post("/{university_id}/faculties/",
+             name="create_faculty",
+             response_model=JSENDOutSchema[FacultyOut],
+             summary="Create faculty",
+             responses={200: {"description": "Successful create faculty in university response"}})
 async def create_faculty(university_id: int, faculty: FacultyIn, user=Depends(get_current_user)):
     """
     **Create faculty in university**

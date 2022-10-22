@@ -18,7 +18,7 @@ router = APIRouter(tags=["Admin dashboard"])
             name="get_bed_places",
             response_model=JSENDOutSchema[List[BedPlacesOut]],
             summary="Get bed places list",
-            responses={200: {"description": "Get list of available bed places"}})
+            responses={200: {"description": "Successful get list of available bed places response"}})
 async def available_bed_places(user=Depends(get_current_user)):
     """
     **Get available bed places list.**

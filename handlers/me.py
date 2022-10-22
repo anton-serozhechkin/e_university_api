@@ -13,7 +13,7 @@ router = APIRouter(tags=["Authorization"])
             name="get_me",
             response_model=JSENDOutSchema[UserOut],
             summary='Get current user info',
-            responses={200: {"description": "Get current user information"}})
+            responses={200: {"description": "Successful get current user information response"}})
 async def get_me(user: UserIn = Depends(get_current_user)):
     return {
         "data": user,

@@ -19,7 +19,7 @@ router = APIRouter(tags=["Admin dashboard"])
             name="get_courses_list",
             response_model=JSENDOutSchema[List[CourseListOut]],
             summary="Get courses list",
-            responses={200: {"description": "Get all courses list"}})
+            responses={200: {"description": "Successful get all courses list response"}})
 async def read_courses_list(auth=Depends(get_current_user)):
     """
     **Get all courses list.**

@@ -22,7 +22,7 @@ router = APIRouter(
             name="get_speciality_list",
             response_model=JSENDOutSchema[List[SpecialityListOut]],
             summary="Get speciality list",
-            responses={200: {"description": "Get all speciality list of university"}})
+            responses={200: {"description": "Successful get all speciality list of university response"}})
 async def read_speciality_list(university_id: int, auth=Depends(get_current_user)):
     query = select(speciality_list_view).where(speciality_list_view.c.university_id == university_id)
     return {

@@ -17,7 +17,7 @@ from components.exceptions import BackendException
 
 router = APIRouter(
     responses={422: {"model": JSENDErrorOutSchema, "description": "ValidationError"},
-               404: {"model": JSENDFailOutSchema, "description": "Invalid input data"}}
+               404: {"model": JSENDFailOutSchema, "description": "Invalid input data response"}}
 )
 
 
@@ -25,7 +25,7 @@ router = APIRouter(
              name="post_student_existence",
              response_model=JSENDOutSchema[StudentCheckExistanceOut],
              summary="Check user existence",
-             responses={200: {"description": "Check user existence"}},
+             responses={200: {"description": "Successful check user existence response"}},
              tags=["Authorization"])  # TODO spelling mistake, there is need to check path in other modules
 async def check_student(student: StudentCheckExistanceIn):
 

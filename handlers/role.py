@@ -18,7 +18,7 @@ router = APIRouter(tags=["SuperAdmin dashboard"])
             name="get_available_roles",
             response_model=JSENDOutSchema[List[AvailableRolesOut]],
             summary="Get available roles",
-            responses={200: {"description": "Get list of available roles"}})
+            responses={200: {"description": "Successful get list of available roles response"}})
 async def available_roles(user=Depends(get_current_user)):
     query = select(Role)
     return {
