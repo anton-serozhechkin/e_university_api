@@ -12,13 +12,20 @@ import os
 
 from fastapi import APIRouter, status as http_status
 
-from schemas.jsend import JSENDOutSchema
+from schemas.jsend import JSENDOutSchema, JSENDErrorOutSchema, JSENDFailOutSchema
 from components.exceptions import BackendException
 
-router = APIRouter()
+router = APIRouter(
+    responses={422: {"model": JSENDErrorOutSchema, "description": "ValidationError"},
+               404: {"model": JSENDFailOutSchema, "description": "Invalid input data"}}
+)
 
 
-@router.post("/check-student-existance", response_model=JSENDOutSchema[StudentCheckExistanceOut],
+@router.post("/check-student-existance",
+             name="post_student_existence",
+             response_model=JSENDOutSchema[StudentCheckExistanceOut],
+             summary="Check user existence",
+             responses={200: {"description": "Check user existence"}},
              tags=["Authorization"])  # TODO spelling mistake, there is need to check path in other modules
 async def check_student(student: StudentCheckExistanceIn):
 

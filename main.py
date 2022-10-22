@@ -10,7 +10,7 @@ from components.exceptions import BackendException
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from components.ecxeption_handlers import (
+from components.exception_handlers import (
     backend_exception_handler,
     http_exception_handler,
     validation_exception_handler)

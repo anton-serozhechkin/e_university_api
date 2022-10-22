@@ -14,13 +14,23 @@ from datetime import datetime
 from translitua import translit
 from fastapi import APIRouter, status as http_status
 
-from schemas.jsend import JSENDOutSchema
+from schemas.jsend import JSENDOutSchema, JSENDErrorOutSchema, JSENDFailOutSchema
 from components.exceptions import BackendException
 
-router = APIRouter()
+router = APIRouter(
+    responses={422: {"model": JSENDErrorOutSchema, "description": "ValidationError"},
+               403: {"model": JSENDFailOutSchema, "description": "Registration time has expired"},
+               404: {"model": JSENDFailOutSchema, "description": "Invalid input data"},
+               409: {"model": JSENDFailOutSchema, "description": "Input data are already exist"}}
+)
 
 
-@router.post("/registration", response_model=JSENDOutSchema[RegistrationOut], tags=["Authorization"])
+@router.post("/registration",
+             name="registration",
+             response_model=JSENDOutSchema[RegistrationOut],
+             summary="User registration",
+             responses={200: {"description": "User registration"}},
+             tags=["Authorization"])
 async def registation(user: RegistrationIn):  # TODO spelling mistake 'registRation'
 
     RegistrationIn(
@@ -47,7 +57,7 @@ async def registation(user: RegistrationIn):  # TODO spelling mistake 'registRat
     if datetime_utc_now > expires:  # TODO Local variable 'expires' might be referenced before assignment
         raise BackendException(
             message=("Registration time has expired."
-                     " Please go to the link to check the availability of students on the register."),
+                     "Please go to the link to check the availability of students on the register."),
             code=http_status.HTTP_403_FORBIDDEN
         )
 
@@ -94,5 +104,6 @@ async def registation(user: RegistrationIn):  # TODO spelling mistake 'registRat
             "faculty_id": user_faculty_data,
             "login": login
         },
-        "message": f"User with id {last_record_id} was registered successfully"
+        "message": f"User with id {last_record_id} was registered successfully",
+        "code": http_status.HTTP_201_CREATED
     }

@@ -4,28 +4,39 @@ from components.utils import (create_access_token, create_refresh_token, verify_
 from schemas.user import AuthOut
 
 from sqlalchemy import select
-from fastapi import Depends, APIRouter
+from fastapi import Depends, APIRouter, status as http_status
 from fastapi.security import OAuth2PasswordRequestForm
 
 from components.exceptions import BackendException
+from schemas.jsend import JSENDErrorOutSchema, JSENDFailOutSchema
 
-router = APIRouter()
+router = APIRouter(
+    tags=["Authorization"],
+    responses={422: {"model": JSENDErrorOutSchema, "description": "ValidationError"},
+               401: {"model": JSENDFailOutSchema, "description": "Not authorized"}}
+)
 
 
-@router.post('/login', summary="Створення доступу та оновлення токена користувача", response_model=AuthOut, tags=["Authorization"])
+@router.post('/login',
+             name="login",
+             response_model=AuthOut,
+             summary="Create access and refresh user token",
+             responses={200: {"description": "Login and refresh user token"}})
 async def login(form_data: OAuth2PasswordRequestForm = Depends()):
     query = select(User).where(User.login == form_data.username)
     user = await database.fetch_one(query)
     if not user:
         raise BackendException(
-            message="Login or password is invalid. Please, try again."
+            message="Login or password is invalid. Please, try again.",
+            code=http_status.HTTP_401_UNAUTHORIZED
         )
 
     hashed_pass = user.password
 
     if not verify_password(form_data.password, hashed_pass):
         raise BackendException(
-            message="Email or password is invalid. Please, try again."
+            message="Email or password is invalid. Please, try again.",
+            code=http_status.HTTP_401_UNAUTHORIZED
         )
     
     return {
