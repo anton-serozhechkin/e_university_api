@@ -1,15 +1,30 @@
 SET search_path to public;
 
+CREATE TABLE IF NOT EXISTS rector(
+    rector_id integer NOT NULL,
+    full_name varchar(255) NOT NULL,
+    CONSTRAINT rector_pk PRIMARY KEY (rector_id));
+
 CREATE TABLE IF NOT EXISTS university (
     university_id integer NOT NULL,
     university_name varchar(255) NOT NULL,
     short_university_name varchar(50) NOT NULL,
     logo varchar(255),
+    rector_id INTEGER NOT NULL,
     CONSTRAINT university_pk PRIMARY KEY (university_id));
 
 CREATE SEQUENCE IF NOT EXISTS university_id_seq AS bigint START WITH 1 INCREMENT BY 1;
 
 ALTER TABLE university ALTER COLUMN university_id SET DEFAULT nextval('university_id_seq');
+
+ALTER TABLE university ADD CONSTRAINT university_rector_fk
+FOREIGN KEY (rector_id) REFERENCES rector(rector_id)
+MATCH FULL ON DELETE CASCADE ON UPDATE CASCADE;
+
+CREATE TABLE IF NOT EXISTS dekan(
+    dekan_id integer NOT NULL,
+    full_name varchar(255) NOT NULL,
+    CONSTRAINT dekan_pk PRIMARY KEY (dekan_id));
 
 CREATE TABLE IF NOT EXISTS faculty(
     faculty_id integer NOT NULL,
@@ -17,6 +32,7 @@ CREATE TABLE IF NOT EXISTS faculty(
     shortname varchar(20),
     main_email varchar(50),
     university_id integer NOT NULL,
+    dekan_id INTEGER NOT NULL,
     CONSTRAINT faculty_pk PRIMARY KEY (faculty_id));
 
 CREATE SEQUENCE IF NOT EXISTS faculty_id_seq AS bigint START WITH 1 INCREMENT BY 1;
@@ -27,12 +43,35 @@ ALTER TABLE faculty ADD CONSTRAINT faculty_university_fk
 FOREIGN KEY (university_id) REFERENCES university (university_id)
 MATCH FULL ON DELETE CASCADE ON UPDATE CASCADE;
 
+ALTER TABLE faculty ADD CONSTRAINT faculty_dekan_fk
+FOREIGN KEY (dekan_id) REFERENCES dekan(dekan_id)
+MATCH FULL ON DELETE CASCADE ON UPDATE CASCADE;
+
+CREATE TABLE IF NOT EXISTS speciality(
+    speciality_id integer NOT NULL,
+    faculty_id integer NOT NULL,
+    code integer NOT NULL,
+    name VARCHAR(255) NOT NULL,
+    CONSTRAINT speciality_pk PRIMARY KEY(speciality_id));
+
+ALTER TABLE speciality ADD CONSTRAINT speciality_faculty_fk 
+FOREIGN KEY (faculty_id) REFERENCES faculty(faculty_id)
+MATCH FULL ON DELETE CASCADE ON UPDATE CASCADE;
+
+CREATE TABLE IF NOT EXISTS course(
+    course_id integer NOT NULL,
+    value integer NOT NULL,
+    CONSTRAINT course_pk PRIMARY KEY(course_id));
+
 CREATE TABLE IF NOT EXISTS student (
     student_id integer NOT NULL,
     full_name varchar(255) NOT NULL,
     telephone_number varchar(255) NOT NULL UNIQUE,
     faculty_id integer NOT NULL,
     user_id integer,
+    speciality_id INTEGER NOT NULL,
+    course_id INTEGER NOT NULL,
+    gender VARCHAR(1) NOT NULL,
     CONSTRAINT student_pk PRIMARY KEY(student_id));
 
 CREATE SEQUENCE IF NOT EXISTS student_id_seq AS bigint START WITH 1 INCREMENT BY 1;
@@ -41,6 +80,14 @@ ALTER TABLE student ALTER COLUMN student_id SET DEFAULT nextval('student_id_seq'
 
 ALTER TABLE student ADD CONSTRAINT student_faculty_fk
 FOREIGN KEY (faculty_id) REFERENCES faculty(faculty_id)
+MATCH FULL ON DELETE CASCADE ON UPDATE CASCADE;
+
+ALTER TABLE student ADD CONSTRAINT student_speciality_fk
+FOREIGN KEY (speciality_id) REFERENCES speciality(speciality_id)
+MATCH FULL ON DELETE CASCADE ON UPDATE CASCADE;
+
+ALTER TABLE student ADD CONSTRAINT student_course_fk
+FOREIGN KEY (course_id) REFERENCES course(course_id)
 MATCH FULL ON DELETE CASCADE ON UPDATE CASCADE;
 
 CREATE TABLE IF NOT EXISTS "user"(
@@ -117,16 +164,6 @@ ALTER TABLE one_time_token ADD CONSTRAINT one_time_token_student_fk
 FOREIGN KEY (student_id) REFERENCES student(student_id)
 MATCH FULL ON DELETE CASCADE ON UPDATE CASCADE;
 
-INSERT INTO university(university_name, short_university_name)
-VALUES ('Харківський національний економічний університет імені Семена Кузнеця',
-        'ХНЕУ ім. С. Кузнеця');
-
-INSERT INTO role(role_name) VALUES ('Студент');
-
-INSERT INTO role(role_name) VALUES ('Адміністратор');
-
-INSERT INTO role(role_name) VALUES ('Супер Адміністратор');
-
 DROP VIEW IF EXISTS user_list_view;
 CREATE VIEW user_list_view AS
     SELECT
@@ -164,17 +201,10 @@ CREATE TABLE IF NOT EXISTS service(
     service_name varchar(255) NOT NULL,
     CONSTRAINT service_pk PRIMARY KEY (service_id));
 
-INSERT INTO service(service_id, service_name) VALUES (1, 'Поселення в гуртожиток');
-
 CREATE TABLE IF NOT EXISTS status(
     status_id integer NOT NULL,
     status_name varchar(50) NOT NULL,
     CONSTRAINT status_pk PRIMARY KEY (status_id));
-
-INSERT INTO status(status_id, status_name) VALUES (1, 'Схвалено');
-INSERT INTO status(status_id, status_name) VALUES (2, 'Відхилено');
-INSERT INTO status(status_id, status_name) VALUES (3, 'Розглядається');
-INSERT INTO status(status_id, status_name) VALUES (4, 'Скасовано');
 
 CREATE TABLE IF NOT EXISTS user_request(
     user_request_id integer NOT NULL,
@@ -223,18 +253,6 @@ CREATE SEQUENCE IF NOT EXISTS user_document_id_seq AS bigint START WITH 1 INCREM
 
 ALTER TABLE user_document ALTER COLUMN user_document_id SET DEFAULT nextval('user_document_id_seq');
 
-INSERT INTO faculty(faculty_id, name, shortname, university_id) VALUES (1, 'Інформаційних технологій', 'ІТ', 1);
-
-INSERT INTO faculty(faculty_id, name, shortname, university_id) VALUES (2, 'Міжнародних відносин і журналістики', 'МВЖ', 1);
-
-INSERT INTO faculty(faculty_id, name, shortname, university_id) VALUES (3, 'Міжнародної економіки і підприємництва', 'МЕП', 1);
-
-INSERT INTO faculty(faculty_id, name, shortname, university_id) VALUES (4, 'Фінансів і обліку', 'ФіО', 1);
-
-INSERT INTO faculty(faculty_id, name, shortname, university_id) VALUES (5, 'Менеджмента і маркетингу', 'МіМ', 1);
-
-INSERT INTO faculty(faculty_id, name, shortname, university_id) VALUES (6, 'Економіки і права', 'ЕіП', 1);
-
 DROP VIEW IF EXISTS user_request_exist_view;
 CREATE VIEW user_request_exist_view AS
     SELECT
@@ -267,50 +285,6 @@ CREATE TABLE IF NOT EXISTS bed_places(
     bed_place_name varchar(50) NOT NULL,
     CONSTRAINT bed_place_pk PRIMARY KEY (bed_place_id));
 
-INSERT INTO bed_places(bed_place_id, bed_place_name) VALUES (1, '0.75');
-INSERT INTO bed_places(bed_place_id, bed_place_name) VALUES (2, '1');
-INSERT INTO bed_places(bed_place_id, bed_place_name) VALUES (3, '1.5');
-
-CREATE TABLE IF NOT EXISTS dekan(
-    dekan_id integer NOT NULL,
-    full_name varchar(255) NOT NULL,
-    CONSTRAINT dekan_pk PRIMARY KEY (dekan_id));
-
-INSERT INTO dekan(dekan_id, full_name) VALUES (1, 'Коц Григорій Павлович');
-INSERT INTO dekan(dekan_id, full_name) VALUES (2, 'Птащенко Олена Валеріївна');
-INSERT INTO dekan(dekan_id, full_name) VALUES (3, 'Шталь Тетяна Валеріївна');
-INSERT INTO dekan(dekan_id, full_name) VALUES (4, 'Проноза Павло Володимирович');
-INSERT INTO dekan(dekan_id, full_name) VALUES (5, 'Вовк Володимир Анатолійович');
-INSERT INTO dekan(dekan_id, full_name) VALUES (6, 'Бріль Михайло Сергійович');
-
-ALTER TABLE faculty ADD dekan_id integer;
-
-ALTER TABLE faculty ADD CONSTRAINT faculty_dekan_fk
-FOREIGN KEY (dekan_id) REFERENCES dekan(dekan_id)
-MATCH FULL ON DELETE CASCADE ON UPDATE CASCADE;
-
-UPDATE faculty SET dekan_id = 1 WHERE faculty_id = 1;
-UPDATE faculty SET dekan_id = 2 WHERE faculty_id = 2;
-UPDATE faculty SET dekan_id = 3 WHERE faculty_id = 3;
-UPDATE faculty SET dekan_id = 4 WHERE faculty_id = 4;
-UPDATE faculty SET dekan_id = 5 WHERE faculty_id = 5;
-UPDATE faculty SET dekan_id = 6 WHERE faculty_id = 6;
-
-CREATE TABLE IF NOT EXISTS rector(
-    rector_id integer NOT NULL,
-    full_name varchar(255) NOT NULL,
-    CONSTRAINT rector_pk PRIMARY KEY (rector_id));
-
-INSERT INTO rector(rector_id, full_name) VALUES (1, 'Пономаренко Володимир Степанович');
-
-ALTER TABLE university ADD rector_id integer;
-
-ALTER TABLE university ADD CONSTRAINT university_rector_fk
-FOREIGN KEY (rector_id) REFERENCES rector(rector_id)
-MATCH FULL ON DELETE CASCADE ON UPDATE CASCADE;
-
-UPDATE university SET rector_id = 1 WHERE university_id = 1;
-
 DROP VIEW IF EXISTS faculty_list_view;
 CREATE VIEW faculty_list_view AS
     SELECT
@@ -329,39 +303,6 @@ CREATE VIEW faculty_list_view AS
         f.university_id,
         f.faculty_id,
         f.dekan_id;
-
-CREATE TABLE IF NOT EXISTS speciality(
-    speciality_id integer NOT NULL,
-    university_id integer NOT NULL,
-    code integer NOT NULL,
-    name VARCHAR(255) NOT NULL,
-    CONSTRAINT speciality_pk PRIMARY KEY(speciality_id));
-
-ALTER TABLE student ADD COLUMN speciality_id INTEGER;
-
-ALTER TABLE student ADD CONSTRAINT student_speciality_fk
-FOREIGN KEY (speciality_id) REFERENCES speciality(speciality_id)
-MATCH FULL ON DELETE CASCADE ON UPDATE CASCADE;
-
-CREATE TABLE IF NOT EXISTS course(
-    course_id integer NOT NULL,
-    value integer NOT NULL,
-    CONSTRAINT course_pk PRIMARY KEY(course_id));
-
-INSERT INTO course(course_id, value) VALUES (1, 1);
-INSERT INTO course(course_id, value) VALUES (2, 2);
-INSERT INTO course(course_id, value) VALUES (3, 3);
-INSERT INTO course(course_id, value) VALUES (4, 4);
-INSERT INTO course(course_id, value) VALUES (5, 5);
-INSERT INTO course(course_id, value) VALUES (6, 6);
-
-ALTER TABLE student ADD COLUMN course_id INTEGER;
-
-ALTER TABLE student ADD CONSTRAINT student_course_fk
-FOREIGN KEY (course_id) REFERENCES course(course_id)
-MATCH FULL ON DELETE CASCADE ON UPDATE CASCADE;
-
-ALTER TABLE student ADD COLUMN gender VARCHAR(1);
 
 DROP VIEW IF EXISTS user_request_booking_hostel_view;
 CREATE VIEW user_request_booking_hostel_view AS
@@ -388,7 +329,6 @@ CREATE VIEW user_request_booking_hostel_view AS
         END AS finish_year,
         CASE WHEN LOWER(s.gender) = 'ч' THEN 'M'
             WHEN LOWER(s.gender) = 'ж' THEN 'F'
-            -- if student gender isn't defined, let's say that it's male by default
             ELSE 'M'
         END AS gender
     FROM
@@ -439,14 +379,6 @@ CREATE TABLE IF NOT EXISTS commandant(
     telephone_number varchar(50) NOT NULL UNIQUE,
     CONSTRAINT commandant_pk PRIMARY KEY(commandant_id));
 
-INSERT INTO commandant(commandant_id, full_name, telephone_number) VALUES (1, 'Ляшко Надія Михайлівна', '+380-(57)-710-78-51');
-INSERT INTO commandant(commandant_id, full_name, telephone_number) VALUES (2, 'Любченко Володимир Віталійович', '+380-(57)-779-26-54');
-INSERT INTO commandant(commandant_id, full_name, telephone_number) VALUES (3, 'Колосова Олена Іванівна', '+380-(57)-336-83-50');
-INSERT INTO commandant(commandant_id, full_name, telephone_number) VALUES (4, 'Марченко Тетяна Федорівна', '+380-(57)-336-77-57');
-INSERT INTO commandant(commandant_id, full_name, telephone_number) VALUES (5, 'Рилова Лариса Миколаївна', '+380-(57)-702-11-94');
-INSERT INTO commandant(commandant_id, full_name, telephone_number) VALUES (6, 'Голубєва Надія Олександрівна', '+380-(57)-340-10-82');
-INSERT INTO commandant(commandant_id, full_name, telephone_number) VALUES (7, 'Піпенко Світлана Миколаївна', '+380-(57)-391-02-83');
-
 CREATE TABLE IF NOT EXISTS hostel(
     hostel_id integer NOT NULL,
     university_id integer NOT NULL,
@@ -456,6 +388,9 @@ CREATE TABLE IF NOT EXISTS hostel(
     street VARCHAR(100) NOT NULL,
     build VARCHAR(10) NOT NULL,
     commandant_id integer NOT NULL,
+    month_price float NOT NULL,
+    instagram VARCHAR(255),
+    telegram VARCHAR(255),
     CONSTRAINT hostel_pk PRIMARY KEY(hostel_id));
 
 ALTER TABLE hostel ADD CONSTRAINT hostel_commandant_fk
@@ -465,14 +400,6 @@ MATCH FULL ON DELETE SET NULL ON UPDATE CASCADE;
 ALTER TABLE hostel ADD CONSTRAINT hostel_university_fk
 FOREIGN KEY (university_id) REFERENCES university(university_id)
 MATCH FULL ON DELETE CASCADE ON UPDATE CASCADE;
-
-INSERT INTO hostel(hostel_id, university_id, number, name,  city, street, build, commandant_id) VALUES (1, 1, 1, 'Геліос', 'Харків', 'просп. Ювілейний', '52', 1);
-INSERT INTO hostel(hostel_id, university_id, number, name,  city, street, build, commandant_id) VALUES (2, 1, 2, 'Полюс', 'Харків',  'вул. Луї Пастера', '177', 2);
-INSERT INTO hostel(hostel_id, university_id, number, name,  city, street, build, commandant_id) VALUES (3, 1, 3, 'ІТ', 'Харків', 'вул. Цілиноградська', '40', 3);
-INSERT INTO hostel(hostel_id, university_id, number, name,  city, street, build, commandant_id) VALUES (4, 1, 4, 'Міжнародний', 'Харків', 'вул. Цілиноградська', '30', 4);
-INSERT INTO hostel(hostel_id, university_id, number, name,  city, street, build, commandant_id) VALUES (5, 1, 5, 'П''ятірочка', 'Харків', 'пров. Інженерний', '4', 5);
-INSERT INTO hostel(hostel_id, university_id, number, name,  city, street, build, commandant_id) VALUES (6, 1, 6, 'Сінергія', 'Харків',  'вул. Клочківська', '216а', 6);
-INSERT INTO hostel(hostel_id, university_id, number, name,  city, street, build, commandant_id) VALUES (7, 1, 7, 'Академічний', 'Харків',  'вул. Ак. Філіппова', '42', 7);
 
 DROP VIEW IF EXISTS hostel_list_view;
 CREATE VIEW hostel_list_view AS
@@ -536,16 +463,6 @@ ALTER TABLE user_request_review ADD CONSTRAINT user_request_review_bed_place_fk
 FOREIGN KEY (bed_place_id) REFERENCES bed_places(bed_place_id)
 MATCH FULL ON DELETE SET NULL ON UPDATE CASCADE;
 
-ALTER TABLE hostel ADD COLUMN month_price float;
-
-UPDATE hostel SET month_price = 800.00 WHERE hostel_id = 1;
-UPDATE hostel SET month_price = 800.00 WHERE hostel_id = 2;
-UPDATE hostel SET month_price = 800.00 WHERE hostel_id = 3;
-UPDATE hostel SET month_price = 800.00 WHERE hostel_id = 4;
-UPDATE hostel SET month_price = 800.00 WHERE hostel_id = 5;
-UPDATE hostel SET month_price = 800.00 WHERE hostel_id = 6;
-UPDATE hostel SET month_price = 800.00 WHERE hostel_id = 7;
-
 CREATE TABLE IF NOT EXISTS requisites(
     requisites_id integer NOT NULL,
     iban VARCHAR(100),
@@ -563,20 +480,6 @@ ALTER TABLE requisites ADD CONSTRAINT requisites_service_fk
 FOREIGN KEY (service_id) REFERENCES service(service_id)
 MATCH FULL ON DELETE CASCADE ON UPDATE CASCADE;
 
-INSERT INTO requisites(requisites_id, iban, university_id, organisation_code, service_id, payment_recognation)
-VALUES (1, 'UA826482364382748327483', 1, 'ЄДРПОУ 753485385', 1, 'Призначення платежу: За проживання в гуртожитку. Назва Гуртожитку. ПІБ студента.');
-
-ALTER TABLE hostel ADD instagram varchar(255);
-ALTER TABLE hostel ADD telegram varchar(255);
-
-UPDATE hostel SET instagram = 'https://www.instagram.com/_polus2_khneu/?igshid=YmMyMTA2M2Y=' WHERE hostel_id = 2;
-UPDATE hostel SET instagram = 'https://www.instagram.com/hostelit3_hneu/?igshid=YmMyMTA2M2Y%3D' WHERE hostel_id = 3;
-UPDATE hostel SET instagram = 'https://www.instagram.com/4etverka_style/?igshid=YmMyMTA2M2Y%3D' WHERE hostel_id = 4;
-UPDATE hostel SET telegram = 'https://t.me/+UtvxydkWGlb3Vt9x' WHERE hostel_id = 4;
-UPDATE hostel SET instagram = 'https://www.instagram.com/fivetirochka_2.0/?igshid=YmMyMTA2M2Y%3D' WHERE hostel_id = 5;
-UPDATE hostel SET instagram = 'https://www.instagram.com/sinergia.house.6/?igshid=YmMyMTA2M2Y%3D' WHERE hostel_id = 6;
-UPDATE hostel SET telegram = 'https://t.me/+Sp1tojwYbLaCvGJG' WHERE hostel_id = 7;
-
 CREATE TABLE IF NOT EXISTS service_document(
     service_document_id integer NOT NULL,
     service_id INTEGER NOT NULL,
@@ -591,12 +494,6 @@ MATCH FULL ON DELETE CASCADE ON UPDATE CASCADE;
 ALTER TABLE service_document ADD CONSTRAINT service_document_university_fk
 FOREIGN KEY (university_id) REFERENCES university(university_id)
 MATCH FULL ON DELETE CASCADE ON UPDATE CASCADE;
-
-INSERT INTO service_document(service_document_id, service_id, university_id, documents)
-VALUES(1, 1, 1, '{"1": "Паспорт громадянина України (оригінал)",
-                "2": "6 фотокарток 3х4",
-                "3": "Результат флюрографії, з терміном видач до одного року (оригінал)",
-                "4": "Квитанція про сплату за проживання не менше ніж за 4 місяці (копія)"}'::JSON);
 
 DROP VIEW IF EXISTS hostel_accommodation_view;
 CREATE VIEW hostel_accommodation_view AS
@@ -642,10 +539,6 @@ CREATE VIEW hostel_accommodation_view AS
         sd.service_id = se.service_id AND
         sd.university_id = urr.university_id;
 
-ALTER TABLE speciality DROP COLUMN IF EXISTS university_id CASCADE;
-ALTER TABLE speciality ADD COLUMN IF NOT EXISTS faculty_id INTEGER NOT NULL;
-ALTER TABLE speciality ADD CONSTRAINT speciality_faculty_fk FOREIGN KEY (faculty_id) REFERENCES faculty(faculty_id);
-
 DROP VIEW IF EXISTS speciality_list_view;
 CREATE VIEW speciality_list_view AS
     SELECT
@@ -658,35 +551,6 @@ CREATE VIEW speciality_list_view AS
     LEFT JOIN faculty f ON
         f.faculty_id = s.faculty_id
     ORDER BY s.code, s.name;
-
-INSERT INTO speciality(speciality_id, faculty_id, code, name) VALUES (1, 1, 051, 'Економіка');
-INSERT INTO speciality(speciality_id, faculty_id, code, name) VALUES (2, 1, 121, 'Інженерія програмного забезпечення');
-INSERT INTO speciality(speciality_id, faculty_id, code, name) VALUES (3, 1, 122, 'Комп''ютерні науки');
-INSERT INTO speciality(speciality_id, faculty_id, code, name) VALUES (4, 1, 124, 'Системний аналіз');
-INSERT INTO speciality(speciality_id, faculty_id, code, name) VALUES (5, 1, 125, 'Кібербезпека');
-INSERT INTO speciality(speciality_id, faculty_id, code, name) VALUES (6, 1, 126, 'Інформаційні системи та технології');
-INSERT INTO speciality(speciality_id, faculty_id, code, name) VALUES (7, 1, 186, 'Видавництво та поліграфія');
-INSERT INTO speciality(speciality_id, faculty_id, code, name) VALUES (8, 6, 051, 'Економіка');
-INSERT INTO speciality(speciality_id, faculty_id, code, name) VALUES (9, 6, 053, 'Психологія');
-INSERT INTO speciality(speciality_id, faculty_id, code, name) VALUES (10, 6, 081, 'Право, освітня програма');
-INSERT INTO speciality(speciality_id, faculty_id, code, name) VALUES (11, 6, 232, 'Соціальне забезпечення');
-INSERT INTO speciality(speciality_id, faculty_id, code, name) VALUES (12, 6, 281, 'Публічне управління та адміністрування');
-INSERT INTO speciality(speciality_id, faculty_id, code, name) VALUES (13, 5, 073, 'Менеджмент');
-INSERT INTO speciality(speciality_id, faculty_id, code, name) VALUES (14, 5, 075, 'Маркетинг');
-INSERT INTO speciality(speciality_id, faculty_id, code, name) VALUES (15, 5, 022, 'Дизайн');
-INSERT INTO speciality(speciality_id, faculty_id, code, name) VALUES (16, 4, 072, 'Фінанси, банківська справа та страхування');
-INSERT INTO speciality(speciality_id, faculty_id, code, name) VALUES (17, 4, 071, 'Облік і оподаткування');
-INSERT INTO speciality(speciality_id, faculty_id, code, name) VALUES (18, 2, 011, 'Освітні, педагогічні науки');
-INSERT INTO speciality(speciality_id, faculty_id, code, name) VALUES (19, 2, 052, 'Політологія');
-INSERT INTO speciality(speciality_id, faculty_id, code, name) VALUES (20, 2, 061, 'Журналістика');
-INSERT INTO speciality(speciality_id, faculty_id, code, name) VALUES (21, 2, 073, 'Менеджмент');
-INSERT INTO speciality(speciality_id, faculty_id, code, name) VALUES (22, 2, 291, 'Міжнародні відносини, суспільні комунікації та регіональні студії');
-INSERT INTO speciality(speciality_id, faculty_id, code, name) VALUES (23, 2, 292, 'Міжнародні економічні відносини');
-INSERT INTO speciality(speciality_id, faculty_id, code, name) VALUES (24, 3, 051, 'Економіка');
-INSERT INTO speciality(speciality_id, faculty_id, code, name) VALUES (25, 3, 073, 'Менеджмент');
-INSERT INTO speciality(speciality_id, faculty_id, code, name) VALUES (26, 3, 076, 'Підприємництво, торгівля та біржова діяльність');
-INSERT INTO speciality(speciality_id, faculty_id, code, name) VALUES (27, 3, 241, 'Готельно-ресторанна справа');
-INSERT INTO speciality(speciality_id, faculty_id, code, name) VALUES (28, 3, 242, 'Туризм');
 
 DROP VIEW IF EXISTS students_list_view;
 CREATE VIEW students_list_view AS
