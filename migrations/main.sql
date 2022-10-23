@@ -221,7 +221,7 @@ CREATE SEQUENCE IF NOT EXISTS user_document_id_seq AS bigint START WITH 1 INCREM
 
 ALTER TABLE user_document ALTER COLUMN user_document_id SET DEFAULT nextval('user_document_id_seq');
 
-CREATE TABLE IF NOT EXISTS bed_places(
+CREATE TABLE IF NOT EXISTS bed_place(
     bed_place_id integer NOT NULL,
     bed_place_name varchar(50) NOT NULL,
     CONSTRAINT bed_place_pk PRIMARY KEY (bed_place_id));
@@ -292,7 +292,7 @@ FOREIGN KEY (hostel_id) REFERENCES hostel(hostel_id)
 MATCH FULL ON DELETE SET NULL ON UPDATE CASCADE;
 
 ALTER TABLE user_request_review ADD CONSTRAINT user_request_review_bed_place_fk
-FOREIGN KEY (bed_place_id) REFERENCES bed_places(bed_place_id)
+FOREIGN KEY (bed_place_id) REFERENCES bed_place(bed_place_id)
 MATCH FULL ON DELETE SET NULL ON UPDATE CASCADE;
 
 CREATE TABLE IF NOT EXISTS requisites(
@@ -354,7 +354,7 @@ CREATE VIEW hostel_accommodation_view AS
         user_request_review urr
     LEFT JOIN hostel ht ON
         ht.hostel_id = urr.hostel_id
-    LEFT JOIN bed_places bd ON
+    LEFT JOIN bed_place bd ON
         bd.bed_place_id = urr.bed_place_id
     LEFT JOIN user_request ur ON
         ur.user_request_id = urr.user_request_id
@@ -431,7 +431,7 @@ CREATE VIEW user_request_details_view AS
 		ur.service_id = sr.service_id
 	LEFT JOIN hostel ht ON
 		ht.hostel_id = urr.hostel_id
-	LEFT JOIN bed_places bd ON
+	LEFT JOIN bed_place bd ON
 		bd.bed_place_id = urr.bed_place_id
     LEFT JOIN user_document ud ON
 		ud.user_request_id = urr.user_request_id
