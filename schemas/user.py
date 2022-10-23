@@ -2,14 +2,13 @@ from datetime import datetime
 from typing import List, Dict, Union
 import re
 from pydantic import BaseModel, validator
-from components.exceptions import BackendException
 
 
 class UsersListViewOut(BaseModel):
 
     user_id: int
     login: str
-    last_vist: datetime = None      # TODO syntax error
+    last_vist: datetime = None      # TODO spelling error
     email: str
     is_active: bool = None
     role: List[Dict[str, Union[int, str]]]
@@ -51,7 +50,7 @@ class RegistrationIn(BaseModel):
             message = f"Invalid email address format: {v}."
 
         if message:
-            raise BackendException(message=message)
+            raise ValueError(message)
         return v
 
     @validator('password_re_check')
@@ -59,9 +58,9 @@ class RegistrationIn(BaseModel):
         password = values.get('password')
 
         if not password or not v:
-            raise BackendException(message='Passwords cannot be empty.')
+            raise ValueError('Passwords cannot be empty.')
         if password != v:
-            raise BackendException(message='The entered passwords do not match.')
+            raise ValueError('The entered passwords do not match.')
         return v
 
 
@@ -97,7 +96,7 @@ class CreateUserIn(BaseModel):
         elif not re.fullmatch(regex, v):
             message = f"Invalid email address format: {v}."
         if message:
-            raise BackendException(message=message)
+            raise ValueError(message)
         return v
 
     @validator('password_re_check')
@@ -105,9 +104,9 @@ class CreateUserIn(BaseModel):
         password = values.get('password')
 
         if not password or not v:
-            raise BackendException(message='Passwords cannot be empty.')
+            raise ValueError('Passwords cannot be empty.')
         if password != v:
-            raise BackendException(message='The entered passwords do not match.')
+            raise ValueError('The entered passwords do not match.')
         return v
 
 

@@ -1,7 +1,6 @@
 import re
 
 from pydantic import BaseModel, validator
-from components.exceptions import BackendException
 
 
 class FacultyIn(BaseModel):
@@ -32,7 +31,7 @@ class FacultyIn(BaseModel):
             message = f"Invalid email address format: {v}."
 
         if message:
-            raise BackendException(message=message)
+            raise ValueError(message)
 
         return v
     
