@@ -21,7 +21,7 @@ async def read_faculties(university_id: int, user=Depends(get_current_user)):
     query = select(faculty_list_view).where(faculty_list_view.c.university_id == university_id)
     return {
         "data": await database.fetch_all(query),
-        "message": f"Get faculty list of the university with id {university_id}"
+        "message": f"Got faculty list of the university with id {university_id}"
     }
 
 

@@ -35,7 +35,7 @@ async def create_student(university_id: int, student: CreateStudentIn, auth=Depe
         "data": {
             "student_id": student_id
         },
-        "message": f"Create student {student.full_name}"
+        "message": f"Created student {student.full_name}"
     }
 
 
@@ -49,7 +49,7 @@ async def read_students_list(university_id: int, faculty_id: Union[int, None] = 
 
     return {
         "data": await database.fetch_all(query),
-        "message": f"Get students list of the university with id {university_id}"
+        "message": f"Got students list of the university with id {university_id}"
     }
 
 
@@ -58,7 +58,7 @@ async def delete_student(university_id: int, delete_student: DeleteStudentIn, au
     query = delete(Student).where(Student.student_id == delete_student.student_id)
 
     await database.execute(query)
-
+    # TODO: in response key data has empty dict value, not like it's discribed 
     return {
         "data": {
             "student_id": delete_student.student_id

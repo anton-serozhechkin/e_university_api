@@ -21,7 +21,7 @@ router = APIRouter()
 
 
 @router.post("/registration", response_model=JSENDOutSchema[RegistrationOut], tags=["Authorization"])
-async def registation(user: RegistrationIn):  # TODO syntax error
+async def registation(user: RegistrationIn):  # TODO spelling mistake 'registRation'
 
     RegistrationIn(
         token=user.token,
@@ -29,7 +29,7 @@ async def registation(user: RegistrationIn):  # TODO syntax error
         password=user.password,
         password_re_check=user.password_re_check)
 
-    query = select(OneTimeToken).where(OneTimeToken.c.token == user.token)
+    query = select(OneTimeToken).where(OneTimeToken.token == user.token)
     token_data = await database.fetch_all(query)
 
     if not token_data:

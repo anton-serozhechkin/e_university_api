@@ -19,5 +19,5 @@ async def available_roles(user=Depends(get_current_user)):
     query = select(Role)
     return {
         "data": await database.fetch_all(query),
-        "message": "Get roles"
+        "message": "Got roles"
     }

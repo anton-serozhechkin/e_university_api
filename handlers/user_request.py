@@ -50,7 +50,7 @@ async def check_user_request_existence(university_id: int, service_id: int, user
         }
     return {
         "data": response,
-        "message": "Get user request existence"
+        "message": "Got user request existence"
     }
 
 
@@ -61,7 +61,7 @@ async def read_user_request_list(university_id: int, user=Depends(get_current_us
                                                  user_request_list_view.c.university_id == university_id)
     return {
         "data": await database.fetch_all(query),
-        "message": "Get user requests list"
+        "message": "Got user requests list"
     }
 
 
@@ -109,7 +109,7 @@ async def read_user_request_booking_hostel(university_id: int, user=Depends(get_
                                                            user_request_booking_hostel_view.c.university_id == university_id)
     return {
         "data": await database.fetch_one(query),
-        "message": "Get user request booking hostel"
+        "message": "Got user request booking hostel"
     }
 
 
@@ -171,7 +171,7 @@ async def read_hostel_accommodation(university_id: int, user_request_id: int, us
                                                     hostel_accommodation_view.c.user_request_id == user_request_id)
     response = await database.fetch_one(query)
 
-    response.documents = json.loads(response.documents)     # TODO AttributeError: 'NoneType' object has no attribute 'documents'
+    response.documents = json.loads(response.documents)     # TODO AttributeError: 'NoneType' object has no attribute 'documents' (it's heppend only if user request doesn't have review)
 
     response.hostel_name = json.loads(response.hostel_name)
     response.hostel_address = json.loads(response.hostel_address)
@@ -193,5 +193,5 @@ async def read_request_details(university_id: int, user_request_id: int, user=De
     response.hostel_name = json.loads(response.hostel_name)
     return {
         "data": response,
-        "message": "Get request details"
+        "message": "Got request details"
     }

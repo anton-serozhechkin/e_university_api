@@ -19,7 +19,7 @@ router = APIRouter()
 
 
 @router.post("/check-student-existance", response_model=JSENDOutSchema[StudentCheckExistanceOut],
-             tags=["Authorization"])  # TODO syntax error, there is need to check path in other modules
+             tags=["Authorization"])  # TODO spelling mistake, there is need to check path in other modules
 async def check_student(student: StudentCheckExistanceIn):
 
     query = select(Student).where(Student.full_name == student.full_name,

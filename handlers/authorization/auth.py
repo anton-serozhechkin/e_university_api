@@ -27,7 +27,7 @@ async def login(form_data: OAuth2PasswordRequestForm = Depends()):
         raise BackendException(
             message="Email or password is invalid. Please, try again."
         )
-    
+
     return {
         "access_token": create_access_token(user.email),
         "refresh_token": create_refresh_token(user.email),

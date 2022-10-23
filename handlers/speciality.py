@@ -21,5 +21,5 @@ async def read_speciality_list(university_id: int, auth=Depends(get_current_user
     query = select(speciality_list_view).where(speciality_list_view.c.university_id == university_id)
     return {
         "data": await database.fetch_all(query),
-        "message": f"Get speciality list of the university with id {university_id}"
+        "message": f"Got speciality list of the university with id {university_id}"
     }
