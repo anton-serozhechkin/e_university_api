@@ -24,7 +24,7 @@ services:
       - .env
     depends_on:
       - postgres
-    command: uvicorn --host 0.0.0.0 --port 8000 main:app
+    command: uvicorn --host 0.0.0.0 --port 8000 apps.main:app
     ports:
       - '8000:8000'
 

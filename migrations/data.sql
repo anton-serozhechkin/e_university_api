@@ -29,9 +29,9 @@ INSERT INTO faculty(faculty_id, name, shortname, university_id, dekan_id) VALUES
 INSERT INTO faculty(faculty_id, name, shortname, university_id, dekan_id) VALUES (5, 'Менеджмента і маркетингу', 'МіМ', 1, 5);
 INSERT INTO faculty(faculty_id, name, shortname, university_id, dekan_id) VALUES (6, 'Економіки і права', 'ЕіП', 1, 6);
 
-INSERT INTO bed_places(bed_place_id, bed_place_name) VALUES (1, '0.75');
-INSERT INTO bed_places(bed_place_id, bed_place_name) VALUES (2, '1');
-INSERT INTO bed_places(bed_place_id, bed_place_name) VALUES (3, '1.5');
+INSERT INTO bed_place(bed_place_id, bed_place_name) VALUES (1, '0.75');
+INSERT INTO bed_place(bed_place_id, bed_place_name) VALUES (2, '1');
+INSERT INTO bed_place(bed_place_id, bed_place_name) VALUES (3, '1.5');
 
 INSERT INTO course(course_id, value) VALUES (1, 1);
 INSERT INTO course(course_id, value) VALUES (2, 2);
