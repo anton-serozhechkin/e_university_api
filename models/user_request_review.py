@@ -1,23 +1,37 @@
-from sqlalchemy import (MetaData, Column, Table, Integer, DateTime, ForeignKey, VARCHAR, FLOAT)
+from models import bed_places, user, hostel, university, user_request
+
+from datetime import datetime
+
+from sqlalchemy import (Column, INTEGER, DATETIME, ForeignKey, VARCHAR, FLOAT)
+from sqlalchemy.orm import relationship
+
+from db import Base
 
 
-metadata_obj = MetaData()
+class UserRequestReview(Base):
+    __tablename__ = "user_request_review"
+    user_request_review_id = Column(INTEGER, primary_key=True, nullable=False)
+    date_created = Column(DATETIME, nullable=False)
+    room_number = Column(INTEGER)
+    start_date_accommodation = Column(DATETIME)
+    end_date_accommodation = Column(DATETIME)
+    total_sum = Column(FLOAT)
+    payment_deadline = Column(DATETIME)
+    remark = Column(VARCHAR(length=255))
+    date_review = Column(DATETIME, nullable=False)
+    bed_place_id = Column(INTEGER, ForeignKey("bed_places.bed_place_id"))
+    reviewer = Column(INTEGER, ForeignKey("user.user_id"), nullable=False)
+    hostel_id = Column(INTEGER, ForeignKey("hostel.hostel_id"))
+    university_id = Column(INTEGER, ForeignKey("university.university_id"), nullable=False)
+    user_request_id = Column(INTEGER, ForeignKey("user_request.user_request_id"), nullable=False)
 
+    bed_places = relationship("BedPlaces", back_populates='user_request_reviews')
+    reviewer_user = relationship("User", back_populates='user_request_reviews')
+    hostels = relationship("Hostel", back_populates='user_request_reviews')
+    university = relationship("University", back_populates='user_request_reviews')
+    user_request = relationship("UserRequest", back_populates='user_request_reviews')
 
-user_request_review = Table('user_request_review', metadata_obj,
-          Column('user_request_review_id', Integer, primary_key=True),
-          Column('university_id', Integer, ForeignKey("university.university_id")),
-          Column('user_request_id', Integer, ForeignKey("user_request.user_request_id")),
-          Column('date_created', DateTime),
-          Column('reviewer', Integer, ForeignKey("user.user_id")),
-          Column('hostel_id', Integer, ForeignKey("hostel.hostel_id")),
-          Column('room_number', Integer),
-          Column('start_date_accommodation', DateTime),
-          Column('end_date_accommodation', DateTime),
-          Column('total_sum', FLOAT),
-          Column('payment_deadline', DateTime),
-          Column('remark', VARCHAR(255)),
-          Column('date_review', DateTime),
-          Column('bed_place_id', Integer, ForeignKey("bed_place.bed_place_id")))
-
-
+    def __repr__(self):
+        return f'{self.__class__.__name__}(user_request_review_id="{self.user_request_review_id}",date_created="{self.date_created}",' \
+               f'room_number="{self.room_number}", start_date_accommodation="{self.start_date_accommodation}",end_date_accommodation="{self.end_date_accommodation}", total_sum="{self.total_sum}", payment_deadline="{self.payment_deadline}",' \
+               f'remark="{self.remark}", date_review="{self.date_review}", bed_place_id="{self.bed_place_id}",reviewer="{self.reviewer}",hostel_id="{self.hostel_id}",university_id="{self.university_id}",user_request_id="{self.user_request_id}")'

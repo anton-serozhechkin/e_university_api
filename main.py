@@ -2,15 +2,17 @@ from db import database
 from settings import Settings
 from tags_metadata import metadata
 from handlers import faculty
-from handlers.authorization import check_student_existance 
+from handlers.authorization import check_student_existance
 from handlers.authorization import registration
 from handlers.authorization import auth
 from handlers import me, user, user_request, bed_place, role, hostel, course, speciality, student
-
-
+from components.exceptions import BackendException
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from components.exception_handlers import backend_exception_handler, http_exception_handler
+from starlette.exceptions import HTTPException as StarletteHTTPException
+
 
 app = FastAPI(openapi_tags=metadata)
 
@@ -23,6 +25,12 @@ app.add_middleware(
     allow_methods=Settings.CORS_ALLOW_METHODS,
     allow_headers=Settings.CORS_ALLOW_HEADERS,
 )
+
+
+# Add exception handlers
+app.add_exception_handler(BackendException, backend_exception_handler)
+app.add_exception_handler(StarletteHTTPException, http_exception_handler)
+
 
 # Endpoints registration
 app.include_router(faculty.router)
