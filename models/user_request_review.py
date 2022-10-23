@@ -1,6 +1,4 @@
-from models import bed_places, user, hostel, university, user_request
-
-from datetime import datetime
+from models import bed_place, user, hostel, university, user_request
 
 from sqlalchemy import (Column, INTEGER, DATETIME, ForeignKey, VARCHAR, FLOAT)
 from sqlalchemy.orm import relationship
@@ -19,13 +17,13 @@ class UserRequestReview(Base):
     payment_deadline = Column(DATETIME)
     remark = Column(VARCHAR(length=255))
     date_review = Column(DATETIME, nullable=False)
-    bed_place_id = Column(INTEGER, ForeignKey("bed_places.bed_place_id"))
+    bed_place_id = Column(INTEGER, ForeignKey("bed_place.bed_place_id"))
     reviewer = Column(INTEGER, ForeignKey("user.user_id"), nullable=False)
     hostel_id = Column(INTEGER, ForeignKey("hostel.hostel_id"))
     university_id = Column(INTEGER, ForeignKey("university.university_id"), nullable=False)
     user_request_id = Column(INTEGER, ForeignKey("user_request.user_request_id"), nullable=False)
 
-    bed_places = relationship("BedPlaces", back_populates='user_request_reviews')
+    bed_place = relationship("BedPlace", back_populates='user_request_reviews')
     reviewer_user = relationship("User", back_populates='user_request_reviews')
     hostels = relationship("Hostel", back_populates='user_request_reviews')
     university = relationship("University", back_populates='user_request_reviews')

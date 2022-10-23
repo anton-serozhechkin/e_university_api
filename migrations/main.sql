@@ -221,7 +221,7 @@ CREATE SEQUENCE IF NOT EXISTS user_document_id_seq AS bigint START WITH 1 INCREM
 
 ALTER TABLE user_document ALTER COLUMN user_document_id SET DEFAULT nextval('user_document_id_seq');
 
-CREATE TABLE IF NOT EXISTS bed_places(
+CREATE TABLE IF NOT EXISTS bed_place(
     bed_place_id integer NOT NULL,
     bed_place_name varchar(50) NOT NULL,
     CONSTRAINT bed_place_pk PRIMARY KEY (bed_place_id));
