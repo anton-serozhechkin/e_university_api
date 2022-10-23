@@ -24,11 +24,13 @@ import json
 
 from fastapi import Depends, APIRouter
 
+from schemas.jsend import JSENDOutSchema
+
 router = APIRouter()
 
 
-@router.get("/{university_id}/user-request-existence/{service_id}/", response_model=UserRequestExistenceOut,
-            tags=["Student dashboard"])
+@router.get("/{university_id}/user-request-existence/{service_id}/",
+            response_model=JSENDOutSchema[UserRequestExistenceOut], tags=["Student dashboard"])
 async def check_user_request_existence(university_id: int, service_id: int, user=Depends(get_current_user)):
     query = select(user_request_exist_view).where(user_request_exist_view.c.user_id == user.user_id,
                                                   user_request_exist_view.c.university_id == university_id,
@@ -46,17 +48,25 @@ async def check_user_request_existence(university_id: int, service_id: int, user
             "status": None,
             "user_request_exist": False
         }
-    return response
+    return {
+        "data": response,
+        "message": "Got user request existence"
+    }
 
 
-@router.get("/{university_id}/user-request/", response_model=List[UserRequestsListOut], tags=["Student dashboard"])
+@router.get("/{university_id}/user-request/", response_model=JSENDOutSchema[List[UserRequestsListOut]],
+            tags=["Student dashboard"])
 async def read_user_request_list(university_id: int, user=Depends(get_current_user)):
     query = select(user_request_list_view).where(user_request_list_view.c.user_id == user.user_id,
                                                  user_request_list_view.c.university_id == university_id)
-    return await database.fetch_all(query)
+    return {
+        "data": await database.fetch_all(query),
+        "message": "Got user requests list"
+    }
 
 
-@router.post("/{university_id}/user-request/", response_model=CreateUserRequestOut, tags=["Student dashboard"])
+@router.post("/{university_id}/user-request/", response_model=JSENDOutSchema[CreateUserRequestOut],
+             tags=["Student dashboard"])
 async def create_user_request(university_id: int, user_request: CreateUserRequestIn, user=Depends(get_current_user)):
     query = select(UserFaculty).where(UserFaculty.user_id == user.user_id)
     user_faculty_result = await database.fetch_one(query)
@@ -84,34 +94,45 @@ async def create_user_request(university_id: int, user_request: CreateUserReques
     await create_user_document(**prepared_data)
 
     return {
-        "status_id": STATUS_MAPPING.get("Розглядається"),
-        "user_request_id": last_record_id
+        "data": {
+            "status_id": STATUS_MAPPING.get("Розглядається"),
+            "user_request_id": last_record_id
+        },
+        "message": f"Created user request with id {last_record_id}"
     }
 
 
-@router.get("/{university_id}/user-request-booking-hostel/", response_model=UserRequestBookingHostelOut,
+@router.get("/{university_id}/user-request-booking-hostel/", response_model=JSENDOutSchema[UserRequestBookingHostelOut],
             tags=["Student dashboard"])
 async def read_user_request_booking_hostel(university_id: int, user=Depends(get_current_user)):
     query = select(user_request_booking_hostel_view).where(user_request_booking_hostel_view.c.user_id == user.user_id,
                                                            user_request_booking_hostel_view.c.university_id == university_id)
-    return await database.fetch_one(query)
+    return {
+        "data": await database.fetch_one(query),
+        "message": "Got user request booking hostel"
+    }
 
 
-@router.put("/{university_id}/user-request/{user_request_id}", response_model=CancelRequestOut,
+@router.put("/{university_id}/user-request/{user_request_id}", response_model=JSENDOutSchema[CancelRequestOut],
             tags=["Student dashboard"])
-async def cancel_request(university_id: int, user_request_id: int, cancel_request: CancelRequestIn, user=Depends(get_current_user)):
+async def cancel_request(university_id: int, user_request_id: int, cancel_request: CancelRequestIn,
+                         user=Depends(get_current_user)):
     CancelRequestIn(status_id=cancel_request.status_id)
     query = update(UserRequest).where(UserRequest.user_request_id == user_request_id).values(
         status_id=cancel_request.status_id)
     await database.execute(query)
 
     return {
-        "user_request_id": user_request_id,
-        "status_id": cancel_request.status_id
+        "data": {
+            "user_request_id": user_request_id,
+            "status_id": cancel_request.status_id
+        },
+        "message": f"Canceled request with id {user_request_id}"
     }
 
 
-@router.post("/{university_id}/user-request-review/{user_request_id}/", response_model=UserRequestReviewOut,
+@router.post("/{university_id}/user-request-review/{user_request_id}/",
+             response_model=JSENDOutSchema[UserRequestReviewOut],
              tags=["Admin dashboard"])
 async def create_user_request_review(university_id: int, user_request_id: int, user_request_review: UserRequestReviewIn,
                                      user=Depends(get_current_user)):
@@ -135,25 +156,32 @@ async def create_user_request_review(university_id: int, user_request_id: int, u
     await database.execute(query)
 
     return {
-        "status_id": user_request_review.status_id,
-        "user_request_review_id": last_record_id
+        "data": {
+            "status_id": user_request_review.status_id,
+            "user_request_review_id": last_record_id
+        },
+        "message": "Created user request review"
     }
 
 
-@router.get("/{university_id}/hostel-accommodation/{user_request_id}", response_model=HostelAccomodationViewOut,
-            tags=["Student dashboard"])
+@router.get("/{university_id}/hostel-accommodation/{user_request_id}",
+            response_model=JSENDOutSchema[HostelAccomodationViewOut], tags=["Student dashboard"])
 async def read_hostel_accommodation(university_id: int, user_request_id: int, user=Depends(get_current_user)):
     query = select(hostel_accommodation_view).where(hostel_accommodation_view.c.university_id == university_id,
                                                     hostel_accommodation_view.c.user_request_id == user_request_id)
     response = await database.fetch_one(query)
 
-    response.documents = json.loads(response.documents)
+    response.documents = json.loads(response.documents)     # TODO AttributeError: 'NoneType' object has no attribute 'documents' (it's heppend only if user request doesn't have review)
+
     response.hostel_name = json.loads(response.hostel_name)
     response.hostel_address = json.loads(response.hostel_address)
-    return response
+    return {
+        "data": response,
+        "message": "Get hostel accommodation"
+    }
 
 
-@router.get("/{university_id}/user-request/{user_request_id}", response_model=UserRequestDetailsViewOut,
+@router.get("/{university_id}/user-request/{user_request_id}", response_model=JSENDOutSchema[UserRequestDetailsViewOut],
             tags=["Student dashboard"])
 async def read_request_details(university_id: int, user_request_id: int, user=Depends(get_current_user)):
     query = select(user_request_details_view).where(user_request_details_view.c.university_id == university_id,
@@ -163,4 +191,7 @@ async def read_request_details(university_id: int, user_request_id: int, user=De
 
     response.documents = json.loads(response.documents)
     response.hostel_name = json.loads(response.hostel_name)
-    return response
+    return {
+        "data": response,
+        "message": "Got request details"
+    }

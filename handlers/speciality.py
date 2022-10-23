@@ -9,11 +9,17 @@ from typing import List
 
 from fastapi import APIRouter, Depends
 
+from schemas.jsend import JSENDOutSchema
+
 
 router = APIRouter()
 
 
-@router.get("/{university_id}/speciality/", response_model=List[SpecialityListOut], tags=["Admin dashboard"])
-async def read_speciality_list(university_id: int, auth = Depends(get_current_user)):
+@router.get("/{university_id}/speciality/", response_model=JSENDOutSchema[List[SpecialityListOut]],
+            tags=["Admin dashboard"])
+async def read_speciality_list(university_id: int, auth=Depends(get_current_user)):
     query = select(speciality_list_view).where(speciality_list_view.c.university_id == university_id)
-    return await database.fetch_all(query)
+    return {
+        "data": await database.fetch_all(query),
+        "message": f"Got speciality list of the university with id {university_id}"
+    }

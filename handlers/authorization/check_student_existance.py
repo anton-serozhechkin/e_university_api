@@ -10,14 +10,16 @@ from datetime import datetime, timedelta
 import hashlib
 import os
 
-from fastapi import APIRouter
-from fastapi.responses import JSONResponse
+from fastapi import APIRouter, status as http_status
 
+from schemas.jsend import JSENDOutSchema
+from components.exceptions import BackendException
 
 router = APIRouter()
 
 
-@router.post("/check-student-existance", response_model=StudentCheckExistanceOut, tags=["Authorization"])
+@router.post("/check-student-existance", response_model=JSENDOutSchema[StudentCheckExistanceOut],
+             tags=["Authorization"])  # TODO spelling mistake, there is need to check path in other modules
 async def check_student(student: StudentCheckExistanceIn):
 
     query = select(Student).where(Student.full_name == student.full_name,
@@ -25,8 +27,10 @@ async def check_student(student: StudentCheckExistanceIn):
     result = await database.fetch_one(query)
 
     if not result:
-        return JSONResponse(status_code=404, content={"message": "Дані про студента не знайдено. " \
-                                                                "Будь ласка, спробуйте ще раз."})
+        raise BackendException(
+            message="Student data was not found. Please, try again.",
+            code=http_status.HTTP_404_NOT_FOUND
+        )
 
     student_id = result.student_id
 
@@ -40,10 +44,11 @@ async def check_student(student: StudentCheckExistanceIn):
     query = select(OneTimeToken).where(OneTimeToken.token_id == last_record_id)
     result = await database.fetch_one(query)
 
-    response = {
-                'token': result.token,
-                'student': result.student_id, 
-                'expires': result.expires
+    return {
+        "data": {
+            'token': result.token,
+            'student': result.student_id,
+            'expires': result.expires
+        },
+        "message": f"Get information of student with id {result.student_id}"
     }
-
-    return response

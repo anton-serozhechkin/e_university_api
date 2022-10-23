@@ -9,10 +9,15 @@ from typing import List
 
 from fastapi import Depends, APIRouter
 
+from schemas.jsend import JSENDOutSchema
+
 router = APIRouter()
 
 
-@router.get("/roles/", response_model=List[AvailableRolesOut], tags=["SuperAdmin dashboard"])
+@router.get("/roles/", response_model=JSENDOutSchema[List[AvailableRolesOut]], tags=["SuperAdmin dashboard"])
 async def available_roles(user=Depends(get_current_user)):
     query = select(Role)
-    return await database.fetch_all(query)
+    return {
+        "data": await database.fetch_all(query),
+        "message": "Got roles"
+    }
