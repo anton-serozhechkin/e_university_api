@@ -164,38 +164,6 @@ ALTER TABLE one_time_token ADD CONSTRAINT one_time_token_student_fk
 FOREIGN KEY (student_id) REFERENCES student(student_id)
 MATCH FULL ON DELETE CASCADE ON UPDATE CASCADE;
 
-DROP VIEW IF EXISTS user_list_view;
-CREATE VIEW user_list_view AS
-    SELECT
-        u.user_id,
-        u.login,
-        u.last_visit,
-        u.email,
-        u.is_active,
-        COALESCE(json_agg(json_build_object('role', u.role_id, 'role_name', r.role_name)) FILTER (WHERE r.role_name IS NOT NULL), NULL) as role,
-        COALESCE(json_agg(json_build_object('faculty', f.faculty_id, 'faculty_name', f.name)) FILTER (WHERE f.name IS NOT NULL), NULL) as faculties,
-        un.university_id
-    FROM "user" u
-    LEFT JOIN "role" r ON
-        r.role_id = u.role_id
-    LEFT JOIN user_faculty uf ON
-        uf.user_id = u.user_id
-    LEFT JOIN faculty f ON
-        f.faculty_id = uf.faculty_id
-    LEFT JOIN university un ON
-        un.university_id = f.university_id
-    GROUP BY
-        u.user_id,
-        u.login,
-        u.last_visit,
-        u.email,
-        u.is_active,
-        un.university_id
-    ORDER BY
-        un.university_id,
-        u.user_id,
-        u.is_active;
-
 CREATE TABLE IF NOT EXISTS service(
     service_id integer NOT NULL,
     service_name varchar(255) NOT NULL,
@@ -253,125 +221,10 @@ CREATE SEQUENCE IF NOT EXISTS user_document_id_seq AS bigint START WITH 1 INCREM
 
 ALTER TABLE user_document ALTER COLUMN user_document_id SET DEFAULT nextval('user_document_id_seq');
 
-DROP VIEW IF EXISTS user_request_exist_view;
-CREATE VIEW user_request_exist_view AS
-    SELECT
-        ur.user_request_id,
-        ur.user_id,
-        ur.faculty_id,
-        ur.university_id,
-        ur.service_id,
-        jsonb_build_object('status_id', ur.status_id, 'status_name', st.status_name) as status
-    FROM
-        user_request ur
-    LEFT JOIN status st ON
-        ur.status_id = st.status_id
-    WHERE
-        ur.status_id in (1, 3)
-    GROUP BY
-        ur.user_request_id,
-        ur.user_id,
-        ur.faculty_id,
-        ur.university_id,
-        ur.service_id,
-        st.status_name
-    ORDER BY
-        ur.university_id,
-        ur.faculty_id,
-        ur.user_id;
-
 CREATE TABLE IF NOT EXISTS bed_places(
     bed_place_id integer NOT NULL,
     bed_place_name varchar(50) NOT NULL,
     CONSTRAINT bed_place_pk PRIMARY KEY (bed_place_id));
-
-DROP VIEW IF EXISTS faculty_list_view;
-CREATE VIEW faculty_list_view AS
-    SELECT
-        f.university_id,
-        f.faculty_id,
-        f.name,
-        f.shortname,
-        f.main_email,
-        f.dekan_id,
-        d.full_name as decan_full_name
-    FROM
-        faculty f
-    LEFT JOIN dekan d ON
-        d.dekan_id = f.dekan_id
-    ORDER BY
-        f.university_id,
-        f.faculty_id,
-        f.dekan_id;
-
-DROP VIEW IF EXISTS user_request_booking_hostel_view;
-CREATE VIEW user_request_booking_hostel_view AS
-    SELECT
-        s.full_name,
-        s.user_id,
-        f.name as faculty_name,
-        u.university_id,
-        u.short_university_name,
-        r.full_name as rector_full_name,
-        sp.code as speciality_code,
-        sp.name as speciality_name,
-        co.value as course,
-        CASE
-            WHEN co.value in (1, 2, 3, 4) THEN 'B'
-            ELSE 'M'
-        END AS educ_level,
-        CURRENT_DATE as date_today,
-        CASE WHEN date_part('month', now()) >= 7 THEN date_part('year', now())::integer
-            ELSE date_part('year', now() - INTERVAL '1 YEAR')::integer
-        END AS start_year,
-        CASE WHEN date_part('month', now()) >= 7 THEN date_part('year', now() + INTERVAL '1 YEAR')::integer
-            ELSE date_part('year', now())::integer
-        END AS finish_year,
-        CASE WHEN LOWER(s.gender) = 'ч' THEN 'M'
-            WHEN LOWER(s.gender) = 'ж' THEN 'F'
-            ELSE 'M'
-        END AS gender
-    FROM
-        student s
-    LEFT JOIN faculty f ON
-        s.faculty_id = f.faculty_id
-    LEFT JOIN university u ON
-        f.university_id = u.university_id
-    LEFT JOIN rector r ON
-        u.rector_id = u.rector_id
-    LEFT JOIN speciality sp ON
-        s.speciality_id = sp.speciality_id
-    LEFT JOIN course co ON
-        s.course_id = co.course_id
-    ORDER BY
-        u.university_id,
-        s.user_id;
-
-DROP VIEW IF EXISTS user_request_list_view;
-CREATE VIEW user_request_list_view AS
-    SELECT
-        ur.university_id,
-        ur.user_id,
-        ur.user_request_id,
-        sr.service_name,
-        jsonb_build_object('status_id', ur.status_id, 'status_name', st.status_name) as status,
-        ur.date_created
-    FROM
-        user_request ur
-    LEFT JOIN status st ON
-        ur.status_id = st.status_id
-    LEFT JOIN service sr ON
-        ur.service_id = sr.service_id
-     GROUP BY
-        ur.user_request_id,
-        ur.user_id,
-        ur.university_id,
-        ur.service_id,
-        st.status_name,
-        sr.service_name
-    ORDER BY
-        ur.university_id,
-        ur.user_id;
 
 CREATE TABLE IF NOT EXISTS commandant(
     commandant_id integer NOT NULL,
@@ -400,27 +253,6 @@ MATCH FULL ON DELETE SET NULL ON UPDATE CASCADE;
 ALTER TABLE hostel ADD CONSTRAINT hostel_university_fk
 FOREIGN KEY (university_id) REFERENCES university(university_id)
 MATCH FULL ON DELETE CASCADE ON UPDATE CASCADE;
-
-DROP VIEW IF EXISTS hostel_list_view;
-CREATE VIEW hostel_list_view AS
-    SELECT
-        ht.university_id,
-        ht.hostel_id,
-        ht.number,
-        ht.name,
-        ht.city,
-        ht.street,
-        ht.build,
-        ht.commandant_id,
-        co.full_name as commandant_full_name
-    FROM
-        hostel ht
-    LEFT JOIN commandant co ON
-        co.commandant_id = ht.commandant_id
-    ORDER BY
-        ht.university_id,
-        ht.hostel_id,
-        ht.name;
 
 CREATE TABLE IF NOT EXISTS user_request_review(
     user_request_review_id integer NOT NULL,
@@ -498,26 +330,26 @@ MATCH FULL ON DELETE CASCADE ON UPDATE CASCADE;
 DROP VIEW IF EXISTS hostel_accommodation_view;
 CREATE VIEW hostel_accommodation_view AS
     SELECT
-    urr.user_request_review_id,
-    urr.university_id,
-    urr.user_request_id,
-    urr.room_number,
-    urr.start_date_accommodation,
-    urr.end_date_accommodation,
-    ht.month_price,
-    jsonb_build_object('name', ht.name, 'number', ht.number)
-        as hostel_name,
-    jsonb_build_object('city', ht.city, 'street', ht.street, 'build', ht.build )
-        as hostel_address,
-    bd.bed_place_name,
-    urr.total_sum,
-    re.iban,
-    un.university_name,
-    re.organisation_code,
-    re.payment_recognation,
-    co.full_name as commandant_full_name,
-    co.telephone_number,
-    sd.documents
+        urr.user_request_review_id,
+        urr.university_id,
+        urr.user_request_id,
+        urr.room_number,
+        urr.start_date_accommodation,
+        urr.end_date_accommodation,
+        ht.month_price,
+        jsonb_build_object('name', ht.name, 'number', ht.number)
+            as hostel_name,
+        jsonb_build_object('city', ht.city, 'street', ht.street, 'build', ht.build )
+            as hostel_address,
+        bd.bed_place_name,
+        urr.total_sum,
+        re.iban,
+        un.university_name,
+        re.organisation_code,
+        re.payment_recognation,
+        co.full_name as commandant_full_name,
+        co.telephone_number,
+        sd.documents
     FROM
         user_request_review urr
     LEFT JOIN hostel ht ON
@@ -620,3 +452,171 @@ CREATE VIEW user_request_details_view AS
     ORDER BY
         ur.university_id,
         ur.user_request_id;
+
+DROP VIEW IF EXISTS hostel_list_view;
+CREATE VIEW hostel_list_view AS
+    SELECT
+        ht.university_id,
+        ht.hostel_id,
+        ht.number,
+        ht.name,
+        ht.city,
+        ht.street,
+        ht.build,
+        ht.commandant_id,
+        co.full_name as commandant_full_name
+    FROM
+        hostel ht
+    LEFT JOIN commandant co ON
+        co.commandant_id = ht.commandant_id
+    ORDER BY
+        ht.university_id,
+        ht.hostel_id,
+        ht.name;
+
+DROP VIEW IF EXISTS user_request_list_view;
+CREATE VIEW user_request_list_view AS
+    SELECT
+        ur.university_id,
+        ur.user_id,
+        ur.user_request_id,
+        sr.service_name,
+        jsonb_build_object('status_id', ur.status_id, 'status_name', st.status_name) as status,
+        ur.date_created
+    FROM
+        user_request ur
+    LEFT JOIN status st ON
+        ur.status_id = st.status_id
+    LEFT JOIN service sr ON
+        ur.service_id = sr.service_id
+     GROUP BY
+        ur.user_request_id,
+        ur.user_id,
+        ur.university_id,
+        ur.service_id,
+        st.status_name,
+        sr.service_name
+    ORDER BY
+        ur.university_id,
+        ur.user_id;
+
+DROP VIEW IF EXISTS faculty_list_view;
+CREATE VIEW faculty_list_view AS
+    SELECT
+        f.university_id,
+        f.faculty_id,
+        f.name,
+        f.shortname,
+        f.main_email,
+        f.dekan_id,
+        d.full_name as decan_full_name
+    FROM
+        faculty f
+    LEFT JOIN dekan d ON
+        d.dekan_id = f.dekan_id
+    ORDER BY
+        f.university_id,
+        f.faculty_id,
+        f.dekan_id;
+
+DROP VIEW IF EXISTS user_list_view;
+CREATE VIEW user_list_view AS
+    SELECT
+        u.user_id,
+        u.login,
+        u.last_visit,
+        u.email,
+        u.is_active,
+        COALESCE(json_agg(json_build_object('role', u.role_id, 'role_name', r.role_name)) FILTER (WHERE r.role_name IS NOT NULL), NULL) as role,
+        COALESCE(json_agg(json_build_object('faculty', f.faculty_id, 'faculty_name', f.name)) FILTER (WHERE f.name IS NOT NULL), NULL) as faculties,
+        un.university_id
+    FROM "user" u
+    LEFT JOIN "role" r ON
+        r.role_id = u.role_id
+    LEFT JOIN user_faculty uf ON
+        uf.user_id = u.user_id
+    LEFT JOIN faculty f ON
+        f.faculty_id = uf.faculty_id
+    LEFT JOIN university un ON
+        un.university_id = f.university_id
+    GROUP BY
+        u.user_id,
+        u.login,
+        u.last_visit,
+        u.email,
+        u.is_active,
+        un.university_id
+    ORDER BY
+        un.university_id,
+        u.user_id,
+        u.is_active;
+
+DROP VIEW IF EXISTS user_request_exist_view;
+CREATE VIEW user_request_exist_view AS
+    SELECT
+        ur.user_request_id,
+        ur.user_id,
+        ur.faculty_id,
+        ur.university_id,
+        ur.service_id,
+        jsonb_build_object('status_id', ur.status_id, 'status_name', st.status_name) as status
+    FROM
+        user_request ur
+    LEFT JOIN status st ON
+        ur.status_id = st.status_id
+    WHERE
+        ur.status_id in (1, 3)
+    GROUP BY
+        ur.user_request_id,
+        ur.user_id,
+        ur.faculty_id,
+        ur.university_id,
+        ur.service_id,
+        st.status_name
+    ORDER BY
+        ur.university_id,
+        ur.faculty_id,
+        ur.user_id;
+
+DROP VIEW IF EXISTS user_request_booking_hostel_view;
+CREATE VIEW user_request_booking_hostel_view AS
+    SELECT
+        s.full_name,
+        s.user_id,
+        f.name as faculty_name,
+        u.university_id,
+        u.short_university_name,
+        r.full_name as rector_full_name,
+        sp.code as speciality_code,
+        sp.name as speciality_name,
+        co.value as course,
+        CASE
+            WHEN co.value in (1, 2, 3, 4) THEN 'B'
+            ELSE 'M'
+        END AS educ_level,
+        CURRENT_DATE as date_today,
+        CASE WHEN date_part('month', now()) >= 7 THEN date_part('year', now())::integer
+            ELSE date_part('year', now() - INTERVAL '1 YEAR')::integer
+        END AS start_year,
+        CASE WHEN date_part('month', now()) >= 7 THEN date_part('year', now() + INTERVAL '1 YEAR')::integer
+            ELSE date_part('year', now())::integer
+        END AS finish_year,
+        CASE WHEN LOWER(s.gender) = 'ч' THEN 'M'
+            WHEN LOWER(s.gender) = 'ж' THEN 'F'
+            ELSE 'M'
+        END AS gender
+    FROM
+        student s
+    LEFT JOIN faculty f ON
+        s.faculty_id = f.faculty_id
+    LEFT JOIN university u ON
+        f.university_id = u.university_id
+    LEFT JOIN rector r ON
+        u.rector_id = u.rector_id
+    LEFT JOIN speciality sp ON
+        s.speciality_id = sp.speciality_id
+    LEFT JOIN course co ON
+        s.course_id = co.course_id
+    ORDER BY
+        u.university_id,
+        s.user_id;
