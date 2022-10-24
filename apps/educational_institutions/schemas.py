@@ -26,10 +26,10 @@ class FacultyIn(BaseModel):
         message = False
 
         if not v:
-            message = "Електронний адрес не може бути порожнім"
+            message = "The email address cannot be empty."
 
         elif not re.fullmatch(regex, v):
-            message = f"Невірний формат адреси електронної пошти: {v}."
+            message = f"Invalid email address format: {v}."
 
         if message:
             raise ValueError(message)
