@@ -1,7 +1,6 @@
 from datetime import datetime
 from typing import List, Dict, Union
 import re
-
 from pydantic import BaseModel, validator
 
 
@@ -9,7 +8,7 @@ class UsersListViewOut(BaseModel):
 
     user_id: int
     login: str
-    last_vist: datetime = None
+    last_visit: datetime = None
     email: str
     is_active: bool = None
     role: List[Dict[str, Union[int, str]]]
@@ -29,7 +28,7 @@ class RegistrationIn(BaseModel):
     email: str
     password: str
     password_re_check: str
-    
+
     @validator('email')
     def validate_email(cls, v):
         """
@@ -45,14 +44,13 @@ class RegistrationIn(BaseModel):
         message = False
 
         if not v:
-            message = "Електронний адрес не може бути порожнім"
+            message = "The email address cannot be empty."
 
         elif not re.fullmatch(regex, v):
-            message = f"Невірний формат адресу електронної пошти: {v}."
+            message = f"Invalid email address format: {v}."
 
         if message:
             raise ValueError(message)
-
         return v
 
     @validator('password_re_check')
@@ -60,11 +58,9 @@ class RegistrationIn(BaseModel):
         password = values.get('password')
 
         if not password or not v:
-            raise ValueError('Паролі не можуть бути порожніми')
-
+            raise ValueError('Passwords cannot be empty.')
         if password != v:
-            raise ValueError('Введені паролі не співпадають')
-
+            raise ValueError('The entered passwords do not match.')
         return v
 
 
@@ -75,7 +71,7 @@ class AuthOut(BaseModel):
 
 
 class CreateUserIn(BaseModel):
-    
+
     email: str
     password: str
     password_re_check: str
@@ -96,12 +92,11 @@ class CreateUserIn(BaseModel):
                            '[A-Za-z0-9' + specials + ']+(?<!['+ specials + '])@[A-Za-z0-9.-]+\.[A-Za-z]{2,4}$')
         message = False
         if not v:
-            message = "Електронний адрес не може бути порожнім"
+            message = "The email address cannot be empty."
         elif not re.fullmatch(regex, v):
-            message = f"Невірний формат адреси електронної пошти: {v}."
+            message = f"Invalid email address format: {v}."
         if message:
             raise ValueError(message)
-        
         return v
 
     @validator('password_re_check')
@@ -109,11 +104,9 @@ class CreateUserIn(BaseModel):
         password = values.get('password')
 
         if not password or not v:
-            raise ValueError('Паролі не можуть бути порожніми')
-
+            raise ValueError('Passwords cannot be empty.')
         if password != v:
-            raise ValueError('Введені паролі не співпадають')
-
+            raise ValueError('The entered passwords do not match.')
         return v
 
 

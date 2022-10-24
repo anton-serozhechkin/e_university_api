@@ -16,7 +16,7 @@ router = APIRouter()
 
 
 @router.get("/{university_id}/faculties/", response_model=JSENDOutSchema[List[FacultyOut]],
-            tags=["SuperAdmin dashboard"])
+            tags=["SuperAdmin dashboard"])  # TODO after input id of non-existent university it returns success
 async def read_faculties(university_id: int, user=Depends(get_current_user)):
     query = select(faculty_list_view).where(faculty_list_view.c.university_id == university_id)
     return {
