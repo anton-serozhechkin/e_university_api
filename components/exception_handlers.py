@@ -11,9 +11,7 @@ from starlette.exceptions import HTTPException as StarletteHTTPException
 
 def backend_exception_handler(request: Request, exc: BackendException) -> JSONResponse:
     """Return result from Back-end exception."""
-    response = JSONResponse(content=exc.dict())
-    response.status_code = exc.code
-    return response
+    return JSONResponse(content=exc.dict(), status_code=exc.code)
 
 
 def http_exception_handler(request: Request, exc: StarletteHTTPException) -> JSONResponse:
@@ -43,16 +41,15 @@ def validation_exception_handler(request: Request, exc: RequestValidationError) 
                 "context": error.get("ctx", None),
             }
         )
-    response = JSONResponse(
+    return JSONResponse(
         content={
             "status": JSENDStatus.FAIL,
             "data": modified_details,
             "message": "Validation error.",
             "code": status.HTTP_422_UNPROCESSABLE_ENTITY,
-        }
+        },
+        status_code=status.HTTP_422_UNPROCESSABLE_ENTITY
     )
-    response.status_code = status.HTTP_422_UNPROCESSABLE_ENTITY
-    return response
 
 
 def integrity_error_handler(error: IntegrityError):

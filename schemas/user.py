@@ -8,7 +8,7 @@ class UsersListViewOut(BaseModel):
 
     user_id: int
     login: str
-    last_vist: datetime = None      # TODO spelling error
+    last_visit: datetime = None
     email: str
     is_active: bool = None
     role: List[Dict[str, Union[int, str]]]
