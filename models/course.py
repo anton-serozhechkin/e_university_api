@@ -13,5 +13,6 @@ class Course(Base):
     value = Column(INTEGER, nullable=False)
 
     student = relationship('Student', back_populates='courses')
+
     def __repr__(self):
         return f'{self.__class__.__name__}(course_id="{self.course_id}", value="{self.value}")'

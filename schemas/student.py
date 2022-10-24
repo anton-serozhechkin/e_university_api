@@ -5,7 +5,9 @@ from pydantic import BaseModel, validator
 
 
 class StudentCheckExistanceIn(BaseModel):
-    full_name: str
+    first_name: str
+    last_name: str
+    middle_name: str
     telephone_number: str
 
 
@@ -14,21 +16,33 @@ class StudentCheckExistanceOut(BaseModel):
     token: str
     expires: datetime
 
+
 class CreateStudentIn(BaseModel):
-    full_name: str
+    first_name: str
+    last_name: str
+    middle_name: str
     telephone_number: str
     course_id: int
     faculty_id: int
     speciality_id: int
     gender: str
 
-    @validator('full_name')
-    def validate_full_name(value):
-        full_name = value.split()
-        if not full_name:
-            raise ValueError("Прізвище та ім'я студента обов'язкові до заповнення!")
-        elif len(full_name) < 2:
-            raise ValueError("Прізвище та ім'я студента обов'язкові до заповнення!")
+    @validator('first_name')
+    def validate_first_name(value):
+        first_name = value.split()
+        if not first_name:
+            raise ValueError("Iм'я студента обов'язкові до заповнення!")
+        elif len(first_name) < 2:
+            raise ValueError("Iм'я студента обов'язкові до заповнення!")
+        return value
+
+    @validator('last_name')
+    def validate_last_name(value):
+        last_name = value.split()
+        if not last_name:
+            raise ValueError("Прізвище студента обов'язкові до заповнення!")
+        elif len(last_name) < 2:
+            raise ValueError("Прізвище студента обов'язкові до заповнення!")
         return value
     
     @validator('telephone_number')
@@ -75,7 +89,9 @@ class CreateStudentOut(BaseModel):
 
 class StudentsListOut(BaseModel):
     student_id: int       
-    student_full_name: str
+    student_first_name: str
+    student_last_name: str
+    student_middle_name: str
     telephone_number: str
     user_id: int = None
     university_id: int

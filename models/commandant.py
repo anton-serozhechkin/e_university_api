@@ -10,11 +10,13 @@ class Commandant(Base):
     __tablename__ = 'commandant'
 
     commandant_id = Column(INTEGER, primary_key=True, nullable=False)
-    full_name = Column(VARCHAR(length=255), nullable=False)
+    first_name = Column(VARCHAR(length=255), nullable=False)
+    last_name = Column(VARCHAR(length=255), nullable=False)
+    middle_name = Column(VARCHAR(length=255), nullable=True)
     telephone_number = Column(VARCHAR(length=50), nullable=False, unique=True)
 
     hostel = relationship("Hostel", back_populates="commandant")
 
     def __repr__(self):
-        return (f'{self.__class__.__name__}(commandant_id="{self.commandant_id}",full_name="{self.full_name}",'
-                f'telephone_number="{self.telephone_number}")')
+        return (f'{self.__class__.__name__}(commandant_id="{self.commandant_id}",first_name="{self.first_name}",'
+                f'last_name="{self.last_name}", telephone_number="{self.telephone_number}")')

@@ -42,5 +42,6 @@ class FacultyOut(BaseModel):
     shortname: str
     main_email: str = None
     university_id: int
-    decan_full_name: str = None
-   
+    decan_first_name: str = None
+    decan_last_name: str = None
+    decan_middle_name: str = None

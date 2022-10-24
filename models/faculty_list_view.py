@@ -11,4 +11,6 @@ faculty_list_view = Table('faculty_list_view', metadata_obj,
           Column('main_email', VARCHAR(50)),
           Column('university_id', Integer),
           Column('dekan_id', Integer),
-          Column('decan_full_name', VARCHAR(255)))
+          Column('decan_first_name', VARCHAR(255)),
+          Column('decan_last_name', VARCHAR(255)),
+          Column('decan_middle_name', VARCHAR(255)))

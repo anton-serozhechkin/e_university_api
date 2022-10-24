@@ -44,7 +44,9 @@ MATCH FULL ON DELETE CASCADE ON UPDATE CASCADE;
 -- student_pk marked as PK to faculty_id"
 CREATE TABLE IF NOT EXISTS student (
     student_id integer NOT NULL,
-    full_name varchar(255) NOT NULL,
+    first_name varchar(255) NOT NULL,
+    last_name varchar(255) NOT NULL,
+    middle_name varchar(255),
     telephone_number varchar(255) NOT NULL UNIQUE,
     faculty_id integer NOT NULL,
     user_id integer,
@@ -369,17 +371,17 @@ CREATE TABLE IF NOT EXISTS dekan(
     CONSTRAINT dekan_pk PRIMARY KEY (dekan_id));
 
 -- INSERT DATA to table dekan
-INSERT INTO dekan(dekan_id, full_name) VALUES (1, 'Коц Григорій Павлович');
+INSERT INTO dekan(dekan_id, first_name, last_name, middle_name) VALUES (1, 'Коц', 'Григорій', 'Павлович');
 
-INSERT INTO dekan(dekan_id, full_name) VALUES (2, 'Птащенко Олена Валеріївна');
+INSERT INTO dekan(dekan_id, first_name, last_name, middle_name) VALUES (2, 'Птащенко', 'Олена', 'Валеріївна');
 
-INSERT INTO dekan(dekan_id, full_name) VALUES (3, 'Шталь Тетяна Валеріївна');
+INSERT INTO dekan(dekan_id, first_name, last_name, middle_name) VALUES (3, 'Шталь', 'Тетяна', 'Валеріївна');
 
-INSERT INTO dekan(dekan_id, full_name) VALUES (4, 'Проноза Павло Володимирович');
+INSERT INTO dekan(dekan_id, first_name, last_name, middle_name) VALUES (4, 'Проноза', 'Павло', 'Володимирович');
 
-INSERT INTO dekan(dekan_id, full_name) VALUES (5, 'Вовк Володимир Анатолійович');
+INSERT INTO dekan(dekan_id, first_name, last_name, middle_name) VALUES (5, 'Вовк', 'Володимир', 'Анатолійович');
 
-INSERT INTO dekan(dekan_id, full_name) VALUES (6, 'Бріль Михайло Сергійович');
+INSERT INTO dekan(dekan_id, first_name, last_name, middle_name) VALUES (6, 'Бріль', 'Михайло', 'Сергійович');
 
 
 -- Add column dekan_id to table faculty
@@ -406,11 +408,13 @@ UPDATE faculty SET dekan_id = 6 WHERE faculty_id = 6;
 -- Create table rector
 CREATE TABLE IF NOT EXISTS rector(
     rector_id integer NOT NULL,
-    full_name varchar(255) NOT NULL,
+    first_name varchar(255) NOT NULL,
+    last_name varchar(255) NOT NULL,
+    middle_name varchar(255),
     CONSTRAINT rector_pk PRIMARY KEY (rector_id));
 
 -- INSERT DATA to rector table
-INSERT INTO rector(rector_id, full_name) VALUES (1, 'Пономаренко Володимир Степанович');
+INSERT INTO rector(rector_id, first_name, last_name, middle_name) VALUES (1, 'Пономаренко', 'Володимир', 'Степанович');
 
 -- Add column rector_id to table university
 ALTER TABLE university ADD rector_id integer;
@@ -433,7 +437,9 @@ CREATE VIEW faculty_list_view AS
         f.shortname,
         f.main_email,
         f.dekan_id,
-        d.full_name as decan_full_name
+        d.first_name as decan_first_name
+        d.last_name as decan_last_name
+        d.middle_name as decan_middle_name
     FROM
         faculty f
     LEFT JOIN dekan d ON
@@ -491,7 +497,9 @@ CREATE VIEW user_request_booking_hostel_view AS
         f.name as faculty_name,
         u.university_id,
         u.short_university_name,
-        r.full_name as rector_full_name,
+        r.first_name as rector_first_name,
+        r.last_name as rector_last_name,
+        r.middle_name as rector_middle_name,
         sp.code as speciality_code,
         sp.name as speciality_name,
         co.value as course,
@@ -559,18 +567,20 @@ CREATE VIEW user_request_list_view AS
 -- Create table commandant
 CREATE TABLE IF NOT EXISTS commandant(
     commandant_id integer NOT NULL,
-    full_name VARCHAR(255) NOT NULL,
+    first_name VARCHAR(255) NOT NULL,
+    last_name VARCHAR(255) NOT NULL,
+    middle_name VARCHAR(255),
     telephone_number varchar(50) NOT NULL UNIQUE,
     CONSTRAINT commandant_pk PRIMARY KEY(commandant_id));
 
 -- Insert data to table commandant
-INSERT INTO commandant(commandant_id, full_name, telephone_number) VALUES (1, 'Ляшко Надія Михайлівна', '+380-(57)-710-78-51');
-INSERT INTO commandant(commandant_id, full_name, telephone_number) VALUES (2, 'Любченко Володимир Віталійович', '+380-(57)-779-26-54');
-INSERT INTO commandant(commandant_id, full_name, telephone_number) VALUES (3, 'Колосова Олена Іванівна', '+380-(57)-336-83-50');
-INSERT INTO commandant(commandant_id, full_name, telephone_number) VALUES (4, 'Марченко Тетяна Федорівна', '+380-(57)-336-77-57');
-INSERT INTO commandant(commandant_id, full_name, telephone_number) VALUES (5, 'Рилова Лариса Миколаївна', '+380-(57)-702-11-94');
-INSERT INTO commandant(commandant_id, full_name, telephone_number) VALUES (6, 'Голубєва Надія Олександрівна', '+380-(57)-340-10-82');
-INSERT INTO commandant(commandant_id, full_name, telephone_number) VALUES (7, 'Піпенко Світлана Миколаївна', '+380-(57)-391-02-83');
+INSERT INTO commandant(commandant_id, first_name, last_name, middle_name, telephone_number) VALUES (1, 'Ляшко', 'Надія', 'Михайлівна', '+380-(57)-710-78-51');
+INSERT INTO commandant(commandant_id, first_name, last_name, middle_name, telephone_number) VALUES (2, 'Любченко', 'Володимир', 'Віталійович', '+380-(57)-779-26-54');
+INSERT INTO commandant(commandant_id, first_name, last_name, middle_name, telephone_number) VALUES (3, 'Колосова', 'Олена', 'Іванівна', '+380-(57)-336-83-50');
+INSERT INTO commandant(commandant_id, first_name, last_name, middle_name, telephone_number) VALUES (4, 'Марченко', 'Тетяна', 'Федорівна', '+380-(57)-336-77-57');
+INSERT INTO commandant(commandant_id, first_name, last_name, middle_name, telephone_number) VALUES (5, 'Рилова', 'Лариса', 'Миколаївна', '+380-(57)-702-11-94');
+INSERT INTO commandant(commandant_id, first_name, last_name, middle_name, telephone_number) VALUES (6, 'Голубєва', 'Надія', 'Олександрівна', '+380-(57)-340-10-82');
+INSERT INTO commandant(commandant_id, first_name, last_name, middle_name, telephone_number) VALUES (7, 'Піпенко', 'Світлана', 'Миколаївна', '+380-(57)-391-02-83');
 
 -- Create table hostel
 CREATE TABLE IF NOT EXISTS hostel(
@@ -615,7 +625,9 @@ CREATE VIEW hostel_list_view AS
         ht.street,
         ht.build,
         ht.commandant_id,
-        co.full_name as commandant_full_name
+        co.first_name as commandant_first_name
+        co.last_name as commandant_last_name
+        co.middle_name as commandant_middle_name
     FROM
         hostel ht
     LEFT JOIN commandant co ON
@@ -783,7 +795,9 @@ CREATE VIEW hostel_accommodation_view AS
     un.university_name,
     re.organisation_code,
     re.payment_recognation,
-    co.full_name as commandant_full_name,
+    co.first_name as commandant_first_name,
+    co.last_name as commandant_last_name,
+    co.middle_name as commandant_middle_name,
     co.telephone_number,
     sd.documents
     FROM
@@ -860,7 +874,9 @@ DROP VIEW IF EXISTS students_list_view;
 CREATE VIEW students_list_view AS
     SELECT
         st.student_id,
-        st.full_name as student_full_name,
+        st.first_name as student_first_name,
+        st.last_name as student_last_name,
+        st.middle_name as student_middle_name,
         st.telephone_number,
         st.user_id,
 	    f.university_id,
@@ -875,7 +891,9 @@ CREATE VIEW students_list_view AS
     ORDER BY
         f.university_id,
         st.faculty_id,
-        st.full_name;
+        st.first_name,
+        st.last_name,
+        st.middle_name;
 
 
 -- Create view to return user_request information

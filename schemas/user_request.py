@@ -21,12 +21,16 @@ class UserRequestExistenceOut(BaseModel):
 
 
 class UserRequestBookingHostelOut(BaseModel):
-    full_name: str
+    first_name: str
+    last_name: str
+    middle_name: str
     user_id: int
     faculty_name: str
     university_id: int
     short_university_name: str
-    rector_full_name: str
+    rector_first_name: str
+    rector_last_name: str
+    rector_middle_name: str
     date_today: date
     start_year: int
     finish_year: int
@@ -80,6 +84,7 @@ class UserRequestReviewIn(BaseModel):
             raise ValueError(message)
         return v
 
+
 class UserRequestReviewOut(BaseModel):
     status_id: int
     user_request_review_id: int
@@ -100,7 +105,9 @@ class HostelAccomodationViewOut(BaseModel):
     university_name: str
     organisation_code: str
     payment_recognation: str
-    commandant_full_name: str
+    commandant_first_name: str
+    commandant_last_name: str
+    commandant_middle_name: str
     telephone_number: str
     documents: Dict[str, str]
 

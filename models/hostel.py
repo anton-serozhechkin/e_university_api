@@ -23,7 +23,6 @@ class Hostel(Base):
     commandant = relationship('Commandant', back_populates='hostel')
     user_request_reviews = relationship('UserRequestReview', back_populates='hostels')
 
-
     def __repr__(self):
         return f'{self.__class__.__name__}(hostel_id="{self.hostel_id}",' \
                f'number="{self.number}",name="{self.name}",city="{self.city}",street="{self.street}",' \
