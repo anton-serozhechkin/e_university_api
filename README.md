@@ -51,7 +51,7 @@ During development it may be useful to run application outside of docker contain
 
    Run application (one-liner):
 
-       poetry run main:app uvicorn --port 8778
+       poetry run uvicorn apps.main:app --port 8778
 
    or
 
@@ -66,7 +66,7 @@ For work with application, you need to setup your database in docker container. 
 
 1. While postgres docker container is running, enter it (use separate terminal):
 
-    docker exec -it e_university_api-postgres bash
+       docker exec -it e_university_api-postgres bash
 
 2. Enter inside psql terminal (inside your container):
 
@@ -74,8 +74,8 @@ For work with application, you need to setup your database in docker container. 
 
 3. Create database for use it in our application and use it (inside psql terminal):
 
-    CREATE DATABASE e_university;
-    \c e_university;
+       CREATE DATABASE e_university;
+       \c e_university;
 
 4. Copy content of 1) migrations/main.sql and 2) migrations/data.sql one after another and paste it in previously opened psql terminal.
    Check that migrations applied successfully.
@@ -84,8 +84,8 @@ For work with application, you need to setup your database in docker container. 
 
 6. Rebuild docker and up it, use commands:
 
-    docker-compose build --no-cache
-    docker-compose up
+       docker-compose build --no-cache
+       docker-compose up
 
 ## Project layout
 
