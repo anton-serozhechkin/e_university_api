@@ -10,7 +10,7 @@ router = APIRouter(tags=["Authorization"])
 
 
 @router.get('/me',
-            name="get_me",
+            name="read_me",
             response_model=JSENDOutSchema[UserOut],
             summary='Get current user info',
             responses={200: {"description": "Successful get current user information response"}})

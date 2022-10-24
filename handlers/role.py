@@ -15,7 +15,7 @@ router = APIRouter(tags=["SuperAdmin dashboard"])
 
 
 @router.get("/roles/",
-            name="get_available_roles",
+            name="read_available_roles",
             response_model=JSENDOutSchema[List[AvailableRolesOut]],
             summary="Get available roles",
             responses={200: {"description": "Successful get list of available roles response"}})

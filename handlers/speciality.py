@@ -19,7 +19,7 @@ router = APIRouter(
 
 
 @router.get("/{university_id}/speciality/",
-            name="get_speciality_list",
+            name="read_speciality_list",
             response_model=JSENDOutSchema[List[SpecialityListOut]],
             summary="Get speciality list",
             responses={200: {"description": "Successful get all speciality list of university response"}})

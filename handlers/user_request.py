@@ -32,7 +32,7 @@ router = APIRouter(
 
 
 @router.get("/{university_id}/user-request-existence/{service_id}/",
-            name="check_user_request_existence",
+            name="read_user_request_existence",
             response_model=JSENDOutSchema[UserRequestExistenceOut],
             summary="Check user request existence",
             responses={200: {"description": "Successful get response with info about existence user request response"}},
@@ -61,7 +61,7 @@ async def check_user_request_existence(university_id: int, service_id: int, user
 
 
 @router.get("/{university_id}/user-request/",
-            name="get_user_request_list",
+            name="read_user_request_list",
             response_model=JSENDOutSchema[List[UserRequestsListOut]],
             summary="Get user request list",
             responses={200: {"description": "Successful get university user request list response"}},
@@ -76,7 +76,7 @@ async def read_user_request_list(university_id: int, user=Depends(get_current_us
 
 
 @router.post("/{university_id}/user-request/",
-             name="post_user_request",
+             name="create_user_request",
              response_model=JSENDOutSchema[CreateUserRequestOut],
              summary="Create user request",
              responses={200: {"description": "Successful create user request response"}},
@@ -118,7 +118,7 @@ async def create_user_request(university_id: int, user_request: CreateUserReques
 
 
 @router.get("/{university_id}/user-request-booking-hostel/",
-            name="get_user_request_booking_hostel",
+            name="read_user_request_booking_hostel",
             response_model=JSENDOutSchema[UserRequestBookingHostelOut],
             summary="Get user request booking hostel",
             responses={200: {"description": "Successful get user request booking hostel response"}},
@@ -133,7 +133,7 @@ async def read_user_request_booking_hostel(university_id: int, user=Depends(get_
 
 
 @router.put("/{university_id}/user-request/{user_request_id}",
-            name="put_cancel_user_request",
+            name="update_cancel_user_request",
             response_model=JSENDOutSchema[CancelRequestOut],
             summary="Cancel user request",
             responses={200: {"description": "Successful cancel user request response"}},
@@ -156,7 +156,7 @@ async def cancel_request(university_id: int, user_request_id: int, cancel_reques
 
 
 @router.post("/{university_id}/user-request-review/{user_request_id}/",
-             name="post_user_request_review",
+             name="create_user_request_review",
              response_model=JSENDOutSchema[UserRequestReviewOut],
              summary="Create user request review",
              responses={200: {"description": "Successful create user request review response"}},
@@ -193,7 +193,7 @@ async def create_user_request_review(university_id: int, user_request_id: int, u
 
 
 @router.get("/{university_id}/hostel-accommodation/{user_request_id}",
-            name="get_hostel_accommodation",
+            name="read_hostel_accommodation",
             response_model=JSENDOutSchema[HostelAccomodationViewOut],
             summary="Get hostel accommodation",
             responses={200: {"description": "Successful get user request hostel accommodation response"}},
@@ -214,7 +214,7 @@ async def read_hostel_accommodation(university_id: int, user_request_id: int, us
 
 
 @router.get("/{university_id}/user-request/{user_request_id}",
-            name="get_request_details",
+            name="read_user_request_details",
             response_model=JSENDOutSchema[UserRequestDetailsViewOut],
             summary="Get user request",
             responses={200: {"description": "Successful get user request response"}},

@@ -19,7 +19,7 @@ router = APIRouter(
 
 
 @router.get("/{university_id}/faculties/",
-            name="get_faculty_list",
+            name="read_faculty_list",
             response_model=JSENDOutSchema[List[FacultyOut]],
             summary="Get faculty list",
             responses={

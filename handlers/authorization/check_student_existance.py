@@ -22,7 +22,7 @@ router = APIRouter(
 
 
 @router.post("/check-student-existance",
-             name="post_student_existence",
+             name="create_student_existence",
              response_model=JSENDOutSchema[StudentCheckExistanceOut],
              summary="Check user existence",
              responses={200: {"description": "Successful check user existence response"}},

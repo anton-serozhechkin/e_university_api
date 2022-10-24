@@ -1,8 +1,8 @@
 from sqlalchemy import select
 
 from handlers.current_user import get_current_user
-from schemas.bed_places import BedPlacesOut
-from models.bed_places import BedPlaces
+from schemas.bed_place import BedPlaceOut
+from models.bed_place import BedPlace
 from db import database
 
 from typing import List
@@ -15,8 +15,8 @@ router = APIRouter(tags=["Admin dashboard"])
 
 
 @router.get("/bed-places/",
-            name="get_bed_places",
-            response_model=JSENDOutSchema[List[BedPlacesOut]],
+            name="read_bed_places",
+            response_model=JSENDOutSchema[List[BedPlaceOut]],
             summary="Get bed places list",
             responses={200: {"description": "Successful get list of available bed places response"}})
 async def available_bed_places(user=Depends(get_current_user)):
@@ -27,7 +27,7 @@ async def available_bed_places(user=Depends(get_current_user)):
 
     **Return**: list of available bed places.
     """
-    query = select(BedPlaces)
+    query = select(BedPlace)
     return {
         "data": await database.fetch_all(query),
         "message": "Got available bed places list"

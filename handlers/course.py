@@ -16,7 +16,7 @@ router = APIRouter(tags=["Admin dashboard"])
 
 
 @router.get("/courses/",
-            name="get_courses_list",
+            name="read_courses_list",
             response_model=JSENDOutSchema[List[CourseListOut]],
             summary="Get courses list",
             responses={200: {"description": "Successful get all courses list response"}})

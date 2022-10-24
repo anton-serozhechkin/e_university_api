@@ -22,7 +22,7 @@ router = APIRouter(
 
 
 @router.get("/{university_id}/users/",
-            name="get_users_list",
+            name="read_users_list",
             response_model=JSENDOutSchema[List[UsersListViewOut]],
             summary="Get university users list",
             responses={200: {"description": "Successful get all users list of the university response"}})
@@ -35,7 +35,7 @@ async def users_list(university_id: int, user=Depends(get_current_user)):
 
 
 @router.post("/{university_id}/users/",
-             name="post_user",
+             name="create_user",
              response_model=JSENDOutSchema[CreateUserOut],
              summary="Create university user",
              responses={200: {"description": "Successful create university user response"}})
