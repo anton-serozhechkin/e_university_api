@@ -1,7 +1,7 @@
 from sqlalchemy import (Column, ForeignKey, VARCHAR, INTEGER)
 from sqlalchemy.orm import relationship
 
-from apps.core.db import Base
+from apps.common.db import Base
 
 
 class Role(Base):

@@ -1,7 +1,7 @@
 from apps.educational_institutions.models import faculty_list_view, Faculty, speciality_list_view, Course
 from apps.educational_institutions.schemas import FacultyOut, FacultyIn, SpecialityListOut, CourseListOut
 from apps.users.handlers import get_current_user
-from apps.core.db import database
+from apps.common.db import database
 
 from sqlalchemy import select, insert
 

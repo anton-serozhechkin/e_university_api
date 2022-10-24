@@ -1,4 +1,4 @@
-from apps.core.db import Base
+from apps.common.db import Base
 
 from sqlalchemy import (MetaData, Column, Table, INTEGER, VARCHAR, ForeignKey, BOOLEAN, TIMESTAMP, JSON)
 from sqlalchemy.orm import relationship

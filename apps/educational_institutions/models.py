@@ -1,7 +1,7 @@
 from sqlalchemy import (MetaData, Column, INTEGER, VARCHAR, ForeignKey, Table, JSON)
 from sqlalchemy.orm import relationship
 
-from apps.core.db import Base
+from apps.common.db import Base
 
 metadata_obj = MetaData()
 

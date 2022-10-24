@@ -1,4 +1,4 @@
-from apps.core.db import database
+from apps.common.db import database
 from apps.hostel.models import BedPlace, hostel_list_view
 from apps.hostel.schemas import HostelListOut, BedPlaceOut
 from apps.users.handlers import get_current_user

@@ -1,6 +1,6 @@
 import typing
 from fastapi import status as http_status
-from apps.components.enums import JSENDStatus
+from apps.common.enums import JSENDStatus
 
 
 class BackendException(Exception):

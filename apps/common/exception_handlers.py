@@ -1,5 +1,5 @@
-from apps.components.enums import JSENDStatus
-from apps.components.exceptions import BackendException
+from apps.common.enums import JSENDStatus
+from apps.common.exceptions import BackendException
 
 from fastapi import Request, status
 from fastapi.responses import JSONResponse

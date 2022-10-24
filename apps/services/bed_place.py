@@ -2,7 +2,7 @@ from apps.hostel.models import BedPlace
 from apps.hostel.schemas import BedPlaceOut
 from apps.jsend import JSENDOutSchema
 
-from apps.core.db import database
+from apps.common.db import database
 
 from sqlalchemy import select
 from fastapi import Depends, APIRouter

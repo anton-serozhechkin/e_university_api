@@ -4,7 +4,7 @@ from pydantic import Field, BaseModel
 from pydantic.generics import GenericModel
 from pydantic.typing import NoneType
 
-from apps.components.enums import JSENDStatus
+from apps.common.enums import JSENDStatus
 
 
 SchemaVar = TypeVar("SchemaVar", bound=Union[BaseModel, NoneType, str])

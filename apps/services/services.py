@@ -1,4 +1,4 @@
-from apps.core.db import database
+from apps.common.db import database
 from apps.services.models import Service, UserDocument
 from settings import (Settings, TEMPLATES_PATH, SETTLEMENT_HOSTEL_PATH)
 

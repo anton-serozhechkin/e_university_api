@@ -1,12 +1,12 @@
-from apps.components.utils import (create_access_token, create_refresh_token, verify_password)
+from apps.common.utils import (create_access_token, create_refresh_token, verify_password)
 from apps.authorization.models import Role
 from apps.users.handlers import get_current_user
-from apps.components.exceptions import BackendException
+from apps.common.exceptions import BackendException
 from apps.authorization.schemas import AvailableRolesOut
 from apps.jsend import JSENDOutSchema
 from apps.users.models import User
 from apps.users.schemas import AuthOut
-from apps.core.db import database
+from apps.common.db import database
 
 from typing import List
 from fastapi import Depends, APIRouter
