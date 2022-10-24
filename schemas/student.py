@@ -22,14 +22,14 @@ class CreateStudentIn(BaseModel):
     gender: str
 
     @validator('full_name')
-    def validate_full_name(value):  # TODO may be there is need to use staticmethod decorator
-        full_name = value.split()   # TODO use hint or so
+    def validate_full_name(cls, value):
+        full_name = value.split()
         if not full_name or len(full_name) < 2:
             raise ValueError("The student's name and surname are mandatory!")
         return value
     
     @validator('telephone_number')
-    def validate_telephone_number(value):   # TODO may be there is need to use staticmethod decorator
+    def validate_telephone_number(cls, value):
         if not value:
             raise ValueError('The phone number cannot be empty!')
         elif len(str(value)) != 12:
@@ -37,7 +37,7 @@ class CreateStudentIn(BaseModel):
         return value
 
     @validator('course_id')
-    def validate_course_id(value):  # TODO may be there is need to use staticmethod decorator
+    def validate_course_id(cls, value):
         if not value:
             raise ValueError('The course cannot be empty!')
         elif value not in range(1, 7):
@@ -45,23 +45,23 @@ class CreateStudentIn(BaseModel):
         return value
 
     @validator('speciality_id')
-    def validate_speciality_id(value):
+    def validate_speciality_id(cls, value):
         if not value:
             raise ValueError('The specialty cannot be empty!')
         return value
 
     @validator('faculty_id')
-    def validate_faculty_id(value):
+    def validate_faculty_id(cls, value):
         if not value:
             raise ValueError('The faculty cannot be empty!')
         return value
 
     @validator('gender')
-    def validate_gender(value):
+    def validate_gender(cls, value):
         exists_genders = ['Ч', 'М']
         if not value: 
             raise ValueError('The student gender cannot be empty!')
-        if value.upper() not in exists_genders:     # TODO use hint or so
+        if value.upper() not in exists_genders:
             raise ValueError('Choose your gender from the list provided.')
         return value
 

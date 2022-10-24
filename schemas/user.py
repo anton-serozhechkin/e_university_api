@@ -54,7 +54,7 @@ class RegistrationIn(BaseModel):
         return v
 
     @validator('password_re_check')
-    def validate_password(cls, v, values):  # TODO may be there is need to use classmethod decorator
+    def validate_password(cls, v, values):
         password = values.get('password')
 
         if not password or not v:

@@ -50,7 +50,7 @@ class CancelRequestIn(BaseModel):
     status_id: int
 
     @validator('status_id')
-    def validate_status_id(cls, v):  # TODO may be there is need to use classmethod decorator
+    def validate_status_id(cls, v):
         if v != 4:
             raise ValueError("The application can only be canceled.")
         return v
@@ -73,7 +73,7 @@ class UserRequestReviewIn(BaseModel):
     bed_place_id: int = None
 
     @validator('status_id')
-    def validate_status_id(cls, v):  # TODO may be there is need to use classmethod decorator
+    def validate_status_id(cls, v):
         if v not in [1, 2]:
             raise ValueError("The application can only be approved or rejected.")
         return v
