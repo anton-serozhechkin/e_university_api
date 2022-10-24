@@ -89,9 +89,9 @@ class CreateStudentOut(BaseModel):
 
 class StudentsListOut(BaseModel):
     student_id: int       
-    student_first_name: str
-    student_last_name: str
-    student_middle_name: str
+    first_name: str
+    last_name: str
+    middle_name: str
     telephone_number: str
     user_id: int = None
     university_id: int
