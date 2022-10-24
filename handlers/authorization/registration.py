@@ -32,6 +32,16 @@ router = APIRouter(
              responses={200: {"description": "Successful user registration response"}},
              tags=["Authorization"])
 async def registation(user: RegistrationIn):  # TODO spelling mistake 'registRation'
+    """
+    **User registration**
+
+    **Input**:
+    - **token**: token from "Check user existence"
+    - **email**: enter user email; only letters (a-z), numbers (0-9) and periods (.) are allowed
+    - **password**: enter password; password cannot be empty
+
+    **Return**: user id; faculty id; login, which consists of name and random number
+    """
 
     RegistrationIn(
         token=user.token,

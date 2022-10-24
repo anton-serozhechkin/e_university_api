@@ -21,13 +21,6 @@ router = APIRouter(tags=["Admin dashboard"])
             summary="Get courses list",
             responses={200: {"description": "Successful get all courses list response"}})
 async def read_courses_list(auth=Depends(get_current_user)):
-    """
-    **Get all courses list.**
-
-    **Auth**: only authenticated user can get courses list.
-
-    **Return**: list of all courses.
-    """
     query = select(Course)
     return {
         "data": await database.fetch_all(query),

@@ -29,10 +29,7 @@ async def read_faculties(university_id: int, user=Depends(get_current_user)):
     """
     **Get list of university faculties**
 
-    **Auth**: only authenticated user can get courses list
-
     **Path**:
-
     - **university_id**: integer, required, university id in table
 
     **Return**: list of all university faculties with info: faculty id in table, name and shortname,

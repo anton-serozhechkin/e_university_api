@@ -23,6 +23,15 @@ router = APIRouter(
              summary="Create access and refresh user token",
              responses={200: {"description": "Login and refresh user token"}})
 async def login(form_data: OAuth2PasswordRequestForm = Depends()):
+    """
+    **Login user**
+
+    **Input**:
+    - **username**: login, which consists of name and random number; required
+    - **password**: password to this login name; required
+
+    **Return**: access and refresh tokens for authentication, user id
+    """
     query = select(User).where(User.login == form_data.username)
     user = await database.fetch_one(query)
     if not user:

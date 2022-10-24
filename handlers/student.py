@@ -24,6 +24,22 @@ router = APIRouter(
              responses={200: {"description": "Successful create student of the university response"}},
              tags=["Admin dashboard"])   # TODO after input id of the non-existent university it creates student
 async def create_student(university_id: int, student: CreateStudentIn, auth=Depends(get_current_user)):
+    """
+    **Create university student**
+
+    **Path**:
+    - **university_id**: university id
+
+    **Input**:
+    - **full_name**: student fist name and last name, required
+    - **telephone_number**: student telephone number, must consists of 12 digits, required
+    - **course_id**: student course id, must be between 1 and 6, required
+    - **faculty_id**: faculty id, required
+    - **speciality_id**: speciality id, required
+    - **gender**: student gender, 'Ч' or 'Ж'
+
+    **Return**: created student id
+    """
     CreateStudentIn(
         full_name=student.full_name,
         telephone_number=student.telephone_number,

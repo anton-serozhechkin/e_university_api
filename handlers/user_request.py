@@ -38,6 +38,15 @@ router = APIRouter(
             responses={200: {"description": "Successful get response with info about existence user request response"}},
             tags=["Student dashboard"])
 async def check_user_request_existence(university_id: int, service_id: int, user=Depends(get_current_user)):
+    """
+    **Checking user request existence**
+
+    **Path**
+    - **university_id**: user university id
+    - **service_id**: checking service id
+
+    **Return**: user request id; user request status; user request existence
+    """
     query = select(user_request_exist_view).where(user_request_exist_view.c.user_id == user.user_id,
                                                   user_request_exist_view.c.university_id == university_id,
                                                   user_request_exist_view.c.service_id == service_id)
@@ -82,6 +91,18 @@ async def read_user_request_list(university_id: int, user=Depends(get_current_us
              responses={200: {"description": "Successful create user request response"}},
              tags=["Student dashboard"])
 async def create_user_request(university_id: int, user_request: CreateUserRequestIn, user=Depends(get_current_user)):
+    """
+    **Create user request**
+
+    **Path**:
+    - **university_id**: user university id
+
+    **Input**:
+    - **service_id**: service id in database, required
+    - **comment*: comment for the creating user request, required
+
+    **Return**: user request id; request status id
+    """
     query = select(UserFaculty).where(UserFaculty.user_id == user.user_id)
     user_faculty_result = await database.fetch_one(query)
     query = insert(UserRequest).values(date_created=datetime.now(),
@@ -140,6 +161,18 @@ async def read_user_request_booking_hostel(university_id: int, user=Depends(get_
             tags=["Student dashboard"])
 async def cancel_request(university_id: int, user_request_id: int, cancel_request: CancelRequestIn,
                          user=Depends(get_current_user)):
+    """
+    **Cancel user request**
+
+    **Path**:
+    - **university_id**: user university id
+    - **user_request_id**: user request id
+
+    **Input**:
+    - **status_id**: user request status id, required
+
+    **Return**: deleted user request id and status id
+    """
     CancelRequestIn(status_id=cancel_request.status_id)
     query = update(UserRequest).where(UserRequest.user_request_id == user_request_id).values(
         status_id=cancel_request.status_id)
@@ -163,6 +196,26 @@ async def cancel_request(university_id: int, user_request_id: int, cancel_reques
              tags=["Admin dashboard"])
 async def create_user_request_review(university_id: int, user_request_id: int, user_request_review: UserRequestReviewIn,
                                      user=Depends(get_current_user)):
+    """
+    **Create user request review**
+
+    **Path**:
+    - **university_id**: user university id
+    - **user_request_id**: user request id
+
+    **Input**:
+    - **status_id**: user request status id, required
+    - **room_number**: user room number, required
+    - **start_date_accommodation**: starting datetime hostel accommodation, required
+    - **end_date_accommodation**: end datetime hostel accommodation, required
+    - **total_sum**: total sum of hostel accommodation payment, required
+    - **payment_deadline**: deadline datetime for hostel accommodation payment, required
+    - **remark**: additional info for request review, required
+    - **hostel_id**: hostel id in the database, required
+    - **bed_place_id**: hostel bed place id, required
+
+    **Return**: user request status id; user request review id
+    """
     query = insert(UserRequestReview).values(university_id=university_id,
                                              user_request_id=user_request_id,
                                              date_created=datetime.now(),

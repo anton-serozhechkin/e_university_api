@@ -40,6 +40,21 @@ async def users_list(university_id: int, user=Depends(get_current_user)):
              summary="Create university user",
              responses={200: {"description": "Successful create university user response"}})
 async def create_user(university_id: int, user: CreateUserIn, auth=Depends(get_current_user)):
+    """
+    **Create university user**
+
+    **Path**:
+    - **university_id**: university id for creating user
+
+    **Input**:
+    - **email**: user email, only letters (a-z), numbers (0-9) and periods (.) are allowed, required
+    - **password**: password, cannot be empty, required
+    - **password_re_check**: password recheck, required
+    - **role_id**: user role id, 1 - student, 2 - admin, 3 - superadmin, required
+    - **faculty_id**: user faculty id, required
+
+    **Return**: created user id
+    """
     CreateUserIn(
         email=user.email,
         password=user.password,

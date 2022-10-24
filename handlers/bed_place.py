@@ -20,13 +20,6 @@ router = APIRouter(tags=["Admin dashboard"])
             summary="Get bed places list",
             responses={200: {"description": "Successful get list of available bed places response"}})
 async def available_bed_places(user=Depends(get_current_user)):
-    """
-    **Get available bed places list.**
-
-    **Auth**: only authenticated user can get courses list
-
-    **Return**: list of available bed places.
-    """
     query = select(BedPlace)
     return {
         "data": await database.fetch_all(query),

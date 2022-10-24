@@ -28,6 +28,15 @@ router = APIRouter(
              responses={200: {"description": "Successful check user existence response"}},
              tags=["Authorization"])  # TODO spelling mistake, there is need to check path in other modules
 async def check_student(student: StudentCheckExistanceIn):
+    """
+    **Check student existence in the database**
+
+    **Input**:
+    - **full name**: full name of the student in the database
+    - **telephone number**: telephone number, must be 12 digits
+
+    **Return**: student id; token, which is used for registering user; token expires datetime
+    """
 
     query = select(Student).where(Student.full_name == student.full_name,
                                   Student.telephone_number == student.telephone_number)
