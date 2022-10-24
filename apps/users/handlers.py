@@ -3,8 +3,8 @@ from apps.common.utils import get_hashed_password
 from apps.common.db import database
 from apps.users.models import User, user_list_view, Student, OneTimeToken, UserFaculty, students_list_view
 from apps.users.schemas import UserOut, TokenPayload, UsersListViewOut, CreateUserOut, CreateUserIn, DeleteUserIn, \
-    RegistrationOut, RegistrationIn, CreateStudentOut, CreateStudentIn, StudentsListOut, DeleteStudentIn, UserIn, \
-    StudentCheckExistanceIn, StudentCheckExistanceOut
+    RegistrationOut, RegistrationIn, CreateStudentOut, CreateStudentIn, StudentsListOut, UserIn, DeleteStudentIn, \
+    StudentCheckExistanceOut, StudentCheckExistanceIn
 from settings import Settings
 
 from random import randint
@@ -238,6 +238,7 @@ async def registration(user: RegistrationIn):
 
 
 @users_router.post("/{university_id}/students/", response_model=JSENDOutSchema[CreateStudentOut], tags=["Admin dashboard"])
+#TODO after input id of the non-existent university it creates student
 async def create_student(university_id: int, student: CreateStudentIn, auth=Depends(get_current_user)):
     CreateStudentIn(
         full_name=student.full_name,
@@ -263,7 +264,7 @@ async def create_student(university_id: int, student: CreateStudentIn, auth=Depe
 
 @users_router.get("/{university_id}/students/", response_model=JSENDOutSchema[List[StudentsListOut]],
                   tags=["Admin dashboard"])
-async def read_students_list(university_id: int, faculty_id: Union[int, None] = None, user=Depends(get_current_user)):
+async def read_students_list(university_id: int, faculty_id: Union[int, None] = None, user=Depends(get_current_user)):  #TODO after input id of the non-existent university it returns the students
     if faculty_id:
         query = select(students_list_view).where(students_list_view.c.faculty_id == faculty_id)
     else:

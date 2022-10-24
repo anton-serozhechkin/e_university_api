@@ -103,7 +103,7 @@ async def read_user_request_booking_hostel(university_id: int, user=Depends(get_
 
 
 @services_router.put("/{university_id}/user-request/{user_request_id}", response_model=JSENDOutSchema[CancelRequestOut],
-                      tags=["Student dashboard"])
+                     tags=["Student dashboard"])
 async def cancel_request(university_id: int, user_request_id: int, cancel_request: CancelRequestIn,
                          user=Depends(get_current_user)):
     CancelRequestIn(status_id=cancel_request.status_id)
