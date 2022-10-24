@@ -9,7 +9,7 @@ from typing import List
 
 from fastapi import Depends, APIRouter
 
-from apps.jsend import JSENDOutSchema
+from apps.common.schemas import JSENDOutSchema
 
 
 educational_institutions_router = APIRouter()

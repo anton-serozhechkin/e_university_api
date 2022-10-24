@@ -7,7 +7,7 @@ from typing import List
 
 from fastapi import APIRouter, Depends
 from sqlalchemy import select
-from apps.jsend import JSENDOutSchema
+from apps.common.schemas import JSENDOutSchema
 hostel_router = APIRouter()
 
 

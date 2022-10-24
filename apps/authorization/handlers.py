@@ -3,7 +3,7 @@ from apps.authorization.models import Role
 from apps.users.handlers import get_current_user
 from apps.common.exceptions import BackendException
 from apps.authorization.schemas import AvailableRolesOut
-from apps.jsend import JSENDOutSchema
+from apps.common.schemas import JSENDOutSchema
 from apps.users.models import User
 from apps.users.schemas import AuthOut
 from apps.common.db import database

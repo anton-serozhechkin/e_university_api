@@ -16,7 +16,7 @@ class Service(Base):
     service_name = Column(VARCHAR(length=255), nullable=False)
 
     requisites = relationship("Requisites", back_populates="service")
-    user_request = relationship("UserRequest", back_populates="service")
+    user_requests = relationship("UserRequest", back_populates="service")
 
     def __repr__(self):
         return f'{self.__class__.__name__}(service_id="{self.service_id}",service_name="{self.service_name}")'
@@ -34,13 +34,13 @@ class UserRequest(Base):
     university_id = Column(INTEGER, ForeignKey("university.university_id"), nullable=False)
     status_id = Column(INTEGER, ForeignKey("status.status_id"), nullable=False)
 
-    users = relationship("User", back_populates="user_request")
-    service = relationship("Service", back_populates="user_request")
-    faculties = relationship("Faculty", back_populates="user_request")
-    university = relationship("University", back_populates="user_request")
-    status = relationship("Status", back_populates="user_request")
+    user = relationship("User", back_populates="user_requests")
+    service = relationship("Service", back_populates="user_requests")
+    faculty = relationship("Faculty", back_populates="user_requests")
+    university = relationship("University", back_populates="user_requests")
+    status = relationship("Status", back_populates="user_requests")
     user_documents = relationship("UserDocument", back_populates="user_request")
-    user_request_reviews = relationship("UserRequestReview", back_populates='user_request')
+    user_request_review = relationship("UserRequestReview", back_populates='user_request')
 
     def __repr__(self):
         return f'{self.__class__.__name__}(user_request_id="{self.user_request_id}",' \
@@ -54,7 +54,7 @@ class Status(Base):
     status_id = Column(INTEGER, primary_key=True, nullable=False)
     status_name = Column(VARCHAR(length=50), nullable=False)
 
-    user_request = relationship("UserRequest", back_populates="status")
+    user_requests = relationship("UserRequest", back_populates="status")
 
     def __repr__(self):
         return f'{self.__class__.__name__}(status_id="{self.status_id}",status_name="{self.status_name}")'
@@ -90,16 +90,16 @@ class UserRequestReview(Base):
     remark = Column(VARCHAR(length=255))
     date_review = Column(DATETIME, nullable=False)
     bed_place_id = Column(INTEGER, ForeignKey("bed_place.bed_place_id"))
-    reviewer = Column(INTEGER, ForeignKey("user.user_id"), nullable=False)
+    reviewer = Column(INTEGER, ForeignKey("user.user_id"), nullable=False)  # TODO: rename column to reviewer_id
     hostel_id = Column(INTEGER, ForeignKey("hostel.hostel_id"))
     university_id = Column(INTEGER, ForeignKey("university.university_id"), nullable=False)
     user_request_id = Column(INTEGER, ForeignKey("user_request.user_request_id"), nullable=False)
 
-    bed_places = relationship("BedPlace", back_populates='user_request_reviews')
-    reviewer_user = relationship("User", back_populates='user_request_reviews')
-    hostels = relationship("Hostel", back_populates='user_request_reviews')
+    bed_place = relationship("BedPlace", back_populates='user_request_review')
+    reviewer_user = relationship("User", back_populates='user_request_reviews')  # TODO: rename to reviewer
+    hostel = relationship("Hostel", back_populates='user_request_reviews')
     university = relationship("University", back_populates='user_request_reviews')
-    user_request = relationship("UserRequest", back_populates='user_request_reviews')
+    user_request = relationship("UserRequest", back_populates='user_request_review')
 
     def __repr__(self):
         return f'{self.__class__.__name__}(user_request_review_id="{self.user_request_review_id}",date_created="{self.date_created}",' \

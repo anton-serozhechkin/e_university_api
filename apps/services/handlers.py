@@ -14,7 +14,7 @@ import json
 
 from fastapi import Depends, APIRouter
 from sqlalchemy import select, insert, update
-from apps.jsend import JSENDOutSchema
+from apps.common.schemas import JSENDOutSchema
 services_router = APIRouter()
 
 

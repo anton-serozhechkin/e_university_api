@@ -17,10 +17,10 @@ class User(Base):
     is_active = Column(BOOLEAN, default=False)
     role_id = Column(INTEGER, ForeignKey("role.role_id"), nullable=True)
 
-    student = relationship("Student", back_populates="users")
+    student = relationship("Student", back_populates="user")
     user_request_reviews = relationship("UserRequestReview", back_populates="reviewer_user")
-    user_faculty = relationship("UserFaculty", back_populates="users")
-    user_request = relationship("UserRequest", back_populates="users")
+    faculties = relationship("Faculty", secondary="user_faculty", back_populates="users")
+    user_requests = relationship("UserRequest", back_populates="user")
     roles = relationship("Role", back_populates="users")
 
     def __repr__(self):
@@ -36,7 +36,7 @@ class OneTimeToken(Base):
     expires = Column(TIMESTAMP, nullable=False)
     student_id = Column(INTEGER, ForeignKey("student.student_id"), nullable=False)
 
-    student = relationship("Student", back_populates="one_time_token")
+    student = relationship("Student", back_populates="one_time_tokens")
 
     def __repr__(self):
         return f'{self.__class__.__name__}(token_id="{self.token_id}",token="{self.token}",expires="{self.expires}",student_id="{self.student_id}")'
@@ -54,11 +54,11 @@ class Student(Base):
     user_id = Column(INTEGER, ForeignKey("user.user_id"))
     faculty_id = Column(INTEGER, ForeignKey("faculty.faculty_id"), nullable=False)
 
-    courses = relationship("Course", back_populates="student")
-    specialties = relationship("Speciality", back_populates="student")
-    users = relationship("User", back_populates="student")
-    faculties = relationship("Faculty", back_populates="student")
-    one_time_token = relationship("OneTimeToken", back_populates="student")
+    course = relationship("Course", sync_backref=False, lazy="joined")
+    speciality = relationship("Speciality", sync_backref=False)
+    user = relationship("User", back_populates="student")
+    faculty = relationship("Faculty", back_populates="students")
+    one_time_tokens = relationship("OneTimeToken", back_populates="student")
 
     def __repr__(self):
         return f'{self.__class__.__name__}(student_id="{self.student_id}",full_name="{self.full_name}",' \
@@ -69,11 +69,8 @@ class Student(Base):
 class UserFaculty(Base):
     __tablename__ = "user_faculty"
 
-    user_id = Column(INTEGER, ForeignKey("user.user_id"), nullable=False, primary_key=True)
-    faculty_id = Column(INTEGER, ForeignKey("faculty.faculty_id"), nullable=False, primary_key=True)
-
-    users = relationship("User", back_populates="user_faculty")
-    faculties = relationship("Faculty", back_populates="faculty")
+    user_id = Column(INTEGER, ForeignKey("user.user_id", ondelete="CASCADE", onupdate="CASCADE"), nullable=False, primary_key=True)
+    faculty_id = Column(INTEGER, ForeignKey("faculty.faculty_id", ondelete="CASCADE", onupdate="CASCADE"), nullable=False, primary_key=True)
 
     def __repr__(self):
         return f'{self.__class__.__name__}(user_id="{self.user_id}", faculty_id="{self.faculty_id}")'

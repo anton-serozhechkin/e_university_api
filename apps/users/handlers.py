@@ -20,7 +20,7 @@ from translitua import translit
 from fastapi import Depends, APIRouter, HTTPException, status as http_status
 from fastapi.security import OAuth2PasswordBearer
 from pydantic import ValidationError
-from apps.jsend import JSENDOutSchema
+from apps.common.schemas import JSENDOutSchema
 
 users_router = APIRouter()
 
