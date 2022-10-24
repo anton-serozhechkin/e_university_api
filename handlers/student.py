@@ -10,10 +10,10 @@ from typing import List, Union
 
 from fastapi import APIRouter, Depends, status as http_status
 
-from schemas.jsend import JSENDOutSchema, JSENDErrorOutSchema
+from schemas.jsend import JSENDOutSchema, JSENDFailOutSchema
 
 router = APIRouter(
-    responses={422: {"model": JSENDErrorOutSchema, "description": "ValidationError"}}
+    responses={422: {"model": JSENDFailOutSchema, "description": "ValidationError"}}
 )
 
 

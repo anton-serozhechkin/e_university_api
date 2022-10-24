@@ -14,11 +14,11 @@ from datetime import datetime
 from translitua import translit
 from fastapi import APIRouter, status as http_status
 
-from schemas.jsend import JSENDOutSchema, JSENDErrorOutSchema, JSENDFailOutSchema
+from schemas.jsend import JSENDOutSchema, JSENDFailOutSchema
 from components.exceptions import BackendException
 
 router = APIRouter(
-    responses={422: {"model": JSENDErrorOutSchema, "description": "ValidationError"},
+    responses={422: {"model": JSENDFailOutSchema, "description": "ValidationError"},
                403: {"model": JSENDFailOutSchema, "description": "Registration time expired fail response"},
                404: {"model": JSENDFailOutSchema, "description": "Invalid input data response"},
                409: {"model": JSENDFailOutSchema, "description": "Input data already exist response"}}

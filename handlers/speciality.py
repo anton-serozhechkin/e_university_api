@@ -9,12 +9,12 @@ from typing import List
 
 from fastapi import APIRouter, Depends
 
-from schemas.jsend import JSENDOutSchema, JSENDErrorOutSchema
+from schemas.jsend import JSENDOutSchema, JSENDFailOutSchema
 
 
 router = APIRouter(
     tags=["Admin dashboard"],
-    responses={422: {"model": JSENDErrorOutSchema, "description": "ValidationError"}}
+    responses={422: {"model": JSENDFailOutSchema, "description": "ValidationError"}}
 )
 
 

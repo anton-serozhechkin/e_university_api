@@ -12,11 +12,11 @@ import os
 
 from fastapi import APIRouter, status as http_status
 
-from schemas.jsend import JSENDOutSchema, JSENDErrorOutSchema, JSENDFailOutSchema
+from schemas.jsend import JSENDOutSchema, JSENDFailOutSchema
 from components.exceptions import BackendException
 
 router = APIRouter(
-    responses={422: {"model": JSENDErrorOutSchema, "description": "ValidationError"},
+    responses={422: {"model": JSENDFailOutSchema, "description": "ValidationError"},
                404: {"model": JSENDFailOutSchema, "description": "Invalid input data response"}}
 )
 

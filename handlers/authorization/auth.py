@@ -8,11 +8,11 @@ from fastapi import Depends, APIRouter, status as http_status
 from fastapi.security import OAuth2PasswordRequestForm
 
 from components.exceptions import BackendException
-from schemas.jsend import JSENDErrorOutSchema, JSENDFailOutSchema
+from schemas.jsend import JSENDFailOutSchema
 
 router = APIRouter(
     tags=["Authorization"],
-    responses={422: {"model": JSENDErrorOutSchema, "description": "ValidationError"},
+    responses={422: {"model": JSENDFailOutSchema, "description": "ValidationError"},
                401: {"model": JSENDFailOutSchema, "description": "Not authorized response"}}
 )
 

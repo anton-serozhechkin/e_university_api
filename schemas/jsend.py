@@ -26,4 +26,4 @@ class JSENDFailOutSchema(JSENDOutSchema):
 class JSENDErrorOutSchema(JSENDOutSchema):
     status: JSENDStatus = Field(default=JSENDStatus.ERROR)
     data: Union[str, NoneType]
-    code: int = Field(default=http_status.HTTP_400_BAD_REQUEST)
+    code: int = Field(default=http_status.HTTP_500_INTERNAL_SERVER_ERROR)
