@@ -238,8 +238,7 @@ async def registration(user: RegistrationIn):
 
 
 @users_router.post("/{university_id}/students/", response_model=JSENDOutSchema[CreateStudentOut], tags=["Admin dashboard"])
-# async def create_student(university_id: int, student: CreateStudentIn, auth=Depends(get_current_user)):
-async def create_student(university_id: int, student: CreateStudentIn):
+async def create_student(university_id: int, student: CreateStudentIn, auth=Depends(get_current_user)):
     CreateStudentIn(
         full_name=student.full_name,
         telephone_number=student.telephone_number,
