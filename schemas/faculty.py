@@ -1,7 +1,6 @@
 import re
 
 from pydantic import BaseModel, validator
-from components.exceptions import BackendException
 
 
 class FacultyIn(BaseModel):
@@ -12,7 +11,7 @@ class FacultyIn(BaseModel):
     main_email: str = None
 
     @validator('main_email')
-    def validate_email(cls, v):     #TODO may be there is need to use classmethod decorator
+    def validate_email(cls, v):
         """
         The method is using for email validation. Only letters (a-z), numbers (0-9) and periods (.) are allowed
         :return: True or not None string
@@ -32,7 +31,7 @@ class FacultyIn(BaseModel):
             message = f"Invalid email address format: {v}."
 
         if message:
-            raise BackendException(message=message)
+            raise ValueError(message)
 
         return v
     

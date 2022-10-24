@@ -2,7 +2,6 @@ from datetime import date, datetime
 from typing import Dict, Union, List
 
 from pydantic import BaseModel, validator
-from components.exceptions import BackendException
 
 
 class CreateUserRequestIn(BaseModel):
@@ -51,9 +50,9 @@ class CancelRequestIn(BaseModel):
     status_id: int
 
     @validator('status_id')
-    def validate_status_id(cls, v):  # TODO may be there is need to use classmethod decorator
+    def validate_status_id(cls, v):
         if v != 4:
-            raise BackendException(message="The application can only be canceled.")
+            raise ValueError("The application can only be canceled.")
         return v
 
 
@@ -74,9 +73,9 @@ class UserRequestReviewIn(BaseModel):
     bed_place_id: int = None
 
     @validator('status_id')
-    def validate_status_id(cls, v):  # TODO may be there is need to use classmethod decorator
+    def validate_status_id(cls, v):
         if v not in [1, 2]:
-            raise BackendException(message="The application can only be approved or rejected.")
+            raise ValueError("The application can only be approved or rejected.")
         return v
 
 
@@ -99,7 +98,7 @@ class HostelAccomodationViewOut(BaseModel):
     iban: str
     university_name: str
     organisation_code: str
-    payment_recognation: str  # TODO syntax error
+    payment_recognation: str  # TODO spelling error
     commandant_full_name: str
     telephone_number: str
     documents: Dict[str, str]

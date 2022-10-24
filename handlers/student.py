@@ -73,7 +73,7 @@ async def delete_student(university_id: int, delete_student: DeleteStudentIn, au
     query = delete(Student).where(Student.student_id == delete_student.student_id)
 
     await database.execute(query)
-
+    # TODO: in response key data has empty dict value, not like it's discribed 
     return {
         "data": {
             "student_id": delete_student.student_id

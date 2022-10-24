@@ -203,7 +203,7 @@ async def read_hostel_accommodation(university_id: int, user_request_id: int, us
                                                     hostel_accommodation_view.c.user_request_id == user_request_id)
     response = await database.fetch_one(query)
 
-    response.documents = json.loads(response.documents)     # TODO AttributeError: 'NoneType' object has no attribute 'documents'
+    response.documents = json.loads(response.documents)     # TODO AttributeError: 'NoneType' object has no attribute 'documents' (it's heppend only if user request doesn't have review)
 
     response.hostel_name = json.loads(response.hostel_name)
     response.hostel_address = json.loads(response.hostel_address)

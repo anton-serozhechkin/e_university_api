@@ -38,7 +38,7 @@ async def login(form_data: OAuth2PasswordRequestForm = Depends()):
             message="Email or password is invalid. Please, try again.",
             code=http_status.HTTP_401_UNAUTHORIZED
         )
-    
+
     return {
         "access_token": create_access_token(user.email),
         "refresh_token": create_refresh_token(user.email),
