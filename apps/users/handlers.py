@@ -2,13 +2,12 @@ from apps.common.exceptions import BackendException
 from apps.common.utils import get_hashed_password
 from apps.common.db import database
 from apps.users.models import User, user_list_view, Student, OneTimeToken, UserFaculty, students_list_view
-from apps.users.schemas import UserOut, TokenPayload, UsersListViewOut, CreateUserOut, CreateUserIn, DeleteUserIn, \
-    RegistrationOut, RegistrationIn, CreateStudentOut, CreateStudentIn, StudentsListOut, UserIn, DeleteStudentIn, \
-    StudentCheckExistanceOut, StudentCheckExistanceIn
+from apps.users.schemas import UserOut, TokenPayload, CreateUserIn, DeleteUserIn, RegistrationIn, CreateStudentIn,\
+    UserIn, DeleteStudentIn, StudentCheckExistanceIn
 from settings import Settings
 
 from random import randint
-from typing import List, Union
+from typing import Union
 from datetime import datetime, timedelta
 from jose import jwt
 
@@ -27,7 +26,7 @@ users_router = APIRouter()
 reuseable_oauth = OAuth2PasswordBearer(
     tokenUrl="/login",
     scheme_name="JWT"
-)       # TODO spelling mistake 'reusable'
+)  # TODO spelling mistake 'reusable'
 
 
 async def get_current_user(token: str = Depends(reuseable_oauth)) -> UserOut:
@@ -66,10 +65,7 @@ async def get_current_user(token: str = Depends(reuseable_oauth)) -> UserOut:
     return user
 
 
-@users_router.post("/check-student-existance", response_model=JSENDOutSchema[StudentCheckExistanceOut],
-                   tags=["Authorization"])  # TODO spelling mistake, there is need to check path in other modules
 async def check_student(student: StudentCheckExistanceIn):
-
     query = select(Student).where(Student.full_name == student.full_name,
                                   Student.telephone_number == student.telephone_number)
     result = await database.fetch_one(query)
@@ -90,30 +86,15 @@ async def check_student(student: StudentCheckExistanceIn):
     last_record_id = await database.execute(query)
 
     query = select(OneTimeToken).where(OneTimeToken.token_id == last_record_id)
-    result = await database.fetch_one(query)
-
-    return {
-        "data": {
-            'token': result.token,
-            'student': result.student_id,
-            'expires': result.expires
-        },
-        "message": f"Get information of student with id {result.student_id}"
-    }
+    return await database.fetch_one(query)
 
 
-@users_router.get("/{university_id}/users/", response_model=JSENDOutSchema[List[UsersListViewOut]],
-                  tags=["SuperAdmin dashboard"])
-async def users_list(university_id: int, user=Depends(get_current_user)):
+async def read_users_list(university_id: int):
     query = select(user_list_view).where(user_list_view.c.university_id == university_id)
-    return {
-        "data": await database.fetch_all(query),
-        "message": f"Got user list of the university with id {university_id}"
-    }
+    return await database.fetch_all(query)
 
 
-@users_router.post("/{university_id}/users/", response_model=JSENDOutSchema[CreateUserOut], tags=["SuperAdmin dashboard"])
-async def create_user(university_id: int, user: CreateUserIn, auth=Depends(get_current_user)):
+async def create_user(user: CreateUserIn):
     CreateUserIn(
         email=user.email,
         password=user.password,
@@ -137,31 +118,15 @@ async def create_user(university_id: int, user: CreateUserIn, auth=Depends(get_c
                                            faculty_id=faculty_id)
         await database.execute(query)
 
-    return {
-        "data": {
-            "user_id": last_record_id
-        },
-        "message": f"Created user with id {last_record_id}"
-    }
+    return last_record_id
 
 
-@users_router.delete("/{university_id}/users/", response_model=JSENDOutSchema, tags=["SuperAdmin dashboard"])
-async def delete_user(university_id: int, delete_user: DeleteUserIn, auth=Depends(get_current_user)):
+async def del_user(delete_user: DeleteUserIn):
     query = delete(User).where(User.user_id == delete_user.user_id)
-
     await database.execute(query)
 
-    return {
-        "data": {
-            "user_id": delete_user.user_id
-        },
-        "message": f"Deleted user with id {delete_user.user_id}"
-    }
 
-
-@users_router.post("/registration", response_model=JSENDOutSchema[RegistrationOut], tags=["Authorization"])
 async def registration(user: RegistrationIn):
-
     RegistrationIn(
         token=user.token,
         email=user.email,
@@ -210,7 +175,8 @@ async def registration(user: RegistrationIn):
             code=http_status.HTTP_409_CONFLICT
         )
 
-    transliterated_full_name = translit(full_name)  # TODO Local variable 'full_name' might be referenced before assignment
+    transliterated_full_name = translit(
+        full_name)  # TODO Local variable 'full_name' might be referenced before assignment
     login = f"{(transliterated_full_name[:4])}-{randint(100, 999)}".lower()
 
     # Encoding password
@@ -224,22 +190,17 @@ async def registration(user: RegistrationIn):
     await database.execute(query)
 
     query = insert(UserFaculty).values(user_id=last_record_id, faculty_id=faculty_id).returning(
-        UserFaculty.faculty_id)     # TODO Local variable 'faculty_id' might be referenced before assignment
+        UserFaculty.faculty_id)  # TODO Local variable 'faculty_id' might be referenced before assignment
     user_faculty_data = await database.execute(query)
 
     return {
-        "data": {
-            "user_id": last_record_id,
-            "faculty_id": user_faculty_data,
-            "login": login
-        },
-        "message": f"User with id {last_record_id} was registered successfully"
+        "user_id": last_record_id,
+        "faculty_id": user_faculty_data,
+        "login": login
     }
 
 
-@users_router.post("/{university_id}/students/", response_model=JSENDOutSchema[CreateStudentOut], tags=["Admin dashboard"])
-#TODO after input id of the non-existent university it creates student
-async def create_student(university_id: int, student: CreateStudentIn, auth=Depends(get_current_user)):
+async def create_student(student: CreateStudentIn):
     CreateStudentIn(
         full_name=student.full_name,
         telephone_number=student.telephone_number,
@@ -254,40 +215,23 @@ async def create_student(university_id: int, student: CreateStudentIn, auth=Depe
 
     student_id = await database.execute(query)
 
-    return {
-        "data": {
-            "student_id": student_id
-        },
-        "message": f"Created student {student.full_name}"
-    }
+    return {"student_id": student_id}
 
 
-@users_router.get("/{university_id}/students/", response_model=JSENDOutSchema[List[StudentsListOut]],
-                  tags=["Admin dashboard"])
-async def read_students_list(university_id: int, faculty_id: Union[int, None] = None, user=Depends(get_current_user)):  #TODO after input id of the non-existent university it returns the students
+async def read_students_list(university_id: int, faculty_id: Union[int, None] = None):  # TODO after input id of the non-existent university it returns the students
     if faculty_id:
         query = select(students_list_view).where(students_list_view.c.faculty_id == faculty_id)
     else:
         query = select(students_list_view).where(students_list_view.c.university_id == university_id)
 
-    return {
-        "data": await database.fetch_all(query),
-        "message": f"Got students list of the university with id {university_id}"
-    }
+    return await database.fetch_all(query)
 
 
-@users_router.delete("/{university_id}/students/", response_model=JSENDOutSchema, tags=["SuperAdmin dashboard"])
-async def delete_student(university_id: int, delete_student: DeleteStudentIn, auth=Depends(get_current_user)):
+async def delete_student(delete_student: DeleteStudentIn):
     query = delete(Student).where(Student.student_id == delete_student.student_id)
 
     await database.execute(query)
     # TODO: in response key data has empty dict value, not like it's discribed
-    return {
-        "data": {
-            "student_id": delete_student.student_id
-        },
-        "message": f"Deleted student with id {delete_student.student_id}"
-    }
 
 
 @users_router.get('/me', summary='Отримати інформацію про поточного користувача, який увійшов у систему',
