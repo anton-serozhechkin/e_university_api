@@ -65,9 +65,9 @@ async def create_user_request(university_id: int, user_request: CreateUserReques
     await create_user_document(**prepared_data)
 
     return {
-            "status_id": STATUS_MAPPING.get("Розглядається"),
-            "user_request_id": last_record_id
-        }
+        "status_id": STATUS_MAPPING.get("Розглядається"),
+        "user_request_id": last_record_id
+    }
 
 
 async def read_user_request_booking_hostel(university_id: int, user: UserOut):
@@ -90,7 +90,7 @@ async def cancel_request(user_request_id: int, cancel_request: CancelRequestIn):
 
 
 async def create_user_request_review(university_id: int, user_request_id: int, user_request_review: UserRequestReviewIn,
-                                   user: UserOut):
+                                     user: UserOut):
     query = insert(UserRequestReview).values(university_id=university_id,
                                              user_request_id=user_request_id,
                                              date_created=datetime.now(),
@@ -123,7 +123,8 @@ async def read_hostel_accommodation(university_id: int, user_request_id: int):
                                                     hostel_accommodation_view.c.user_request_id == user_request_id)
     response = await database.fetch_one(query)
 
-    response.documents = json.loads(response.documents)  # TODO AttributeError: 'NoneType' object has no attribute 'documents' (it's heppend only if user request doesn't have review)
+    response.documents = json.loads(
+        response.documents)  # TODO AttributeError: 'NoneType' object has no attribute 'documents' (it's heppend only if user request doesn't have review)
 
     response.hostel_name = json.loads(response.hostel_name)
     response.hostel_address = json.loads(response.hostel_address)

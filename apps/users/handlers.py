@@ -4,18 +4,14 @@ from apps.common.db import database
 from apps.users.models import User, user_list_view, Student, OneTimeToken, UserFaculty, students_list_view
 from apps.users.schemas import UserOut, TokenPayload, CreateUserIn, DeleteUserIn, RegistrationIn, CreateStudentIn,\
     UserIn, DeleteStudentIn, StudentCheckExistanceIn
+from apps.users.serivces import get_login, get_student_attr, get_token_data, get_login_full_name, get_token_and_expires
 from settings import Settings
 
-from random import randint
 from typing import Union
-from datetime import datetime, timedelta
+from datetime import datetime
 from jose import jwt
 
-import hashlib
-import os
-
 from sqlalchemy import select, insert, delete, update
-from translitua import translit
 from fastapi import Depends, APIRouter, HTTPException, status as http_status
 from fastapi.security import OAuth2PasswordBearer
 from pydantic import ValidationError
@@ -23,13 +19,13 @@ from apps.common.schemas import JSENDOutSchema
 
 users_router = APIRouter()
 
-reuseable_oauth = OAuth2PasswordBearer(
+reusable_oauth = OAuth2PasswordBearer(
     tokenUrl="/login",
     scheme_name="JWT"
-)  # TODO spelling mistake 'reusable'
+)
 
 
-async def get_current_user(token: str = Depends(reuseable_oauth)) -> UserOut:
+async def get_current_user(token: str = Depends(reusable_oauth)) -> UserOut:
     try:
         payload = jwt.decode(
             token, Settings.JWT_SECRET_KEY, algorithms=[Settings.JWT_ALGORITHM]
@@ -58,11 +54,8 @@ async def get_current_user(token: str = Depends(reuseable_oauth)) -> UserOut:
             message="User not found",
             code=http_status.HTTP_404_NOT_FOUND
         )
-
     query = user_list_view.select(user_list_view.c.user_id == user.user_id)
-    user = await database.fetch_one(query)
-
-    return user
+    return await database.fetch_one(query)
 
 
 async def check_student(student: StudentCheckExistanceIn):
@@ -78,8 +71,7 @@ async def check_student(student: StudentCheckExistanceIn):
 
     student_id = result.student_id
 
-    token = hashlib.sha1(os.urandom(128)).hexdigest()
-    expires = datetime.utcnow() + timedelta(seconds=Settings.TOKEN_LIFE_TIME)
+    token, expires = get_token_and_expires()
 
     query = insert(OneTimeToken).values(student_id=student_id, token=token,
                                         expires=expires).returning(OneTimeToken.token_id)
@@ -105,9 +97,7 @@ async def create_user(user: CreateUserIn):
 
     hashed_password = get_hashed_password(user.password)
 
-    login = f"{(user.email[:4])}-{randint(100, 999)}".lower()
-
-    query = insert(User).values(login=login, password=hashed_password,
+    query = insert(User).values(login=get_login(user.email), password=hashed_password,
                                 email=user.email, role_id=user.role_id,
                                 is_active=False)
 
@@ -142,19 +132,14 @@ async def registration(user: RegistrationIn):
             code=http_status.HTTP_404_NOT_FOUND
         )
 
-    for token in token_data:
-        expires = token.expires
-        student_id = token.student_id
+    expires, student_id = get_token_data(token_data)
 
-    datetime_utc_now = datetime.utcnow()
-
-    if datetime_utc_now > expires:  # TODO Local variable 'expires' might be referenced before assignment
+    if expires < datetime.utcnow():
         raise BackendException(
             message=("Registration time has expired."
                      " Please go to the link to check the availability of students on the register."),
             code=http_status.HTTP_403_FORBIDDEN
         )
-
     query = select(Student).where(Student.student_id == student_id)
     student = await database.fetch_all(query)
 
@@ -164,20 +149,14 @@ async def registration(user: RegistrationIn):
             code=http_status.HTTP_404_NOT_FOUND
         )
 
-    for item in student:
-        full_name = item.full_name
-        faculty_id = item.faculty_id
-        student_user_id = item.user_id
+    full_name, faculty_id, student_user_id = get_student_attr(student)
 
-    if student_user_id:  # TODO Local variable 'student_user_id' might be referenced before assignment
+    if student_user_id:
         raise BackendException(
             message="A student account already exists. Please check your email for details.",
             code=http_status.HTTP_409_CONFLICT
         )
-
-    transliterated_full_name = translit(
-        full_name)  # TODO Local variable 'full_name' might be referenced before assignment
-    login = f"{(transliterated_full_name[:4])}-{randint(100, 999)}".lower()
+    login = get_login_full_name(full_name)
 
     # Encoding password
     encoded_user_password = get_hashed_password(user.password)
@@ -189,8 +168,10 @@ async def registration(user: RegistrationIn):
     query = update(Student).values(user_id=last_record_id).where(Student.student_id == student_id)
     await database.execute(query)
 
-    query = insert(UserFaculty).values(user_id=last_record_id, faculty_id=faculty_id).returning(
-        UserFaculty.faculty_id)  # TODO Local variable 'faculty_id' might be referenced before assignment
+    query = insert(UserFaculty).values(
+        user_id=last_record_id,
+        faculty_id=faculty_id
+    ).returning(UserFaculty.faculty_id)
     user_faculty_data = await database.execute(query)
 
     return {
@@ -226,8 +207,8 @@ async def read_students_list(university_id: int, faculty_id: Union[int, None] = 
     return await database.fetch_all(query)
 
 
-async def delete_student(delete_student: DeleteStudentIn):
-    query = delete(Student).where(Student.student_id == delete_student.student_id)
+async def delete_student(del_student: DeleteStudentIn):
+    query = delete(Student).where(Student.student_id == del_student.student_id)
 
     await database.execute(query)
     # TODO: in response key data has empty dict value, not like it's discribed

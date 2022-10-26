@@ -85,8 +85,8 @@ async def read_students_list(university_id: int, faculty_id: Union[int, None] = 
 
 
 @users_router.delete("/{university_id}/students/", response_model=JSENDOutSchema, tags=["SuperAdmin dashboard"])
-async def delete_student(university_id: int, delete_student: DeleteStudentIn, auth=Depends(get_current_user)):
-    await handlers.delete_student(delete_student)
+async def delete_student(university_id: int, del_student: DeleteStudentIn, auth=Depends(get_current_user)):
+    await handlers.delete_student(del_student)
     return {
         "data": {
             "student_id": delete_student.student_id
