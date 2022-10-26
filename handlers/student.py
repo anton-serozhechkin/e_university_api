@@ -57,3 +57,4 @@ async def delete_student(university_id: int, delete_student: DeleteStudentIn, au
     return {
         "student_id": delete_student.student_id
     }
+
