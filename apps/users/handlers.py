@@ -1,5 +1,5 @@
 from apps.common.exceptions import BackendException
-from apps.common.utils import get_hashed_password
+from apps.authorization.services import get_hashed_password
 from apps.common.db import database
 from apps.users.models import User, user_list_view, Student, OneTimeToken, UserFaculty, students_list_view
 from apps.users.schemas import UserOut, TokenPayload, CreateUserIn, DeleteUserIn, RegistrationIn, CreateStudentIn,\
