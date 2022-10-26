@@ -1,9 +1,9 @@
-from apps.authorization.handlers import authorization_router
+from apps.authorization.routers import authorization_router
 from apps.common.exception_handlers import backend_exception_handler, http_exception_handler
 from apps.common.exceptions import BackendException
-from apps.educational_institutions.handlers import educational_institutions_router
-from apps.hostel.handlers import hostel_router
-from apps.services.handlers import services_router
+from apps.educational_institutions.routers import educational_institutions_router
+from apps.hostel.routers import hostel_router
+from apps.services.routers import services_router
 from apps.users.handlers import users_router
 from apps.common.db import database
 from settings import Settings
