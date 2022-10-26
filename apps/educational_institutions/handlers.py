@@ -5,12 +5,12 @@ from apps.common.db import database
 from sqlalchemy import select, insert
 
 
-async def post_faculties(university_id: int):
+async def read_faculties(university_id: int):
     query = select(faculty_list_view).where(faculty_list_view.c.university_id == university_id)
     return await database.fetch_all(query)
 
 
-async def post_faculty(faculty: FacultyIn):
+async def create_faculty(faculty: FacultyIn):
     query = insert(Faculty).values(name=faculty.name, shortname=faculty.shortname,
                                    main_email=faculty.main_email,
                                    university_id=faculty.university_id)
@@ -22,11 +22,11 @@ async def post_faculty(faculty: FacultyIn):
     }
 
 
-async def get_speciality_list(university_id: int):
+async def read_speciality_list(university_id: int):
     query = select(speciality_list_view).where(speciality_list_view.c.university_id == university_id)
     return await database.fetch_all(query)
 
 
-async def get_courses_list():
+async def read_courses_list():
     query = select(Course)
     return await database.fetch_all(query)

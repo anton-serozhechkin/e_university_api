@@ -12,7 +12,7 @@ import json
 from sqlalchemy import select, insert, update
 
 
-async def get_user_request_existence(university_id: int, service_id: int, user: UserOut):
+async def read_user_request_existence(university_id: int, service_id: int, user: UserOut):
     query = select(user_request_exist_view).where(user_request_exist_view.c.user_id == user.user_id,
                                                   user_request_exist_view.c.university_id == university_id,
                                                   user_request_exist_view.c.service_id == service_id)
@@ -30,13 +30,13 @@ async def get_user_request_existence(university_id: int, service_id: int, user: 
     }
 
 
-async def get_user_request_list(university_id: int, user: UserOut):
+async def read_user_request_list(university_id: int, user: UserOut):
     query = select(user_request_list_view).where(user_request_list_view.c.user_id == user.user_id,
                                                  user_request_list_view.c.university_id == university_id)
     return await database.fetch_all(query)
 
 
-async def post_user_request(university_id: int, user_request: CreateUserRequestIn, user: UserOut):
+async def create_user_request(university_id: int, user_request: CreateUserRequestIn, user: UserOut):
     query = select(UserFaculty).where(UserFaculty.user_id == user.user_id)
     user_faculty_result = await database.fetch_one(query)
     query = insert(UserRequest).values(date_created=datetime.now(),
@@ -70,7 +70,7 @@ async def post_user_request(university_id: int, user_request: CreateUserRequestI
         }
 
 
-async def get_user_request_booking_hostel(university_id: int, user: UserOut):
+async def read_user_request_booking_hostel(university_id: int, user: UserOut):
     query = select(user_request_booking_hostel_view).where(
         user_request_booking_hostel_view.c.user_id == user.user_id,
         user_request_booking_hostel_view.c.university_id == university_id
@@ -78,7 +78,7 @@ async def get_user_request_booking_hostel(university_id: int, user: UserOut):
     return await database.fetch_one(query)
 
 
-async def put_cancel_request(user_request_id: int, cancel_request: CancelRequestIn):
+async def cancel_request(user_request_id: int, cancel_request: CancelRequestIn):
     CancelRequestIn(status_id=cancel_request.status_id)
     query = update(UserRequest).where(UserRequest.user_request_id == user_request_id).values(
         status_id=cancel_request.status_id)
@@ -89,7 +89,7 @@ async def put_cancel_request(user_request_id: int, cancel_request: CancelRequest
     }
 
 
-async def post_user_request_review(university_id: int, user_request_id: int, user_request_review: UserRequestReviewIn,
+async def create_user_request_review(university_id: int, user_request_id: int, user_request_review: UserRequestReviewIn,
                                    user: UserOut):
     query = insert(UserRequestReview).values(university_id=university_id,
                                              user_request_id=user_request_id,
@@ -118,7 +118,7 @@ async def post_user_request_review(university_id: int, user_request_id: int, use
     }
 
 
-async def get_hostel_accommodation(university_id: int, user_request_id: int):
+async def read_hostel_accommodation(university_id: int, user_request_id: int):
     query = select(hostel_accommodation_view).where(hostel_accommodation_view.c.university_id == university_id,
                                                     hostel_accommodation_view.c.user_request_id == user_request_id)
     response = await database.fetch_one(query)
@@ -130,7 +130,7 @@ async def get_hostel_accommodation(university_id: int, user_request_id: int):
     return response
 
 
-async def get_request_details(university_id: int, user_request_id: int):
+async def read_request_details(university_id: int, user_request_id: int):
     query = select(user_request_details_view).where(user_request_details_view.c.university_id == university_id,
                                                     user_request_details_view.c.user_request_id == user_request_id)
 

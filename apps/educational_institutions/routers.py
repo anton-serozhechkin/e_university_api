@@ -17,7 +17,7 @@ educational_institutions_router = APIRouter()
                                      tags=["SuperAdmin dashboard"])
 async def read_faculties(university_id: int, user=Depends(get_current_user)):
     return {
-        "data": handlers.post_faculties(university_id),
+        "data": handlers.read_faculties(university_id),
         "message": f"Got faculty list of the university with id {university_id}"
     }
 
@@ -25,7 +25,7 @@ async def read_faculties(university_id: int, user=Depends(get_current_user)):
 @educational_institutions_router.post("/{university_id}/faculties/", response_model=JSENDOutSchema[FacultyOut],
                                       tags=["SuperAdmin dashboard"])
 async def create_faculty(university_id: int, faculty: FacultyIn, user=Depends(get_current_user)):
-    response = handlers.post_faculty(faculty)
+    response = handlers.create_faculty(faculty)
     return {
         "data": response,
         "message": f"Successfully created faculty with id {response['faculty_id']}"
@@ -36,7 +36,7 @@ async def create_faculty(university_id: int, faculty: FacultyIn, user=Depends(ge
                                      tags=["Admin dashboard"])
 async def read_speciality_list(university_id: int, auth=Depends(get_current_user)):
     return {
-        "data": handlers.get_speciality_list(university_id),
+        "data": handlers.read_speciality_list(university_id),
         "message": f"Got speciality list of the university with id {university_id}"
     }
 
@@ -45,6 +45,6 @@ async def read_speciality_list(university_id: int, auth=Depends(get_current_user
                                      tags=["Admin dashboard"])
 async def read_courses_list(auth=Depends(get_current_user)):
     return {
-        "data": handlers.get_courses_list(),
+        "data": handlers.read_courses_list(),
         "message": "Got all courses"
     }

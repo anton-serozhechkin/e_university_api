@@ -20,7 +20,6 @@ async def login(form_data: OAuth2PasswordRequestForm = Depends()):
 
 @authorization_router.get("/roles/", response_model=JSENDOutSchema[List[AvailableRolesOut]], tags=["SuperAdmin dashboard"])
 async def available_roles(user=Depends(get_current_user)):
-
     return {
         "data": await handlers.available_roles(),
         "message": "Got roles"

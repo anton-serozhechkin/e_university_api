@@ -223,7 +223,6 @@ async def read_students_list(university_id: int, faculty_id: Union[int, None] = 
         query = select(students_list_view).where(students_list_view.c.faculty_id == faculty_id)
     else:
         query = select(students_list_view).where(students_list_view.c.university_id == university_id)
-
     return await database.fetch_all(query)
 
 
