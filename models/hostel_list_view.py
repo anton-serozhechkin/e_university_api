@@ -13,4 +13,6 @@ hostel_list_view = Table('hostel_list_view', metadata_obj,
           Column('street', VARCHAR(100)),
           Column('build', VARCHAR(10)),
           Column('commandant_id', Integer),
-          Column('commandant_full_name', VARCHAR(255)))
+          Column('first_name', VARCHAR(255)),
+          Column('last_name', VARCHAR(255)),
+          Column('middle_name', VARCHAR(255)))

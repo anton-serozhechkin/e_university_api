@@ -52,7 +52,9 @@ async def registation(user: RegistrationIn):
         return JSONResponse(status_code=404, content={"message": "Студента не знайдено"})
 
     for item in student:
-        full_name = item.full_name
+        first_name = item.first_name
+        last_name = item.last_name
+        middle_name = item.middle_name
         faculty_id = item.faculty_id
         student_user_id = item.user_id
 
@@ -60,7 +62,7 @@ async def registation(user: RegistrationIn):
         return JSONResponse(status_code=409, content={"message": "Обліковий запис для студента " \
                                                                  "вже існує. Будь ласка, перевірте деталі на електронній пошті"})
 
-    transliterated_full_name = translit(full_name)
+    transliterated_full_name = translit(last_name + first_name)
     login = f"{(transliterated_full_name[:4])}-{randint(100, 999)}".lower()
 
     # Encoding password

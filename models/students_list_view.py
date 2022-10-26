@@ -13,4 +13,4 @@ students_list_view = Table('students_list_view', metadata_obj,
           Column('faculty_id', Integer),
           Column('speciality_id', Integer),
           Column('course_id', Integer),
-          Column('gender',VARCHAR(1)))
+          Column('gender', VARCHAR(1)))

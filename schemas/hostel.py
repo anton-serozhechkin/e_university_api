@@ -10,4 +10,6 @@ class HostelListOut(BaseModel):
     street: str
     build: str
     commandant_id: int
-    commandant_full_name: str
+    first_name: str
+    last_name: str
+    middle_name: str

@@ -20,7 +20,9 @@ router = APIRouter()
 @router.post("/check-student-existance", response_model=StudentCheckExistanceOut, tags=["Authorization"])
 async def check_student(student: StudentCheckExistanceIn):
 
-    query = select(Student).where(Student.full_name == student.full_name,
+    query = select(Student).where(Student.first_name == student.first_name,
+                                  Student.last_name == student.last_name,
+                                  Student.middle_name == student.middle_name,
                                   Student.telephone_number == student.telephone_number)
     result = await database.fetch_one(query)
 

@@ -17,5 +17,6 @@ class OneTimeToken(Base):
     student = relationship("Student", back_populates="one_time_token")
 
     def __repr__(self):
-        return f'{self.__class__.__name__}(token_id="{self.token_id}",token="{self.token}",expires="{self.expires}",student_id="{self.student_id}")'
+        return f'{self.__class__.__name__}(token_id="{self.token_id}",token="{self.token}",expires="{self.expires}",' \
+               f'student_id="{self.student_id}")'
 
