@@ -57,12 +57,9 @@ async def get_current_user(token: str = Depends(reusable_oauth)) -> UserOut:
 
 
 async def check_student(student: StudentCheckExistanceIn):
-    print(student, student.full_name, student.telephone_number, 777)
     query = select(Student).where(Student.full_name == student.full_name,
                                   Student.telephone_number == student.telephone_number)
-    print(query, 666)
     result = await database.fetch_one(query)
-    print(result, 8888888)
     if not result:
         raise BackendException(
             message="Student data was not found. Please, try again.",
