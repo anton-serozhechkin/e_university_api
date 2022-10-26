@@ -4,7 +4,7 @@ from apps.common.exceptions import BackendException
 from apps.educational_institutions.routers import educational_institutions_router
 from apps.hostel.routers import hostel_router
 from apps.services.routers import services_router
-from apps.users.handlers import users_router
+from apps.users.routers import users_router
 from apps.common.db import database
 from settings import Settings
 from tags_metadata import metadata

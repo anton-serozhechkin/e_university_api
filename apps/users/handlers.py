@@ -12,12 +12,10 @@ from datetime import datetime
 from jose import jwt
 
 from sqlalchemy import select, insert, delete, update
-from fastapi import Depends, APIRouter, HTTPException, status as http_status
+from fastapi import Depends, HTTPException, status as http_status
 from fastapi.security import OAuth2PasswordBearer
 from pydantic import ValidationError
-from apps.common.schemas import JSENDOutSchema
 
-users_router = APIRouter()
 
 reusable_oauth = OAuth2PasswordBearer(
     tokenUrl="/login",
@@ -59,10 +57,12 @@ async def get_current_user(token: str = Depends(reusable_oauth)) -> UserOut:
 
 
 async def check_student(student: StudentCheckExistanceIn):
+    print(student, student.full_name, student.telephone_number, 777)
     query = select(Student).where(Student.full_name == student.full_name,
                                   Student.telephone_number == student.telephone_number)
+    print(query, 666)
     result = await database.fetch_one(query)
-
+    print(result, 8888888)
     if not result:
         raise BackendException(
             message="Student data was not found. Please, try again.",
@@ -214,8 +214,6 @@ async def delete_student(del_student: DeleteStudentIn):
     # TODO: in response key data has empty dict value, not like it's discribed
 
 
-@users_router.get('/me', summary='Отримати інформацію про поточного користувача, який увійшов у систему',
-                  response_model=JSENDOutSchema[UserOut], tags=["Authorization"])
 async def get_me(user: UserIn = Depends(get_current_user)):
     return {
         "data": user,
