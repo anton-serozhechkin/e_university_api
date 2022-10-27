@@ -37,7 +37,6 @@ class UserRequestBookingHostelOut(BaseModel):
     gender: str
 
 
-
 class UserRequestsListOut(BaseModel):
     university_id: int
     user_id: int
@@ -56,9 +55,11 @@ class CancelRequestIn(BaseModel):
             raise ValueError("The application can only be canceled.")
         return v
 
+
 class CancelRequestOut(BaseModel):
     user_request_id: int
     status_id: int
+
 
 class UserRequestReviewIn(BaseModel):
     status_id: int
