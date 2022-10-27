@@ -89,9 +89,9 @@ async def delete_student(university_id: int, del_student: DeleteStudentIn, auth=
     await handlers.delete_student(del_student)
     return {
         "data": {
-            "student_id": delete_student.student_id
+            "student_id": del_student.student_id
         },
-        "message": f"Deleted student with id {delete_student.student_id}"
+        "message": f"Deleted student with id {del_student.student_id}"
     }
 
 

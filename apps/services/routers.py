@@ -80,7 +80,7 @@ async def read_hostel_accommodation(university_id: int, user_request_id: int, us
 
 
 @services_router.get("/{university_id}/user-request/{user_request_id}", response_model=JSENDOutSchema[UserRequestDetailsViewOut],
-                     tags=["Student dashboard"])
+                     tags=["Student dashboard"])    # TODO Return Validation error with empty data
 async def read_request_details(university_id: int, user_request_id: int, user=Depends(get_current_user)):
     return {
         "data": await handlers.read_request_details(university_id, user_request_id),

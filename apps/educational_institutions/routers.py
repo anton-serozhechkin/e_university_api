@@ -29,7 +29,7 @@ async def create_faculty(university_id: int, faculty: FacultyIn, user=Depends(ge
     return {
         "data": response,
         "message": f"Successfully created faculty with id {response['faculty_id']}"
-    }
+    }   # TODO There is need to add decan to new faculty (change FacultyIn)
 
 
 @educational_institutions_router.get("/{university_id}/speciality/", response_model=JSENDOutSchema[List[SpecialityListOut]],
