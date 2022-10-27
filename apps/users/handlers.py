@@ -120,38 +120,17 @@ async def registration(user: RegistrationIn):
         password_re_check=user.password_re_check)
 
     query = select(OneTimeToken).where(OneTimeToken.token == user.token)
-    token_data = await database.fetch_all(query)
 
-    if not token_data:
-        raise BackendException(
-            message="To register a user, first go to the page for checking the presence of a student in the register.",
-            code=http_status.HTTP_404_NOT_FOUND
-        )
+    token_data = await database.fetch_all(query)
 
     expires, student_id = get_token_data(token_data)
 
-    if expires < datetime.utcnow():
-        raise BackendException(
-            message=("Registration time has expired."
-                     " Please go to the link to check the availability of students on the register."),
-            code=http_status.HTTP_403_FORBIDDEN
-        )
     query = select(Student).where(Student.student_id == student_id)
-    student = await database.fetch_all(query)
 
-    if not student:
-        raise BackendException(
-            message="Student is not found.",
-            code=http_status.HTTP_404_NOT_FOUND
-        )
+    student = await database.fetch_all(query)
 
     full_name, faculty_id, student_user_id = get_student_attr(student)
 
-    if student_user_id:
-        raise BackendException(
-            message="A student account already exists. Please check your email for details.",
-            code=http_status.HTTP_409_CONFLICT
-        )
     login = get_login_full_name(full_name)
 
     # Encoding password
