@@ -23,4 +23,4 @@ RUN poetry install --only main
 # https://docs.docker.com/build/building/cache/#order-your-layers
 COPY . .
 
-CMD ["uvicorn", "main:app"]
+CMD ["uvicorn", "apps.main:app"]
