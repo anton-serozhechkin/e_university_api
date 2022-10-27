@@ -67,24 +67,30 @@ class Dekan(Base):
     __tablename__ = 'dekan'
 
     dekan_id = Column(INTEGER, primary_key=True, nullable=False)
-    full_name = Column(VARCHAR(length=255), nullable=False)
+    first_name = Column(VARCHAR(length=50), nullable=False)
+    last_name = Column(VARCHAR(length=50), nullable=False)
+    middle_name = Column(VARCHAR(length=50), nullable=True)
 
     faculty = relationship("Faculty", back_populates="dekan")
 
     def __repr__(self):
-        return f'{self.__class__.__name__}(dekan_id="{self.dekan_id}", full_name="{self.full_name}")'
+        return f'{self.__class__.__name__}(dekan_id="{self.dekan_id}", first_name="{self.first_name}", ' \
+               f'last_name="{self.last_name}",middle_name="{self.middle_name}")'
 
 
 class Rector(Base):
     __tablename__ = 'rector'
 
     rector_id = Column(INTEGER, primary_key=True, nullable=False)
-    full_name = Column(VARCHAR(length=255), nullable=False)
+    first_name = Column(VARCHAR(length=50), nullable=False)
+    last_name = Column(VARCHAR(length=50), nullable=False)
+    middle_name = Column(VARCHAR(length=50), nullable=True)
 
     university = relationship("University", back_populates="rector")
 
     def __str__(self):
-        return f'{self.__class__.__name__}(rector_id="{self.rector_id}",full_name="{self.full_name}")'
+        return f'{self.__class__.__name__}(rector_id="{self.rector_id}",first_name="{self.first_name}", ' \
+               f'last_name="{self.last_name}", middle_name="{self.middle_name}")'
 
 
 class Course(Base):
@@ -92,6 +98,8 @@ class Course(Base):
 
     course_id = Column(INTEGER, primary_key=True, nullable=False)
     value = Column(INTEGER, nullable=False)
+
+    student = relationship('Student', back_populates='courses')
 
     def __repr__(self):
         return f'{self.__class__.__name__}(course_id="{self.course_id}", value="{self.value}")'
@@ -104,7 +112,7 @@ faculty_list_view = Table('faculty_list_view', metadata_obj,
                           Column('main_email', VARCHAR(50)),
                           Column('university_id', INTEGER),
                           Column('dekan_id', INTEGER),
-                          Column('dekan_full_name', VARCHAR(255)))
+                          Column('dekan_full_name', VARCHAR(255)))  # TODO may be first, last and middle names?
 
 speciality_list_view = Table('speciality_list_view', metadata_obj,
                              Column('faculty_id', INTEGER),

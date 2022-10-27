@@ -137,8 +137,10 @@ class DeleteUserIn(BaseModel):
     user_id: int
 
 
-class StudentCheckExistanceIn(BaseModel):   # TODO spelling error
-    full_name: str
+class StudentCheckExistanceIn(BaseModel):   # TODO spelling error and 'full_name'
+    first_name: str
+    last_name: str
+    middle_name: str
     telephone_number: str
 
 
@@ -149,18 +151,34 @@ class StudentCheckExistanceOut(BaseModel):
 
 
 class CreateStudentIn(BaseModel):
-    full_name: str
+    first_name: str
+    last_name: str
+    middle_name: str
     telephone_number: str
     course_id: int
     faculty_id: int
     speciality_id: int
     gender: str
 
-    @validator('full_name')
+    @validator('first_name')
     def validate_full_name(cls, value):
         full_name = value.split()
-        if not full_name or len(full_name) < 2:
-            raise ValueError("The student's name and surname are mandatory!")
+        if not full_name:
+            raise ValueError("The student's name are mandatory!")
+        return value
+
+    @validator('last_name')
+    def validate_full_name(cls, value):
+        full_name = value.split()
+        if not full_name:
+            raise ValueError("The student's surname are mandatory!")
+        return value
+
+    @validator('middle_name')
+    def validate_full_name(cls, value):
+        full_name = value.split()
+        if not full_name:
+            raise ValueError("The student's middle are mandatory!")
         return value
 
     @validator('telephone_number')
@@ -207,7 +225,9 @@ class CreateStudentOut(BaseModel):
 
 class StudentsListOut(BaseModel):
     student_id: int
-    student_full_name: str
+    first_name: str
+    last_name: str
+    middle_name: str
     telephone_number: str
     user_id: int = None
     university_id: int

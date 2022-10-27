@@ -88,7 +88,9 @@ async def check_student(student: StudentCheckExistanceIn):
 
         **Return**: student id; token, which is used for registering user; token expires datetime
     """
-    query = select(Student).where(Student.full_name == student.full_name,
+    query = select(Student).where(Student.first_name == student.first_name,
+                                  Student.last_name == student.last_name,
+                                  Student.middle_name == student.middle_name,
                                   Student.telephone_number == student.telephone_number)
     result = await database.fetch_one(query)
 
@@ -278,7 +280,9 @@ async def registration(user: RegistrationIn):
         )
 
     for item in student:
-        full_name = item.full_name
+        first_name = item.first_name
+        last_name = item.last_name
+        middle_name = item.middle_name
         faculty_id = item.faculty_id
         student_user_id = item.user_id
 
@@ -288,8 +292,7 @@ async def registration(user: RegistrationIn):
             code=http_status.HTTP_409_CONFLICT
         )
 
-    transliterated_full_name = translit(
-        full_name)  # TODO Local variable 'full_name' might be referenced before assignment
+    transliterated_full_name = translit(last_name + first_name)  # TODO Local variable 'full_name' might be referenced before assignment
     login = f"{(transliterated_full_name[:4])}-{randint(100, 999)}".lower()
 
     # Encoding password
@@ -345,14 +348,17 @@ async def create_student(university_id: int, student: CreateStudentIn, auth=Depe
         **Return**: created student id
     """
     CreateStudentIn(
-        full_name=student.full_name,
+        first_name=student.first_name,
+        last_name=student.last_name,
+        middle_name=student.middle_name,
         telephone_number=student.telephone_number,
         course_id=student.course_id,
         faculty_id=student.faculty_id,
         speciality_id=student.speciality_id,
         gender=student.gender)
 
-    query = insert(Student).values(full_name=student.full_name, telephone_number=student.telephone_number,
+    query = insert(Student).values(first_name=student.first_name, last_name=student.last_name,
+                                   middle_name=student.middle_name, telephone_number=student.telephone_number,
                                    course_id=student.course_id, faculty_id=student.faculty_id,
                                    speciality_id=student.speciality_id, gender=student.gender.upper())
 
@@ -362,7 +368,7 @@ async def create_student(university_id: int, student: CreateStudentIn, auth=Depe
         "data": {
             "student_id": student_id
         },
-        "message": f"Created student {student.full_name}",
+        "message": f"Created student {student.first_name} {student.last_name}",
         "code": http_status.HTTP_201_CREATED
     }
 

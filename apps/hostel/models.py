@@ -1,6 +1,6 @@
 from apps.common.db import Base
 
-from sqlalchemy import (MetaData, Column, INTEGER, VARCHAR, ForeignKey, FLOAT, Table)
+from sqlalchemy import (MetaData, Column, JSON, INTEGER, VARCHAR, TIMESTAMP, ForeignKey, FLOAT, Table)
 from sqlalchemy.orm import relationship
 
 metadata_obj = MetaData()
@@ -33,13 +33,17 @@ class Commandant(Base):
     __tablename__ = 'commandant'
 
     commandant_id = Column(INTEGER, primary_key=True, nullable=False)
-    full_name = Column(VARCHAR(length=255), nullable=False)
+    first_name = Column(VARCHAR(length=255), nullable=False)
+    last_name = Column(VARCHAR(length=255), nullable=False)
+    middle_name = Column(VARCHAR(length=255), nullable=True)
     telephone_number = Column(VARCHAR(length=50), nullable=False, unique=True)
 
     hostel = relationship("Hostel", back_populates="commandant")
 
     def __repr__(self):
-        return (f'{self.__class__.__name__}(commandant_id="{self.commandant_id}",full_name="{self.full_name}",'
+        return (f'{self.__class__.__name__}(commandant_id="{self.commandant_id}",first_name="{self.first_name}",'
+                f'last_name="{self.last_name}")'
+                f'middle_name="{self.middle_name}")'
                 f'telephone_number="{self.telephone_number}")')
 
 
@@ -64,4 +68,29 @@ hostel_list_view = Table('hostel_list_view', metadata_obj,
                          Column('street', VARCHAR(100)),
                          Column('build', VARCHAR(10)),
                          Column('commandant_id', INTEGER),
-                         Column('commandant_full_name', VARCHAR(255)))
+                         Column('first_name', VARCHAR(50)),
+                         Column('last_name', VARCHAR(50)),
+                         Column('middle_name', VARCHAR(50)))
+
+
+hostel_accommodation_view = Table('hostel_accommodation_view', metadata_obj,
+                                  Column('university_id', INTEGER),
+                                  Column('user_request_review_id', INTEGER),
+                                  Column('user_request_id', INTEGER),
+                                  Column('hostel_name', JSON),
+                                  Column('hostel_address', JSON),
+                                  Column('room_number', INTEGER),
+                                  Column('bed_place_name', VARCHAR(50)),
+                                  Column('month_price', FLOAT),
+                                  Column('start_date_accommodation', TIMESTAMP),
+                                  Column('end_date_accommodation', TIMESTAMP),
+                                  Column('total_sum', FLOAT),
+                                  Column('iban', VARCHAR(100)),
+                                  Column('university_name', VARCHAR(255)),
+                                  Column('organisation_code', VARCHAR(50)),
+                                  Column('payment_recognation', VARCHAR(255)),
+                                  Column('first_name', VARCHAR(50)),
+                                  Column('last_name', VARCHAR(50)),
+                                  Column('middle_name', VARCHAR(50)),
+                                  Column('telephone_number', VARCHAR(50)),
+                                  Column('documents', JSON))

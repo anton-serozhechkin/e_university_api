@@ -15,6 +15,8 @@ import json
 from fastapi import Depends, APIRouter, status as http_status
 from sqlalchemy import select, insert, update
 from apps.common.schemas import JSENDOutSchema, JSENDFailOutSchema
+
+
 services_router = APIRouter(
     responses={422: {"model": JSENDFailOutSchema, "description": "ValidationError"}}
 )
