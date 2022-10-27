@@ -157,7 +157,7 @@ async def create_user(university_id: int, user: CreateUserIn, auth=Depends(get_c
         - **email**: user email, only letters (a-z), numbers (0-9) and periods (.) are allowed, required
         - **password**: password, cannot be empty, required
         - **password_re_check**: password recheck, required
-        - **role_id**: user role id, 1 - student, 2 - admin, 3 - superadmin, required
+        - **role_id**: user role id, required
         - **faculty_id**: user faculty id, required
 
         **Return**: created user id
@@ -213,7 +213,7 @@ async def delete_user(university_id: int, delete_user: DeleteUserIn, auth=Depend
             "user_id": delete_user.user_id
         },
         "message": f"Deleted user with id {delete_user.user_id}",
-        "code": http_status.HTTP_202_ACCEPTED
+        "code": http_status.HTTP_200_OK
     }
 
 
@@ -408,7 +408,7 @@ async def delete_student(university_id: int, delete_student: DeleteStudentIn, au
             "student_id": delete_student.student_id
         },
         "message": f"Deleted student with id {delete_student.student_id}",
-        "code": http_status.HTTP_202_ACCEPTED
+        "code": http_status.HTTP_200_OK
     }
 
 

@@ -92,7 +92,7 @@ async def create_user_request(university_id: int, user_request: CreateUserReques
 
     **Input**:
     - **service_id**: service id in database, required
-    - **comment*: comment for the creating user request, required
+    - **comment*: comment for the creating user request
 
     **Return**: user request id; request status id
     """
@@ -164,7 +164,7 @@ async def cancel_request(university_id: int, user_request_id: int, cancel_reques
     **Input**:
     - **status_id**: user request status id, required
 
-    **Return**: deleted user request id and status id
+    **Return**: canceled user request id and status id
     """
     CancelRequestIn(status_id=cancel_request.status_id)
     query = update(UserRequest).where(UserRequest.user_request_id == user_request_id).values(
@@ -177,7 +177,7 @@ async def cancel_request(university_id: int, user_request_id: int, cancel_reques
             "status_id": cancel_request.status_id
         },
         "message": f"Canceled request with id {user_request_id}",
-        "code": http_status.HTTP_202_ACCEPTED
+        "code": http_status.HTTP_200_OK
     }
 
 
