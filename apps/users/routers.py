@@ -19,7 +19,7 @@ async def check_student(student: StudentCheckExistanceIn):
     return {
         "data": {
             'token': result.token,
-            'student': result.student,
+            'student': result.student_id,
             'expires': result.expires
         },
         "message": f"Get information of student with id {result.student}"

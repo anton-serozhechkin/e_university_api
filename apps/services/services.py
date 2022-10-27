@@ -22,7 +22,7 @@ async def create_user_document_content(**kwargs) -> str:
         context = kwargs.get("context")
         doc.render(context)
         document_name = f"hostel_settlement_{kwargs.get('date_created')}_{kwargs.get('user_request_id')}.docx"
-        path_to_storage = SETTLEMENT_HOSTEL_PATH / document_name
+        path_to_storage = SETTLEMENT_HOSTEL_PATH / document_name.replace(":", "_")
         doc.save(path_to_storage)
         return str(path_to_storage)
     raise RuntimeError(f"create_user_document_content({kwargs}) | there is no service_id!!!")

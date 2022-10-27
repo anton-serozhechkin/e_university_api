@@ -73,7 +73,6 @@ async def check_student(student: StudentCheckExistanceIn):
     query = insert(OneTimeToken).values(student_id=student_id, token=token,
                                         expires=expires).returning(OneTimeToken.token_id)
     last_record_id = await database.execute(query)
-
     query = select(OneTimeToken).where(OneTimeToken.token_id == last_record_id)
     return await database.fetch_one(query)
 

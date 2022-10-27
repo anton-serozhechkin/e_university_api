@@ -48,12 +48,10 @@ async def create_user_request(university_id: int, user_request: CreateUserReques
                                        status_id=STATUS_MAPPING.get("Розглядається"))
 
     last_record_id = await database.execute(query)
-
     query = select(user_request_booking_hostel_view).where(
         user_request_booking_hostel_view.c.user_id == user.user_id,
         user_request_booking_hostel_view.c.university_id == university_id
     )
-
     result = await database.fetch_one(query)
 
     prepared_data = {
@@ -61,9 +59,7 @@ async def create_user_request(university_id: int, user_request: CreateUserReques
         "service_id": user_request.service_id,
         "user_request_id": last_record_id
     }
-
     await create_user_document(**prepared_data)
-
     return {
         "status_id": STATUS_MAPPING.get("Розглядається"),
         "user_request_id": last_record_id
