@@ -17,20 +17,11 @@ def get_login_full_name(full_name):
 
 
 def get_student_attr(student):
-    full_name, faculty_id, student_user_id = '', 0, 0
-    for item in student:
-        full_name = item.full_name
-        faculty_id = item.faculty_id
-        student_user_id = item.user_id
-    return full_name, faculty_id, student_user_id
+    return student[0].full_name, student[0].faculty_id, student[0].user_id
 
 
 def get_token_data(token_data):
-    expires, student_id = None, 0
-    for token in token_data:
-        expires = token.expires
-        student_id = token.student_id
-    return expires, student_id
+    return token_data[0].expires, token_data[0].student_id
 
 
 def get_token_and_expires():
