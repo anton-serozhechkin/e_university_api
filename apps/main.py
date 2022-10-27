@@ -19,10 +19,10 @@ origins = ["*"]
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=Settings.CORS_ALLOW_ORIGINS,
-    allow_credentials=Settings.CORS_ALLOW_CREDENTIALS,
-    allow_methods=Settings.CORS_ALLOW_METHODS,
-    allow_headers=Settings.CORS_ALLOW_HEADERS,
+    allow_origins='http://localhost:4200',
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 # Add exception handlers
