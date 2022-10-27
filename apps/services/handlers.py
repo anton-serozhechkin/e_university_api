@@ -1,4 +1,5 @@
 from apps.common.db import database
+from apps.hostel.schemas import BedPlaceOut
 from apps.services.models import user_request_exist_view, user_request_list_view, STATUS_MAPPING, UserRequest, \
     user_request_booking_hostel_view, UserRequestReview, hostel_accommodation_view, user_request_details_view
 from apps.services.schemas import UserRequestExistenceOut, UserRequestsListOut, CreateUserRequestOut, \
@@ -15,11 +16,12 @@ import json
 from fastapi import Depends, APIRouter
 from sqlalchemy import select, insert, update
 from apps.common.schemas import JSENDOutSchema
+
 services_router = APIRouter()
 
 
 @services_router.get("/{university_id}/user-request-existence/{service_id}/",
-            response_model=JSENDOutSchema[UserRequestExistenceOut], tags=["Student dashboard"])
+                     response_model=JSENDOutSchema[UserRequestExistenceOut], tags=["Student dashboard"])
 async def check_user_request_existence(university_id: int, service_id: int, user=Depends(get_current_user)):
     query = select(user_request_exist_view).where(user_request_exist_view.c.user_id == user.user_id,
                                                   user_request_exist_view.c.university_id == university_id,
@@ -91,7 +93,8 @@ async def create_user_request(university_id: int, user_request: CreateUserReques
     }
 
 
-@services_router.get("/{university_id}/user-request-booking-hostel/", response_model=JSENDOutSchema[UserRequestBookingHostelOut],
+@services_router.get("/{university_id}/user-request-booking-hostel/",
+                     response_model=JSENDOutSchema[UserRequestBookingHostelOut],
                      tags=["Student dashboard"])
 async def read_user_request_booking_hostel(university_id: int, user=Depends(get_current_user)):
     query = select(user_request_booking_hostel_view).where(user_request_booking_hostel_view.c.user_id == user.user_id,
@@ -141,7 +144,8 @@ async def create_user_request_review(university_id: int, user_request_id: int, u
 
     last_record_id = await database.execute(query)
 
-    query = update(UserRequest).values(status_id=user_request_review.status_id).where(UserRequest.user_request_id == user_request_id)
+    query = update(UserRequest).values(status_id=user_request_review.status_id).where(
+        UserRequest.user_request_id == user_request_id)
     await database.execute(query)
 
     return {
@@ -160,7 +164,8 @@ async def read_hostel_accommodation(university_id: int, user_request_id: int, us
                                                     hostel_accommodation_view.c.user_request_id == user_request_id)
     response = await database.fetch_one(query)
 
-    response.documents = json.loads(response.documents)  # TODO AttributeError: 'NoneType' object has no attribute 'documents' (it's heppend only if user request doesn't have review)
+    response.documents = json.loads(
+        response.documents)  # TODO AttributeError: 'NoneType' object has no attribute 'documents' (it's heppend only if user request doesn't have review)
 
     response.hostel_name = json.loads(response.hostel_name)
     response.hostel_address = json.loads(response.hostel_address)
@@ -170,7 +175,8 @@ async def read_hostel_accommodation(university_id: int, user_request_id: int, us
     }
 
 
-@services_router.get("/{university_id}/user-request/{user_request_id}", response_model=JSENDOutSchema[UserRequestDetailsViewOut],
+@services_router.get("/{university_id}/user-request/{user_request_id}",
+                     response_model=JSENDOutSchema[UserRequestDetailsViewOut],
                      tags=["Student dashboard"])
 async def read_request_details(university_id: int, user_request_id: int, user=Depends(get_current_user)):
     query = select(user_request_details_view).where(user_request_details_view.c.university_id == university_id,
@@ -184,3 +190,14 @@ async def read_request_details(university_id: int, user_request_id: int, user=De
         "data": response,
         "message": "Got request details"
     }
+
+
+@services_router.get("/{university_id}/hostel-accommodation/{user_request_id}",
+                     response_model=JSENDOutSchema[HostelAccomodationViewOut], tags=["Student dashboard"])
+async def sum_student_accommodation(university_id: int, user_request_id: int, hostel_info: HostelAccomodationViewOut,
+                                    hostel: UserRequestReviewIn, user=Depends(get_current_user)):
+    HostelAccomodationViewOut(
+        bed_place_id=hostel.bed_place_id,
+        start_date_accommodation=hostel_info.start_date_accommodation,
+        end_date_accommodation=hostel_info.end_date_accommodation
+    )
