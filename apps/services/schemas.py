@@ -84,7 +84,7 @@ class UserRequestReviewOut(BaseModel):
     user_request_review_id: int
 
 
-class HostelAccomodationViewOut(BaseModel):
+class HostelAccommodationViewOut(BaseModel):
     university_id: int
     user_request_review_id: int
     user_request_id: int
@@ -118,3 +118,14 @@ class UserRequestDetailsViewOut(BaseModel):
     date_review: datetime = None
     remark: str = None
     documents: List[Dict[str, str]]
+
+
+class CountHostelAccommodationIn(BaseModel):
+    start_date_accommodation: date = None
+    end_date_accommodation: date = None
+    bed_place_id: int = None
+    month_price: float = None
+
+
+class CountHostelAccommodationOut(BaseModel):
+    total_accommodation_cost: float
