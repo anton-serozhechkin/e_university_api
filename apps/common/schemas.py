@@ -3,7 +3,6 @@ from fastapi import status as http_status
 from pydantic import Field, BaseModel
 from pydantic.generics import GenericModel
 from pydantic.typing import NoneType
-import orjson
 
 from apps.common.enums import JSENDStatus
 
