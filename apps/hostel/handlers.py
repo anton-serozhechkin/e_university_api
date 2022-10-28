@@ -1,10 +1,13 @@
 from apps.common.db import database
 from apps.hostel.models import BedPlace, hostel_list_view
 from apps.hostel.schemas import HostelListOut, BedPlaceOut
+from apps.hostel.models import Hostel, BedPlace, hostel_list_view
+from apps.hostel.services import hostel_service, bed_place_service
 
 from fastapi import Request
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
+from typing import List
 
 
 class HostelHandler:
@@ -15,16 +18,16 @@ class HostelHandler:
                                 university_id: int,
                                 session: AsyncSession,
                                 ) -> HostelListOut:
-        query = select(hostel_list_view).where(hostel_list_view.c.university_id == university_id)
-        return await database.fetch_all(query)
-
+        return await hostel_service.list(
+            session=session,
+            filters={"university_id": university_id}
+        )
 
     async def read_available_bed_places(self,
                                         *,
                                         request: Request,
-                                        session: AsyncSession) -> BedPlaceOut:
-        query = select(BedPlace)
-        return await database.fetch_all(query)
+                                        session: AsyncSession) -> List[BedPlaceOut]:
+        return await bed_place_service.list(session=session)
 
 
 hostel_handler = HostelHandler()

@@ -46,9 +46,7 @@ async def available_bed_places(request: Request,
                                session: AsyncSession = Depends(get_async_session),
                                user=Depends(get_current_user)):
     return {
-        "data": await hostel_handler.read_available_bed_places(
-            request=request,
-            session=session
-        ),
+        "data": await hostel_handler.read_available_bed_places(request=request,
+                                                               session=session),
         "message": "Got available bed places list"
     }
