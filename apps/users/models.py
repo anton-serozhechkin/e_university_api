@@ -81,7 +81,9 @@ class UserFaculty(Base):
 
 students_list_view = Table('students_list_view', metadata_obj,
                            Column('student_id', INTEGER),
-                           Column('student_full_name', VARCHAR(255)),   # TODO: full_name?
+                           Column('student_first_name', VARCHAR(50)),
+                           Column('student_last_name', VARCHAR(50)),
+                           Column('student_middle_name', VARCHAR(50)),
                            Column('telephone_number', INTEGER),
                            Column('user_id', INTEGER),
                            Column('university_id', INTEGER),

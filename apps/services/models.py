@@ -132,7 +132,9 @@ user_request_booking_hostel_view = Table('user_request_booking_hostel_view', met
                                          Column('faculty_name', VARCHAR(255)),
                                          Column('university_id', INTEGER),
                                          Column('short_university_name', VARCHAR(50)),
-                                         Column('rector_full_name', VARCHAR(255)),  # TODO may be rector's first, last, middle names?
+                                         Column('rector_first_name', VARCHAR(50)),
+                                         Column('rector_last_name', VARCHAR(50)),
+                                         Column('rector_middle_name', VARCHAR(50)),
                                          Column('speciality_code', INTEGER),
                                          Column('speciality_name', VARCHAR(255)),
                                          Column('course', INTEGER),
@@ -189,7 +191,9 @@ hostel_accommodation_view = Table('hostel_accommodation_view', metadata_obj,
                                   Column('university_name', VARCHAR(255)),
                                   Column('organisation_code', VARCHAR(50)),
                                   Column('payment_recognation', VARCHAR(255)),
-                                  Column('commandant_full_name', VARCHAR(255)), # TODO: may be first, last, middle names?
+                                  Column('commandant_first_name', VARCHAR(50)),
+                                  Column('commandant_last_name', VARCHAR(50)),
+                                  Column('commandant_middle_name', VARCHAR(50)),
                                   Column('telephone_number', VARCHAR(50)),
                                   Column('documents', JSON))
 

@@ -112,7 +112,9 @@ faculty_list_view = Table('faculty_list_view', metadata_obj,
                           Column('main_email', VARCHAR(50)),
                           Column('university_id', INTEGER),
                           Column('dekan_id', INTEGER),
-                          Column('dekan_full_name', VARCHAR(255)))  # TODO may be first, last and middle names?
+                          Column('dekan_first_name', VARCHAR(50)),
+                          Column('dekan_last_name', VARCHAR(50)),
+                          Column('dekan_middle_name', VARCHAR(50)))
 
 speciality_list_view = Table('speciality_list_view', metadata_obj,
                              Column('faculty_id', INTEGER),
