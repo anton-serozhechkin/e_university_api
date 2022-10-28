@@ -3,11 +3,27 @@ from fastapi import status as http_status
 from pydantic import Field, BaseModel
 from pydantic.generics import GenericModel
 from pydantic.typing import NoneType
+import orjson
 
 from apps.common.enums import JSENDStatus
 
 
 SchemaVar = TypeVar("SchemaVar", bound=Union[BaseModel, NoneType, str])
+
+
+class BaseInSchema(BaseModel):
+    class Config:
+        """Schema configuration."""
+
+        orm_mode = True
+        arbitrary_types_allowed = True
+        validate_assignment = True
+        allow_population_by_field_name = True
+        use_enum_values = True
+
+
+class BaseOutSchema(BaseInSchema):
+    pass
 
 
 class JSENDOutSchema(GenericModel, Generic[SchemaVar]):
