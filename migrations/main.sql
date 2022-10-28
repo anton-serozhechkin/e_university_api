@@ -509,7 +509,7 @@ CREATE VIEW faculty_list_view AS
         f.shortname,
         f.main_email,
         f.dekan_id,
-        d.full_name as decan_full_name
+        d.full_name as dekan_full_name
     FROM
         faculty f
     LEFT JOIN dekan d ON

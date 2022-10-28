@@ -11,8 +11,8 @@ __all__ = ['BASE_DIR', 'Settings', 'TEMPLATES_PATH', 'STORAGE_PATH', 'SETTLEMENT
 
 BASE_DIR = Path(__file__).resolve().parent
 
-TEMPLATES_PATH = BASE_DIR / "templates"
-STORAGE_PATH = BASE_DIR / "storage"
+TEMPLATES_PATH = BASE_DIR / "apps" / "templates"
+STORAGE_PATH = BASE_DIR / "apps"
 SETTLEMENT_HOSTEL_PATH = BASE_DIR / STORAGE_PATH / "settlement_hostel"
 
 

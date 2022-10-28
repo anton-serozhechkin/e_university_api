@@ -51,7 +51,7 @@ During development it may be useful to run application outside of docker contain
 
    Run application (one-liner):
 
-       poetry run uvicorn main:app --port 8778
+       poetry run uvicorn apps.main:app --port 8778
 
    or
 
