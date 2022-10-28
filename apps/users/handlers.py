@@ -129,7 +129,7 @@ async def registration(user: RegistrationIn):
 
     student = await database.fetch_all(query)
 
-    full_name, faculty_id, student_user_id = get_student_attr(student)
+    full_name, faculty_id = get_student_attr(student)
 
     login = get_login_full_name(full_name)
 
