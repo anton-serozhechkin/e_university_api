@@ -40,3 +40,13 @@ async def create_user_document(**kwargs):
                                         content=content,
                                         user_request_id=kwargs.get("user_request_id"))
     return await database.execute(query)
+
+
+def calculate_accommodation(end_date, start_date, month_price, bed_place_name):
+    if end_date <= start_date:
+        raise ValueError(
+            message="Wrong date value",
+        )
+
+    date_differance = end_date.month - start_date.month + 12 * (end_date.year - start_date.year)
+    return month_price * date_differance * bed_place_name
