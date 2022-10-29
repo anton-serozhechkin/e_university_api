@@ -640,7 +640,6 @@ CREATE TABLE IF NOT EXISTS user_request_review(
     total_sum float,
     payment_deadline timestamp,
     remark varchar(255),
-    date_review timestamp NOT NULL,
     bed_place_id integer,
     CONSTRAINT user_req_rew_pk PRIMARY KEY(user_request_review_id));
 
@@ -892,7 +891,6 @@ CREATE VIEW user_request_details_view AS
         jsonb_build_object('name', ht.name, 'number', ht.number) as hostel_name, 
         urr.room_number, 
         bd.bed_place_name,
-        urr.date_review,
         urr.remark,
         jsonb_agg(jsonb_build_object('name', ud.name, 'content', ud.content)) as documents
     FROM   
@@ -921,7 +919,6 @@ CREATE VIEW user_request_details_view AS
 		ht.number,
         urr.room_number, 
         bd.bed_place_name,
-        urr.date_review,
         urr.remark
     ORDER BY
         ur.university_id,
