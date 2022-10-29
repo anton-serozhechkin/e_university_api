@@ -1,11 +1,7 @@
-from apps.common.db import database
-from apps.hostel.models import BedPlace, hostel_list_view
 from apps.hostel.schemas import HostelListOut, BedPlaceOut
-from apps.hostel.models import Hostel, BedPlace, hostel_list_view
 from apps.hostel.services import hostel_service, bed_place_service
 
 from fastapi import Request
-from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from typing import List
 

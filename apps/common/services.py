@@ -1,5 +1,5 @@
 import uuid
-from typing import Type, TypeVar, Union, List
+from typing import Type, TypeVar, Union, List, Dict
 
 from fastapi.encoders import jsonable_encoder
 from pydantic import BaseModel
@@ -7,12 +7,14 @@ from sqlalchemy import delete, select, update
 from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.engine import ChunkedIteratorResult, CursorResult
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.sql.schema import Table
 
 from apps.common.db import Base
 
 ModelType = TypeVar("ModelType", bound=Base)
 CreateSchemaType = TypeVar("CreateSchemaType", bound=BaseModel)
 UpdateSchemaType = TypeVar("UpdateSchemaType", bound=BaseModel)
+ReadSchemaType = TypeVar("ReadSchemaType", bound=BaseModel)
 
 
 class AsyncCRUDBase:
@@ -68,3 +70,21 @@ class AsyncCRUDBase:
         result: CursorResult = await session.execute(statement=delete_statement)
         await session.commit()
         return result
+
+    async def list(
+        self,
+        *,
+        session: AsyncSession,
+        filters: Union[Dict, None] = None  # TODO: Add dynamic filtering system
+    ) -> List[Union[ReadSchemaType]]:
+        select_statement = select(self.model)
+        if filters:
+            select_statement = select_statement.filter_by(**filters)
+        select_statement = select_statement.execution_options(populate_existing=True)
+
+        result: ChunkedIteratorResult = await session.execute(statement=select_statement)
+        if isinstance(self.model, Table):
+            objects: List[Table] = result.all()
+        else:
+            objects: List[ReadSchemaType] = result.scalars().all()
+        return objects

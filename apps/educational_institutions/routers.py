@@ -1,13 +1,12 @@
-from apps.educational_institutions.schemas import FacultyOut, FacultyIn, SpecialityListOut, CourseListOut
+from apps.common.dependencies import get_async_session
+from apps.common.schemas import JSENDFailOutSchema, JSENDOutSchema
+from apps.educational_institutions.handlers import edu_institutions_handler
+from apps.educational_institutions.schemas import FacultyIn, FacultyOut,CourseListOut, SpecialityListOut
 from apps.users.handlers import get_current_user
-from apps.educational_institutions import handlers
 
-
+from fastapi import APIRouter, Depends, Request
+from sqlalchemy.ext.asyncio import AsyncSession
 from typing import List
-
-from fastapi import Depends, APIRouter
-
-from apps.common.schemas import JSENDOutSchema, JSENDFailOutSchema
 
 
 educational_institutions_router = APIRouter(
@@ -23,7 +22,10 @@ educational_institutions_router = APIRouter(
                                          200: {"description": "Successful get faculty list of university response"},
                                      },  # TODO after input id of non-existent university it returns success,
                                      tags=["SuperAdmin dashboard"])
-async def read_faculties(university_id: int, user=Depends(get_current_user)):
+async def read_faculties(request: Request,
+                         university_id: int,
+                         user=Depends(get_current_user),
+                         session: AsyncSession = Depends(get_async_session)):
     """
         **Get list of university faculties**
 
@@ -34,7 +36,11 @@ async def read_faculties(university_id: int, user=Depends(get_current_user)):
         email, university id in table, decan full name
     """
     return {
-        "data": await handlers.read_faculties(university_id),
+        "data": await edu_institutions_handler.read_faculties(
+            request=request,
+            university_id=university_id,
+            session=session
+        ),
         "message": f"Got faculty list of the university with id {university_id}"
     }
 
@@ -47,7 +53,13 @@ async def read_faculties(university_id: int, user=Depends(get_current_user)):
                                           200: {"description": "Successful create faculty in university response"}
                                       },
                                       tags=["SuperAdmin dashboard"])
-async def create_faculty(university_id: int, faculty: FacultyIn, user=Depends(get_current_user)):
+async def create_faculty(
+        request: Request,
+        university_id: int,
+        faculty: FacultyIn,
+        user=Depends(get_current_user),
+        session: AsyncSession = Depends(get_async_session)
+):
     """
         **Create faculty in university**
 
@@ -65,10 +77,14 @@ async def create_faculty(university_id: int, faculty: FacultyIn, user=Depends(ge
         **Return**: list of all university faculties with info: faculty id in table, name and shortname,
         email, university id in table, decan full name
     """
-    response = await handlers.create_faculty(faculty)
+    response = await edu_institutions_handler.create_faculty(
+        request=request,
+        data=faculty,
+        session=session
+        )
     return {
         "data": response,
-        "message": f"Successfully created faculty with id {response['faculty_id']}"
+        "message": f"Successfully created faculty with id {response.dict()['faculty_id']}"
     }   # TODO There is need to add decan to new faculty (change FacultyIn)
 
 
@@ -80,9 +96,18 @@ async def create_faculty(university_id: int, faculty: FacultyIn, user=Depends(ge
                                          "description": "Successful get all speciality list of university response"}
                                      },
                                      tags=["Admin dashboard"])
-async def read_speciality_list(university_id: int, auth=Depends(get_current_user)):
+async def read_speciality_list(
+        request: Request,
+        university_id: int,
+        auth=Depends(get_current_user),
+        session: AsyncSession = Depends(get_async_session)
+):
     return {
-        "data": await handlers.read_speciality_list(university_id),
+        "data": await edu_institutions_handler.read_speciality_list(
+            request=request,
+            university_id=university_id,
+            session=session
+        ),
         "message": f"Got speciality list of the university with id {university_id}"
     }
 
@@ -93,8 +118,15 @@ async def read_speciality_list(university_id: int, auth=Depends(get_current_user
                                      summary="Get courses list",
                                      responses={200: {"description": "Successful get all courses list response"}},
                                      tags=["Admin dashboard"])
-async def read_courses_list(auth=Depends(get_current_user)):
+async def read_courses_list(
+        request: Request,
+        auth=Depends(get_current_user),
+        session: AsyncSession = Depends(get_async_session)
+):
     return {
-        "data": await handlers.read_courses_list(),
+        "data": await edu_institutions_handler.read_courses_list(
+            request=request,
+            session=session
+        ),
         "message": "Got all courses"
     }
