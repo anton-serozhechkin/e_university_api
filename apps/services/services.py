@@ -1,12 +1,13 @@
 from apps.common.db import database
 from apps.services.models import Service, UserDocument
+from apps.common.file_manager import FileManagerLocal
 from settings import (Settings, TEMPLATES_PATH, SETTLEMENT_HOSTEL_PATH)
 
 from datetime import datetime
-from docxtpl import DocxTemplate
 from sqlalchemy import select, insert
 
-HOSTEL_BOOKING_TEMPLATE_URL = "hostel_booking_template.docx"
+
+HOSTEL_BOOKING_TEMPLATE = "hostel_booking_template.docx"
 
 
 async def generate_document_name(service_id: int) -> str:
@@ -17,14 +18,11 @@ async def generate_document_name(service_id: int) -> str:
 
 async def create_user_document_content(**kwargs) -> str:
     if kwargs.get("service_id") == 1:
-        path_to_template = TEMPLATES_PATH / HOSTEL_BOOKING_TEMPLATE_URL
-        doc = DocxTemplate(path_to_template)
-        context = kwargs.get("context")
-        doc.render(context)
+        file_manager = FileManagerLocal()
+        rendered_template = file_manager.render(TEMPLATES_PATH, HOSTEL_BOOKING_TEMPLATE, kwargs.get("context"))
         document_name = f"hostel_settlement_{kwargs.get('date_created')}_{kwargs.get('user_request_id')}.docx"
-        path_to_storage = SETTLEMENT_HOSTEL_PATH / document_name
-        doc.save(path_to_storage)
-        return str(path_to_storage)
+        document_path = file_manager.create(SETTLEMENT_HOSTEL_PATH, document_name, rendered_template)
+        return document_path
     raise RuntimeError(f"create_user_document_content({kwargs}) | there is no service_id!!!")
 
 

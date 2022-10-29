@@ -7,13 +7,15 @@ from pydantic import BaseSettings, Field, validator, Extra, PostgresDsn
 
 from sqlalchemy.engine.url import URL
 
-__all__ = ['BASE_DIR', 'Settings', 'TEMPLATES_PATH', 'STORAGE_PATH', 'SETTLEMENT_HOSTEL_PATH']
+__all__ = ['BASE_DIR', 'Settings', 'TEMPLATES_PATH', 'STORAGE_PATH', 'SETTLEMENT_HOSTEL_PATH', 
+            "SERVICES_PATH"]
 
 BASE_DIR = Path(__file__).resolve().parent
 
 TEMPLATES_PATH = BASE_DIR / "apps" / "templates"
 STORAGE_PATH = BASE_DIR / "apps"
-SETTLEMENT_HOSTEL_PATH = BASE_DIR / STORAGE_PATH / "settlement_hostel"
+SERVICES_PATH = BASE_DIR / "apps" / "services"
+SETTLEMENT_HOSTEL_PATH = BASE_DIR / SERVICES_PATH / "settlement_hostel"
 
 
 def _build_db_dsn(values: dict, async_dsn: bool = False) -> URL:
