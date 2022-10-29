@@ -124,7 +124,6 @@ class CountHostelAccommodationIn(BaseModel):
     start_date_accommodation: date = None
     end_date_accommodation: date = None
     bed_place_id: int = None
-    month_price: float = None
 
 
 class CountHostelAccommodationOut(BaseModel):
