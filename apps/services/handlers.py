@@ -285,8 +285,21 @@ async def read_request_details(university_id: int, user_request_id: int, user=De
                       response_model=JSENDOutSchema[CountHostelAccommodationIn],
                       tags=["Student dashboard"])
 async def count_student_accommodation(university_id: int, user_request_id: int,  hostel: CountHostelAccommodationIn,
-                                     user=Depends(get_current_user)):
+                                      user=Depends(get_current_user)):
+    """
+    **Count Student Accommodation**
 
+    **Path**:
+    - **university_id**: user university id
+    - **user_request_id**: user request id
+
+    **Input**:
+    - **start_date_accommodation**: start date of user accommodation
+    - **end_date_accommodation**: end(last) date of user accommodation
+    - **bed_place_id**: user bed place id
+
+    **Return**: summa of accommodation, by month price, dates differance and bed place type
+    """
     hostel_query = select(hostel_accommodation_view).where(hostel_accommodation_view.c.user_request_id == user_request_id,
                                                            hostel_accommodation_view.c.university_id == university_id,)
 
