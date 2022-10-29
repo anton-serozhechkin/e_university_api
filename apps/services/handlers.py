@@ -284,7 +284,8 @@ async def read_request_details(university_id: int, user_request_id: int, user=De
                       name="count_student_accommodation",
                       response_model=JSENDOutSchema[CountHostelAccommodationIn],
                       tags=["Student dashboard"])
-async def count_student_accommodation(university_id: int, user_request_id: int,  hostel: CountHostelAccommodationIn):
+async def count_student_accommodation(university_id: int, user_request_id: int,  hostel: CountHostelAccommodationIn,
+                                     user=Depends(get_current_user)):
 
     hostel_query = select(hostel_accommodation_view).where(hostel_accommodation_view.c.user_request_id == user_request_id,
                                                            hostel_accommodation_view.c.university_id == university_id,)
