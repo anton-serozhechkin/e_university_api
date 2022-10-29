@@ -1,10 +1,11 @@
 from apps.common.db import database
+from apps.hostel.models import BedPlace
 from apps.services.models import user_request_exist_view, user_request_list_view, STATUS_MAPPING, UserRequest, \
     user_request_booking_hostel_view, UserRequestReview, hostel_accommodation_view, user_request_details_view
 from apps.services.schemas import UserRequestExistenceOut, UserRequestsListOut, CreateUserRequestOut, \
     CreateUserRequestIn, UserRequestBookingHostelOut, CancelRequestOut, CancelRequestIn, UserRequestReviewOut, \
     UserRequestReviewIn, HostelAccommodationViewOut, UserRequestDetailsViewOut, CountHostelAccommodationIn
-from apps.services.services import create_user_document
+from apps.services.services import create_user_document, calculate_accommodation
 from apps.users.handlers import get_current_user
 from apps.users.models import UserFaculty
 
@@ -244,7 +245,7 @@ async def create_user_request_review(university_id: int, user_request_id: int, u
                      summary="Get hostel accommodation",
                      responses={200: {"description": "Successful get user request hostel accommodation response"}},
                      tags=["Student dashboard"])
-async def read_hostel_accommodation(university_id: int, user_request_id: int, user=Depends(get_current_user)):
+async def read_hostel_accommodation(university_id: int, user_request_id: int):
     query = select(hostel_accommodation_view).where(hostel_accommodation_view.c.university_id == university_id,
                                                     hostel_accommodation_view.c.user_request_id == user_request_id)
     response = await database.fetch_one(query)
@@ -279,22 +280,22 @@ async def read_request_details(university_id: int, user_request_id: int, user=De
     }
 
 
-@services_router.post("/{user_request_id}/count_hostel_accommodation/",
+@services_router.post("/{user_request_id}/student-accommodation/{university_id}/",
+                      name="count_student_accommodation",
                       response_model=JSENDOutSchema[CountHostelAccommodationIn],
                       tags=["Student dashboard"])
-async def count_hostel_accommodation(user_request_id: int, university_id: int, hostel: CountHostelAccommodationIn):
+async def count_student_accommodation(university_id: int, user_request_id: int,  hostel: CountHostelAccommodationIn):
 
-    query = select(hostel_accommodation_view).where(hostel_accommodation_view.c.user_request_id == user_request_id,
-                                                    hostel_accommodation_view.c.university_id == university_id,)
+    hostel_query = select(hostel_accommodation_view).where(hostel_accommodation_view.c.user_request_id == user_request_id,
+                                                           hostel_accommodation_view.c.university_id == university_id,)
 
-    hostel_info = await database.fetch_one(query)
+    bed_place_query = select(BedPlace).where(BedPlace.bed_place_id == hostel.bed_place_id)
 
-    def calculate(month_price, bed_place_id, end_date, start_date):
-        dif_date = end_date.month - start_date.month + 12 * (end_date.year - start_date.year)
-        return month_price * dif_date * bed_place_id
+    hostel_info = await database.fetch_one(hostel_query)
+    bed_place_info = await database.fetch_one(bed_place_query)
 
     return {
         "data": hostel_info,
-        "message": f"Result summa: "
-                   f"{calculate(hostel.month_price, hostel.bed_place_id, hostel.end_date_accommodation, hostel.start_date_accommodation)}",
+        "message": f"Result summa of student accommodation: "
+                   f"{calculate_accommodation(hostel.end_date_accommodation, hostel.start_date_accommodation, hostel_info.month_price, bed_place_info.bed_place_id)}"
     }
