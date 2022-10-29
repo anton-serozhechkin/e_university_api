@@ -10,7 +10,8 @@ print_config = False
 
 
 # Server socket
-bind = '127.0.0.1:8000'
+HOST = '0.0.0.0:$PORT'
+POST = '5432'
 backlog = 2048
 
 
@@ -18,7 +19,8 @@ backlog = 2048
 workers = 4
 worker_class = 'uvicorn.workers.UvicornWorker'
 worker_connections = 1000
-max_requests = 0
+max_requests = 100
+max_requests_jitter = 4
 timeout = 30
 keepalive = 2
 
