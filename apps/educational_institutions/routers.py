@@ -2,7 +2,7 @@ from apps.common.dependencies import get_async_session
 from apps.common.schemas import JSENDFailOutSchema, JSENDOutSchema
 from apps.educational_institutions.handlers import edu_institutions_handler
 from apps.educational_institutions.schemas import FacultyIn, FacultyOut,CourseListOut, SpecialityListOut
-from apps.users.handlers import get_current_user
+from apps.users.serivces import get_current_user
 
 from fastapi import APIRouter, Depends, Request
 from sqlalchemy.ext.asyncio import AsyncSession
