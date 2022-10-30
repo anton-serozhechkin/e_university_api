@@ -85,8 +85,8 @@ class AsyncCRUDBase:
         data: Union[ModelType, None] = result.scalar_one_or_none()
         return data
 
-    async def update_mod(self, *, session: AsyncSession, data: Dict = dict, obj: UpdateSchemaType) -> Union[ModelType, None]:
-        values = jsonable_encoder(obj=obj, exclude_unset=True, by_alias=False)
+    async def update_mod(self, *, session: AsyncSession, data: Dict = dict, obj: Union[Dict, UpdateSchemaType] = dict) -> Union[ModelType, None]:
+        values = obj if isinstance(obj, Dict) else jsonable_encoder(obj=obj, exclude_unset=True, by_alias=False)
         where_expr = []
         for k, v in data.items():
             where_expr.append(getattr(self.model, k) == v)

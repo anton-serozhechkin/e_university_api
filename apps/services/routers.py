@@ -175,8 +175,13 @@ async def cancel_request(
                       summary="Create user request review",
                       responses={200: {"description": "Successful create user request review response"}},
                       tags=["Admin dashboard"])
-async def create_user_request_review(university_id: int, user_request_id: int, user_request_review: UserRequestReviewIn,
-                                     user=Depends(get_current_user)):
+async def create_user_request_review(
+        request: Request,
+        university_id: int,
+        user_request_id: int,
+        user_request_review: UserRequestReviewIn,
+        user=Depends(get_current_user),
+        session: AsyncSession = Depends(get_async_session)):
     """
         **Create user request review**
 
@@ -198,7 +203,13 @@ async def create_user_request_review(university_id: int, user_request_id: int, u
         **Return**: user request status id; user request review id
     """
     return {
-        "data": await service_handler.create_user_request_review(university_id, user_request_id, user_request_review, user),
+        "data": await service_handler.create_user_request_review(
+            request=request,
+            university_id=university_id,
+            user_request_id=user_request_id,
+            user_request_review=user_request_review,
+            user=user,
+            session=session),
         "message": "Created user request review"
     }
 
@@ -209,9 +220,18 @@ async def create_user_request_review(university_id: int, user_request_id: int, u
                      summary="Get hostel accommodation",
                      responses={200: {"description": "Successful get user request hostel accommodation response"}},
                      tags=["Student dashboard"])
-async def read_hostel_accommodation(university_id: int, user_request_id: int, user=Depends(get_current_user)):
+async def read_hostel_accommodation(
+        request: Request,
+        university_id: int,
+        user_request_id: int,
+        user=Depends(get_current_user),
+        session: AsyncSession = Depends(get_async_session)):
     return {
-        "data": await service_handler.read_hostel_accommodation(university_id, user_request_id),
+        "data": await service_handler.read_hostel_accommodation(
+            request=request,
+            university_id=university_id,
+            user_request_id=user_request_id,
+            session=session),
         "message": "Get hostel accommodation"
     }
 

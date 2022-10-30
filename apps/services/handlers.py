@@ -3,8 +3,8 @@ from apps.services.models import user_request_exist_view, user_request_list_view
     user_request_booking_hostel_view, UserRequestReview, hostel_accommodation_view, user_request_details_view
 from apps.services.schemas import CreateUserRequestIn, CancelRequestIn, UserRequestExistenceOut, UserRequestReviewIn
 from apps.services.services import (
-    create_user_document, request_existence_service, request_existence_list_service, user_faculty_service,
-    user_request_service, user_request_booking_hostel_service
+    create_user_document, hostel_accommodation_service, request_existence_service, request_existence_list_service,
+    user_faculty_service, user_request_service, user_request_booking_hostel_service, user_request_review_service
 )
 from apps.users.models import UserFaculty
 from apps.users.schemas import UserOut
@@ -118,44 +118,56 @@ class ServiceHandler:
             "status_id": cancel_request.status_id
         }
 
-    async def create_user_request_review(university_id: int, user_request_id: int, user_request_review: UserRequestReviewIn,
-                                         user: UserOut):
-        query = insert(UserRequestReview).values(university_id=university_id,
-                                                 user_request_id=user_request_id,
-                                                 date_created=datetime.now(),
-                                                 reviewer=user.user_id,
-                                                 hostel_id=user_request_review.hostel_id,
-                                                 room_number=user_request_review.room_number,
-                                                 start_date_accommodation=user_request_review.start_date_accommodation.now(),
-                                                 end_date_accommodation=user_request_review.end_date_accommodation.now(),
-                                                 total_sum=user_request_review.total_sum,
-                                                 payment_deadline=user_request_review.payment_deadline.now(),
-                                                 remark=user_request_review.remark,
-                                                 date_review=datetime.now(),
-                                                 bed_place_id=user_request_review.bed_place_id)
-
-        last_record_id = await database.execute(query)
-
-        query = update(UserRequest).values(status_id=user_request_review.status_id).where(
-            UserRequest.user_request_id == user_request_id
+    async def create_user_request_review(
+            self,
+            *,
+            request: Request,
+            university_id: int,
+            user_request_id: int,
+            user_request_review: UserRequestReviewIn,
+            user: UserOut,
+            session: AsyncSession):
+        created_user_request_review = await user_request_review_service.create_mod(
+            session=session,
+            data={
+                "university_id": university_id,
+                "user_request_id": user_request_id,
+                "date_created": datetime.now(),
+                "reviewer": user.user_id,
+                "hostel_id": user_request_review.hostel_id,
+                "room_number": user_request_review.room_number,
+                "start_date_accommodation": user_request_review.start_date_accommodation.now(),
+                "end_date_accommodation": user_request_review.end_date_accommodation.now(),
+                "total_sum": user_request_review.total_sum,
+                "payment_deadline": user_request_review.payment_deadline.now(),
+                "remark": user_request_review.remark,
+                "date_review": datetime.now(),
+                "bed_place_id": user_request_review.bed_place_id
+            })
+        await user_request_service.update_mod(
+            session=session,
+            data={"user_request_id": user_request_id},
+            obj={"status_id": user_request_review.status_id}
         )
-        await database.execute(query)
-
         return {
             "status_id": user_request_review.status_id,
-            "user_request_review_id": last_record_id
+            "user_request_review_id": created_user_request_review.user_request_review_id
         }
 
-    async def read_hostel_accommodation(university_id: int, user_request_id: int):
-        query = select(hostel_accommodation_view).where(hostel_accommodation_view.c.university_id == university_id,
-                                                        hostel_accommodation_view.c.user_request_id == user_request_id)
-        response = await database.fetch_one(query)
-
-        response.documents = json.loads(response.documents)
+    async def read_hostel_accommodation(
+            self,
+            *,
+            request: Request,
+            university_id: int,
+            user_request_id: int,
+            session: AsyncSession):
+        response = await hostel_accommodation_service.read_mod(
+            session=session,
+            data={
+                "university_id": university_id,
+                "user_request_id": user_request_id
+            })
         # TODO AttributeError: 'NoneType' object has no attribute 'documents' (it's heppend only if user request doesn't have review)
-
-        response.hostel_name = json.loads(response.hostel_name)
-        response.hostel_address = json.loads(response.hostel_address)
         return response
 
     async def read_request_details(university_id: int, user_request_id: int):
