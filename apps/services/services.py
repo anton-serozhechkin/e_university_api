@@ -1,5 +1,6 @@
 from apps.common.db import database
-from apps.services.models import Service, UserDocument
+from apps.common.services import AsyncCRUDBase
+from apps.services.models import Service, UserDocument, user_request_exist_view
 from settings import (Settings, TEMPLATES_PATH, SETTLEMENT_HOSTEL_PATH)
 
 from datetime import datetime
@@ -40,3 +41,6 @@ async def create_user_document(**kwargs):
                                         content=content,
                                         user_request_id=kwargs.get("user_request_id"))
     return await database.execute(query)
+
+
+request_existence_service = AsyncCRUDBase(model=user_request_exist_view)

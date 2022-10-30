@@ -1,13 +1,15 @@
+from apps.common.dependencies import get_async_session
+from apps.common.schemas import JSENDFailOutSchema, JSENDOutSchema
+from apps.services.handlers import service_handler
+from apps.services import handlers
 from apps.services.schemas import UserRequestExistenceOut, UserRequestsListOut, CreateUserRequestOut, \
     CreateUserRequestIn, UserRequestBookingHostelOut, CancelRequestOut, CancelRequestIn, UserRequestReviewOut, \
     UserRequestReviewIn, HostelAccomodationViewOut, UserRequestDetailsViewOut
 from apps.users.handlers import get_current_user
-from apps.services import handlers
 
+from fastapi import APIRouter, Depends, Request
+from sqlalchemy.ext.asyncio import AsyncSession
 from typing import List
-
-from fastapi import Depends, APIRouter
-from apps.common.schemas import JSENDOutSchema, JSENDFailOutSchema
 
 
 services_router = APIRouter(
@@ -23,7 +25,13 @@ services_router = APIRouter(
                          200: {"description": "Successful get response with info about existence user request response"}
                      },
                      tags=["Student dashboard"])
-async def check_user_request_existence(university_id: int, service_id: int, user=Depends(get_current_user)):
+async def check_user_request_existence(
+        request: Request,
+        university_id: int,
+        service_id: int,
+        user=Depends(get_current_user),
+        session: AsyncSession = Depends(get_async_session)
+):  # TODO: nothing prevents student from creating multiple requests with the same id
     """
     **Checking user request existence**
 
@@ -34,7 +42,13 @@ async def check_user_request_existence(university_id: int, service_id: int, user
     **Return**: user request id; user request status; user request existence
     """
     return {
-        "data": await handlers.read_user_request_existence(university_id, service_id, user),
+        "data": await service_handler.read_user_request_existence(
+            request=request,
+            university_id=university_id,
+            service_id=service_id,
+            user=user,
+            session=session
+        ),
         "message": "Got user request existence"
     }
 
@@ -45,9 +59,11 @@ async def check_user_request_existence(university_id: int, service_id: int, user
                      summary="Get user request list",
                      responses={200: {"description": "Successful get university user request list response"}},
                      tags=["Student dashboard"])
-async def read_user_request_list(university_id: int, user=Depends(get_current_user)):
+async def read_user_request_list(
+        request: Request,
+        university_id: int, user=Depends(get_current_user)):
     return {
-        "data": await handlers.read_user_request_list(university_id, user),
+        "data": await service_handler.read_user_request_list(university_id, user),
         "message": "Got user requests list"
     }
 
@@ -71,7 +87,7 @@ async def create_user_request(university_id: int, user_request: CreateUserReques
 
     **Return**: user request id; request status id
     """
-    response = await handlers.create_user_request(university_id, user_request, user)
+    response = await service_handler.create_user_request(university_id, user_request, user)
     return {
         "data": response,
         "message": f"Created user request with id {response['user_request_id']}"
@@ -86,7 +102,7 @@ async def create_user_request(university_id: int, user_request: CreateUserReques
                      tags=["Student dashboard"])
 async def read_user_request_booking_hostel(university_id: int, user=Depends(get_current_user)):
     return {
-        "data": await handlers.read_user_request_booking_hostel(university_id, user),
+        "data": await service_handler.read_user_request_booking_hostel(university_id, user),
         "message": "Got user request booking hostel"
     }
 
@@ -112,7 +128,7 @@ async def cancel_request(university_id: int, user_request_id: int, cancel_reques
     **Return**: canceled user request id and status id
     """
     return {
-        "data": await handlers.cancel_request(user_request_id, cancel_request),
+        "data": await service_handler.cancel_request(user_request_id, cancel_request),
         "message": f"Canceled request with id {user_request_id}"
     }
 
@@ -146,7 +162,7 @@ async def create_user_request_review(university_id: int, user_request_id: int, u
         **Return**: user request status id; user request review id
     """
     return {
-        "data": await handlers.create_user_request_review(university_id, user_request_id, user_request_review, user),
+        "data": await service_handler.create_user_request_review(university_id, user_request_id, user_request_review, user),
         "message": "Created user request review"
     }
 
@@ -159,7 +175,7 @@ async def create_user_request_review(university_id: int, user_request_id: int, u
                      tags=["Student dashboard"])
 async def read_hostel_accommodation(university_id: int, user_request_id: int, user=Depends(get_current_user)):
     return {
-        "data": await handlers.read_hostel_accommodation(university_id, user_request_id),
+        "data": await service_handler.read_hostel_accommodation(university_id, user_request_id),
         "message": "Get hostel accommodation"
     }
 
@@ -172,6 +188,6 @@ async def read_hostel_accommodation(university_id: int, user_request_id: int, us
                      tags=["Student dashboard"])   # TODO Return Validation error with empty data
 async def read_request_details(university_id: int, user_request_id: int, user=Depends(get_current_user)):
     return {
-        "data": await handlers.read_request_details(university_id, user_request_id),
+        "data": await service_handler.read_request_details(university_id, user_request_id),
         "message": "Got request details"
     }

@@ -5,7 +5,7 @@ from fastapi.encoders import jsonable_encoder
 from pydantic import BaseModel
 from sqlalchemy import delete, select, update
 from sqlalchemy.dialects.postgresql import insert
-from sqlalchemy.engine import ChunkedIteratorResult, CursorResult
+from sqlalchemy.engine import ChunkedIteratorResult, CursorResult, FilterResult, Result
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.sql.schema import Table
 
@@ -47,6 +47,16 @@ class AsyncCRUDBase:
         result: ChunkedIteratorResult = await session.execute(statement=statement)
         data: Union[ModelType, None] = result.scalar_one_or_none()
         return data
+
+    async def read_mod(self, *, session: AsyncSession, data: Dict = dict, schema: Union[ReadSchemaType, None] = None):
+        obj_in_data = jsonable_encoder(obj=schema, exclude_unset=True, by_alias=False) if schema else {}
+        where_dict = {**data, **obj_in_data}
+        statement = select(self.model)
+        for k, v in where_dict.items():
+            statement = statement.where(getattr(self.model.c, k) == v)
+        result: Result = await session.execute(statement=statement)
+        response: Union[ModelType, None] = result.first()
+        return response
 
     async def update(self, *, session: AsyncSession, id: Union[str, uuid.UUID], obj: UpdateSchemaType) -> Union[ModelType, None]:
         values = jsonable_encoder(obj=obj, exclude_unset=True, by_alias=False)
