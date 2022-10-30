@@ -242,8 +242,17 @@ async def read_hostel_accommodation(
                      summary="Get user request",
                      responses={200: {"description": "Successful get user request response"}},
                      tags=["Student dashboard"])   # TODO Return Validation error with empty data
-async def read_request_details(university_id: int, user_request_id: int, user=Depends(get_current_user)):
+async def read_request_details(
+        request: Request,
+        university_id: int,
+        user_request_id: int,
+        user=Depends(get_current_user),
+        session: AsyncSession = Depends(get_async_session)):
     return {
-        "data": await service_handler.read_request_details(university_id, user_request_id),
+        "data": await service_handler.read_request_details(
+            request=request,
+            university_id=university_id,
+            user_request_id=user_request_id,
+            session=session),
         "message": "Got request details"
     }
