@@ -1,10 +1,12 @@
+from apps.common.schemas import BaseInSchema, BaseOutSchema
+
 from datetime import datetime
 from typing import List, Dict, Union
 import re
 from pydantic import BaseModel, validator
 
 
-class UsersListViewOut(BaseModel):
+class UsersListViewOut(BaseOutSchema):
     user_id: int
     login: str
     last_visit: datetime = None
@@ -15,13 +17,13 @@ class UsersListViewOut(BaseModel):
     university_id: int
 
 
-class RegistrationOut(BaseModel):
+class RegistrationOut(BaseOutSchema):
     user_id: int
     faculty_id: int
     login: str
 
 
-class RegistrationIn(BaseModel):
+class RegistrationIn(BaseInSchema):
 
     token: str
     email: str
@@ -63,13 +65,13 @@ class RegistrationIn(BaseModel):
         return v
 
 
-class AuthOut(BaseModel):
+class AuthOut(BaseOutSchema):
     access_token: str
     refresh_token: str
     user_id: int
 
 
-class CreateUserIn(BaseModel):
+class CreateUserIn(BaseInSchema):
 
     email: str
     password: str
@@ -109,16 +111,16 @@ class CreateUserIn(BaseModel):
         return v
 
 
-class CreateUserOut(BaseModel):
+class CreateUserOut(BaseOutSchema):
     user_id: int
 
 
-class TokenPayload(BaseModel):
+class TokenPayload(BaseInSchema):
     exp: int
     sub: str
 
 
-class UserOut(BaseModel):
+class UserOut(BaseOutSchema):
     user_id: int
     login: str
     last_visit: datetime = None
@@ -133,22 +135,22 @@ class UserIn(TokenPayload):
     user_id: int
 
 
-class DeleteUserIn(BaseModel):
+class DeleteUserIn(BaseInSchema):
     user_id: int
 
 
-class StudentCheckExistanceIn(BaseModel):   # TODO spelling error
+class StudentCheckExistanceIn(BaseInSchema):   # TODO spelling error
     full_name: str
     telephone_number: str
 
 
-class StudentCheckExistanceOut(BaseModel):
+class StudentCheckExistanceOut(BaseOutSchema):
     student: int
     token: str
     expires: datetime
 
 
-class CreateStudentIn(BaseModel):
+class CreateStudentIn(BaseInSchema):
     full_name: str
     telephone_number: str
     course_id: int
@@ -201,11 +203,11 @@ class CreateStudentIn(BaseModel):
         return value
 
 
-class CreateStudentOut(BaseModel):
+class CreateStudentOut(BaseOutSchema):
     student_id: int
 
 
-class StudentsListOut(BaseModel):
+class StudentsListOut(BaseOutSchema):
     student_id: int
     student_full_name: str
     telephone_number: str
@@ -217,5 +219,5 @@ class StudentsListOut(BaseModel):
     gender: str
 
 
-class DeleteStudentIn(BaseModel):
+class DeleteStudentIn(BaseInSchema):
     student_id: int

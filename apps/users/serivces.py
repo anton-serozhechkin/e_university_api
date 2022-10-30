@@ -1,4 +1,8 @@
+from apps.common.db import database
 from apps.common.exceptions import BackendException
+from apps.common.services import AsyncCRUDBase
+from apps.users.models import User, user_list_view
+from apps.users.schemas import TokenPayload, UserOut
 from settings import Settings
 
 from translitua import translit
@@ -6,7 +10,50 @@ from random import randint
 import hashlib
 import os
 from datetime import datetime, timedelta
-from fastapi import status as http_status
+from fastapi import Depends, HTTPException, status as http_status
+from fastapi.security import OAuth2PasswordBearer
+from jose import jwt
+from pydantic import ValidationError
+from sqlalchemy import select, insert, delete, update
+
+
+reusable_oauth = OAuth2PasswordBearer(
+    tokenUrl="/login",
+    scheme_name="JWT"
+)
+
+
+async def get_current_user(token: str = Depends(reusable_oauth)) -> UserOut:
+    try:
+        payload = jwt.decode(
+            token, Settings.JWT_SECRET_KEY, algorithms=[Settings.JWT_ALGORITHM]
+        )
+        token_data = TokenPayload(**payload)
+
+        if datetime.fromtimestamp(token_data.exp) < datetime.now():
+            raise HTTPException(
+                status_code=http_status.HTTP_401_UNAUTHORIZED,
+                detail="Token data has expired",
+                headers={"WWW-Authenticate": "Bearer"}
+            )
+
+    except(jwt.JWTError, ValidationError):
+        raise HTTPException(
+            status_code=http_status.HTTP_403_FORBIDDEN,
+            detail="Credential verification failed",
+            headers={"WWW-Authenticate": "Bearer"}
+        )
+
+    query = select(User).where(User.email == token_data.sub)
+    user = await database.fetch_one(query)
+
+    if user is None:
+        raise BackendException(
+            message="User not found",
+            code=http_status.HTTP_404_NOT_FOUND
+        )
+    query = user_list_view.select(user_list_view.c.user_id == user.user_id)
+    return await database.fetch_one(query)
 
 
 def get_login(data):
@@ -51,3 +98,7 @@ def get_token_and_expires():
     token = hashlib.sha1(os.urandom(128)).hexdigest()
     expires = datetime.utcnow() + timedelta(seconds=Settings.TOKEN_LIFE_TIME)
     return token, expires
+
+
+user_service = AsyncCRUDBase(model=User)
+user_list_service = AsyncCRUDBase(model=user_list_view)

@@ -1,12 +1,13 @@
-from apps.users.handlers import get_current_user
+from apps.common.dependencies import get_async_session
+from apps.users.handlers import get_current_user, user_handler
 from apps.users.schemas import UserOut, UsersListViewOut, CreateUserOut, CreateUserIn, DeleteUserIn, \
     RegistrationOut, RegistrationIn, CreateStudentOut, CreateStudentIn, StudentsListOut, UserIn, DeleteStudentIn, \
     StudentCheckExistanceOut, StudentCheckExistanceIn
-from apps.users import handlers
 from apps.common.schemas import JSENDOutSchema, JSENDFailOutSchema
 
+from fastapi import APIRouter, Depends, Request
+from sqlalchemy.ext.asyncio import AsyncSession
 from typing import List, Union
-from fastapi import Depends, APIRouter
 
 users_router = APIRouter()
 
@@ -21,7 +22,10 @@ users_router = APIRouter()
                        422: {"model": JSENDFailOutSchema, "description": "ValidationError"}
                    },
                    tags=["Authorization"])  # TODO spelling mistake, there is need to check path in other modules
-async def check_student(student: StudentCheckExistanceIn):
+async def check_student(
+        request: Request,
+        student: StudentCheckExistanceIn,
+        session: AsyncSession = Depends(get_async_session)):
     """
         **Check student existence in the database**
 
@@ -31,7 +35,7 @@ async def check_student(student: StudentCheckExistanceIn):
 
         **Return**: student id; token, which is used for registering user; token expires datetime
     """
-    result = await handlers.check_student(student)
+    result = await user_handler.check_student(request=request, student=student, session=session)
     return {
         "data": {
             'token': result.token,
@@ -51,9 +55,16 @@ async def check_student(student: StudentCheckExistanceIn):
                       422: {"model": JSENDFailOutSchema, "description": "ValidationError"}
                   },
                   tags=["SuperAdmin dashboard"])
-async def read_users_list(university_id: int, user=Depends(get_current_user)):
+async def read_users_list(
+        request: Request,
+        university_id: int,
+        user=Depends(get_current_user),
+        session: AsyncSession = Depends(get_async_session)):
     return {
-        "data": await handlers.read_users_list(university_id),
+        "data": await user_handler.read_users_list(
+            request=request,
+            university_id=university_id,
+            session=session),
         "message": f"Got user list of the university with id {university_id}"
     }
 
@@ -67,7 +78,12 @@ async def read_users_list(university_id: int, user=Depends(get_current_user)):
                        422: {"model": JSENDFailOutSchema, "description": "ValidationError"}
                    },
                    tags=["SuperAdmin dashboard"])
-async def create_user(university_id: int, user: CreateUserIn, auth=Depends(get_current_user)):
+async def create_user(
+        request: Request,
+        university_id: int,
+        user: CreateUserIn,
+        auth=Depends(get_current_user),
+        session: AsyncSession = Depends(get_async_session)):
     """
         **Create university user**
 
@@ -83,7 +99,7 @@ async def create_user(university_id: int, user: CreateUserIn, auth=Depends(get_c
 
         **Return**: created user id
     """
-    last_record_id = await handlers.create_user(user)
+    last_record_id = await user_handler.create_user(request=request, user=user, session=session)
     return {
         "data": {
             "user_id": last_record_id
@@ -101,8 +117,13 @@ async def create_user(university_id: int, user: CreateUserIn, auth=Depends(get_c
                          422: {"model": JSENDFailOutSchema, "description": "ValidationError"}
                      },
                      tags=["SuperAdmin dashboard"])
-async def delete_user(university_id: int, delete_user: DeleteUserIn, auth=Depends(get_current_user)):
-    await handlers.del_user(delete_user)
+async def delete_user(
+        request: Request,
+        university_id: int,
+        delete_user: DeleteUserIn,
+        auth=Depends(get_current_user),
+        session: AsyncSession = Depends(get_async_session)):
+    await user_handler.del_user(request=request, delete_user=delete_user, session=session)
     return {
         "data": {
             "user_id": delete_user.user_id
@@ -123,7 +144,10 @@ async def delete_user(university_id: int, delete_user: DeleteUserIn, auth=Depend
                        422: {"model": JSENDFailOutSchema, "description": "ValidationError"}
                    },
                    tags=["Authorization"])
-async def registration(user: RegistrationIn):
+async def registration(
+        request: Request,
+        user: RegistrationIn,
+        session: AsyncSession = Depends(get_async_session)):
     """
         **User registration**
 
@@ -134,7 +158,7 @@ async def registration(user: RegistrationIn):
 
         **Return**: user id; faculty id; login, which consists of name and random number
     """
-    response = await handlers.registration(user)
+    response = await user_handler.registration(request=request, user=user, session=session)
     return {
         "data": response,
         "message": f"User with id {response['user_id']} was registered successfully"
@@ -151,7 +175,12 @@ async def registration(user: RegistrationIn):
                    },
                    tags=["Admin dashboard"])
 # TODO after input id of the non-existent university it creates student
-async def create_student(university_id: int, student: CreateStudentIn, auth=Depends(get_current_user)):
+async def create_student(
+        request: Request,
+        university_id: int,
+        student: CreateStudentIn,
+        auth=Depends(get_current_user),
+        session: AsyncSession = Depends(get_async_session)):
     """
         **Create university student**
         **Path**:
@@ -166,7 +195,7 @@ async def create_student(university_id: int, student: CreateStudentIn, auth=Depe
         **Return**: created student id
     """
     return {
-        "data": await handlers.create_student(student),
+        "data": await user_handler.create_student(request=request, student=student, session=session),
         "message": f"Created student {student.full_name}"
     }
 
@@ -180,10 +209,18 @@ async def create_student(university_id: int, student: CreateStudentIn, auth=Depe
                       422: {"model": JSENDFailOutSchema, "description": "ValidationError"}
                   },
                   tags=["Admin dashboard"])
-async def read_students_list(university_id: int, faculty_id: Union[int, None] = None,
-                             user=Depends(get_current_user)):  # TODO after input id of the non-existent university it returns the students
+async def read_students_list(
+        request: Request,
+        university_id: int,
+        faculty_id: Union[int, None] = None,
+        user=Depends(get_current_user),
+        session: AsyncSession = Depends(get_async_session)):  # TODO after input id of the non-existent university it returns the students
     return {
-        "data": await handlers.read_students_list(university_id, faculty_id),
+        "data": await user_handler.read_students_list(
+            request=request,
+            university_id=university_id,
+            faculty_id=faculty_id,
+            session=session),
         "message": f"Got students list of the university with id {university_id}"
     }
 
@@ -197,8 +234,13 @@ async def read_students_list(university_id: int, faculty_id: Union[int, None] = 
                          422: {"model": JSENDFailOutSchema, "description": "ValidationError"}
                      },
                      tags=["SuperAdmin dashboard"])
-async def delete_student(university_id: int, del_student: DeleteStudentIn, auth=Depends(get_current_user)):
-    await handlers.delete_student(del_student)
+async def delete_student(
+        request: Request,
+        university_id: int,
+        del_student: DeleteStudentIn,
+        auth=Depends(get_current_user),
+        session: AsyncSession = Depends(get_async_session)):
+    await user_handler.delete_student(request=request, del_student=del_student, session=session)
     return {
         "data": {
             "student_id": del_student.student_id
