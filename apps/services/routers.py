@@ -1,7 +1,6 @@
 from apps.common.dependencies import get_async_session
 from apps.common.schemas import JSENDFailOutSchema, JSENDOutSchema
 from apps.services.handlers import service_handler
-from apps.services import handlers
 from apps.services.schemas import UserRequestExistenceOut, UserRequestsListOut, CreateUserRequestOut, \
     CreateUserRequestIn, UserRequestBookingHostelOut, CancelRequestOut, CancelRequestIn, UserRequestReviewOut, \
     UserRequestReviewIn, HostelAccomodationViewOut, UserRequestDetailsViewOut
@@ -61,9 +60,17 @@ async def check_user_request_existence(
                      tags=["Student dashboard"])
 async def read_user_request_list(
         request: Request,
-        university_id: int, user=Depends(get_current_user)):
+        university_id: int,
+        user=Depends(get_current_user),
+        session: AsyncSession = Depends(get_async_session)
+):
     return {
-        "data": await service_handler.read_user_request_list(university_id, user),
+        "data": await service_handler.read_user_request_list(
+            request=request,
+            university_id=university_id,
+            user=user,
+            session=session
+        ),
         "message": "Got user requests list"
     }
 
@@ -74,7 +81,13 @@ async def read_user_request_list(
                       summary="Create user request",
                       responses={200: {"description": "Successful create user request response"}},
                       tags=["Student dashboard"])
-async def create_user_request(university_id: int, user_request: CreateUserRequestIn, user=Depends(get_current_user)):
+async def create_user_request(
+        request: Request,
+        university_id: int,
+        user_request: CreateUserRequestIn,
+        user=Depends(get_current_user),
+        session: AsyncSession = Depends(get_async_session)
+):
     """
     **Create user request**
 
@@ -87,7 +100,13 @@ async def create_user_request(university_id: int, user_request: CreateUserReques
 
     **Return**: user request id; request status id
     """
-    response = await service_handler.create_user_request(university_id, user_request, user)
+    response = await service_handler.create_user_request(
+        request=request,
+        university_id=university_id,
+        user_request=user_request,
+        user=user,
+        session=session
+    )
     return {
         "data": response,
         "message": f"Created user request with id {response['user_request_id']}"

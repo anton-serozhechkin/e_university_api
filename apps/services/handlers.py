@@ -2,7 +2,10 @@ from apps.common.db import database
 from apps.services.models import user_request_exist_view, user_request_list_view, STATUS_MAPPING, UserRequest, \
     user_request_booking_hostel_view, UserRequestReview, hostel_accommodation_view, user_request_details_view
 from apps.services.schemas import CreateUserRequestIn, CancelRequestIn, UserRequestExistenceOut, UserRequestReviewIn
-from apps.services.services import create_user_document, request_existence_service
+from apps.services.services import (
+    create_user_document, request_existence_service, request_existence_list_service, user_faculty_service,
+    user_request_service, user_request_booking_hostel_service
+)
 from apps.users.models import UserFaculty
 from apps.users.schemas import UserOut
 
@@ -41,39 +44,77 @@ class ServiceHandler:
             "user_request_exist": False
         }
 
-    async def read_user_request_list(university_id: int, user: UserOut):
-        query = select(user_request_list_view).where(user_request_list_view.c.user_id == user.user_id,
-                                                     user_request_list_view.c.university_id == university_id)
-        return await database.fetch_all(query)
-
-    async def create_user_request(university_id: int, user_request: CreateUserRequestIn, user: UserOut):
-        query = select(UserFaculty).where(UserFaculty.user_id == user.user_id)
-        user_faculty_result = await database.fetch_one(query)
-        query = insert(UserRequest).values(date_created=datetime.now(),
-                                           comment=user_request.comment,
-                                           user_id=user.user_id,
-                                           service_id=user_request.service_id,
-                                           faculty_id=user_faculty_result.faculty_id,
-                                           university_id=university_id,
-                                           status_id=STATUS_MAPPING.get("Розглядається"))
-
-        last_record_id = await database.execute(query)
-        query = select(user_request_booking_hostel_view).where(
-            user_request_booking_hostel_view.c.user_id == user.user_id,
-            user_request_booking_hostel_view.c.university_id == university_id
+    async def read_user_request_list(
+            self,
+            *,
+            request: Request,
+            university_id: int,
+            user: UserOut,
+            session: AsyncSession
+    ):
+        return await request_existence_list_service.list(
+            session=session,
+            filters={"university_id": university_id, "user_id": user.user_id}
         )
-        result = await database.fetch_one(query)
 
+    async def create_user_request(
+            self,
+            *,
+            request: Request,
+            university_id: int,
+            user_request: CreateUserRequestIn,
+            user: UserOut,
+            session: AsyncSession
+    ):
+        user_faculty_result = await user_faculty_service.read_mod(data={"user_id": user.user_id}, session=session)
+        data = {"date_created": datetime.now(),
+                "comment": user_request.comment,
+                "user_id": user.user_id,
+                "service_id": user_request.service_id,
+                "faculty_id": user_faculty_result.faculty_id,
+                "university_id": university_id,
+                "status_id": STATUS_MAPPING.get("Розглядається")}
+        user_request = await user_request_service.create_mod(session=session, data=data)
+        result = await user_request_booking_hostel_service.read_mod(
+            session=session,
+            data={"user_id": user.user_id, "university_id": university_id})
         prepared_data = {
             "context": result,
             "service_id": user_request.service_id,
-            "user_request_id": last_record_id
+            "user_request_id": user_request.user_request_id
         }
         await create_user_document(**prepared_data)
         return {
             "status_id": STATUS_MAPPING.get("Розглядається"),
-            "user_request_id": last_record_id
+            "user_request_id": user_request.user_request_id
         }
+        # query = select(UserFaculty).where(UserFaculty.user_id == user.user_id)
+        # user_faculty_result = await database.fetch_one(query)
+        # query = insert(UserRequest).values(date_created=datetime.now(),
+        #                                    comment=user_request.comment,
+        #                                    user_id=user.user_id,
+        #                                    service_id=user_request.service_id,
+        #                                    faculty_id=user_faculty_result.faculty_id,
+        #                                    university_id=university_id,
+        #                                    status_id=STATUS_MAPPING.get("Розглядається"))
+        #
+        # last_record_id = await database.execute(query)
+        # query = select(user_request_booking_hostel_view).where(
+        #     user_request_booking_hostel_view.c.user_id == user.user_id,
+        #     user_request_booking_hostel_view.c.university_id == university_id
+        # )
+        # result = await database.fetch_one(query)
+        #
+        # prepared_data = {
+        #     "context": result,
+        #     "service_id": user_request.service_id,
+        #     "user_request_id": last_record_id
+        # }
+        # await create_user_document(**prepared_data)
+        # return {
+        #     "status_id": STATUS_MAPPING.get("Розглядається"),
+        #     "user_request_id": last_record_id
+        # }
 
     async def read_user_request_booking_hostel(university_id: int, user: UserOut):
         query = select(user_request_booking_hostel_view).where(

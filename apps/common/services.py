@@ -30,6 +30,15 @@ class AsyncCRUDBase:
         data: ModelType = result.scalar_one()
         return data
 
+    async def create_mod(self, *, session: AsyncSession, data: Dict = dict, schema: Union[CreateSchemaType, None] = None):
+        obj_in_data = jsonable_encoder(obj=schema, exclude_unset=True, by_alias=False) if schema else {}
+        insert_statement = insert(self.model).values(**data, **obj_in_data).returning(self.model)
+        statement = select(self.model).from_statement(insert_statement).execution_options(populate_existing=True)
+        result: ChunkedIteratorResult = await session.execute(statement=statement)
+        await session.commit()
+        data: ModelType = result.scalar_one()
+        return data
+
     async def create_many(self, *, session: AsyncSession, objs: List[CreateSchemaType]) -> Union[List[ModelType], None]:
         insert_statement = (
             insert(self.model)
@@ -52,11 +61,12 @@ class AsyncCRUDBase:
         obj_in_data = jsonable_encoder(obj=schema, exclude_unset=True, by_alias=False) if schema else {}
         where_dict = {**data, **obj_in_data}
         statement = select(self.model)
+        model = self.model.c if isinstance(self.model, Table) else self.model
         for k, v in where_dict.items():
-            statement = statement.where(getattr(self.model.c, k) == v)
-        result: Result = await session.execute(statement=statement)
+            statement = statement.where(getattr(model, k) == v)
+        result: ChunkedIteratorResult = await session.execute(statement=statement)
         response: Union[ModelType, None] = result.first()
-        return response
+        return response if isinstance(self.model, Table) else response[0]
 
     async def update(self, *, session: AsyncSession, id: Union[str, uuid.UUID], obj: UpdateSchemaType) -> Union[ModelType, None]:
         values = jsonable_encoder(obj=obj, exclude_unset=True, by_alias=False)
