@@ -43,7 +43,7 @@ async def check_student(
             'student': result.student_id,
             'expires': result.expires
         },
-        "message": f"Get information of student with id {result.student}"
+        "message": f"Get information of student with id {result.student_id}"
     }
 
 

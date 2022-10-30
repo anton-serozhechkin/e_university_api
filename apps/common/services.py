@@ -57,7 +57,7 @@ class AsyncCRUDBase:
         data: Union[ModelType, None] = result.scalar_one_or_none()
         return data
 
-    async def read_mod(self, *, session: AsyncSession, data: Dict = dict, schema: Union[ReadSchemaType, None] = None):
+    async def read_mod(self, *, session: AsyncSession, data: Dict, schema: Union[ReadSchemaType, None] = None):
         obj_in_data = jsonable_encoder(obj=schema, exclude_unset=True, by_alias=False) if schema else {}
         where_dict = {**data, **obj_in_data}
         statement = select(self.model)

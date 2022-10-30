@@ -6,8 +6,8 @@ from apps.users.models import User, user_list_view, Student, OneTimeToken, UserF
 from apps.users.schemas import UserOut, TokenPayload, CreateUserIn, DeleteUserIn, RegistrationIn, CreateStudentIn, \
     UserIn, DeleteStudentIn, StudentCheckExistanceIn
 from apps.users.serivces import(
-    get_login, get_student_attr, get_token_data, get_login_full_name, get_token_and_expires, user_service,
-    user_list_service
+    get_login, get_student_attr, get_token_data, get_login_full_name, get_token_and_expires, student_service,
+    one_time_token_service
 )
 from settings import Settings
 
@@ -27,31 +27,40 @@ class UserHandler:
             self,
             *,
             request: Request,
-            student: StudentCheckExistanceIn):
-        query = select(Student).where(Student.full_name == student.full_name,
-                                      Student.telephone_number == student.telephone_number)
-        result = await database.fetch_one(query)
+            student: StudentCheckExistanceIn,
+            session: AsyncSession):
+        result = await student_service.read_mod(session=session, data={}, schema=student)
         if not result:
             raise BackendException(
                 message="Student data was not found. Please, try again.",
                 code=http_status.HTTP_404_NOT_FOUND
             )
-
-        student_id = result.student_id
-
         token, expires = get_token_and_expires()
 
-        query = insert(OneTimeToken).values(student_id=student_id, token=token,
-                                            expires=expires).returning(OneTimeToken.token_id)
-        last_record_id = await database.execute(query)
-        query = select(OneTimeToken).where(OneTimeToken.token_id == last_record_id)
-        return await database.fetch_one(query)
+        one_time_token = await one_time_token_service.create_mod(
+            session=session,
+            data={
+                "student_id": result.student_id,
+                "token": token,
+                "expires": expires
+            })
+        return one_time_token
 
-    async def read_users_list(university_id: int):
+    async def read_users_list(
+            self,
+            *,
+            request: Request,
+            university_id: int,
+            session: AsyncSession):
         query = select(user_list_view).where(user_list_view.c.university_id == university_id)
         return await database.fetch_all(query)
 
-    async def create_user(user: CreateUserIn):
+    async def create_user(
+            self,
+            *,
+            request: Request,
+            user: CreateUserIn,
+            session: AsyncSession):
         CreateUserIn(
             email=user.email,
             password=user.password,
@@ -75,11 +84,21 @@ class UserHandler:
 
         return last_record_id
 
-    async def del_user(delete_user: DeleteUserIn):
+    async def del_user(
+            self,
+            *,
+            request: Request,
+            delete_user: DeleteUserIn,
+            session: AsyncSession):
         query = delete(User).where(User.user_id == delete_user.user_id)
         await database.execute(query)
 
-    async def registration(user: RegistrationIn):
+    async def registration(
+            self,
+            *,
+            request: Request,
+            user: RegistrationIn,
+            session: AsyncSession):
         RegistrationIn(
             token=user.token,
             email=user.email,
@@ -122,7 +141,12 @@ class UserHandler:
             "login": login
         }
 
-    async def create_student(student: CreateStudentIn):
+    async def create_student(
+            self,
+            *,
+            request: Request,
+            student: CreateStudentIn,
+            session: AsyncSession):
         CreateStudentIn(
             full_name=student.full_name,
             telephone_number=student.telephone_number,
@@ -139,25 +163,35 @@ class UserHandler:
 
         return {"student_id": student_id}
 
-    async def read_students_list(university_id: int, faculty_id: Union[
-        int, None] = None):  # TODO after input id of the non-existent university it returns the students
+    async def read_students_list(
+            self,
+            *,
+            request: Request,
+            university_id: int,
+            faculty_id: Union[int, None] = None,
+            session: AsyncSession):  # TODO after input id of the non-existent university it returns the students
         if faculty_id:
             query = select(students_list_view).where(students_list_view.c.faculty_id == faculty_id)
         else:
             query = select(students_list_view).where(students_list_view.c.university_id == university_id)
         return await database.fetch_all(query)
 
-    async def delete_student(del_student: DeleteStudentIn):
+    async def delete_student(
+            self,
+            *,
+            request: Request,
+            del_student: DeleteStudentIn,
+            session: AsyncSession):
         query = delete(Student).where(Student.student_id == del_student.student_id)
 
         await database.execute(query)
         # TODO: in response key data has empty dict value, not like it's discribed
 
-    async def get_me(user: UserIn = Depends(get_current_user)):
-        return {
-            "data": user,
-            "message": "Got user information"
-        }
+    # async def get_me(user: UserIn = Depends(get_current_user)):
+    #     return {
+    #         "data": user,
+    #         "message": "Got user information"
+    #     }
 
 
 user_handler = UserHandler()
