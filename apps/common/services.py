@@ -3,7 +3,7 @@ from typing import Type, TypeVar, Union, List, Dict
 
 from fastapi.encoders import jsonable_encoder
 from pydantic import BaseModel
-from sqlalchemy import delete, select, update
+from sqlalchemy import delete, select, update, and_
 from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.engine import ChunkedIteratorResult, CursorResult, FilterResult, Result
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -73,6 +73,26 @@ class AsyncCRUDBase:
         update_statement = (
             update(self.model)
             .where(self.model.id == id)
+            .values(**values)
+            .returning(self.model)
+            .execution_options(synchronize_session="fetch")
+        )
+        statement = (
+            select(self.model).from_statement(statement=update_statement).execution_options(populate_existing=True)
+        )
+        result: ChunkedIteratorResult = await session.execute(statement=statement)
+        await session.commit()
+        data: Union[ModelType, None] = result.scalar_one_or_none()
+        return data
+
+    async def update_mod(self, *, session: AsyncSession, data: Dict = dict, obj: UpdateSchemaType) -> Union[ModelType, None]:
+        values = jsonable_encoder(obj=obj, exclude_unset=True, by_alias=False)
+        where_expr = []
+        for k, v in data.items():
+            where_expr.append(getattr(self.model, k) == v)
+        update_statement = (
+            update(self.model)
+            .where(and_(*where_expr))
             .values(**values)
             .returning(self.model)
             .execution_options(synchronize_session="fetch")

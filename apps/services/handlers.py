@@ -88,46 +88,31 @@ class ServiceHandler:
             "status_id": STATUS_MAPPING.get("Розглядається"),
             "user_request_id": user_request.user_request_id
         }
-        # query = select(UserFaculty).where(UserFaculty.user_id == user.user_id)
-        # user_faculty_result = await database.fetch_one(query)
-        # query = insert(UserRequest).values(date_created=datetime.now(),
-        #                                    comment=user_request.comment,
-        #                                    user_id=user.user_id,
-        #                                    service_id=user_request.service_id,
-        #                                    faculty_id=user_faculty_result.faculty_id,
-        #                                    university_id=university_id,
-        #                                    status_id=STATUS_MAPPING.get("Розглядається"))
-        #
-        # last_record_id = await database.execute(query)
-        # query = select(user_request_booking_hostel_view).where(
-        #     user_request_booking_hostel_view.c.user_id == user.user_id,
-        #     user_request_booking_hostel_view.c.university_id == university_id
-        # )
-        # result = await database.fetch_one(query)
-        #
-        # prepared_data = {
-        #     "context": result,
-        #     "service_id": user_request.service_id,
-        #     "user_request_id": last_record_id
-        # }
-        # await create_user_document(**prepared_data)
-        # return {
-        #     "status_id": STATUS_MAPPING.get("Розглядається"),
-        #     "user_request_id": last_record_id
-        # }
 
-    async def read_user_request_booking_hostel(university_id: int, user: UserOut):
-        query = select(user_request_booking_hostel_view).where(
-            user_request_booking_hostel_view.c.user_id == user.user_id,
-            user_request_booking_hostel_view.c.university_id == university_id
-        )
-        return await database.fetch_one(query)
+    async def read_user_request_booking_hostel(
+            self,
+            *,
+            request: Request,
+            university_id: int,
+            user: UserOut,
+            session: AsyncSession
+    ):
+        return await user_request_booking_hostel_service.read_mod(
+            session=session,
+            data={"user_id": user.user_id, "university_id": university_id})
 
-    async def cancel_request(user_request_id: int, cancel_request: CancelRequestIn):
+    async def cancel_request(
+            self,
+            *,
+            request: Request,
+            user_request_id: int,
+            cancel_request: CancelRequestIn,
+            session: AsyncSession):
         CancelRequestIn(status_id=cancel_request.status_id)
-        query = update(UserRequest).where(UserRequest.user_request_id == user_request_id).values(
-            status_id=cancel_request.status_id)
-        await database.execute(query)
+        await user_request_service.update_mod(
+                session=session,
+                data={"user_request_id": user_request_id},
+                obj=cancel_request)
         return {
             "user_request_id": user_request_id,
             "status_id": cancel_request.status_id

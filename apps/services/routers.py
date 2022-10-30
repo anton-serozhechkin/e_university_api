@@ -119,9 +119,17 @@ async def create_user_request(
                      summary="Get user request booking hostel",
                      responses={200: {"description": "Successful get user request booking hostel response"}},
                      tags=["Student dashboard"])
-async def read_user_request_booking_hostel(university_id: int, user=Depends(get_current_user)):
+async def read_user_request_booking_hostel(
+        request: Request,
+        university_id: int,
+        user=Depends(get_current_user),
+        session: AsyncSession = Depends(get_async_session)):
     return {
-        "data": await service_handler.read_user_request_booking_hostel(university_id, user),
+        "data": await service_handler.read_user_request_booking_hostel(
+            request=request,
+            university_id=university_id,
+            user=user,
+            session=session),
         "message": "Got user request booking hostel"
     }
 
@@ -132,8 +140,13 @@ async def read_user_request_booking_hostel(university_id: int, user=Depends(get_
                      summary="Cancel user request",
                      responses={200: {"description": "Successful cancel user request response"}},
                      tags=["Student dashboard"])
-async def cancel_request(university_id: int, user_request_id: int, cancel_request: CancelRequestIn,
-                         user=Depends(get_current_user)):
+async def cancel_request(
+        request: Request,
+        university_id: int,
+        user_request_id: int,
+        cancel_request: CancelRequestIn,
+        user=Depends(get_current_user),
+        session: AsyncSession = Depends(get_async_session)):
     """
     **Cancel user request**
 
@@ -147,7 +160,11 @@ async def cancel_request(university_id: int, user_request_id: int, cancel_reques
     **Return**: canceled user request id and status id
     """
     return {
-        "data": await service_handler.cancel_request(user_request_id, cancel_request),
+        "data": await service_handler.cancel_request(
+            request=request,
+            user_request_id=user_request_id,
+            cancel_request=cancel_request,
+            session=session),
         "message": f"Canceled request with id {user_request_id}"
     }
 

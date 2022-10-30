@@ -25,7 +25,6 @@ async def create_user_document_content(**kwargs) -> str:
         path_to_template = TEMPLATES_PATH / HOSTEL_BOOKING_TEMPLATE_URL
         doc = DocxTemplate(path_to_template)
         context = kwargs.get("context")
-        print(context, 88888)
         doc.render(context)
         document_name = f"hostel_settlement_{kwargs.get('date_created')}_{kwargs.get('user_request_id')}.docx"
         path_to_storage = SETTLEMENT_HOSTEL_PATH / document_name.replace(":", "_")
@@ -40,7 +39,6 @@ async def create_user_document(**kwargs):
     date_created = datetime.strptime(datetime.now().strftime(Settings.DATETIME_FORMAT),
                                      Settings.DATETIME_FORMAT)
     kwargs["date_created"] = date_created
-    print(kwargs, 9999)
     content = await create_user_document_content(**kwargs)
     query = insert(UserDocument).values(date_created=date_created,
                                         name=name,
