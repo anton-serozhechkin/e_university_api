@@ -1,3 +1,5 @@
+from decimal import Decimal
+
 from apps.common.db import database
 from apps.services.models import Service, UserDocument
 from settings import (Settings, TEMPLATES_PATH, SETTLEMENT_HOSTEL_PATH)
@@ -42,18 +44,18 @@ async def create_user_document(**kwargs):
     return await database.execute(query)
 
 
-def calculate_dates_different(start_date: date, end_date: date) -> int:
+def calculate_difference_between_dates_in_months(end_date: date, start_date: date) -> int:
     if end_date <= start_date:
         raise ValueError(
             message="Start date of hostel accommodation can't be more or equal than end date of hostel accommodation"
         )
-    return -12 * (start_date.year - end_date.year) - start_date.month + end_date.month
+    return end_date.month - start_date.month + 12*(end_date.year - start_date.year)
 
 
-def get_month_price_by_bed_place(hostel_month_price: float, bed_place_name: str) -> float:
-    return hostel_month_price * float(bed_place_name)
+def get_month_price_by_bed_place(hostel_month_price: Decimal, bed_place_name: str) -> Decimal:
+    return Decimal(hostel_month_price) * Decimal(bed_place_name)
 
 
-def calculate_hostel_accommodation_cost(month_price: float, dates_different: int) -> float:
-    return month_price * dates_different
+def calculate_total_hostel_accommodation_cost(month_price: Decimal, month_difference: int) -> Decimal:
+    return month_price * month_difference
 
