@@ -6,8 +6,8 @@ from apps.services.schemas import UserRequestExistenceOut, UserRequestsListOut, 
     CreateUserRequestIn, UserRequestBookingHostelOut, CancelRequestOut, CancelRequestIn, UserRequestReviewOut, \
     UserRequestReviewIn, HostelAccommodationViewOut, UserRequestDetailsViewOut, CountHostelAccommodationCostIn, \
     CountHostelAccommodationCostOut
-from apps.services.services import create_user_document, calculate_hostel_accommodation_cost, calculate_dates_differance, \
-    get_month_price_by_bed_place
+from apps.services.services import create_user_document, calculate_total_hostel_accommodation_cost, \
+    calculate_difference_between_dates_in_months, get_month_price_by_bed_place
 from apps.users.handlers import get_current_user
 from apps.users.models import UserFaculty
 
@@ -285,8 +285,9 @@ async def read_request_details(university_id: int, user_request_id: int, user=De
 @services_router.post("/{university_id}/count-hostel-accommodation-cost/",
                       name="create_count_hostel_accommodation_cost ",
                       response_model=JSENDOutSchema[CountHostelAccommodationCostOut],
+                      responses={200: {"description": "Successful create count hostel accommodation cost response"}},
                       tags=["Admin dashboard"])
-async def count_hostel_accommodation_cost(university_id: int, data: CountHostelAccommodationCostIn):
+async def count_hostel_accommodation_cost(university_id: int, data: CountHostelAccommodationCostIn, user=Depends(get_current_user)):
     """
     **Count Hostel Accommodation Cost**
 
@@ -296,21 +297,23 @@ async def count_hostel_accommodation_cost(university_id: int, data: CountHostelA
     **Input**:
     - **hostel_id**: hostel id
     - **start_date_accommodation**: start date hostel accommodation of student
-    - **end_date_accommodation**: end(last) date hostel accommodation of student
-    - **bed_place_id**: student bed place id
+    - **end_date_accommodation**: end date hostel accommodation of student
+    - **bed_place_id**: student bed place type
 
-    **Return**: summa of hostel accommodation cost, based on hostel id
+    **Return**: summa of hostel accommodation cost, based on hostel id, start and end dates hostel accommodation,
+    student bed place type
     """
-    query = select(Hostel).where(Hostel.hostel_id == data.hostel_id, Hostel.hostel_id == university_id)
+    query = select(Hostel).where(Hostel.hostel_id == data.hostel_id)
     hostel = await database.fetch_one(query)
 
     query = select(BedPlace).where(BedPlace.bed_place_id == data.bed_place_id)
     bed_place = await database.fetch_one(query)
 
-    dates_difference = calculate_dates_differance(data.start_date_accommodation, data.end_date_accommodation)
+    months_difference_between_dates = calculate_difference_between_dates_in_months(data.end_date_accommodation,
+                                                                                   data.start_date_accommodation)
     month_price = get_month_price_by_bed_place(hostel.month_price, bed_place.bed_place_name)
 
     return {
-        "data": CountHostelAccommodationCostOut(total_hostel_accommodation_cost=calculate_hostel_accommodation_cost(month_price, dates_difference)),
+        "data": CountHostelAccommodationCostOut(total_hostel_accommodation_cost=calculate_total_hostel_accommodation_cost(month_price, months_difference_between_dates)),
         "message": "Cost of hostel accommodation of student was counted successfully"
     }
