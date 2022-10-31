@@ -23,7 +23,7 @@ class AsyncCRUDBase:
         self.model = model
 
     async def create(self, *, session: AsyncSession, data: Union[Dict, None] = None,
-                     obj: Union[CreateSchemaType, None] = None):
+                     obj: Union[CreateSchemaType, None] = None) -> ModelType:
         data = data if data else {}
         obj_in_data = jsonable_encoder(obj=obj, exclude_unset=True, by_alias=False) if obj else {}
         insert_statement = insert(self.model).values(**data, **obj_in_data).returning(self.model)
@@ -46,7 +46,7 @@ class AsyncCRUDBase:
         return data
 
     async def read(self, *, session: AsyncSession, data: Union[Dict, None] = None,
-                   obj: Union[ReadSchemaType, None] = None):
+                   obj: Union[ReadSchemaType, None] = None) -> Union[ModelType, None]:
         data = data if data else {}
         obj_in_data = jsonable_encoder(obj=obj, exclude_unset=True, by_alias=False) if obj else {}
         where_dict = {**data, **obj_in_data}
@@ -59,7 +59,7 @@ class AsyncCRUDBase:
         return response if isinstance(self.model, Table) else response[0]
 
     async def update(self, *, session: AsyncSession, data: Union[Dict, None] = None,
-                         obj: Union[Dict, UpdateSchemaType] = None) -> Union[ModelType, None]:
+                     obj: Union[Dict, UpdateSchemaType] = None) -> Union[ModelType, None]:
         obj = obj if obj else {}
         data = data if data else {}
         values = obj if isinstance(obj, Dict) else jsonable_encoder(obj=obj, exclude_unset=True, by_alias=False)
