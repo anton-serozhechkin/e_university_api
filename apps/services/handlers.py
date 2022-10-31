@@ -1,11 +1,13 @@
 from apps.common.db import database
-from apps.hostel.models import BedPlace
+from apps.hostel.models import BedPlace, Hostel
 from apps.services.models import user_request_exist_view, user_request_list_view, STATUS_MAPPING, UserRequest, \
     user_request_booking_hostel_view, UserRequestReview, hostel_accommodation_view, user_request_details_view
 from apps.services.schemas import UserRequestExistenceOut, UserRequestsListOut, CreateUserRequestOut, \
     CreateUserRequestIn, UserRequestBookingHostelOut, CancelRequestOut, CancelRequestIn, UserRequestReviewOut, \
-    UserRequestReviewIn, HostelAccommodationViewOut, UserRequestDetailsViewOut, CountHostelAccommodationIn
-from apps.services.services import create_user_document, calculate_accommodation
+    UserRequestReviewIn, HostelAccommodationViewOut, UserRequestDetailsViewOut, CountHostelAccommodationIn, \
+    CountHostelAccommodationOut
+from apps.services.services import create_user_document, calculate_hostel_accommodation_cost, calculate_dates_different, \
+    get_month_price_by_bed_place
 from apps.users.handlers import get_current_user
 from apps.users.models import UserFaculty
 
@@ -280,12 +282,11 @@ async def read_request_details(university_id: int, user_request_id: int, user=De
     }
 
 
-@services_router.post("/{user_request_id}/student-accommodation/{university_id}/",
+@services_router.post("/student-accommodation/",
                       name="count_student_accommodation",
-                      response_model=JSENDOutSchema[CountHostelAccommodationIn],
+                      response_model=JSENDOutSchema[CountHostelAccommodationOut],
                       tags=["Student dashboard"])
-async def count_student_accommodation(university_id: int, user_request_id: int,  hostel: CountHostelAccommodationIn,
-                                      user=Depends(get_current_user)):
+async def count_student_accommodation(hostel_accommodation: CountHostelAccommodationIn):
     """
     **Count Student Accommodation**
 
@@ -294,22 +295,23 @@ async def count_student_accommodation(university_id: int, user_request_id: int, 
     - **user_request_id**: user request id
 
     **Input**:
+    - **hostel_id**: hostel id
     - **start_date_accommodation**: start date of user accommodation
     - **end_date_accommodation**: end(last) date of user accommodation
     - **bed_place_id**: user bed place id
 
-    **Return**: summa of accommodation, by month price, dates differance and bed place type
+    **Return**: summa of accommodation according to hostel id
     """
-    hostel_query = select(hostel_accommodation_view).where(hostel_accommodation_view.c.user_request_id == user_request_id,
-                                                           hostel_accommodation_view.c.university_id == university_id,)
+    query = select(Hostel).where(Hostel.hostel_id == hostel_accommodation.hostel_id)
+    hostel = await database.fetch_one(query)
 
-    bed_place_query = select(BedPlace).where(BedPlace.bed_place_id == hostel.bed_place_id)
+    query = select(BedPlace).where(BedPlace.bed_place_id == hostel_accommodation.bed_place_id)
+    bed_place = await database.fetch_one(query)
 
-    hostel_info = await database.fetch_one(hostel_query)
-    bed_place_info = await database.fetch_one(bed_place_query)
+    dates_different = calculate_dates_different(hostel_accommodation.start_date_accommodation, hostel_accommodation.end_date_accommodation)
+    month_price = get_month_price_by_bed_place(hostel.month_price, bed_place.bed_place_name)
 
     return {
-        "data": hostel_info,
-        "message": f"Result summa of student accommodation: "
-                   f"{calculate_accommodation(hostel.end_date_accommodation, hostel.start_date_accommodation, hostel_info.month_price, bed_place_info.bed_place_id)}"
+        "data": CountHostelAccommodationOut(total_accommodation_cost=calculate_hostel_accommodation_cost(month_price, dates_different)),
+        "message": "Cost of hostel accommodation of student was counted successfully"
     }
