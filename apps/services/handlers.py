@@ -292,7 +292,7 @@ async def count_hostel_accommodation_cost(university_id: int, data: CountHostelA
     **Count Hostel Accommodation Cost**
 
     **Path**:
-    - **university_id**: user university id
+    - **university_id**: university id of student request
 
     **Input**:
     - **hostel_id**: hostel id
@@ -300,8 +300,8 @@ async def count_hostel_accommodation_cost(university_id: int, data: CountHostelA
     - **end_date_accommodation**: end date hostel accommodation of student
     - **bed_place_id**: student bed place type
 
-    **Return**: summa of hostel accommodation cost, based on hostel id, start and end dates hostel accommodation,
-    student bed place type
+    **Return**: total cost of student hostel accommodation, based on hostel month price, bed place name,
+                start and end dates hostel accommodation
     """
     query = select(Hostel).where(Hostel.hostel_id == data.hostel_id)
     hostel = await database.fetch_one(query)
@@ -309,11 +309,11 @@ async def count_hostel_accommodation_cost(university_id: int, data: CountHostelA
     query = select(BedPlace).where(BedPlace.bed_place_id == data.bed_place_id)
     bed_place = await database.fetch_one(query)
 
-    months_difference_between_dates = calculate_difference_between_dates_in_months(data.end_date_accommodation,
+    months_count = calculate_difference_between_dates_in_months(data.end_date_accommodation,
                                                                                    data.start_date_accommodation)
     month_price = get_month_price_by_bed_place(hostel.month_price, bed_place.bed_place_name)
-
+    # TODO getting response for data key is too long...
     return {
-        "data": CountHostelAccommodationCostOut(total_hostel_accommodation_cost=calculate_total_hostel_accommodation_cost(month_price, months_difference_between_dates)),
+        "data": CountHostelAccommodationCostOut(total_hostel_accommodation_cost=calculate_total_hostel_accommodation_cost(month_price, months_count)),
         "message": "Cost of hostel accommodation of student was counted successfully"
     }
