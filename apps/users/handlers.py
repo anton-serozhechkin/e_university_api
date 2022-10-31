@@ -5,9 +5,10 @@ from apps.common.exceptions import BackendException
 from apps.users.models import User, user_list_view, Student, OneTimeToken, UserFaculty, students_list_view
 from apps.users.schemas import UserOut, TokenPayload, CreateUserIn, DeleteUserIn, RegistrationIn, CreateStudentIn, \
     UserIn, DeleteStudentIn, StudentCheckExistanceIn
+from apps.services.services import user_faculty_service
 from apps.users.serivces import(
     get_login, get_student_attr, get_token_data, get_login_full_name, get_token_and_expires, student_service,
-    one_time_token_service
+    one_time_token_service, user_list_service, user_service
 )
 from settings import Settings
 
@@ -52,8 +53,7 @@ class UserHandler:
             request: Request,
             university_id: int,
             session: AsyncSession):
-        query = select(user_list_view).where(user_list_view.c.university_id == university_id)
-        return await database.fetch_all(query)
+        return await user_list_service.list(session=session, filters={"university_id": university_id})
 
     async def create_user(
             self,
@@ -68,21 +68,22 @@ class UserHandler:
             role_id=user.role_id,
             faculty_id=user.faculty_id
         )
-
         hashed_password = get_hashed_password(user.password)
-
-        query = insert(User).values(login=get_login(user.email), password=hashed_password,
-                                    email=user.email, role_id=user.role_id,
-                                    is_active=False)
-
-        last_record_id = await database.execute(query)
-
+        created_user = await user_service.create_mod(
+            session=session,
+            data={
+                "login": get_login(user.email),
+                "password": hashed_password,
+                "email": user.email,
+                "role_id": user.role_id,
+                "is_active": False
+            })
         for faculty_id in user.faculty_id:
-            query = insert(UserFaculty).values(user_id=last_record_id,
-                                               faculty_id=faculty_id)
-            await database.execute(query)
-
-        return last_record_id
+            await user_faculty_service.create_mod(
+                session=session,
+                data={"user_id": created_user.user_id,
+                      "faculty_id": faculty_id})
+        return created_user.user_id
 
     async def del_user(
             self,
@@ -90,8 +91,7 @@ class UserHandler:
             request: Request,
             delete_user: DeleteUserIn,
             session: AsyncSession):
-        query = delete(User).where(User.user_id == delete_user.user_id)
-        await database.execute(query)
+        await user_service.delete(session=session, data={}, schema=delete_user)
 
     async def registration(
             self,
@@ -99,45 +99,36 @@ class UserHandler:
             request: Request,
             user: RegistrationIn,
             session: AsyncSession):
-        RegistrationIn(
-            token=user.token,
-            email=user.email,
-            password=user.password,
-            password_re_check=user.password_re_check)
-
-        query = select(OneTimeToken).where(OneTimeToken.token == user.token)
-
-        token_data = await database.fetch_all(query)
-
+        token_data = await one_time_token_service.read_mod(session=session, data={"token": user.token})
         expires, student_id = get_token_data(token_data)
-
-        query = select(Student).where(Student.student_id == student_id)
-
-        student = await database.fetch_all(query)
-
+        student = await student_service.read_mod(session=session, data={"student_id": student_id})
         full_name, faculty_id = get_student_attr(student)
-
         login = get_login_full_name(full_name)
-
         # Encoding password
         encoded_user_password = get_hashed_password(user.password)
-
-        query = insert(User).values(login=login, email=user.email, password=encoded_user_password, role_id=1,
-                                    is_active=True)
-        last_record_id = await database.execute(query)
-
-        query = update(Student).values(user_id=last_record_id).where(Student.student_id == student_id)
-        await database.execute(query)
-
-        query = insert(UserFaculty).values(
-            user_id=last_record_id,
-            faculty_id=faculty_id
-        ).returning(UserFaculty.faculty_id)
-        user_faculty_data = await database.execute(query)
-
+        registered_user = await user_service.create_mod(
+            session=session,
+            data={
+                "login": login,
+                "email": user.email,
+                "password": encoded_user_password,
+                "role_id": 1,
+                "is_active": True
+            })
+        await student_service.update_mod(
+            session=session,
+            data={"student_id": student_id},
+            obj={"user_id": registered_user.user_id}
+        )
+        user_faculty_data = await user_faculty_service.create_mod(
+            session=session,
+            data={
+                "user_id": registered_user.user_id,
+                "faculty_id": faculty_id
+            })
         return {
-            "user_id": last_record_id,
-            "faculty_id": user_faculty_data,
+            "user_id": registered_user.user_id,
+            "faculty_id": user_faculty_data.user_id,
             "login": login
         }
 
@@ -147,21 +138,12 @@ class UserHandler:
             request: Request,
             student: CreateStudentIn,
             session: AsyncSession):
-        CreateStudentIn(
-            full_name=student.full_name,
-            telephone_number=student.telephone_number,
-            course_id=student.course_id,
-            faculty_id=student.faculty_id,
-            speciality_id=student.speciality_id,
-            gender=student.gender)
-
-        query = insert(Student).values(full_name=student.full_name, telephone_number=student.telephone_number,
-                                       course_id=student.course_id, faculty_id=student.faculty_id,
-                                       speciality_id=student.speciality_id, gender=student.gender.upper())
-
-        student_id = await database.execute(query)
-
-        return {"student_id": student_id}
+        created_student = await student_service.create_mod(
+            session=session,
+            data={},
+            schema=student
+        )
+        return {"student_id": created_student.student_id}
 
     async def read_students_list(
             self,

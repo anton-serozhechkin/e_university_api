@@ -71,27 +71,28 @@ def get_student_attr(student):
             message="Student is not found.",
             code=http_status.HTTP_404_NOT_FOUND
         )
-    if student[0].user_id:
+    if student.user_id:
         raise BackendException(
             message="A student account already exists. Please check your email for details.",
             code=http_status.HTTP_409_CONFLICT
         )
-    return student[0].full_name, student[0].faculty_id
+    return student.full_name, student.faculty_id
 
 
 def get_token_data(token_data):
+    print(token_data, 1111)
     if not token_data:
         raise BackendException(
             message="To register a user, first go to the page for checking the presence of a student in the register.",
             code=http_status.HTTP_404_NOT_FOUND
         )
-    if token_data[0].expires < datetime.utcnow():
+    if token_data.expires < datetime.utcnow():
         raise BackendException(
             message=("Registration time has expired."
                      " Please go to the link to check the availability of students on the register."),
             code=http_status.HTTP_403_FORBIDDEN
         )
-    return token_data[0].expires, token_data[0].student_id
+    return token_data.expires, token_data.student_id
 
 
 def get_token_and_expires():
@@ -102,4 +103,6 @@ def get_token_and_expires():
 
 student_service = AsyncCRUDBase(model=Student)
 one_time_token_service = AsyncCRUDBase(model=OneTimeToken)
+user_list_service = AsyncCRUDBase(model=user_list_view)
+user_service = AsyncCRUDBase(model=User)
 

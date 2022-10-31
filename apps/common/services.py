@@ -15,6 +15,7 @@ ModelType = TypeVar("ModelType", bound=Base)
 CreateSchemaType = TypeVar("CreateSchemaType", bound=BaseModel)
 UpdateSchemaType = TypeVar("UpdateSchemaType", bound=BaseModel)
 ReadSchemaType = TypeVar("ReadSchemaType", bound=BaseModel)
+DeleteSchemaType = TypeVar("DeleteSchemaType", bound=BaseModel)
 
 
 class AsyncCRUDBase:
@@ -30,7 +31,8 @@ class AsyncCRUDBase:
         data: ModelType = result.scalar_one()
         return data
 
-    async def create_mod(self, *, session: AsyncSession, data: Dict = dict, schema: Union[CreateSchemaType, None] = None):
+    async def create_mod(self, *, session: AsyncSession, data: Dict = dict,
+                         schema: Union[CreateSchemaType, None] = None):
         obj_in_data = jsonable_encoder(obj=schema, exclude_unset=True, by_alias=False) if schema else {}
         insert_statement = insert(self.model).values(**data, **obj_in_data).returning(self.model)
         statement = select(self.model).from_statement(insert_statement).execution_options(populate_existing=True)
@@ -42,8 +44,8 @@ class AsyncCRUDBase:
     async def create_many(self, *, session: AsyncSession, objs: List[CreateSchemaType]) -> Union[List[ModelType], None]:
         insert_statement = (
             insert(self.model)
-            .values([jsonable_encoder(obj=obj, exclude_unset=True, by_alias=False) for obj in objs])
-            .returning(self.model)
+                .values([jsonable_encoder(obj=obj, exclude_unset=True, by_alias=False) for obj in objs])
+                .returning(self.model)
         )
         statement = select(self.model).from_statement(insert_statement).execution_options(populate_existing=True)
         result: ChunkedIteratorResult = await session.execute(statement=statement)
@@ -68,14 +70,15 @@ class AsyncCRUDBase:
         response: Union[ModelType, None] = result.first()
         return response if isinstance(self.model, Table) else response[0]
 
-    async def update(self, *, session: AsyncSession, id: Union[str, uuid.UUID], obj: UpdateSchemaType) -> Union[ModelType, None]:
+    async def update(self, *, session: AsyncSession, id: Union[str, uuid.UUID], obj: UpdateSchemaType) -> Union[
+        ModelType, None]:
         values = jsonable_encoder(obj=obj, exclude_unset=True, by_alias=False)
         update_statement = (
             update(self.model)
-            .where(self.model.id == id)
-            .values(**values)
-            .returning(self.model)
-            .execution_options(synchronize_session="fetch")
+                .where(self.model.id == id)
+                .values(**values)
+                .returning(self.model)
+                .execution_options(synchronize_session="fetch")
         )
         statement = (
             select(self.model).from_statement(statement=update_statement).execution_options(populate_existing=True)
@@ -85,17 +88,19 @@ class AsyncCRUDBase:
         data: Union[ModelType, None] = result.scalar_one_or_none()
         return data
 
-    async def update_mod(self, *, session: AsyncSession, data: Dict = dict, obj: Union[Dict, UpdateSchemaType] = dict) -> Union[ModelType, None]:
+    async def update_mod(self, *, session: AsyncSession, data: Dict = dict,
+                         obj: Union[Dict, UpdateSchemaType] = None) -> Union[ModelType, None]:
+        obj = obj if obj else {}
         values = obj if isinstance(obj, Dict) else jsonable_encoder(obj=obj, exclude_unset=True, by_alias=False)
         where_expr = []
         for k, v in data.items():
             where_expr.append(getattr(self.model, k) == v)
         update_statement = (
             update(self.model)
-            .where(and_(*where_expr))
-            .values(**values)
-            .returning(self.model)
-            .execution_options(synchronize_session="fetch")
+                .where(and_(*where_expr))
+                .values(**values)
+                .returning(self.model)
+                .execution_options(synchronize_session="fetch")
         )
         statement = (
             select(self.model).from_statement(statement=update_statement).execution_options(populate_existing=True)
@@ -105,17 +110,22 @@ class AsyncCRUDBase:
         data: Union[ModelType, None] = result.scalar_one_or_none()
         return data
 
-    async def delete(self, *, session: AsyncSession, id: Union[str, uuid.UUID]) -> CursorResult:
-        delete_statement = delete(self.model).where(self.model.id == id)
-        result: CursorResult = await session.execute(statement=delete_statement)
+    async def delete(self, *, session: AsyncSession, data: Dict = dict,
+                     schema: Union[DeleteSchemaType, None] = None) -> CursorResult:
+        schema = jsonable_encoder(obj=schema, exclude_unset=True, by_alias=False) if schema else {}
+        where_dict = {**data, **schema}
+        statement = delete(self.model)
+        for k, v in where_dict.items():
+            statement = statement.where(getattr(self.model, k) == v)
+        result: CursorResult = await session.execute(statement=statement)
         await session.commit()
         return result
 
     async def list(
-        self,
-        *,
-        session: AsyncSession,
-        filters: Union[Dict, None] = None  # TODO: Add dynamic filtering system
+            self,
+            *,
+            session: AsyncSession,
+            filters: Union[Dict, None] = None  # TODO: Add dynamic filtering system
     ) -> List[Union[ReadSchemaType]]:
         select_statement = select(self.model)
         if filters:
