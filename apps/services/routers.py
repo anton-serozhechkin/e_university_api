@@ -1,10 +1,9 @@
-from apps.common.dependencies import get_async_session
+from apps.common.dependencies import get_async_session, get_current_user
 from apps.common.schemas import JSENDFailOutSchema, JSENDOutSchema
 from apps.services.handlers import service_handler
 from apps.services.schemas import UserRequestExistenceOut, UserRequestsListOut, CreateUserRequestOut, \
     CreateUserRequestIn, UserRequestBookingHostelOut, CancelRequestOut, CancelRequestIn, UserRequestReviewOut, \
     UserRequestReviewIn, HostelAccomodationViewOut, UserRequestDetailsViewOut
-from apps.users.services import get_current_user
 
 from fastapi import APIRouter, Depends, Request
 from sqlalchemy.ext.asyncio import AsyncSession

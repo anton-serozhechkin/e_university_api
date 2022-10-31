@@ -13,8 +13,8 @@ from apps.common.db import Base
 
 ModelType = TypeVar("ModelType", bound=Base)
 CreateSchemaType = TypeVar("CreateSchemaType", bound=BaseModel)
-UpdateSchemaType = TypeVar("UpdateSchemaType", bound=BaseModel)
 ReadSchemaType = TypeVar("ReadSchemaType", bound=BaseModel)
+UpdateSchemaType = TypeVar("UpdateSchemaType", bound=BaseModel)
 DeleteSchemaType = TypeVar("DeleteSchemaType", bound=BaseModel)
 
 
@@ -22,7 +22,8 @@ class AsyncCRUDBase:
     def __init__(self, *, model: Type[ModelType]):
         self.model = model
 
-    async def create(self, *, session: AsyncSession, data: Union[Dict, None] = None, obj: Union[CreateSchemaType, None] = None):
+    async def create(self, *, session: AsyncSession, data: Union[Dict, None] = None,
+                     obj: Union[CreateSchemaType, None] = None):
         data = data if data else {}
         obj_in_data = jsonable_encoder(obj=obj, exclude_unset=True, by_alias=False) if obj else {}
         insert_statement = insert(self.model).values(**data, **obj_in_data).returning(self.model)
@@ -44,7 +45,8 @@ class AsyncCRUDBase:
         data: Union[List[ModelType], None] = result.scalars().all()
         return data
 
-    async def read(self, *, session: AsyncSession, data: Union[Dict, None] = None, obj: Union[ReadSchemaType, None] = None):
+    async def read(self, *, session: AsyncSession, data: Union[Dict, None] = None,
+                   obj: Union[ReadSchemaType, None] = None):
         data = data if data else {}
         obj_in_data = jsonable_encoder(obj=obj, exclude_unset=True, by_alias=False) if obj else {}
         where_dict = {**data, **obj_in_data}
