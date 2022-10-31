@@ -1,6 +1,6 @@
 from apps.common.db import Base
 
-from sqlalchemy import (MetaData, Column, Table, INTEGER, VARCHAR, ForeignKey, BOOLEAN, TIMESTAMP, JSON)
+from sqlalchemy import (MetaData, Column, Table, INTEGER, String, VARCHAR, ForeignKey, BOOLEAN, TIMESTAMP, JSON)
 from sqlalchemy.orm import relationship
 
 metadata_obj = MetaData()
@@ -47,7 +47,7 @@ class Student(Base):
 
     student_id = Column(INTEGER, primary_key=True, nullable=False)
     full_name = Column(VARCHAR(length=255), nullable=False)
-    telephone_number = Column(INTEGER, nullable=False, unique=True)
+    telephone_number = Column(VARCHAR(length=50), nullable=False, unique=True)
     gender = Column(VARCHAR(length=1), nullable=False)
     course_id = Column(INTEGER, ForeignKey("course.course_id"), nullable=False)
     speciality_id = Column(INTEGER, ForeignKey("speciality.speciality_id"), nullable=False)
@@ -79,7 +79,7 @@ class UserFaculty(Base):
 students_list_view = Table('students_list_view', metadata_obj,
                            Column('student_id', INTEGER),
                            Column('student_full_name', VARCHAR(255)),
-                           Column('telephone_number', INTEGER),
+                           Column('telephone_number', String),
                            Column('user_id', INTEGER),
                            Column('university_id', INTEGER),
                            Column('faculty_id', INTEGER),
