@@ -8,7 +8,7 @@ from apps.users.schemas import UserOut, TokenPayload, CreateUserIn, DeleteUserIn
 from apps.services.services import user_faculty_service
 from apps.users.serivces import(
     get_login, get_student_attr, get_token_data, get_login_full_name, get_token_and_expires, student_service,
-    one_time_token_service, user_list_service, user_service
+    one_time_token_service, student_list_service, user_list_service, user_service
 )
 from settings import Settings
 
@@ -152,11 +152,13 @@ class UserHandler:
             university_id: int,
             faculty_id: Union[int, None] = None,
             session: AsyncSession):  # TODO after input id of the non-existent university it returns the students
+        filters = {"university_id": university_id}
         if faculty_id:
-            query = select(students_list_view).where(students_list_view.c.faculty_id == faculty_id)
-        else:
-            query = select(students_list_view).where(students_list_view.c.university_id == university_id)
-        return await database.fetch_all(query)
+            filters["faculty_id"] = faculty_id
+        return await student_list_service.list(
+            session=session,
+            filters=filters
+        )
 
     async def delete_student(
             self,
@@ -164,9 +166,7 @@ class UserHandler:
             request: Request,
             del_student: DeleteStudentIn,
             session: AsyncSession):
-        query = delete(Student).where(Student.student_id == del_student.student_id)
-
-        await database.execute(query)
+        await student_service.delete(session=session, data={}, schema=del_student)
         # TODO: in response key data has empty dict value, not like it's discribed
 
     # async def get_me(user: UserIn = Depends(get_current_user)):
