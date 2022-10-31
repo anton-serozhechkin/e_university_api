@@ -120,7 +120,7 @@ class TokenPayload(BaseInSchema):
     sub: str
 
 
-class UserOut(BaseModel):
+class UserOut(BaseOutSchema):
     user_id: int
     login: str
     last_visit: datetime = None
