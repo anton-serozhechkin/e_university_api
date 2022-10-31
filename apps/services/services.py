@@ -45,7 +45,7 @@ async def create_user_document(**kwargs):
 def calculate_dates_different(start_date: date, end_date: date) -> int:
     if end_date <= start_date:
         raise ValueError(
-            message="Wrong date value",
+            message="Start date of hostel accommodation can't be more or equal than end date of hostel accommodation"
         )
     return -12 * (start_date.year - end_date.year) - start_date.month + end_date.month
 
