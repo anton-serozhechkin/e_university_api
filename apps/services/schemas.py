@@ -1,4 +1,5 @@
 from datetime import date, datetime
+from decimal import Decimal
 from typing import Dict, Union, List
 
 from pydantic import BaseModel, validator
@@ -127,6 +128,5 @@ class CountHostelAccommodationCostIn(BaseModel):
     bed_place_id: int
 
 
-
 class CountHostelAccommodationCostOut(BaseModel):
-    total_hostel_accommodation_cost: float
+    total_hostel_accommodation_cost: Decimal
