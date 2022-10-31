@@ -121,6 +121,7 @@ class UserRequestDetailsViewOut(BaseModel):
 
 
 class CountHostelAccommodationIn(BaseModel):
+    hostel_id: int = None
     start_date_accommodation: date = None
     end_date_accommodation: date = None
     bed_place_id: int = None
