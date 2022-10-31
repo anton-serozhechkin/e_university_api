@@ -2,7 +2,7 @@ from apps.common.db import database
 from apps.services.models import Service, UserDocument
 from settings import (Settings, TEMPLATES_PATH, SETTLEMENT_HOSTEL_PATH)
 
-from datetime import datetime
+from datetime import datetime, date
 from docxtpl import DocxTemplate
 from sqlalchemy import select, insert
 
@@ -42,11 +42,18 @@ async def create_user_document(**kwargs):
     return await database.execute(query)
 
 
-def calculate_accommodation(end_date, start_date, month_price, bed_place_name):
+def calculate_dates_different(start_date: date, end_date: date) -> int:
     if end_date <= start_date:
         raise ValueError(
             message="Wrong date value",
         )
+    return -12 * (start_date.year - end_date.year) - start_date.month + end_date.month
 
-    date_differance = end_date.month - start_date.month + 12 * (end_date.year - start_date.year)
-    return month_price * date_differance * bed_place_name
+
+def get_month_price_by_bed_place(hostel_month_price: float, bed_place_name: str) -> float:
+    return hostel_month_price * float(bed_place_name)
+
+
+def calculate_hostel_accommodation_cost(month_price: float, dates_different: int) -> float:
+    return month_price * dates_different
+
