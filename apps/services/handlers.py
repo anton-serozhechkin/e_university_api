@@ -286,7 +286,7 @@ async def read_request_details(university_id: int, user_request_id: int, user=De
                       name="count_student_accommodation",
                       response_model=JSENDOutSchema[CountHostelAccommodationOut],
                       tags=["Student dashboard"])
-async def count_student_accommodation(hostel_accommodation: CountHostelAccommodationIn):
+async def count_student_accommodation(hostel_accommodation: CountHostelAccommodationIn, user=Depends(get_current_user)):
     """
     **Count Student Accommodation**
 
