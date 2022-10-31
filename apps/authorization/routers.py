@@ -1,4 +1,4 @@
-from apps.users.serivces import get_current_user
+from apps.users.services import get_current_user
 from apps.authorization.schemas import AvailableRolesOut
 from apps.common.dependencies import get_async_session
 from apps.common.schemas import JSENDOutSchema, JSENDFailOutSchema

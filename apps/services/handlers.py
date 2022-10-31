@@ -23,7 +23,7 @@ class ServiceHandler:
             user: UserOut,
             session: AsyncSession
     ):
-        user_request_result = await request_existence_service.read_mod(
+        user_request_result = await request_existence_service.read(
             session=session,
             data={"university_id": university_id, "service_id": service_id, "user_id": user.user_id}
         )
@@ -61,7 +61,7 @@ class ServiceHandler:
             user: UserOut,
             session: AsyncSession
     ):
-        user_faculty_result = await user_faculty_service.read_mod(data={"user_id": user.user_id}, session=session)
+        user_faculty_result = await user_faculty_service.read(data={"user_id": user.user_id}, session=session)
         data = {"date_created": datetime.now(),
                 "comment": user_request.comment,
                 "user_id": user.user_id,
@@ -69,8 +69,8 @@ class ServiceHandler:
                 "faculty_id": user_faculty_result.faculty_id,
                 "university_id": university_id,
                 "status_id": STATUS_MAPPING.get("Розглядається")}
-        user_request = await user_request_service.create_mod(session=session, data=data)
-        result = await user_request_booking_hostel_service.read_mod(
+        user_request = await user_request_service.create(session=session, data=data)
+        result = await user_request_booking_hostel_service.read(
             session=session,
             data={"user_id": user.user_id, "university_id": university_id})
         prepared_data = {
@@ -92,7 +92,7 @@ class ServiceHandler:
             user: UserOut,
             session: AsyncSession
     ):
-        return await user_request_booking_hostel_service.read_mod(
+        return await user_request_booking_hostel_service.read(
             session=session,
             data={"user_id": user.user_id, "university_id": university_id})
 
@@ -104,7 +104,7 @@ class ServiceHandler:
             cancel_request: CancelRequestIn,
             session: AsyncSession):
         CancelRequestIn(status_id=cancel_request.status_id)
-        await user_request_service.update_mod(
+        await user_request_service.update(
                 session=session,
                 data={"user_request_id": user_request_id},
                 obj=cancel_request)
@@ -122,7 +122,7 @@ class ServiceHandler:
             user_request_review: UserRequestReviewIn,
             user: UserOut,
             session: AsyncSession):
-        created_user_request_review = await user_request_review_service.create_mod(
+        created_user_request_review = await user_request_review_service.create(
             session=session,
             data={
                 "university_id": university_id,
@@ -139,7 +139,7 @@ class ServiceHandler:
                 "date_review": datetime.now(),
                 "bed_place_id": user_request_review.bed_place_id
             })
-        await user_request_service.update_mod(
+        await user_request_service.update(
             session=session,
             data={"user_request_id": user_request_id},
             obj={"status_id": user_request_review.status_id}
@@ -156,7 +156,7 @@ class ServiceHandler:
             university_id: int,
             user_request_id: int,
             session: AsyncSession):
-        response = await hostel_accommodation_service.read_mod(
+        response = await hostel_accommodation_service.read(
             session=session,
             data={
                 "university_id": university_id,
@@ -172,7 +172,7 @@ class ServiceHandler:
             university_id: int,
             user_request_id: int,
             session: AsyncSession):
-        return await user_request_detail_service.read_mod(
+        return await user_request_detail_service.read(
             session=session,
             data={
                 "university_id": university_id,

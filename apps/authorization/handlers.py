@@ -1,13 +1,8 @@
-from apps.authorization.services import (create_access_token, create_refresh_token, verify_password)
-from apps.authorization.models import Role
-from apps.authorization.services import verify_user, role_service
-from apps.common.exceptions import BackendException
-from apps.users.serivces import user_service
-from apps.common.db import database
+from apps.authorization.services import (create_access_token, create_refresh_token, verify_user, role_service)
+from apps.users.services import user_service
 
 from fastapi import Depends, Request
 from fastapi.security import OAuth2PasswordRequestForm
-from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 
@@ -19,7 +14,7 @@ class AuthorizationHandler:
             request: Request,
             form_data: OAuth2PasswordRequestForm = Depends(),
             session: AsyncSession):
-        user = await user_service.read_mod(session=session, data={"login": form_data.username})
+        user = await user_service.read(session=session, data={"login": form_data.username})
         verify_user(user, form_data.password)
         return {
             "access_token": create_access_token(user.email),

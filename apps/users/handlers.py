@@ -1,23 +1,14 @@
 from apps.authorization.services import get_hashed_password
-from apps.common.db import database
-from apps.common.dependencies import get_async_session
 from apps.common.exceptions import BackendException
-from apps.users.models import User, user_list_view, Student, OneTimeToken, UserFaculty, students_list_view
-from apps.users.schemas import UserOut, TokenPayload, CreateUserIn, DeleteUserIn, RegistrationIn, CreateStudentIn, \
-    UserIn, DeleteStudentIn, StudentCheckExistanceIn
+from apps.users.schemas import CreateUserIn, DeleteUserIn, RegistrationIn, CreateStudentIn, \
+    DeleteStudentIn, StudentCheckExistanceIn
 from apps.services.services import user_faculty_service
-from apps.users.serivces import(
+from apps.users.services import (
     get_login, get_student_attr, get_token_data, get_login_full_name, get_token_and_expires, student_service,
     one_time_token_service, student_list_service, user_list_service, user_service
 )
-from settings import Settings
 
-from datetime import datetime
-from fastapi import Depends, HTTPException, Request, status as http_status
-from fastapi.security import OAuth2PasswordBearer
-from jose import jwt
-from pydantic import ValidationError
-from sqlalchemy import select, insert, delete, update
+from fastapi import Request, status as http_status
 from sqlalchemy.ext.asyncio import AsyncSession
 from typing import Union
 
@@ -30,7 +21,7 @@ class UserHandler:
             request: Request,
             student: StudentCheckExistanceIn,
             session: AsyncSession):
-        result = await student_service.read_mod(session=session, data={}, schema=student)
+        result = await student_service.read(session=session, obj=student)
         if not result:
             raise BackendException(
                 message="Student data was not found. Please, try again.",
@@ -38,7 +29,7 @@ class UserHandler:
             )
         token, expires = get_token_and_expires()
 
-        one_time_token = await one_time_token_service.create_mod(
+        one_time_token = await one_time_token_service.create(
             session=session,
             data={
                 "student_id": result.student_id,
@@ -61,15 +52,8 @@ class UserHandler:
             request: Request,
             user: CreateUserIn,
             session: AsyncSession):
-        CreateUserIn(
-            email=user.email,
-            password=user.password,
-            password_re_check=user.password_re_check,
-            role_id=user.role_id,
-            faculty_id=user.faculty_id
-        )
         hashed_password = get_hashed_password(user.password)
-        created_user = await user_service.create_mod(
+        created_user = await user_service.create(
             session=session,
             data={
                 "login": get_login(user.email),
@@ -79,7 +63,7 @@ class UserHandler:
                 "is_active": False
             })
         for faculty_id in user.faculty_id:
-            await user_faculty_service.create_mod(
+            await user_faculty_service.create(
                 session=session,
                 data={"user_id": created_user.user_id,
                       "faculty_id": faculty_id})
@@ -91,7 +75,7 @@ class UserHandler:
             request: Request,
             delete_user: DeleteUserIn,
             session: AsyncSession):
-        await user_service.delete(session=session, data={}, schema=delete_user)
+        await user_service.delete(session=session, obj=delete_user)
 
     async def registration(
             self,
@@ -99,14 +83,14 @@ class UserHandler:
             request: Request,
             user: RegistrationIn,
             session: AsyncSession):
-        token_data = await one_time_token_service.read_mod(session=session, data={"token": user.token})
+        token_data = await one_time_token_service.read(session=session, data={"token": user.token})
         expires, student_id = get_token_data(token_data)
-        student = await student_service.read_mod(session=session, data={"student_id": student_id})
+        student = await student_service.read(session=session, data={"student_id": student_id})
         full_name, faculty_id = get_student_attr(student)
         login = get_login_full_name(full_name)
         # Encoding password
         encoded_user_password = get_hashed_password(user.password)
-        registered_user = await user_service.create_mod(
+        registered_user = await user_service.create(
             session=session,
             data={
                 "login": login,
@@ -115,12 +99,12 @@ class UserHandler:
                 "role_id": 1,
                 "is_active": True
             })
-        await student_service.update_mod(
+        await student_service.update(
             session=session,
             data={"student_id": student_id},
             obj={"user_id": registered_user.user_id}
         )
-        user_faculty_data = await user_faculty_service.create_mod(
+        user_faculty_data = await user_faculty_service.create(
             session=session,
             data={
                 "user_id": registered_user.user_id,
@@ -138,10 +122,9 @@ class UserHandler:
             request: Request,
             student: CreateStudentIn,
             session: AsyncSession):
-        created_student = await student_service.create_mod(
+        created_student = await student_service.create(
             session=session,
-            data={},
-            schema=student
+            obj=student
         )
         return {"student_id": created_student.student_id}
 
@@ -166,7 +149,7 @@ class UserHandler:
             request: Request,
             del_student: DeleteStudentIn,
             session: AsyncSession):
-        await student_service.delete(session=session, data={}, schema=del_student)
+        await student_service.delete(session=session, obj=del_student)
         # TODO: in response key data has empty dict value, not like it's discribed
 
 

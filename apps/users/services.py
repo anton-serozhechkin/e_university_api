@@ -80,7 +80,6 @@ def get_student_attr(student):
 
 
 def get_token_data(token_data):
-    print(token_data, 1111)
     if not token_data:
         raise BackendException(
             message="To register a user, first go to the page for checking the presence of a student in the register.",
