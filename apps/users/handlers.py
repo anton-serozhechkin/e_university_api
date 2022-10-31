@@ -169,11 +169,5 @@ class UserHandler:
         await student_service.delete(session=session, data={}, schema=del_student)
         # TODO: in response key data has empty dict value, not like it's discribed
 
-    # async def get_me(user: UserIn = Depends(get_current_user)):
-    #     return {
-    #         "data": user,
-    #         "message": "Got user information"
-    #     }
-
 
 user_handler = UserHandler()

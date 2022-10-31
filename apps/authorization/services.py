@@ -1,3 +1,8 @@
+from apps.authorization.models import Role
+from apps.common.exceptions import BackendException
+from apps.common.services import AsyncCRUDBase
+
+
 from settings import Settings
 from datetime import datetime, timedelta
 from typing import Union, Any
@@ -37,3 +42,13 @@ def create_refresh_token(subject: Union[str, Any], expires_delta: int = None) ->
     to_encode = {"exp": expires_delta, "sub": str(subject)}
     encoded_jwt = jwt.encode(to_encode, Settings.JWT_REFRESH_SECRET_KEY, Settings.JWT_ALGORITHM)
     return encoded_jwt
+
+
+def verify_user(user, password):
+    if not user:
+        raise BackendException(message="Login or password is invalid. Please, try again.")
+    if not verify_password(password, user.password):
+        raise BackendException(message="Email or password is invalid. Please, try again.")
+
+
+role_service = AsyncCRUDBase(model=Role)

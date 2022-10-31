@@ -131,7 +131,6 @@ class AsyncCRUDBase:
         if filters:
             select_statement = select_statement.filter_by(**filters)
         select_statement = select_statement.execution_options(populate_existing=True)
-
         result: ChunkedIteratorResult = await session.execute(statement=select_statement)
         if isinstance(self.model, Table):
             objects: List[Table] = result.all()

@@ -1,12 +1,14 @@
 from apps.users.serivces import get_current_user
 from apps.authorization.schemas import AvailableRolesOut
+from apps.common.dependencies import get_async_session
 from apps.common.schemas import JSENDOutSchema, JSENDFailOutSchema
 from apps.users.schemas import AuthOut
-from apps.authorization import handlers
+from apps.authorization.handlers import authorization_handler
 
-from typing import List
-from fastapi import Depends, APIRouter
+from fastapi import APIRouter, Depends, Request
 from fastapi.security import OAuth2PasswordRequestForm
+from sqlalchemy.ext.asyncio import AsyncSession
+from typing import List
 
 
 authorization_router = APIRouter()
@@ -22,7 +24,10 @@ authorization_router = APIRouter()
                                401: {"model": JSENDFailOutSchema, "description": "Not authorized response"}
                            },
                            tags=["Authorization"])
-async def login(form_data: OAuth2PasswordRequestForm = Depends()):
+async def login(
+        request: Request,
+        form_data: OAuth2PasswordRequestForm = Depends(),
+        session: AsyncSession = Depends(get_async_session)):
     """
         **Login user**
 
@@ -32,7 +37,7 @@ async def login(form_data: OAuth2PasswordRequestForm = Depends()):
 
         **Return**: access and refresh tokens for authentication, user id
     """
-    return await handlers.login(form_data)
+    return await authorization_handler.login(request=request, form_data=form_data, session=session)
 
 
 @authorization_router.get("/roles/",
@@ -41,8 +46,11 @@ async def login(form_data: OAuth2PasswordRequestForm = Depends()):
                           summary="Get available roles",
                           responses={200: {"description": "Successful get list of available roles response"}},
                           tags=["SuperAdmin dashboard"])
-async def available_roles(user=Depends(get_current_user)):
+async def available_roles(
+        request: Request,
+        user=Depends(get_current_user),
+        session: AsyncSession = Depends(get_async_session)):
     return {
-        "data": await handlers.available_roles(),
+        "data": await authorization_handler.available_roles(request=request, session=session),
         "message": "Got roles"
     }
