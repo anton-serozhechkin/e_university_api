@@ -6,7 +6,7 @@ from apps.services.schemas import UserRequestExistenceOut, UserRequestsListOut, 
     CreateUserRequestIn, UserRequestBookingHostelOut, CancelRequestOut, CancelRequestIn, UserRequestReviewOut, \
     UserRequestReviewIn, HostelAccommodationViewOut, UserRequestDetailsViewOut, CountHostelAccommodationCostIn, \
     CountHostelAccommodationCostOut
-from apps.services.services import create_user_document, calculate_hostel_accommodation_cost, calculate_dates_different, \
+from apps.services.services import create_user_document, calculate_hostel_accommodation_cost, calculate_dates_differance, \
     get_month_price_by_bed_place
 from apps.users.handlers import get_current_user
 from apps.users.models import UserFaculty
@@ -307,10 +307,10 @@ async def count_hostel_accommodation_cost(university_id: int, data: CountHostelA
     query = select(BedPlace).where(BedPlace.bed_place_id == data.bed_place_id)
     bed_place = await database.fetch_one(query)
 
-    dates_different = calculate_dates_different(data.start_date_accommodation, data.end_date_accommodation)
+    dates_difference = calculate_dates_differance(data.start_date_accommodation, data.end_date_accommodation)
     month_price = get_month_price_by_bed_place(hostel.month_price, bed_place.bed_place_name)
 
     return {
-        "data": CountHostelAccommodationCostOut(total_hostel_accommodation_cost=calculate_hostel_accommodation_cost(month_price, dates_different)),
+        "data": CountHostelAccommodationCostOut(total_hostel_accommodation_cost=calculate_hostel_accommodation_cost(month_price, dates_difference)),
         "message": "Cost of hostel accommodation of student was counted successfully"
     }
