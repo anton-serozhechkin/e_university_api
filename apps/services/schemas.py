@@ -120,12 +120,13 @@ class UserRequestDetailsViewOut(BaseModel):
     documents: List[Dict[str, str]]
 
 
-class CountHostelAccommodationIn(BaseModel):
-    hostel_id: int = None
-    start_date_accommodation: date = None
-    end_date_accommodation: date = None
-    bed_place_id: int = None
+class CountHostelAccommodationCostIn(BaseModel):
+    hostel_id: int
+    start_date_accommodation: date
+    end_date_accommodation: date
+    bed_place_id: int
 
 
-class CountHostelAccommodationOut(BaseModel):
-    total_accommodation_cost: float
+
+class CountHostelAccommodationCostOut(BaseModel):
+    total_hostel_accommodation_cost: float
