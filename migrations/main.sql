@@ -66,7 +66,7 @@ CREATE TABLE IF NOT EXISTS course(
 CREATE TABLE IF NOT EXISTS student (
     student_id integer NOT NULL,
     full_name varchar(255) NOT NULL,
-    telephone_number varchar(255) NOT NULL UNIQUE,
+    telephone_number varchar(50) NOT NULL UNIQUE,
     faculty_id integer NOT NULL,
     user_id integer,
     speciality_id INTEGER NOT NULL,

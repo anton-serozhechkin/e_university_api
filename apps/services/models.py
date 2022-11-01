@@ -190,4 +190,3 @@ hostel_accommodation_view = Table('hostel_accommodation_view', metadata_obj,
                                   Column('commandant_full_name', VARCHAR(255)),
                                   Column('telephone_number', VARCHAR(50)),
                                   Column('documents', JSON))
-
