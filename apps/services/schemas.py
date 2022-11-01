@@ -67,6 +67,7 @@ class UserRequestReviewIn(BaseModel):
     room_number: int = None
     start_date_accommodation: datetime = None
     end_date_accommodation: datetime = None
+    # TODO it's define as decimal, but return int
     total_sum: Decimal = None
     payment_deadline: datetime = None
     remark: str = None
@@ -92,9 +93,11 @@ class HostelAccomodationViewOut(BaseModel):
     hostel_name: Dict[str, Union[int, str]]
     hostel_address: Dict[str, str]
     bed_place_name: str
+    # TODO it's define as decimal, but return int
     month_price: Decimal
     start_date_accommodation: datetime
     end_date_accommodation: datetime
+    # TODO it's define as decimal, but return int
     total_sum: Decimal
     iban: str
     university_name: str
