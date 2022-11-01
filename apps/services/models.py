@@ -1,5 +1,5 @@
 from sqlalchemy import (
-    MetaData, Column, Table, INTEGER, VARCHAR, FLOAT, ForeignKey, DATETIME, JSON, TIMESTAMP,
+    MetaData, Column, Table, INTEGER, VARCHAR, ForeignKey, DATETIME, JSON, TIMESTAMP, DECIMAL
 )
 from sqlalchemy.orm import relationship
 
@@ -86,7 +86,7 @@ class UserRequestReview(Base):
     room_number = Column(INTEGER)
     start_date_accommodation = Column(DATETIME)
     end_date_accommodation = Column(DATETIME)
-    total_sum = Column(FLOAT)  # TODO: change to DECIMAL and check
+    total_sum = Column(DECIMAL(7, 2))
     payment_deadline = Column(DATETIME)
     remark = Column(VARCHAR(length=255))
     date_review = Column(DATETIME, nullable=False)
@@ -179,10 +179,10 @@ hostel_accommodation_view = Table('hostel_accommodation_view', metadata_obj,
                                   Column('hostel_address', JSON),
                                   Column('room_number', INTEGER),
                                   Column('bed_place_name', VARCHAR(50)),
-                                  Column('month_price', FLOAT),  # TODO: change to DECIMAL and check
+                                  Column('month_price', DECIMAL(6, 2)),
                                   Column('start_date_accommodation', TIMESTAMP),
                                   Column('end_date_accommodation', TIMESTAMP),
-                                  Column('total_sum', FLOAT),  # TODO: change to DECIMAL and check
+                                  Column('total_sum', DECIMAL(7, 2)),
                                   Column('iban', VARCHAR(100)),
                                   Column('university_name', VARCHAR(255)),
                                   Column('organisation_code', VARCHAR(50)),
