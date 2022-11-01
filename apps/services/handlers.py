@@ -220,7 +220,6 @@ async def create_user_request_review(university_id: int, user_request_id: int, u
                                              total_sum=user_request_review.total_sum,
                                              payment_deadline=user_request_review.payment_deadline.now(),
                                              remark=user_request_review.remark,
-                                             date_review=datetime.now(),
                                              bed_place_id=user_request_review.bed_place_id)
 
     last_record_id = await database.execute(query)
