@@ -49,7 +49,7 @@ def calculate_difference_between_dates_in_months(end_date: date, start_date: dat
 
 
 def get_month_price_by_bed_place(hostel_month_price: Decimal, bed_place_name: str) -> Decimal:
-    return Decimal(hostel_month_price) * Decimal(bed_place_name)
+    return hostel_month_price * Decimal(bed_place_name)
 
 
 def calculate_total_hostel_accommodation_cost(month_price: Decimal, months_count: int) -> Decimal:
