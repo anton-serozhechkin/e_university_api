@@ -45,11 +45,6 @@ async def create_user_document(**kwargs):
 
 
 def calculate_difference_between_dates_in_months(end_date: date, start_date: date) -> int:
-    # TODO move it to IN schema, because now it raise, but user see internal server error
-    if end_date <= start_date:
-        raise ValueError(
-            "Start date of hostel accommodation can't be more or equal than end date of hostel accommodation"
-        )
     return end_date.month - start_date.month + 12*(end_date.year - start_date.year)
 
 
