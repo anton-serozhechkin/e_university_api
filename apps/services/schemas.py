@@ -1,29 +1,28 @@
-from apps.common.schemas import BaseInSchema, BaseOutSchema
-
 from datetime import date, datetime
+from decimal import Decimal
 from typing import Dict, Union, List
 from decimal import Decimal
 
 from pydantic import BaseModel, validator
 
 
-class CreateUserRequestIn(BaseInSchema):
+class CreateUserRequestIn(BaseModel):
     service_id: int
     comment: str = None
 
 
-class CreateUserRequestOut(BaseOutSchema):
+class CreateUserRequestOut(BaseModel):
     user_request_id: int
     status_id: int
 
 
-class UserRequestExistenceOut(BaseOutSchema):
+class UserRequestExistenceOut(BaseModel):
     user_request_id: int = None
     status: Dict[str, Union[int, str]] = None
-    user_request_exist: bool = False
+    user_request_exist: bool
 
 
-class UserRequestBookingHostelOut(BaseOutSchema):
+class UserRequestBookingHostelOut(BaseModel):
     full_name: str
     user_id: int
     faculty_name: str
@@ -40,7 +39,7 @@ class UserRequestBookingHostelOut(BaseOutSchema):
     gender: str
 
 
-class UserRequestsListOut(BaseOutSchema):
+class UserRequestsListOut(BaseModel):
     university_id: int
     user_id: int
     user_request_id: int
@@ -49,7 +48,7 @@ class UserRequestsListOut(BaseOutSchema):
     date_created: datetime
 
 
-class CancelRequestIn(BaseInSchema):
+class CancelRequestIn(BaseModel):
     status_id: int
 
     @validator('status_id')
@@ -59,12 +58,12 @@ class CancelRequestIn(BaseInSchema):
         return v
 
 
-class CancelRequestOut(BaseOutSchema):
+class CancelRequestOut(BaseModel):
     user_request_id: int
     status_id: int
 
 
-class UserRequestReviewIn(BaseInSchema):
+class UserRequestReviewIn(BaseModel):
     status_id: int
     room_number: int = None
     start_date_accommodation: datetime = None
@@ -83,12 +82,12 @@ class UserRequestReviewIn(BaseInSchema):
         return v
 
 
-class UserRequestReviewOut(BaseOutSchema):
+class UserRequestReviewOut(BaseModel):
     status_id: int
     user_request_review_id: int
 
 
-class HostelAccomodationViewOut(BaseOutSchema):
+class HostelAccommodationViewOut(BaseModel):
     university_id: int
     user_request_review_id: int
     user_request_id: int
@@ -110,7 +109,7 @@ class HostelAccomodationViewOut(BaseOutSchema):
     documents: Dict[str, str]
 
 
-class UserRequestDetailsViewOut(BaseOutSchema):
+class UserRequestDetailsViewOut(BaseModel):
     user_request_id: int
     university_id: int
     date_created: datetime
@@ -121,5 +120,17 @@ class UserRequestDetailsViewOut(BaseOutSchema):
     hostel_name: Dict[str, Union[int, str]] = None
     room_number: int = None
     bed_place_name: str = None
+    date_review: datetime = None
     remark: str = None
     documents: List[Dict[str, str]]
+
+
+class CountHostelAccommodationCostIn(BaseModel):
+    hostel_id: int
+    start_date_accommodation: date
+    end_date_accommodation: date
+    bed_place_id: int
+
+
+class CountHostelAccommodationCostOut(BaseModel):
+    total_hostel_accommodation_cost: Decimal
