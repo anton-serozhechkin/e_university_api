@@ -40,21 +40,21 @@ INSERT INTO course(course_id, value) VALUES (4, 4);
 INSERT INTO course(course_id, value) VALUES (5, 5);
 INSERT INTO course(course_id, value) VALUES (6, 6);
 
-INSERT INTO commandant(commandant_id, full_name, telephone_number) VALUES (1, 'Ляшко Надія Михайлівна', '+380-(57)-710-78-51');
-INSERT INTO commandant(commandant_id, full_name, telephone_number) VALUES (2, 'Любченко Володимир Віталійович', '+380-(57)-779-26-54');
-INSERT INTO commandant(commandant_id, full_name, telephone_number) VALUES (3, 'Колосова Олена Іванівна', '+380-(57)-336-83-50');
-INSERT INTO commandant(commandant_id, full_name, telephone_number) VALUES (4, 'Марченко Тетяна Федорівна', '+380-(57)-336-77-57');
-INSERT INTO commandant(commandant_id, full_name, telephone_number) VALUES (5, 'Рилова Лариса Миколаївна', '+380-(57)-702-11-94');
-INSERT INTO commandant(commandant_id, full_name, telephone_number) VALUES (6, 'Голубєва Надія Олександрівна', '+380-(57)-340-10-82');
-INSERT INTO commandant(commandant_id, full_name, telephone_number) VALUES (7, 'Піпенко Світлана Миколаївна', '+380-(57)-391-02-83');
+INSERT INTO commandant(commandant_id, full_name, telephone_number) VALUES (1, 'Ляшко Надія Михайлівна', '380577107851');
+INSERT INTO commandant(commandant_id, full_name, telephone_number) VALUES (2, 'Любченко Володимир Віталійович', '380577792654');
+INSERT INTO commandant(commandant_id, full_name, telephone_number) VALUES (3, 'Колосова Олена Іванівна', '380573368350');
+INSERT INTO commandant(commandant_id, full_name, telephone_number) VALUES (4, 'Марченко Тетяна Федорівна', '380573367757');
+INSERT INTO commandant(commandant_id, full_name, telephone_number) VALUES (5, 'Рилова Лариса Миколаївна', '380577021194');
+INSERT INTO commandant(commandant_id, full_name, telephone_number) VALUES (6, 'Голубєва Надія Олександрівна', '380573401082');
+INSERT INTO commandant(commandant_id, full_name, telephone_number) VALUES (7, 'Піпенко Світлана Миколаївна', '380573910283');
 
-INSERT INTO hostel(hostel_id, university_id, number, name,  city, street, build, commandant_id, month_price) VALUES (1, 1, 1, 'Геліос', 'Харків', 'просп. Ювілейний', '52', 1, 800.00);
-INSERT INTO hostel(hostel_id, university_id, number, name,  city, street, build, commandant_id, month_price, instagram) VALUES (2, 1, 2, 'Полюс', 'Харків',  'вул. Луї Пастера', '177', 2, 800.00, 'https://www.instagram.com/_polus2_khneu/?igshid=YmMyMTA2M2Y=');
-INSERT INTO hostel(hostel_id, university_id, number, name,  city, street, build, commandant_id, month_price, instagram) VALUES (3, 1, 3, 'ІТ', 'Харків', 'вул. Цілиноградська', '40', 3, 800.00, 'https://www.instagram.com/hostelit3_hneu/?igshid=YmMyMTA2M2Y%3D');
-INSERT INTO hostel(hostel_id, university_id, number, name,  city, street, build, commandant_id, month_price, instagram, telegram) VALUES (4, 1, 4, 'Міжнародний', 'Харків', 'вул. Цілиноградська', '30', 4, 800.00, 'https://www.instagram.com/4etverka_style/?igshid=YmMyMTA2M2Y%3D', 'https://t.me/+UtvxydkWGlb3Vt9x');
-INSERT INTO hostel(hostel_id, university_id, number, name,  city, street, build, commandant_id, month_price, instagram) VALUES (5, 1, 5, 'П''ятірочка', 'Харків', 'пров. Інженерний', '4', 5, 800.00, 'https://www.instagram.com/fivetirochka_2.0/?igshid=YmMyMTA2M2Y%3D');
-INSERT INTO hostel(hostel_id, university_id, number, name,  city, street, build, commandant_id, month_price, instagram) VALUES (6, 1, 6, 'Сінергія', 'Харків',  'вул. Клочківська', '216а', 6, 800.00, 'https://www.instagram.com/sinergia.house.6/?igshid=YmMyMTA2M2Y%3D');
-INSERT INTO hostel(hostel_id, university_id, number, name,  city, street, build, commandant_id, month_price, telegram) VALUES (7, 1, 7, 'Академічний', 'Харків',  'вул. Ак. Філіппова', '42', 7, 800.00, 'https://t.me/+Sp1tojwYbLaCvGJG');
+INSERT INTO hostel(hostel_id, university_id, number, name, city, street, build, commandant_id, month_price) VALUES (1, 1, 1, 'Геліос', 'Харків', 'просп. Ювілейний', '52', 1, 800.00);
+INSERT INTO hostel(hostel_id, university_id, number, name, city, street, build, commandant_id, month_price, instagram) VALUES (2, 1, 2, 'Полюс', 'Харків',  'вул. Луї Пастера', '177', 2, 800.00, 'https://www.instagram.com/_polus2_khneu/?igshid=YmMyMTA2M2Y=');
+INSERT INTO hostel(hostel_id, university_id, number, name, city, street, build, commandant_id, month_price, instagram) VALUES (3, 1, 3, 'ІТ', 'Харків', 'вул. Цілиноградська', '40', 3, 800.00, 'https://www.instagram.com/hostelit3_hneu/?igshid=YmMyMTA2M2Y%3D');
+INSERT INTO hostel(hostel_id, university_id, number, name, city, street, build, commandant_id, month_price, instagram, telegram) VALUES (4, 1, 4, 'Міжнародний', 'Харків', 'вул. Цілиноградська', '30', 4, 800.00, 'https://www.instagram.com/4etverka_style/?igshid=YmMyMTA2M2Y%3D', 'https://t.me/+UtvxydkWGlb3Vt9x');
+INSERT INTO hostel(hostel_id, university_id, number, name, city, street, build, commandant_id, month_price, instagram) VALUES (5, 1, 5, 'П''ятірочка', 'Харків', 'пров. Інженерний', '4', 5, 800.00, 'https://www.instagram.com/fivetirochka_2.0/?igshid=YmMyMTA2M2Y%3D');
+INSERT INTO hostel(hostel_id, university_id, number, name, city, street, build, commandant_id, month_price, instagram) VALUES (6, 1, 6, 'Сінергія', 'Харків',  'вул. Клочківська', '216а', 6, 800.00, 'https://www.instagram.com/sinergia.house.6/?igshid=YmMyMTA2M2Y%3D');
+INSERT INTO hostel(hostel_id, university_id, number, name, city, street, build, commandant_id, month_price, telegram) VALUES (7, 1, 7, 'Академічний', 'Харків',  'вул. Ак. Філіппова', '42', 7, 800.00, 'https://t.me/+Sp1tojwYbLaCvGJG');
 
 INSERT INTO requisites(requisites_id, iban, university_id, organisation_code, service_id, payment_recognation)
 VALUES (1, 'UA826482364382748327483', 1, 'ЄДРПОУ 753485385', 1, 'Призначення платежу: За проживання в гуртожитку. Назва Гуртожитку. ПІБ студента.');
