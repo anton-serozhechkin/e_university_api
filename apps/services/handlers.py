@@ -310,10 +310,11 @@ async def count_hostel_accommodation_cost(university_id: int, data: CountHostelA
     bed_place = await database.fetch_one(query)
 
     months_count = calculate_difference_between_dates_in_months(data.end_date_accommodation,
-                                                                                   data.start_date_accommodation)
+                                                                data.start_date_accommodation)
     month_price = get_month_price_by_bed_place(hostel.month_price, bed_place.bed_place_name)
-    # TODO getting response for data key is too long...
+
+    response = calculate_total_hostel_accommodation_cost(month_price, months_count)
     return {
-        "data": CountHostelAccommodationCostOut(total_hostel_accommodation_cost=calculate_total_hostel_accommodation_cost(month_price, months_count)),
+        "data": CountHostelAccommodationCostOut(total_hostel_accommodation_cost=response),
         "message": "Cost of hostel accommodation of student was counted successfully"
     }
