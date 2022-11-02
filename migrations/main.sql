@@ -45,7 +45,7 @@ MATCH FULL ON DELETE CASCADE ON UPDATE CASCADE;
 CREATE TABLE IF NOT EXISTS student (
     student_id integer NOT NULL,
     full_name varchar(255) NOT NULL,
-    telephone_number varchar(255) NOT NULL UNIQUE,
+    telephone_number varchar(50) NOT NULL UNIQUE,
     faculty_id integer NOT NULL,
     user_id integer,
     CONSTRAINT student_pk PRIMARY KEY(student_id));
@@ -637,7 +637,7 @@ CREATE TABLE IF NOT EXISTS user_request_review(
     room_number integer,
     start_date_accommodation timestamp,
     end_date_accommodation timestamp,
-    total_sum float,
+    total_sum decimal(7, 2),
     payment_deadline timestamp,
     remark varchar(255),
     bed_place_id integer,

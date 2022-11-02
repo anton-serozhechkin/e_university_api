@@ -1,5 +1,6 @@
 from datetime import date, datetime
 from typing import Dict, Union, List
+from decimal import Decimal
 
 from pydantic import BaseModel, validator
 
@@ -67,7 +68,8 @@ class UserRequestReviewIn(BaseModel):
     room_number: int = None
     start_date_accommodation: datetime = None
     end_date_accommodation: datetime = None
-    total_sum: float = None
+    # TODO it's define as decimal, but return int
+    total_sum: Decimal = None
     payment_deadline: datetime = None
     remark: str = None
     hostel_id: int = None
@@ -92,10 +94,12 @@ class HostelAccomodationViewOut(BaseModel):
     hostel_name: Dict[str, Union[int, str]]
     hostel_address: Dict[str, str]
     bed_place_name: str
-    month_price: float
+    # TODO it's define as decimal, but return int
+    month_price: Decimal
     start_date_accommodation: datetime
     end_date_accommodation: datetime
-    total_sum: float
+    # TODO it's define as decimal, but return int
+    total_sum: Decimal
     iban: str
     university_name: str
     organisation_code: str
