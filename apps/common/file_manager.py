@@ -1,6 +1,7 @@
 import abc
 
 from docxtpl import DocxTemplate
+from pathlib import Path
 
 
 class FileManagerInterface(metaclass=abc.ABCMeta):
@@ -30,7 +31,7 @@ class FileManagerInterface(metaclass=abc.ABCMeta):
         raise NotImplementedError
 
     @abc.abstractmethod
-    def render(self, full_file_path: str, data: dict) -> DocxTemplate:
+    def render(self,path: str, full_file_path: str, data: dict) -> DocxTemplate:
         """Render template file"""
         raise NotImplementedError
 
@@ -43,13 +44,16 @@ class FileManagerLocal(FileManagerInterface):
         rendered_template.save(path_to_storage)
         return path_to_storage
 
-    def get(self, full_file_path: str) -> dict:
+    def get(self, full_file_path: str) -> bytes:
         """Overrides FormalParserInterface.extract_text()"""
-        pass
+        with open(full_file_path, "rb") as in_file:
+            data = in_file.read()
+        return data
 
-    def delete(self, full_file_path: str) -> dict:
+    def delete(self, full_file_path: str) -> str:
         """Overrides FormalParserInterface.extract_text()"""
-        pass
+        Path(full_file_path).unlink()
+        return f"Successfully deleted file {full_file_path}"
 
     def render(self, path: str, file_name: str, data: dict) -> DocxTemplate:
         full_file_path = path / file_name
