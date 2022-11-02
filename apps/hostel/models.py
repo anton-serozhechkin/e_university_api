@@ -1,6 +1,6 @@
 from apps.common.db import Base
 
-from sqlalchemy import (MetaData, Column, INTEGER, VARCHAR, ForeignKey, FLOAT, Table)
+from sqlalchemy import (MetaData, Column, INTEGER, VARCHAR, ForeignKey, Table, DECIMAL)
 from sqlalchemy.orm import relationship
 
 metadata_obj = MetaData()
@@ -15,7 +15,7 @@ class Hostel(Base):
     city = Column(VARCHAR(length=100), nullable=False)
     street = Column(VARCHAR(length=100), nullable=False)
     build = Column(VARCHAR(length=10), nullable=False)
-    month_price = Column(FLOAT)  # TODO: change to DECIMAL and check
+    month_price = Column(DECIMAL(6, 2))
     university_id = Column(INTEGER, ForeignKey("university.university_id"), nullable=False)
     commandant_id = Column(INTEGER, ForeignKey("commandant.commandant_id"), nullable=False)
 
