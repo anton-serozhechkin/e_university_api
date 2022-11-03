@@ -291,9 +291,7 @@ async def read_request_details(university_id: int, user_request_id: int, user=De
                      responses={200: {"description": "Successful get service document response"}},
                      tags=["Admin dashboard", "Student dashboard"])
 async def read_service_document(university_id: int, user_request_id: int, user=Depends(get_current_user)):
-    enc_user = jsonable_encoder(obj=user, exclude_unset=True, by_alias=False)
-    if any([user.university_id != university_id,
-            enc_user.get("role")[0].get("role") == 1]):
+    if user.university_id != university_id:
         raise BackendException(
             message="Access denied. May be input is not correct",
             code=http_status.HTTP_403_FORBIDDEN
