@@ -5,7 +5,7 @@ from apps.services.models import user_request_exist_view, user_request_list_view
     UserDocument
 from apps.services.schemas import UserRequestExistenceOut, UserRequestsListOut, CreateUserRequestOut, \
     CreateUserRequestIn, UserRequestBookingHostelOut, CancelRequestOut, CancelRequestIn, UserRequestReviewOut, \
-    UserRequestReviewIn, HostelAccomodationViewOut, UserRequestDetailsViewOut, ServiceDocumentOut
+    UserRequestReviewIn, HostelAccomodationViewOut, UserRequestDetailsViewOut
 from apps.services.services import create_user_document
 from apps.users.handlers import get_current_user
 from apps.users.models import UserFaculty
