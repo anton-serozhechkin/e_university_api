@@ -40,13 +40,13 @@ class FileManagerLocal(FileManagerInterface):
     """Extract text from a PDF."""
     def create(self, path: str, file_name: str, rendered_template: DocxTemplate) -> str:
         """Overrides FormalParserInterface.load_data_source()"""
-        path_to_storage = path / file_name
+        path_to_storage = Path(path) / file_name
         rendered_template.save(path_to_storage)
-        return path_to_storage
+        return str(path_to_storage)
 
     def get(self, full_file_path: str) -> bytes:
         """Overrides FormalParserInterface.extract_text()"""
-        with open(full_file_path, "rb") as in_file:
+        with open(Path(full_file_path), "rb") as in_file:
             data = in_file.read()
         return data
 
@@ -56,7 +56,7 @@ class FileManagerLocal(FileManagerInterface):
         return f"Successfully deleted file {full_file_path}"
 
     def render(self, path: str, file_name: str, data: dict) -> DocxTemplate:
-        full_file_path = path / file_name
+        full_file_path = Path(path) / file_name
         template = DocxTemplate(full_file_path)
         template.render(data)
         return template

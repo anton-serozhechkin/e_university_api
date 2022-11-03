@@ -15,7 +15,8 @@ BASE_DIR = Path(__file__).resolve().parent
 TEMPLATES_PATH = BASE_DIR / "apps" / "templates"
 STORAGE_PATH = BASE_DIR / "apps"
 SERVICES_PATH = BASE_DIR / "apps" / "services"
-SETTLEMENT_HOSTEL_PATH = BASE_DIR / SERVICES_PATH / "settlement_hostel"
+DOCUMENT_STORAGE_PATH = BASE_DIR / "files"
+SETTLEMENT_HOSTEL_PATH = DOCUMENT_STORAGE_PATH / "services" / "settlement_hostel"
 
 
 def _build_db_dsn(values: dict, async_dsn: bool = False) -> URL:

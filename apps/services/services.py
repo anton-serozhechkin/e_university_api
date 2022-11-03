@@ -4,6 +4,7 @@ from apps.common.file_manager import FileManagerLocal
 from settings import (Settings, TEMPLATES_PATH, SETTLEMENT_HOSTEL_PATH)
 
 from datetime import datetime
+from pathlib import Path
 from sqlalchemy import select, insert
 
 
@@ -19,9 +20,12 @@ async def generate_document_name(service_id: int) -> str:
 async def create_user_document_content(**kwargs) -> str:
     if kwargs.get("service_id") == 1:
         file_manager = FileManagerLocal()
+        user_id = kwargs.get("context").user_id
+        DOCUMENT_PATH = SETTLEMENT_HOSTEL_PATH / str(user_id)
+        Path(DOCUMENT_PATH).mkdir(exist_ok=True)
         rendered_template = file_manager.render(TEMPLATES_PATH, HOSTEL_BOOKING_TEMPLATE, kwargs.get("context"))
         document_name = f"hostel_settlement_{kwargs.get('date_created')}_{kwargs.get('user_request_id')}.docx"
-        document_path = file_manager.create(SETTLEMENT_HOSTEL_PATH, document_name, rendered_template)
+        document_path = file_manager.create(DOCUMENT_PATH, document_name.replace(":", "-"), rendered_template)
         return document_path
     raise RuntimeError(f"create_user_document_content({kwargs}) | there is no service_id!!!")
 
