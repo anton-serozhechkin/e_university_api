@@ -1,6 +1,6 @@
 from apps.common.db import database
 from apps.services.models import Service, UserDocument
-from apps.common.file_manager import FileManagerLocal
+from apps.common.file_manager import file_manager
 from settings import (Settings, TEMPLATES_PATH, SETTLEMENT_HOSTEL_PATH)
 
 from datetime import datetime
@@ -19,7 +19,6 @@ async def generate_document_name(service_id: int) -> str:
 
 async def create_user_document_content(**kwargs) -> str:
     if kwargs.get("service_id") == 1:
-        file_manager = FileManagerLocal()
         user_id = kwargs.get("context").user_id
         DOCUMENT_PATH = SETTLEMENT_HOSTEL_PATH / str(user_id)
         Path(DOCUMENT_PATH).mkdir(exist_ok=True)

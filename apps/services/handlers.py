@@ -1,6 +1,8 @@
 from apps.common.db import database
+from apps.common.exceptions import BackendException
 from apps.services.models import user_request_exist_view, user_request_list_view, STATUS_MAPPING, UserRequest, \
-    user_request_booking_hostel_view, UserRequestReview, hostel_accommodation_view, user_request_details_view
+    user_request_booking_hostel_view, UserRequestReview, hostel_accommodation_view, user_request_details_view,\
+    UserDocument
 from apps.services.schemas import UserRequestExistenceOut, UserRequestsListOut, CreateUserRequestOut, \
     CreateUserRequestIn, UserRequestBookingHostelOut, CancelRequestOut, CancelRequestIn, UserRequestReviewOut, \
     UserRequestReviewIn, HostelAccomodationViewOut, UserRequestDetailsViewOut, ServiceDocumentOut
@@ -13,6 +15,9 @@ from typing import List
 import json
 
 from fastapi import Depends, APIRouter, status as http_status
+from fastapi.encoders import jsonable_encoder
+from fastapi.responses import FileResponse, StreamingResponse
+from pathlib import Path
 from sqlalchemy import select, insert, update
 from apps.common.schemas import JSENDOutSchema, JSENDFailOutSchema
 services_router = APIRouter(
@@ -281,9 +286,20 @@ async def read_request_details(university_id: int, user_request_id: int, user=De
 
 @services_router.get("/{university_id}/service-document/{user_request_id}",
                      name="read_service_document",
-                     response_model=JSENDOutSchema[ServiceDocumentOut],
+                     response_class=FileResponse,
                      summary="Read service document",
                      responses={200: {"description": "Successful get service document response"}},
-                     tags=["Admin dashboard"])
-async def read_service_document(university_id: int, user_quest_id: int, user=Depends(get_current_user)):
-    pass
+                     tags=["Admin dashboard", "Student dashboard"])
+async def read_service_document(university_id: int, user_request_id: int, user=Depends(get_current_user)):
+    enc_user = jsonable_encoder(obj=user, exclude_unset=True, by_alias=False)
+    if any([user.university_id != university_id,
+            enc_user.get("role")[0].get("role") == 1]):
+        raise BackendException(
+            message="Access denied. May be input is not correct",
+            code=http_status.HTTP_403_FORBIDDEN
+        )
+    query = select(UserDocument).where(UserDocument.user_request_id == user_request_id)
+
+    user_document = await database.fetch_one(query)
+
+    return Path(user_document.content)

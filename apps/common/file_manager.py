@@ -60,3 +60,6 @@ class FileManagerLocal(FileManagerInterface):
         template = DocxTemplate(full_file_path)
         template.render(data)
         return template
+
+
+file_manager = FileManagerLocal()
