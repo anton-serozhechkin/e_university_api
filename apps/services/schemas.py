@@ -118,3 +118,8 @@ class UserRequestDetailsViewOut(BaseModel):
     date_review: datetime = None
     remark: str = None
     documents: List[Dict[str, str]]
+
+
+class ServiceDocumentOut(BaseModel):
+    service_id: int
+    document: bytes

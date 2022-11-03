@@ -31,7 +31,7 @@ class FileManagerInterface(metaclass=abc.ABCMeta):
         raise NotImplementedError
 
     @abc.abstractmethod
-    def render(self,path: str, full_file_path: str, data: dict) -> DocxTemplate:
+    def render(self, path: str, full_file_path: str, data: dict) -> DocxTemplate:
         """Render template file"""
         raise NotImplementedError
 

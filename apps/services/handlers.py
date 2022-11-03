@@ -3,7 +3,7 @@ from apps.services.models import user_request_exist_view, user_request_list_view
     user_request_booking_hostel_view, UserRequestReview, hostel_accommodation_view, user_request_details_view
 from apps.services.schemas import UserRequestExistenceOut, UserRequestsListOut, CreateUserRequestOut, \
     CreateUserRequestIn, UserRequestBookingHostelOut, CancelRequestOut, CancelRequestIn, UserRequestReviewOut, \
-    UserRequestReviewIn, HostelAccomodationViewOut, UserRequestDetailsViewOut
+    UserRequestReviewIn, HostelAccomodationViewOut, UserRequestDetailsViewOut, ServiceDocumentOut
 from apps.services.services import create_user_document
 from apps.users.handlers import get_current_user
 from apps.users.models import UserFaculty
@@ -277,3 +277,13 @@ async def read_request_details(university_id: int, user_request_id: int, user=De
         "data": response,
         "message": "Got request details"
     }
+
+
+@services_router.get("/{university_id}/service-document/{user_request_id}",
+                     name="read_service_document",
+                     response_model=JSENDOutSchema[ServiceDocumentOut],
+                     summary="Read service document",
+                     responses={200: {"description": "Successful get service document response"}},
+                     tags=["Admin dashboard"])
+async def read_service_document(university_id: int, user_quest_id: int, user=Depends(get_current_user)):
+    pass
