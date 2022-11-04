@@ -2,7 +2,7 @@ from datetime import date, datetime
 from decimal import Decimal
 from typing import Dict, Union, List
 
-from pydantic import BaseModel, validator
+from pydantic import BaseModel, validator, root_validator
 
 
 class CreateUserRequestIn(BaseModel):
@@ -130,12 +130,13 @@ class CountHostelAccommodationCostIn(BaseModel):
     end_date_accommodation: date
     bed_place_id: int
 
-    def __init__(self, **kwargs):
-        if kwargs['start_date_accommodation'] >= kwargs['end_date_accommodation']:
+    @root_validator
+    def validate_two_dates(cls, values):
+        if values.get('start_date_accommodation') >= values.get('end_date_accommodation'):
             raise ValueError(
                 "Start date of hostel accommodation can't be more or equal than end date of hostel accommodation"
             )
-        super().__init__(**kwargs)
+        return values
 
 
 class CountHostelAccommodationCostOut(BaseModel):
