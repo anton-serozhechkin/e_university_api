@@ -47,8 +47,7 @@ class FileManagerLocal(FileManagerInterface):
     def get(self, full_file_path: str) -> bytes:
         """Overrides FormalParserInterface.extract_text()"""
         with open(Path(full_file_path), "rb") as in_file:
-            data = in_file.read()
-        return data
+            yield from in_file
 
     def delete(self, full_file_path: str) -> str:
         """Overrides FormalParserInterface.extract_text()"""

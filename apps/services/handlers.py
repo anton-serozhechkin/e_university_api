@@ -1,5 +1,6 @@
 from apps.common.db import database
 from apps.common.exceptions import BackendException
+from apps.common.file_manager import file_manager
 from apps.services.models import user_request_exist_view, user_request_list_view, STATUS_MAPPING, UserRequest, \
     user_request_booking_hostel_view, UserRequestReview, hostel_accommodation_view, user_request_details_view,\
     UserDocument
@@ -15,7 +16,6 @@ from typing import List
 import json
 
 from fastapi import Depends, APIRouter, status as http_status
-from fastapi.encoders import jsonable_encoder
 from fastapi.responses import FileResponse, StreamingResponse
 from pathlib import Path
 from sqlalchemy import select, insert, update
@@ -286,9 +286,12 @@ async def read_request_details(university_id: int, user_request_id: int, user=De
 
 @services_router.get("/{university_id}/service-document/{user_request_id}",
                      name="read_service_document",
-                     response_class=FileResponse,
+                     response_class=StreamingResponse,
                      summary="Read service document",
-                     responses={200: {"description": "Successful get service document response"}},
+                     responses={200: {
+                         "description": "Successful get service document response",
+                         "content": {"text/html": {"example": "bytes"}}
+                     }},
                      tags=["Admin dashboard", "Student dashboard"])
 async def read_service_document(university_id: int, user_request_id: int, user=Depends(get_current_user)):
     if user.university_id != university_id:
@@ -300,4 +303,8 @@ async def read_service_document(university_id: int, user_request_id: int, user=D
 
     user_document = await database.fetch_one(query)
 
-    return Path(user_document.content)
+    return StreamingResponse(
+        content=file_manager.get(user_document.content),
+        status_code=http_status.HTTP_200_OK,
+        media_type="text/html"
+    )
