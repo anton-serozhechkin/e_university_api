@@ -1,5 +1,5 @@
 import uuid
-from typing import Type, TypeVar, Union, List, Dict
+from typing import Type, TypeVar, Union, List, Dict, Optional
 
 from fastapi.encoders import jsonable_encoder
 from pydantic import BaseModel
@@ -22,8 +22,8 @@ class AsyncCRUDBase:
     def __init__(self, *, model: Type[ModelType]):
         self.model = model
 
-    async def create(self, *, session: AsyncSession, data: Union[Dict, None] = None,
-                     obj: Union[CreateSchemaType, None] = None) -> ModelType:
+    async def create(self, *, session: AsyncSession, data: Optional[Dict] = None,
+                     obj: Optional[CreateSchemaType] = None) -> ModelType:
         data = data if data else {}
         obj_in_data = jsonable_encoder(obj=obj, exclude_unset=True, by_alias=False) if obj else {}
         insert_statement = insert(self.model).values(**data, **obj_in_data).returning(self.model)
@@ -33,7 +33,7 @@ class AsyncCRUDBase:
         data: ModelType = result.scalar_one()
         return data
 
-    async def create_many(self, *, session: AsyncSession, objs: List[CreateSchemaType]) -> Union[List[ModelType], None]:
+    async def create_many(self, *, session: AsyncSession, objs: List[CreateSchemaType]) -> Optional[List[ModelType]]:
         insert_statement = (
             insert(self.model)
                 .values([jsonable_encoder(obj=obj, exclude_unset=True, by_alias=False) for obj in objs])
@@ -45,24 +45,23 @@ class AsyncCRUDBase:
         data: Union[List[ModelType], None] = result.scalars().all()
         return data
 
-    async def read(self, *, session: AsyncSession, data: Union[Dict, None] = None,
-                   obj: Union[ReadSchemaType, None] = None) -> Union[ModelType, None]:
+    async def read(self, *, session: AsyncSession, data: Optional[Dict] = None,
+                   obj: Optional[ReadSchemaType] = None) -> Optional[ModelType]:
         data = data if data else {}
         obj_in_data = jsonable_encoder(obj=obj, exclude_unset=True, by_alias=False) if obj else {}
-        where_dict = {**data, **obj_in_data}
         statement = select(self.model)
         model = self.model.c if isinstance(self.model, Table) else self.model
-        for k, v in where_dict.items():
+        for k, v in {**data, **obj_in_data}.items():
             statement = statement.where(getattr(model, k) == v)
         result: ChunkedIteratorResult = await session.execute(statement=statement)
         response: Union[ModelType, None] = result.first()
         return response if isinstance(self.model, Table) else response[0]
 
-    async def update(self, *, session: AsyncSession, data: Union[Dict, None] = None,
-                     obj: Union[Dict, UpdateSchemaType] = None) -> Union[ModelType, None]:
+    async def update(self, *, session: AsyncSession, data: Optional[Dict] = None,
+                     obj: Union[Dict, UpdateSchemaType, None] = None) -> Optional[ModelType]:
         obj = obj if obj else {}
         data = data if data else {}
-        values = obj if isinstance(obj, Dict) else jsonable_encoder(obj=obj, exclude_unset=True, by_alias=False)
+        values = jsonable_encoder(obj=obj, exclude_unset=True, by_alias=False)
         where_expr = []
         for k, v in data.items():
             where_expr.append(getattr(self.model, k) == v)
@@ -81,13 +80,12 @@ class AsyncCRUDBase:
         data: Union[ModelType, None] = result.scalar_one_or_none()
         return data
 
-    async def delete(self, *, session: AsyncSession, data: Union[Dict, None] = None,
-                     obj: Union[DeleteSchemaType, None] = None) -> CursorResult:
+    async def delete(self, *, session: AsyncSession, data: Optional[Dict] = None,
+                     obj: Optional[DeleteSchemaType] = None) -> CursorResult:
         data = data if data else {}
         schema = jsonable_encoder(obj=obj, exclude_unset=True, by_alias=False) if obj else {}
-        where_dict = {**data, **schema}
         statement = delete(self.model)
-        for k, v in where_dict.items():
+        for k, v in {**data, **schema}.items():
             statement = statement.where(getattr(self.model, k) == v)
         result: CursorResult = await session.execute(statement=statement)
         await session.commit()
@@ -97,7 +95,7 @@ class AsyncCRUDBase:
             self,
             *,
             session: AsyncSession,
-            filters: Union[Dict, None] = None  # TODO: Add dynamic filtering system
+            filters: Optional[Dict] = None  # TODO: Add dynamic filtering system
     ) -> List[Union[ReadSchemaType]]:
         select_statement = select(self.model)
         if filters:

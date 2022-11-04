@@ -7,7 +7,7 @@ from apps.common.schemas import JSENDOutSchema, JSENDFailOutSchema
 
 from fastapi import APIRouter, Depends, Request
 from sqlalchemy.ext.asyncio import AsyncSession
-from typing import List, Union
+from typing import List, Optional
 
 
 users_router = APIRouter()
@@ -213,7 +213,7 @@ async def create_student(
 async def read_students_list(
         request: Request,
         university_id: int,
-        faculty_id: Union[int, None] = None,
+        faculty_id: Optional[int] = None,
         user=Depends(get_current_user),
         session: AsyncSession = Depends(get_async_session)):  # TODO after input id of the non-existent university it returns the students
     return {

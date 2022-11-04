@@ -1,16 +1,16 @@
 from apps.authorization.services import get_hashed_password
 from apps.common.exceptions import BackendException
+from apps.common.utils import get_login, get_student_attr, get_token_data, get_login_full_name,\
+    get_token_and_expires
 from apps.users.schemas import CreateUserIn, DeleteUserIn, RegistrationIn, CreateStudentIn, \
     DeleteStudentIn, StudentCheckExistanceIn
 from apps.services.services import user_faculty_service
-from apps.users.services import (
-    get_login, get_student_attr, get_token_data, get_login_full_name, get_token_and_expires, student_service,
-    one_time_token_service, student_list_service, user_list_service, user_service
-)
+from apps.users.services import (student_service, one_time_token_service, student_list_service,
+                                 user_list_service, user_service)
 
 from fastapi import Request, status as http_status
 from sqlalchemy.ext.asyncio import AsyncSession
-from typing import Union
+from typing import Optional
 
 
 class UserHandler:
@@ -133,7 +133,7 @@ class UserHandler:
             *,
             request: Request,
             university_id: int,
-            faculty_id: Union[int, None] = None,
+            faculty_id: Optional[int] = None,
             session: AsyncSession):  # TODO after input id of the non-existent university it returns the students
         filters = {"university_id": university_id}
         if faculty_id:
