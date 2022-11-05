@@ -12,8 +12,6 @@ SchemaVar = TypeVar("SchemaVar", bound=Union[BaseModel, NoneType, str])
 
 class BaseInSchema(BaseModel):
     class Config:
-        """Schema configuration."""
-
         orm_mode = True
         arbitrary_types_allowed = True
         validate_assignment = True

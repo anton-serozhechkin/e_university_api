@@ -49,7 +49,7 @@ async def create_user_document(**kwargs):
 
 
 request_existence_service = AsyncCRUDBase(model=user_request_exist_view)
-request_existence_list_service = AsyncCRUDBase(model=user_request_list_view)
+user_request_list_service = AsyncCRUDBase(model=user_request_list_view)
 user_faculty_service = AsyncCRUDBase(model=UserFaculty)
 user_request_service = AsyncCRUDBase(model=UserRequest)
 user_request_booking_hostel_service = AsyncCRUDBase(model=user_request_booking_hostel_view)

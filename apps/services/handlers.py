@@ -1,7 +1,7 @@
 from apps.services.models import STATUS_MAPPING
 from apps.services.schemas import CancelRequestIn, CreateUserRequestIn, UserRequestReviewIn
 from apps.services.services import (
-    create_user_document, hostel_accommodation_service, request_existence_service, request_existence_list_service,
+    create_user_document, hostel_accommodation_service, request_existence_service, user_request_list_service,
     user_faculty_service, user_request_service, user_request_booking_hostel_service, user_request_review_service,
     user_request_detail_service
 )
@@ -47,7 +47,7 @@ class ServiceHandler:
             user: UserOut,
             session: AsyncSession
     ):
-        return await request_existence_list_service.list(
+        return await user_request_list_service.list(
             session=session,
             filters={"university_id": university_id, "user_id": user.user_id}
         )

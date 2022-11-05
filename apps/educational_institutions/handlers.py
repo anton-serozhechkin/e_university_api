@@ -1,7 +1,7 @@
 from apps.educational_institutions.models import Faculty
 from apps.educational_institutions.schemas import FacultyIn, FacultyOut
 from apps.educational_institutions.services import (
-    course_list_service, faculty_create_service, faculty_list_service, speciality_list_service)
+    course_list_service, faculty_service, faculty_list_service, speciality_list_service)
 
 from fastapi import Request
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -22,7 +22,7 @@ class EduInstitutionHandler:
                              request: Request,
                              data: FacultyIn,
                              session: AsyncSession) -> FacultyOut:
-        faculty: Faculty = await faculty_create_service.create(session=session, obj=data)
+        faculty: Faculty = await faculty_service.create(session=session, obj=data)
         return FacultyOut.from_orm(obj=faculty)
 
     async def read_speciality_list(self,

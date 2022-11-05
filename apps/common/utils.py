@@ -20,7 +20,7 @@ def get_login(data):
     return f"{(data[:4])}-{randint(100, 999)}".lower()
 
 
-def get_login_full_name(full_name):
+def get_generated_username(full_name):
     transliterated_full_name = translit(full_name)
     return get_login(transliterated_full_name)
 
@@ -33,7 +33,7 @@ def get_student_attr(student):
         )
     if student.user_id:
         raise BackendException(
-            message="A student account already exists. Please check your email for details.",
+            message="A user account already exists. Please check your email for details.",
             code=http_status.HTTP_409_CONFLICT
         )
     return student.full_name, student.faculty_id

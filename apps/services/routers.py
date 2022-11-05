@@ -35,7 +35,7 @@ async def check_user_request_existence(
 
     **Path**
     - **university_id**: user university id
-    - **service_id**: checking service id
+    - **service_id**: id of the service requested by the student
 
     **Return**: user request id; user request status; user request existence
     """
@@ -94,7 +94,7 @@ async def create_user_request(
     - **university_id**: user university id
 
     **Input**:
-    - **service_id**: service id in database, required
+    - **service_id**: service id, required
     - **comment**: comment for the creating user request
 
     **Return**: user request id; request status id
@@ -190,14 +190,14 @@ async def create_user_request_review(
 
         **Input**:
         - **status_id**: user request status id, required
-        - **room_number**: user room number, required
-        - **start_date_accommodation**: starting datetime hostel accommodation, required
-        - **end_date_accommodation**: end datetime hostel accommodation, required
-        - **total_sum**: total sum of hostel accommodation payment, required
-        - **payment_deadline**: deadline datetime for hostel accommodation payment, required
-        - **remark**: additional info for request review, required
-        - **hostel_id**: hostel id in the database, required
-        - **bed_place_id**: hostel bed place id, required
+        - **room_number**: user room number
+        - **start_date_accommodation**: starting datetime hostel accommodation
+        - **end_date_accommodation**: end datetime hostel accommodation
+        - **total_sum**: total sum of hostel accommodation payment
+        - **payment_deadline**: deadline datetime for hostel accommodation payment
+        - **remark**: additional info for request review
+        - **hostel_id**: hostel id in the database
+        - **bed_place_id**: hostel bed place id
 
         **Return**: user request status id; user request review id
     """

@@ -16,7 +16,7 @@ users_router = APIRouter()
 @users_router.post("/check-student-existance",
                    name="create_student_existence",
                    response_model=JSENDOutSchema[StudentCheckExistanceOut],
-                   summary="Check user existence",
+                   summary="Check student existence",
                    responses={
                        200: {"description": "Successful check user existence response"},
                        404: {"model": JSENDFailOutSchema, "description": "Invalid input data response"},
@@ -73,9 +73,9 @@ async def read_users_list(
 @users_router.post("/{university_id}/users/",
                    name="create_user",
                    response_model=JSENDOutSchema[CreateUserOut],
-                   summary="Create university user",
+                   summary="Create user",
                    responses={
-                       200: {"description": "Successful create university user response"},
+                       200: {"description": "Successful create user response"},
                        422: {"model": JSENDFailOutSchema, "description": "ValidationError"}
                    },
                    tags=["SuperAdmin dashboard"])
@@ -86,7 +86,7 @@ async def create_user(
         auth=Depends(get_current_user),
         session: AsyncSession = Depends(get_async_session)):
     """
-        **Create university user**
+        **Create user**
 
         **Path**:
         - **university_id**: university id for creating user
@@ -100,36 +100,36 @@ async def create_user(
 
         **Return**: created user id
     """
-    last_record_id = await user_handler.create_user(request=request, user=user, session=session)
+    user_id = await user_handler.create_user(request=request, user=user, session=session)
     return {
         "data": {
-            "user_id": last_record_id
+            "user_id": user_id
         },
-        "message": f"Created user with id {last_record_id}"
+        "message": f"Created user with id {user_id}"
     }
 
 
 @users_router.delete("/{university_id}/users/",
                      name="delete_user",
                      response_model=JSENDOutSchema,
-                     summary="Delete university user",
+                     summary="Delete user",
                      responses={
-                         200: {"description": "Successful delete university user response"},
+                         200: {"description": "Successful delete user response"},
                          422: {"model": JSENDFailOutSchema, "description": "ValidationError"}
                      },
                      tags=["SuperAdmin dashboard"])
 async def delete_user(
         request: Request,
         university_id: int,
-        delete_user: DeleteUserIn,
+        data: DeleteUserIn,
         auth=Depends(get_current_user),
         session: AsyncSession = Depends(get_async_session)):
-    await user_handler.del_user(request=request, delete_user=delete_user, session=session)
+    await user_handler.del_user(request=request, delete_user=data, session=session)
     return {
         "data": {
-            "user_id": delete_user.user_id
+            "user_id": data.user_id
         },
-        "message": f"Deleted user with id {delete_user.user_id}"
+        "message": f"Deleted user with id {data.user_id}"
     }
 
 
@@ -192,12 +192,13 @@ async def create_student(
         - **course_id**: student course id, must be between 1 and 6, required
         - **faculty_id**: faculty id, required
         - **speciality_id**: speciality id, required
-        - **gender**: student gender, 'Ч' or 'Ж'
+        - **gender**: student gender, 'Ч' or 'Ж', required
         **Return**: created student id
     """
+    student = await user_handler.create_student(request=request, student=student, session=session)
     return {
-        "data": await user_handler.create_student(request=request, student=student, session=session),
-        "message": f"Created student {student.full_name}"
+        "data": student,
+        "message": f"Created student with id {student.student_id}"
     }
 
 

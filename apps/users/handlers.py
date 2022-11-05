@@ -1,9 +1,9 @@
 from apps.authorization.services import get_hashed_password
 from apps.common.exceptions import BackendException
-from apps.common.utils import get_login, get_student_attr, get_token_data, get_login_full_name,\
-    get_token_and_expires
-from apps.users.schemas import CreateUserIn, DeleteUserIn, RegistrationIn, CreateStudentIn, \
-    DeleteStudentIn, StudentCheckExistanceIn
+from apps.common.utils import (get_login, get_student_attr, get_token_data, get_generated_username,
+                               get_token_and_expires)
+from apps.users.schemas import (CreateUserIn, DeleteUserIn, RegistrationIn, CreateStudentIn,
+                                DeleteStudentIn, StudentCheckExistanceIn)
 from apps.services.services import user_faculty_service
 from apps.users.services import (student_service, one_time_token_service, student_list_service,
                                  user_list_service, user_service)
@@ -20,7 +20,7 @@ class UserHandler:
             *,
             request: Request,
             student: StudentCheckExistanceIn,
-            session: AsyncSession):
+            session: AsyncSession):     # TODO Refactor this method
         result = await student_service.read(session=session, obj=student)
         if not result:
             raise BackendException(
@@ -51,7 +51,7 @@ class UserHandler:
             *,
             request: Request,
             user: CreateUserIn,
-            session: AsyncSession):
+            session: AsyncSession):     # TODO refactor this method
         hashed_password = get_hashed_password(user.password)
         created_user = await user_service.create(
             session=session,
@@ -87,7 +87,7 @@ class UserHandler:
         expires, student_id = get_token_data(token_data)
         student = await student_service.read(session=session, data={"student_id": student_id})
         full_name, faculty_id = get_student_attr(student)
-        login = get_login_full_name(full_name)
+        login = get_generated_username(full_name)
         # Encoding password
         encoded_user_password = get_hashed_password(user.password)
         registered_user = await user_service.create(

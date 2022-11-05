@@ -2,7 +2,6 @@ from apps.authorization.models import Role
 from apps.common.exceptions import BackendException
 from apps.common.services import AsyncCRUDBase
 
-
 from settings import Settings
 from datetime import datetime, timedelta
 from typing import Union, Any
