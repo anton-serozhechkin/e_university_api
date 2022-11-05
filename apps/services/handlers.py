@@ -14,7 +14,7 @@ from apps.users.schemas import StudentsListOut
 from datetime import datetime
 from typing import List
 import json
-
+from collections import defaultdict
 from fastapi import Depends, APIRouter, File, status as http_status, UploadFile
 from fastapi.encoders import jsonable_encoder
 from sqlalchemy import select, insert, update
@@ -301,9 +301,10 @@ async def create_students_from_file(
     query = select(Faculty, Speciality).filter(
         Speciality.faculty_id == Faculty.faculty_id
     ).where(Faculty.university_id == university_id)
-    specialties, faculty_dict, specialty_dict = await database.fetch_all(query), dict(), dict()
+    specialties, faculty_dict = await database.fetch_all(query), defaultdict(dict)
     for specialty in specialties:
-        faculty_dict[specialty.shortname] = specialty.faculty_id
+        faculty_dict[specialty.shortname]["faculty_id"] = specialty.faculty_id
+        faculty_dict[specialty.shortname][specialty.name_1] = specialty.speciality_id
 
 
 
