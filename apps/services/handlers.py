@@ -1,4 +1,5 @@
 from apps.common.db import database
+from apps.common.exceptions import BackendException
 from apps.services.models import user_request_exist_view, user_request_list_view, STATUS_MAPPING, UserRequest, \
     user_request_booking_hostel_view, UserRequestReview, hostel_accommodation_view, user_request_details_view
 from apps.services.schemas import UserRequestExistenceOut, UserRequestsListOut, CreateUserRequestOut, \
@@ -7,12 +8,13 @@ from apps.services.schemas import UserRequestExistenceOut, UserRequestsListOut, 
 from apps.services.services import create_user_document
 from apps.users.handlers import get_current_user
 from apps.users.models import UserFaculty
+from apps.users.schemas import StudentsListOut
 
 from datetime import datetime
 from typing import List
 import json
 
-from fastapi import Depends, APIRouter, status as http_status
+from fastapi import Depends, APIRouter, File, status as http_status, UploadFile
 from sqlalchemy import select, insert, update
 from apps.common.schemas import JSENDOutSchema, JSENDFailOutSchema
 services_router = APIRouter(
@@ -277,3 +279,21 @@ async def read_request_details(university_id: int, user_request_id: int, user=De
         "data": response,
         "message": "Got request details"
     }
+
+
+@services_router.post("/{university_id}/create_students/",
+                      name="create_students_from_file",
+                      response_model=JSENDOutSchema[StudentsListOut],
+                      summary="Create students from file",
+                      responses={200: {"description": "Successful create students from file response"}},
+                      tags=['Admin dashboard'])
+async def create_students_from_file(
+        university_id: int,
+        file: UploadFile = File(...),
+        user=Depends(get_current_user)):
+    if file.content_type != "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet":
+        raise BackendException(
+            message="Uploaded file have invalid type.",
+            code=http_status.HTTP_406_NOT_ACCEPTABLE
+        )
+    pass
