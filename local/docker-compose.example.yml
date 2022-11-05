@@ -16,12 +16,15 @@ services:
       dockerfile: ./Dockerfile
     container_name: e_university_api-backend
     environment:
-      DATABASE_URL: "postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}"
+      # override values from .env file to ensure they are valid for compose networking
+      # https://docs.docker.com/compose/networking/
+      POSTGRES_HOST: 'postgres'
+      POSTGRES_PORT: '5432'
     env_file:
       - .env
     depends_on:
       - postgres
-    command: uvicorn --host 0.0.0.0 --port 8000 main:app
+    command: uvicorn --host 0.0.0.0 --port 8000 apps.main:app
     ports:
       - '8000:8000'
 
