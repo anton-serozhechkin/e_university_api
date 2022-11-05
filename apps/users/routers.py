@@ -18,7 +18,7 @@ users_router = APIRouter()
                    response_model=JSENDOutSchema[StudentCheckExistanceOut],
                    summary="Check student existence",
                    responses={
-                       200: {"description": "Successful check user existence response"},
+                       200: {"description": "Successful check student existence response"},
                        404: {"model": JSENDFailOutSchema, "description": "Invalid input data response"},
                        422: {"model": JSENDFailOutSchema, "description": "ValidationError"}
                    },
