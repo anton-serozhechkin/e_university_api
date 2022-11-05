@@ -44,9 +44,12 @@ def create_refresh_token(subject: Union[str, Any], expires_delta: int = None) ->
     return encoded_jwt
 
 
-def verify_user(user, password):
+def verify_user(user):
     if not user:
         raise BackendException(message="Login or password is invalid. Please, try again.")
+
+
+def check_password(user, password):
     if not verify_password(password, user.password):
         raise BackendException(message="Email or password is invalid. Please, try again.")
 

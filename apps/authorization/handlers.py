@@ -1,4 +1,5 @@
-from apps.authorization.services import (create_access_token, create_refresh_token, verify_user, role_service)
+from apps.authorization.services import (check_password, create_access_token, create_refresh_token, verify_user,
+                                         role_service)
 from apps.users.services import user_service
 
 from fastapi import Depends, Request
@@ -15,7 +16,8 @@ class AuthorizationHandler:
             form_data: OAuth2PasswordRequestForm = Depends(),
             session: AsyncSession):
         user = await user_service.read(session=session, data={"login": form_data.username})
-        verify_user(user, form_data.password)
+        verify_user(user)
+        check_password(user, form_data.password)
         return {
             "access_token": create_access_token(user.email),
             "refresh_token": create_refresh_token(user.email),
