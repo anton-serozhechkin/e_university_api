@@ -169,7 +169,7 @@ class CreateStudentIn(BaseInSchema):
     def validate_telephone_number(cls, value):
         if not value:
             raise ValueError('The phone number cannot be empty!')
-        elif len(str(value)) != 12:
+        elif len(value) != 12:
             raise ValueError('The phone number must contain 12 digits!')
         return value
 

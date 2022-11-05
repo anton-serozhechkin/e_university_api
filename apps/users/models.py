@@ -79,7 +79,7 @@ class UserFaculty(Base):
 students_list_view = Table('students_list_view', metadata_obj,
                            Column('student_id', INTEGER),
                            Column('student_full_name', VARCHAR(255)),
-                           Column('telephone_number', INTEGER),
+                           Column('telephone_number', VARCHAR(50)),
                            Column('user_id', INTEGER),
                            Column('university_id', INTEGER),
                            Column('faculty_id', INTEGER),
