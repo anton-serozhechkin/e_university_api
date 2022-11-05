@@ -18,7 +18,7 @@ def get_hashed_password(password: str) -> str:
     return password_context.hash(password)
 
 
-def verify_password(password: str, hashed_pass: str) -> bool:
+def check_password(password: str, hashed_pass: str) -> bool:
     return password_context.verify(password, hashed_pass)
 
 
@@ -49,8 +49,8 @@ def verify_user(user):
         raise BackendException(message="Login or password is invalid. Please, try again.")
 
 
-def check_password(user, password):
-    if not verify_password(password, user.password):
+def verify_password(user, password):
+    if not check_password(password, user.password):
         raise BackendException(message="Email or password is invalid. Please, try again.")
 
 
