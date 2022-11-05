@@ -1,7 +1,7 @@
-from pydantic import BaseModel
+from apps.common.schemas import BaseOutSchema
 
 
-class HostelListOut(BaseModel):
+class HostelListOut(BaseOutSchema):
     university_id: int
     hostel_id: int
     number: int
@@ -13,6 +13,6 @@ class HostelListOut(BaseModel):
     commandant_full_name: str
 
 
-class BedPlaceOut(BaseModel):
+class BedPlaceOut(BaseOutSchema):
     bed_place_id: int
     bed_place_name: str
