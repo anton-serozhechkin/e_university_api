@@ -3,7 +3,7 @@ from apps.common.schemas import BaseInSchema, BaseOutSchema
 from datetime import datetime
 from typing import List, Dict, Union
 import re
-from pydantic import BaseModel, validator
+from pydantic import validator
 
 
 class UsersListViewOut(BaseOutSchema):

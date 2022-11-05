@@ -1,8 +1,9 @@
 from apps.common.dependencies import get_async_session, get_current_user
 from apps.users.handlers import user_handler
-from apps.users.schemas import UserOut, UsersListViewOut, CreateUserOut, CreateUserIn, DeleteUserIn, \
-    RegistrationOut, RegistrationIn, CreateStudentOut, CreateStudentIn, StudentsListOut, UserIn, DeleteStudentIn, \
-    StudentCheckExistanceOut, StudentCheckExistanceIn
+from apps.users.schemas import (UserOut, UsersListViewOut, CreateUserOut, CreateUserIn, 
+                                DeleteUserIn, RegistrationOut, RegistrationIn, CreateStudentOut, 
+                                CreateStudentIn, StudentsListOut, UserIn, DeleteStudentIn,
+                                StudentCheckExistanceOut, StudentCheckExistanceIn)
 from apps.common.schemas import JSENDOutSchema, JSENDFailOutSchema
 
 from fastapi import APIRouter, Depends, Request
