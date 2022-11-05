@@ -1,5 +1,6 @@
 from apps.common.db import database
 from apps.common.exceptions import BackendException
+from apps.educational_institutions.models import Faculty, Speciality
 from apps.services.models import user_request_exist_view, user_request_list_view, STATUS_MAPPING, UserRequest, \
     user_request_booking_hostel_view, UserRequestReview, hostel_accommodation_view, user_request_details_view
 from apps.services.schemas import UserRequestExistenceOut, UserRequestsListOut, CreateUserRequestOut, \
@@ -15,6 +16,7 @@ from typing import List
 import json
 
 from fastapi import Depends, APIRouter, File, status as http_status, UploadFile
+from fastapi.encoders import jsonable_encoder
 from sqlalchemy import select, insert, update
 from apps.common.schemas import JSENDOutSchema, JSENDFailOutSchema
 services_router = APIRouter(
@@ -296,4 +298,13 @@ async def create_students_from_file(
             message="Uploaded file have invalid type.",
             code=http_status.HTTP_406_NOT_ACCEPTABLE
         )
-    pass
+    query = select(Faculty, Speciality).filter(
+        Speciality.faculty_id == Faculty.faculty_id
+    ).where(Faculty.university_id == university_id)
+    specialties, faculty_dict, specialty_dict = await database.fetch_all(query), dict(), dict()
+    for specialty in specialties:
+        faculty_dict[specialty.shortname] = specialty.faculty_id
+
+
+
+
