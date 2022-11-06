@@ -1,15 +1,16 @@
+from decimal import Decimal
+
 from apps.services.models import STATUS_MAPPING
 from apps.services.schemas import CancelRequestIn, CreateUserRequestIn, UserRequestReviewIn, \
     CountHostelAccommodationCostIn
 from apps.services.services import (
     create_user_document, hostel_accommodation_service, request_existence_service, user_request_list_service,
     user_faculty_service, user_request_service, user_request_booking_hostel_service, user_request_review_service,
-    user_request_detail_service, calculate_difference_between_dates_in_months, get_month_price_by_bed_place,
-    calculate_total_hostel_accommodation_cost, hostel_service, bed_place_service
+    user_request_detail_service, hostel_service, bed_place_service
 )
 from apps.users.schemas import UserOut
 
-from datetime import datetime
+from datetime import datetime, date
 from fastapi import Request
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -207,6 +208,15 @@ class ServiceHandler:
         return {
             'total_hostel_accommodation_cost': response
         }
+
+    def calculate_difference_between_dates_in_months(self, end_date: date, start_date: date) -> int:
+        return end_date.month - start_date.month + 12 * (end_date.year - start_date.year)
+
+    def get_month_price_by_bed_place(self, hostel_month_price: Decimal, bed_place_name: str) -> Decimal:
+        return Decimal(hostel_month_price) * Decimal(bed_place_name)
+
+    def calculate_total_hostel_accommodation_cost(self, month_price: Decimal, month_difference: int) -> Decimal:
+        return month_price * month_difference
 
 
 service_handler = ServiceHandler()

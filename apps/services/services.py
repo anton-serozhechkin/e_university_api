@@ -1,5 +1,3 @@
-from decimal import Decimal
-
 from apps.common.db import database
 from apps.common.services import AsyncCRUDBase
 from apps.hostel.models import Hostel, BedPlace
@@ -10,7 +8,7 @@ from apps.services.models import (
 from apps.users.models import UserFaculty
 from settings import (Settings, TEMPLATES_PATH, SETTLEMENT_HOSTEL_PATH)
 
-from datetime import datetime, date
+from datetime import datetime
 from docxtpl import DocxTemplate
 from sqlalchemy import select, insert
 
@@ -49,18 +47,6 @@ async def create_user_document(**kwargs):
                                         user_request_id=kwargs.get("user_request_id"))
     result = await database.execute(query)
     return result
-
-
-def calculate_difference_between_dates_in_months(end_date: date, start_date: date) -> int:
-    return end_date.month - start_date.month + 12 * (end_date.year - start_date.year)
-
-
-def get_month_price_by_bed_place(hostel_month_price: Decimal, bed_place_name: str) -> Decimal:
-    return Decimal(hostel_month_price) * Decimal(bed_place_name)
-
-
-def calculate_total_hostel_accommodation_cost(month_price: Decimal, month_difference: int) -> Decimal:
-    return month_price * month_difference
 
 
 request_existence_service = AsyncCRUDBase(model=user_request_exist_view)
