@@ -139,13 +139,13 @@ class DeleteUserIn(BaseInSchema):
     user_id: int
 
 
-class StudentCheckExistanceIn(BaseInSchema):   # TODO spelling error
+class StudentCheckExistenceIn(BaseInSchema):
     last_name: str
     first_name: str
     telephone_number: str
 
 
-class StudentCheckExistanceOut(BaseOutSchema):
+class StudentCheckExistenceOut(BaseOutSchema):
     student: int
     token: str
     expires: datetime

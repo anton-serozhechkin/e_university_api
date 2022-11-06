@@ -3,7 +3,7 @@ from apps.common.exceptions import BackendException
 from apps.common.utils import (get_login, get_student_attr, get_token_data, get_generated_username,
                                get_token_and_expires)
 from apps.users.schemas import (CreateUserIn, DeleteUserIn, RegistrationIn, CreateStudentIn,
-                                DeleteStudentIn, StudentCheckExistanceIn)
+                                DeleteStudentIn, StudentCheckExistenceIn)
 from apps.services.services import user_faculty_service
 from apps.users.services import (student_service, one_time_token_service, student_list_service,
                                  user_list_service, user_service)
@@ -19,7 +19,7 @@ class UserHandler:
             self,
             *,
             request: Request,
-            student: StudentCheckExistanceIn,
+            student: StudentCheckExistenceIn,
             session: AsyncSession):     # TODO Refactor this method
         result = await student_service.read(session=session, obj=student)
         if not result:

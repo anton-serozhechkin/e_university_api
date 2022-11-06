@@ -3,7 +3,7 @@ from apps.users.handlers import user_handler
 from apps.users.schemas import (UserOut, UsersListViewOut, CreateUserOut, CreateUserIn, 
                                 DeleteUserIn, RegistrationOut, RegistrationIn, CreateStudentOut, 
                                 CreateStudentIn, StudentsListOut, UserIn, DeleteStudentIn,
-                                StudentCheckExistanceOut, StudentCheckExistanceIn)
+                                StudentCheckExistenceOut, StudentCheckExistenceIn)
 from apps.common.schemas import JSENDOutSchema, JSENDFailOutSchema
 
 from fastapi import APIRouter, Depends, Request
@@ -14,9 +14,9 @@ from typing import List, Optional
 users_router = APIRouter()
 
 
-@users_router.post("/check-student-existance",
+@users_router.post("/check-student-existence/",
                    name="create_student_existence",
-                   response_model=JSENDOutSchema[StudentCheckExistanceOut],
+                   response_model=JSENDOutSchema[StudentCheckExistenceOut],
                    summary="Check student existence",
                    responses={
                        200: {"description": "Successful check student existence response"},
@@ -26,7 +26,7 @@ users_router = APIRouter()
                    tags=["Authorization"])  # TODO spelling mistake, there is need to check path in other modules
 async def check_student(
         request: Request,
-        student: StudentCheckExistanceIn,
+        student: StudentCheckExistenceIn,
         session: AsyncSession = Depends(get_async_session)):
     """
         **Check student existence in the database**
