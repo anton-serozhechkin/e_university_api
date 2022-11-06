@@ -263,7 +263,7 @@ async def read_request_details(
 
 @services_router.post("/{university_id}/count-hostel-accommodation-cost/",
                       name="create_count_hostel_accommodation_cost ",
-                      summary="Get user request",
+                      summary="Create Count Hostel Accommodation Cost",
                       response_model=JSENDOutSchema[CountHostelAccommodationCostOut],
                       responses={200: {"description": "Successful create count hostel accommodation cost response"}},
                       tags=["Admin dashboard"])
