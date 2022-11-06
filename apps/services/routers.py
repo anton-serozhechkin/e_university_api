@@ -1,14 +1,14 @@
+from starlette.responses import StreamingResponse
+
 from apps.common.dependencies import get_async_session, get_current_user
 from apps.common.schemas import JSENDFailOutSchema, JSENDOutSchema
 from apps.services.handlers import service_handler
-from apps.services.schemas import (UserRequestExistenceOut, UserRequestsListOut, 
-                                    CreateUserRequestOut, CreateUserRequestIn, 
-                                    UserRequestBookingHostelOut, CancelRequestOut, 
-                                    CancelRequestIn, UserRequestReviewOut,
-                                    UserRequestReviewIn, HostelAccomodationViewOut, 
-                                    UserRequestDetailsViewOut)
+from apps.services.schemas import (
+    UserRequestExistenceOut, UserRequestsListOut, CreateUserRequestOut, CreateUserRequestIn,
+    UserRequestBookingHostelOut, CancelRequestOut, CancelRequestIn, UserRequestReviewOut,
+    UserRequestReviewIn, HostelAccomodationViewOut, UserRequestDetailsViewOut)
 
-from fastapi import APIRouter, Depends, Request
+from fastapi import APIRouter, Depends, Request, status as http_status
 from sqlalchemy.ext.asyncio import AsyncSession
 from typing import List
 
@@ -258,3 +258,30 @@ async def read_request_details(
             session=session),
         "message": "Got request details"
     }
+
+
+@services_router.get("/{university_id}/service-document/{user_request_id}",
+                     name="read_service_document",
+                     response_class=StreamingResponse,
+                     summary="Read service document",
+                     responses={200: {
+                         "description": "Successful get service document response",
+                         "content": {"text/html": {"example": "bytes"}}
+                     }},
+                     tags=["Admin dashboard", "Student dashboard"])
+async def read_service_document(
+        request: Request,
+        university_id: int,
+        user_request_id: int,
+        user=Depends(get_current_user),
+        session: AsyncSession = Depends(get_async_session)):
+    return StreamingResponse(
+        content=await service_handler.read_service_document(
+            request=request,
+            university_id=university_id,
+            user_request_id=user_request_id,
+            user=user,
+            session=session),
+        status_code=http_status.HTTP_200_OK,
+        media_type="text/html"
+    )

@@ -1,26 +1,16 @@
-from apps.common.db import database
 from apps.common.exceptions import BackendException
 from apps.common.file_manager import file_manager
-from apps.services.models import user_request_exist_view, user_request_list_view, STATUS_MAPPING, UserRequest, \
-    user_request_booking_hostel_view, UserRequestReview, hostel_accommodation_view, user_request_details_view,\
-    UserDocument
-from apps.services.schemas import UserRequestExistenceOut, UserRequestsListOut, CreateUserRequestOut, \
-    CreateUserRequestIn, UserRequestBookingHostelOut, CancelRequestOut, CancelRequestIn, UserRequestReviewOut, \
-    UserRequestReviewIn, HostelAccomodationViewOut, UserRequestDetailsViewOut
-from apps.services.services import create_user_document
-from apps.users.handlers import get_current_user
-from apps.users.models import UserFaculty
 from apps.services.models import STATUS_MAPPING
 from apps.services.schemas import CancelRequestIn, CreateUserRequestIn, UserRequestReviewIn
 from apps.services.services import (
     create_user_document, hostel_accommodation_service, request_existence_service, user_request_list_service,
     user_faculty_service, user_request_service, user_request_booking_hostel_service, user_request_review_service,
-    user_request_detail_service
+    user_request_detail_service, user_document_service
 )
 from apps.users.schemas import UserOut
 
 from datetime import datetime
-from fastapi import Request
+from fastapi import Request, status as http_status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 
@@ -50,7 +40,6 @@ class ServiceHandler:
             "status": None,
             "user_request_exist": False
         }
-
 
     async def read_user_request_list(
             self,
@@ -191,31 +180,21 @@ class ServiceHandler:
                 "user_request_id": user_request_id
             })
 
+    async def read_service_document(
+            self,
+            *,
+            request: Request,
+            university_id: int,
+            user_request_id: int,
+            user: UserOut,
+            session: AsyncSession):
+        if user.university_id != university_id:
+            raise BackendException(
+                message="Access denied. May be input is not correct",
+                code=http_status.HTTP_403_FORBIDDEN
+            )
+        user_document = await user_document_service.read(session=session, data={"user_request_id": user_request_id})
+        return file_manager.get(user_document.content)
+
 
 service_handler = ServiceHandler()
-
-
-@services_router.get("/{university_id}/service-document/{user_request_id}",
-                     name="read_service_document",
-                     response_class=StreamingResponse,
-                     summary="Read service document",
-                     responses={200: {
-                         "description": "Successful get service document response",
-                         "content": {"text/html": {"example": "bytes"}}
-                     }},
-                     tags=["Admin dashboard", "Student dashboard"])
-async def read_service_document(university_id: int, user_request_id: int, user=Depends(get_current_user)):
-    if user.university_id != university_id:
-        raise BackendException(
-            message="Access denied. May be input is not correct",
-            code=http_status.HTTP_403_FORBIDDEN
-        )
-    query = select(UserDocument).where(UserDocument.user_request_id == user_request_id)
-
-    user_document = await database.fetch_one(query)
-
-    return StreamingResponse(
-        content=file_manager.get(user_document.content),
-        status_code=http_status.HTTP_200_OK,
-        media_type="text/html"
-    )
