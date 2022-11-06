@@ -1,4 +1,10 @@
 from apps.common.db import database
+from apps.common.services import AsyncCRUDBase
+from apps.services.models import (
+    hostel_accommodation_view, Service, UserDocument, user_request_exist_view, user_request_list_view,
+    UserRequest, user_request_booking_hostel_view, UserRequestReview, user_request_details_view
+)
+from apps.users.models import UserFaculty
 from apps.services.models import Service, UserDocument
 from apps.common.file_manager import file_manager
 from settings import (Settings, TEMPLATES_PATH, SETTLEMENT_HOSTEL_PATH)
@@ -7,8 +13,7 @@ from datetime import datetime
 from pathlib import Path
 from sqlalchemy import select, insert
 
-
-HOSTEL_BOOKING_TEMPLATE = "hostel_booking_template.docx"
+HOSTEL_BOOKING_TEMPLATE_URL = "hostel_booking_template.docx"
 
 
 async def generate_document_name(service_id: int) -> str:
@@ -22,7 +27,7 @@ async def create_user_document_content(**kwargs) -> str:
         user_id = kwargs.get("context").user_id
         DOCUMENT_PATH = SETTLEMENT_HOSTEL_PATH / str(user_id)
         Path(DOCUMENT_PATH).mkdir(exist_ok=True)
-        rendered_template = file_manager.render(TEMPLATES_PATH, HOSTEL_BOOKING_TEMPLATE, kwargs.get("context"))
+        rendered_template = file_manager.render(TEMPLATES_PATH, HOSTEL_BOOKING_TEMPLATE_URL, kwargs.get("context"))
         document_name = f"hostel_settlement_{kwargs.get('date_created')}_{kwargs.get('user_request_id')}.docx"
         document_path = file_manager.create(DOCUMENT_PATH, document_name.replace(":", "-"), rendered_template)
         return document_path
@@ -40,4 +45,15 @@ async def create_user_document(**kwargs):
                                         name=name,
                                         content=content,
                                         user_request_id=kwargs.get("user_request_id"))
-    return await database.execute(query)
+    result = await database.execute(query)
+    return result
+
+
+request_existence_service = AsyncCRUDBase(model=user_request_exist_view)
+user_request_list_service = AsyncCRUDBase(model=user_request_list_view)
+user_faculty_service = AsyncCRUDBase(model=UserFaculty)
+user_request_service = AsyncCRUDBase(model=UserRequest)
+user_request_booking_hostel_service = AsyncCRUDBase(model=user_request_booking_hostel_view)
+user_request_review_service = AsyncCRUDBase(model=UserRequestReview)
+hostel_accommodation_service = AsyncCRUDBase(model=hostel_accommodation_view)
+user_request_detail_service = AsyncCRUDBase(model=user_request_details_view)

@@ -1,9 +1,10 @@
+from apps.common.db import Base
+
 from sqlalchemy import (
-    MetaData, Column, Table, INTEGER, VARCHAR, FLOAT, ForeignKey, DATETIME, JSON, TIMESTAMP,
+    MetaData, Column, Table, INTEGER, VARCHAR, ForeignKey, DATETIME, JSON, TIMESTAMP, DECIMAL
 )
 from sqlalchemy.orm import relationship
 
-from apps.common.db import Base
 
 metadata_obj = MetaData()
 
@@ -86,10 +87,9 @@ class UserRequestReview(Base):
     room_number = Column(INTEGER)
     start_date_accommodation = Column(DATETIME)
     end_date_accommodation = Column(DATETIME)
-    total_sum = Column(FLOAT)  # TODO: change to DECIMAL and check
+    total_sum = Column(DECIMAL(7, 2))
     payment_deadline = Column(DATETIME)
     remark = Column(VARCHAR(length=255))
-    date_review = Column(DATETIME, nullable=False)
     bed_place_id = Column(INTEGER, ForeignKey("bed_place.bed_place_id"))
     reviewer = Column(INTEGER, ForeignKey("user.user_id"), nullable=False)  # TODO: rename column to reviewer_id
     hostel_id = Column(INTEGER, ForeignKey("hostel.hostel_id"))
@@ -105,7 +105,7 @@ class UserRequestReview(Base):
     def __repr__(self):
         return f'{self.__class__.__name__}(user_request_review_id="{self.user_request_review_id}",date_created="{self.date_created}",' \
                f'room_number="{self.room_number}", start_date_accommodation="{self.start_date_accommodation}",end_date_accommodation="{self.end_date_accommodation}", total_sum="{self.total_sum}", payment_deadline="{self.payment_deadline}",' \
-               f'remark="{self.remark}", date_review="{self.date_review}", bed_place_id="{self.bed_place_id}",reviewer="{self.reviewer}",hostel_id="{self.hostel_id}",university_id="{self.university_id}",user_request_id="{self.user_request_id}")'
+               f'remark="{self.remark}", bed_place_id="{self.bed_place_id}",reviewer="{self.reviewer}",hostel_id="{self.hostel_id}",university_id="{self.university_id}",user_request_id="{self.user_request_id}")'
 
 
 class UserDocument(Base):
@@ -151,7 +151,6 @@ user_request_details_view = Table('user_request_details_view', metadata_obj,
                                   Column('hostel_name', JSON),
                                   Column('room_number', INTEGER),
                                   Column('bed_place_name', VARCHAR(50)),
-                                  Column('date_review', DATETIME),
                                   Column('remark', VARCHAR(255)),
                                   Column('documents', JSON))
 
@@ -179,10 +178,10 @@ hostel_accommodation_view = Table('hostel_accommodation_view', metadata_obj,
                                   Column('hostel_address', JSON),
                                   Column('room_number', INTEGER),
                                   Column('bed_place_name', VARCHAR(50)),
-                                  Column('month_price', FLOAT),  # TODO: change to DECIMAL and check
+                                  Column('month_price', DECIMAL(6, 2)),
                                   Column('start_date_accommodation', TIMESTAMP),
                                   Column('end_date_accommodation', TIMESTAMP),
-                                  Column('total_sum', FLOAT),  # TODO: change to DECIMAL and check
+                                  Column('total_sum', DECIMAL(7, 2)),
                                   Column('iban', VARCHAR(100)),
                                   Column('university_name', VARCHAR(255)),
                                   Column('organisation_code', VARCHAR(50)),
@@ -190,4 +189,3 @@ hostel_accommodation_view = Table('hostel_accommodation_view', metadata_obj,
                                   Column('commandant_full_name', VARCHAR(255)),
                                   Column('telephone_number', VARCHAR(50)),
                                   Column('documents', JSON))
-
