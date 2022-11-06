@@ -2,7 +2,9 @@ SET search_path to public;
 
 CREATE TABLE IF NOT EXISTS rector(
     rector_id integer NOT NULL,
-    full_name varchar(255) NOT NULL,
+    first_name varchar(50) NOT NULL,
+    last_name varchar(50) NOT NULL,
+    middle_name varchar(50),
     CONSTRAINT rector_pk PRIMARY KEY (rector_id));
 
 CREATE TABLE IF NOT EXISTS university (
@@ -23,7 +25,9 @@ MATCH FULL ON DELETE CASCADE ON UPDATE CASCADE;
 
 CREATE TABLE IF NOT EXISTS dekan(
     dekan_id integer NOT NULL,
-    full_name varchar(255) NOT NULL,
+    first_name varchar(50) NOT NULL,
+    last_name varchar(50) NOT NULL,
+    middle_name varchar(50),
     CONSTRAINT dekan_pk PRIMARY KEY (dekan_id));
 
 CREATE TABLE IF NOT EXISTS faculty(
@@ -65,7 +69,9 @@ CREATE TABLE IF NOT EXISTS course(
 
 CREATE TABLE IF NOT EXISTS student (
     student_id integer NOT NULL,
-    full_name varchar(255) NOT NULL,
+    first_name varchar(50) NOT NULL,
+    last_name varchar(50) NOT NULL,
+    middle_name varchar(50),
     telephone_number varchar(50) NOT NULL UNIQUE,
     faculty_id integer NOT NULL,
     user_id integer,
@@ -228,7 +234,9 @@ CREATE TABLE IF NOT EXISTS bed_place(
 
 CREATE TABLE IF NOT EXISTS commandant(
     commandant_id integer NOT NULL,
-    full_name VARCHAR(255) NOT NULL,
+    first_name VARCHAR(50) NOT NULL,
+    last_name VARCHAR(50) NOT NULL,
+    middle_name VARCHAR(50),
     telephone_number varchar(50) NOT NULL UNIQUE,
     CONSTRAINT commandant_pk PRIMARY KEY(commandant_id));
 
@@ -339,7 +347,7 @@ CREATE VIEW hostel_accommodation_view AS
         ht.month_price,
         jsonb_build_object('name', ht.name, 'number', ht.number)
             as hostel_name,
-        jsonb_build_object('city', ht.city, 'street', ht.street, 'build', ht.build )
+        jsonb_build_object('city', ht.city, 'street', ht.street, 'build', ht.build)
             as hostel_address,
         bd.bed_place_name,
         urr.total_sum,
@@ -347,7 +355,8 @@ CREATE VIEW hostel_accommodation_view AS
         un.university_name,
         re.organisation_code,
         re.payment_recognation,
-        co.full_name as commandant_full_name,
+        jsonb_build_object('last_name', co.last_name, 'first_name', co.first_name, 'middle_name', co.middle_name) 
+            as commandant_full_name,
         co.telephone_number,
         sd.documents
     FROM
@@ -388,7 +397,8 @@ DROP VIEW IF EXISTS students_list_view;
 CREATE VIEW students_list_view AS
     SELECT
         st.student_id,
-        st.full_name as student_full_name,
+        json_build_object('last_name', st.last_name, 'first_name', st.first_name, 'middle_name', st.middle_name)
+            as student_full_name,
         st.telephone_number,
         st.user_id,
 	    f.university_id,
@@ -403,7 +413,9 @@ CREATE VIEW students_list_view AS
     ORDER BY
         f.university_id,
         st.faculty_id,
-        st.full_name;
+        st.last_name,
+        st.first_name,
+        st.middle_name;
 
 DROP VIEW IF EXISTS user_request_details_view;
 CREATE VIEW user_request_details_view AS
@@ -464,7 +476,8 @@ CREATE VIEW hostel_list_view AS
         ht.street,
         ht.build,
         ht.commandant_id,
-        co.full_name as commandant_full_name
+        json_build_object('last_name', co.last_name, 'first_name', co.first_name, 'middle_name', co.middle_name)
+            as commandant_full_name
     FROM
         hostel ht
     LEFT JOIN commandant co ON
@@ -509,7 +522,8 @@ CREATE VIEW faculty_list_view AS
         f.shortname,
         f.main_email,
         f.dekan_id,
-        d.full_name as dekan_full_name
+        json_build_object('last_name', d.last_name, 'first_name', d.first_name, 'middle_name', d.middle_name)
+            as dekan_full_name
     FROM
         faculty f
     LEFT JOIN dekan d ON
@@ -581,12 +595,14 @@ CREATE VIEW user_request_exist_view AS
 DROP VIEW IF EXISTS user_request_booking_hostel_view;
 CREATE VIEW user_request_booking_hostel_view AS
     SELECT
-        s.full_name,
+        json_build_object('last_name', s.last_name, 'first_name', s.first_name, 'middle_name', s.middle_name)
+            as full_name,
         s.user_id,
         f.name as faculty_name,
         u.university_id,
         u.short_university_name,
-        r.full_name as rector_full_name,
+        json_build_object('last_name', r.last_name, 'first_name', r.first_name, 'middle_name', r.middle_name)
+            as rector_full_name,
         sp.code as speciality_code,
         sp.name as speciality_name,
         co.value as course,
