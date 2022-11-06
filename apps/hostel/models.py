@@ -3,6 +3,7 @@ from apps.common.db import Base
 from sqlalchemy import (MetaData, Column, INTEGER, VARCHAR, ForeignKey, Table, DECIMAL)
 from sqlalchemy.orm import relationship
 
+
 metadata_obj = MetaData()
 
 
