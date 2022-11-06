@@ -1,5 +1,7 @@
 from apps.common.schemas import BaseOutSchema
 
+from typing import Dict
+
 
 class HostelListOut(BaseOutSchema):
     university_id: int
@@ -10,7 +12,7 @@ class HostelListOut(BaseOutSchema):
     street: str
     build: str
     commandant_id: int
-    commandant_full_name: str
+    commandant_full_name: Dict[str, str]
 
 
 class BedPlaceOut(BaseOutSchema):

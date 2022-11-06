@@ -140,7 +140,8 @@ class DeleteUserIn(BaseInSchema):
 
 
 class StudentCheckExistanceIn(BaseInSchema):   # TODO spelling error
-    full_name: str
+    last_name: str
+    first_name: str
     telephone_number: str
 
 
@@ -151,18 +152,25 @@ class StudentCheckExistanceOut(BaseOutSchema):
 
 
 class CreateStudentIn(BaseInSchema):
-    full_name: str
+    last_name: str
+    first_name: str
+    middle_name: str = None
     telephone_number: str
     course_id: int
     faculty_id: int
     speciality_id: int
     gender: str
 
-    @validator('full_name')
-    def validate_full_name(cls, value):
-        full_name = value.split()
-        if not full_name or len(full_name) < 2:
-            raise ValueError("The student's name and surname are mandatory!")
+    @validator('last_name')
+    def validate_last_name(cls, value):
+        if not value:
+            raise ValueError("The student's surname is mandatory!")
+        return value
+
+    @validator('first_name')
+    def validate_first_name(cls, value):
+        if not value:
+            raise ValueError("The student's name is mandatory!")
         return value
 
     @validator('telephone_number')
@@ -209,7 +217,7 @@ class CreateStudentOut(BaseOutSchema):
 
 class StudentsListOut(BaseOutSchema):
     student_id: int
-    student_full_name: str
+    student_full_name: Dict[str, str]
     telephone_number: str
     user_id: int = None
     university_id: int

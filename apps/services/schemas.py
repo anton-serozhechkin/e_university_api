@@ -4,7 +4,7 @@ from datetime import date, datetime
 from typing import Dict, Union, List
 from decimal import Decimal
 
-from pydantic import BaseModel, validator
+from pydantic import validator
 
 
 class CreateUserRequestIn(BaseInSchema):
@@ -24,17 +24,17 @@ class UserRequestExistenceOut(BaseOutSchema):
 
 
 class UserRequestBookingHostelOut(BaseOutSchema):
-    full_name: str
+    full_name: Dict[str, str]
     user_id: int
     faculty_name: str
     university_id: int
     short_university_name: str
-    rector_full_name: str
+    rector_full_name: Dict[str, str]
     date_today: date
     start_year: int
     finish_year: int
-    speciality_code: int = None  # delete it after table speciality won't be empty
-    speciality_name: str = None  # delete it after table speciality won't be empty
+    speciality_code: int
+    speciality_name: str
     course: int
     educ_level: str
     gender: str
@@ -105,7 +105,7 @@ class HostelAccomodationViewOut(BaseOutSchema):
     university_name: str
     organisation_code: str
     payment_recognation: str  # TODO spelling error
-    commandant_full_name: str
+    commandant_full_name: Dict[str, str]
     telephone_number: str
     documents: Dict[str, str]
 

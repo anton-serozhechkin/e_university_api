@@ -2,7 +2,7 @@ from apps.common.schemas import BaseOutSchema, BaseInSchema
 
 import re
 
-from pydantic import BaseModel, validator
+from pydantic import validator
 from typing import Dict, Union
 
 
@@ -45,7 +45,7 @@ class FacultyOut(BaseOutSchema):
     shortname: str
     main_email: str = None
     university_id: int
-    dekan_full_name: str = None
+    dekan_full_name: Dict[str, str] = None
 
 
 class SpecialityListOut(BaseOutSchema):
