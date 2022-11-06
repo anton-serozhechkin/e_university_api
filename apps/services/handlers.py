@@ -5,7 +5,7 @@ from apps.services.services import (
     create_user_document, hostel_accommodation_service, request_existence_service, user_request_list_service,
     user_faculty_service, user_request_service, user_request_booking_hostel_service, user_request_review_service,
     user_request_detail_service, calculate_difference_between_dates_in_months, get_month_price_by_bed_place,
-    calculate_total_hostel_accommodation_cost, hostel_service
+    calculate_total_hostel_accommodation_cost, hostel_service, bed_place_service
 )
 from apps.users.schemas import UserOut
 
@@ -189,22 +189,24 @@ class ServiceHandler:
             data: CountHostelAccommodationCostIn,
             session: AsyncSession):
 
-        hostel = await hostel_service.list(
+        hostel = await hostel_service.read(
             session=session,
-            filters={"hostel_id": data.hostel_id}
+            data={"hostel_id": data.hostel_id}
         )
 
-        bed_place = await hostel_service.list(
+        bed_place = await bed_place_service.read(
             session=session,
-            filters={"bed_place_id": data.bed_place_id}
+            data={"bed_place_id": data.bed_place_id}
         )
 
         months_count = calculate_difference_between_dates_in_months(data.end_date_accommodation,
                                                                     data.start_date_accommodation)
         month_price = get_month_price_by_bed_place(hostel.month_price, bed_place.bed_place_name)
-        response = calculate_total_hostel_accommodation_cost(month_price, months_count)
 
-        return response
+        response = calculate_total_hostel_accommodation_cost(month_price, months_count)
+        return {
+            'total_hostel_accommodation_cost': response
+        }
 
 
 service_handler = ServiceHandler()
