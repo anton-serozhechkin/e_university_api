@@ -1,6 +1,6 @@
 from apps.common.db import Base
 
-from sqlalchemy import (MetaData, Column, INTEGER, VARCHAR, ForeignKey, Table, DECIMAL)
+from sqlalchemy import (MetaData, Column, INTEGER, VARCHAR, ForeignKey, Table, DECIMAL, JSON)
 from sqlalchemy.orm import relationship
 
 
@@ -34,14 +34,16 @@ class Commandant(Base):
     __tablename__ = 'commandant'
 
     commandant_id = Column(INTEGER, primary_key=True, nullable=False)
-    full_name = Column(VARCHAR(length=255), nullable=False)
+    last_name = Column(VARCHAR(length=50), nullable=False)
+    first_name = Column(VARCHAR(length=50), nullable=False)
+    middle_name = Column(VARCHAR(length=50))
     telephone_number = Column(VARCHAR(length=50), nullable=False, unique=True)
 
     hostel = relationship("Hostel", back_populates="commandant")
 
     def __repr__(self):
-        return (f'{self.__class__.__name__}(commandant_id="{self.commandant_id}",full_name="{self.full_name}",'
-                f'telephone_number="{self.telephone_number}")')
+        return (f'{self.__class__.__name__}(commandant_id="{self.commandant_id}", last_name="{self.last_name}",'
+                f'first_name="{self.first_name}", middle_name="{self.middle_name}", telephone_number="{self.telephone_number}")')
 
 
 class BedPlace(Base):
@@ -65,4 +67,4 @@ hostel_list_view = Table('hostel_list_view', metadata_obj,
                          Column('street', VARCHAR(100)),
                          Column('build', VARCHAR(10)),
                          Column('commandant_id', INTEGER),
-                         Column('commandant_full_name', VARCHAR(255)))
+                         Column('commandant_full_name', JSON))

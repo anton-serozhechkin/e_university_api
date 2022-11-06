@@ -126,12 +126,12 @@ class UserDocument(Base):
 
 
 user_request_booking_hostel_view = Table('user_request_booking_hostel_view', metadata_obj,
-                                         Column('full_name', VARCHAR(255)),
+                                         Column('full_name', JSON),
                                          Column('user_id', INTEGER),
                                          Column('faculty_name', VARCHAR(255)),
                                          Column('university_id', INTEGER),
                                          Column('short_university_name', VARCHAR(50)),
-                                         Column('rector_full_name', VARCHAR(255)),
+                                         Column('rector_full_name', JSON),
                                          Column('speciality_code', INTEGER),
                                          Column('speciality_name', VARCHAR(255)),
                                          Column('course', INTEGER),
@@ -140,6 +140,7 @@ user_request_booking_hostel_view = Table('user_request_booking_hostel_view', met
                                          Column('start_year', INTEGER),
                                          Column('finish_year', INTEGER),
                                          Column('gender', VARCHAR(1)))
+
 
 user_request_details_view = Table('user_request_details_view', metadata_obj,
                                   Column('user_request_id', INTEGER),
@@ -156,6 +157,7 @@ user_request_details_view = Table('user_request_details_view', metadata_obj,
                                   Column('remark', VARCHAR(255)),
                                   Column('documents', JSON))
 
+
 user_request_exist_view = Table('user_request_exist_view', metadata_obj,
                                 Column('user_request_id', INTEGER),
                                 Column('user_id', INTEGER),
@@ -164,6 +166,7 @@ user_request_exist_view = Table('user_request_exist_view', metadata_obj,
                                 Column('service_id', INTEGER),
                                 Column('status', JSON))
 
+
 user_request_list_view = Table('user_request_list_view', metadata_obj,
                                Column('university_id', INTEGER),
                                Column('user_id', INTEGER),
@@ -171,6 +174,7 @@ user_request_list_view = Table('user_request_list_view', metadata_obj,
                                Column('service_name', VARCHAR(255)),
                                Column('status', JSON),
                                Column('date_created', DATETIME))
+
 
 hostel_accommodation_view = Table('hostel_accommodation_view', metadata_obj,
                                   Column('university_id', INTEGER),
@@ -188,6 +192,6 @@ hostel_accommodation_view = Table('hostel_accommodation_view', metadata_obj,
                                   Column('university_name', VARCHAR(255)),
                                   Column('organisation_code', VARCHAR(50)),
                                   Column('payment_recognation', VARCHAR(255)),
-                                  Column('commandant_full_name', VARCHAR(255)),
+                                  Column('commandant_full_name', JSON),
                                   Column('telephone_number', VARCHAR(50)),
                                   Column('documents', JSON))
