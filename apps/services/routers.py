@@ -1,12 +1,13 @@
 from apps.common.dependencies import get_async_session, get_current_user
 from apps.common.schemas import JSENDFailOutSchema, JSENDOutSchema
 from apps.services.handlers import service_handler
-from apps.services.schemas import (UserRequestExistenceOut, UserRequestsListOut, 
-                                    CreateUserRequestOut, CreateUserRequestIn, 
-                                    UserRequestBookingHostelOut, CancelRequestOut, 
-                                    CancelRequestIn, UserRequestReviewOut,
-                                    UserRequestReviewIn, HostelAccomodationViewOut, 
-                                    UserRequestDetailsViewOut)
+from apps.services.schemas import (UserRequestExistenceOut, UserRequestsListOut,
+                                   CreateUserRequestOut, CreateUserRequestIn,
+                                   UserRequestBookingHostelOut, CancelRequestOut,
+                                   CancelRequestIn, UserRequestReviewOut,
+                                   UserRequestReviewIn, HostelAccomodationViewOut,
+                                   UserRequestDetailsViewOut, CountHostelAccommodationCostIn,
+                                   CountHostelAccommodationCostOut)
 
 from fastapi import APIRouter, Depends, Request
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -243,7 +244,7 @@ async def read_hostel_accommodation(
                      response_model=JSENDOutSchema[UserRequestDetailsViewOut],
                      summary="Get user request",
                      responses={200: {"description": "Successful get user request response"}},
-                     tags=["Student dashboard"])   # TODO Return Validation error with empty data
+                     tags=["Student dashboard"])  # TODO Return Validation error with empty data
 async def read_request_details(
         request: Request,
         university_id: int,
@@ -257,4 +258,26 @@ async def read_request_details(
             user_request_id=user_request_id,
             session=session),
         "message": "Got request details"
+    }
+
+
+@services_router.post("/{university_id}/count-hostel-accommodation-cost/",
+                      name="create_count_hostel_accommodation_cost ",
+                      summary="Get user request",
+                      response_model=JSENDOutSchema[CountHostelAccommodationCostOut],
+                      responses={200: {"description": "Successful create count hostel accommodation cost response"}},
+                      tags=["Admin dashboard"])
+async def count_hostel_accommodation_cost(
+        request: Request,
+        university_id: int,
+        data: CountHostelAccommodationCostIn,
+        user=Depends(get_current_user),
+        session: AsyncSession = Depends(get_async_session)):
+    return {
+        "data": await service_handler.count_hostel_accommodation_cost(
+            request=request,
+            university_id=university_id,
+            data=data,
+            session=session),
+        "message": "Cost of hostel accommodation of student was counted successfully"
     }
