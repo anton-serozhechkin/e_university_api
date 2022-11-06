@@ -33,10 +33,10 @@ class Faculty(Base):
     name = Column(VARCHAR(length=255), nullable=False)
     shortname = Column(VARCHAR(length=20))
     main_email = Column(VARCHAR(length=50))
-    dekan_id = Column(INTEGER, ForeignKey('dekan.dekan_id'))
+    dean_id = Column(INTEGER, ForeignKey('dean.dean_id'))
     university_id = Column(INTEGER, ForeignKey("university.university_id"), nullable=False)
 
-    dekan = relationship("Dekan", back_populates="faculty")  # TODO: rename to "dean"
+    dean = relationship("Dean", back_populates="faculty")
     university = relationship("University", back_populates="faculties")
     speciality = relationship("Speciality", back_populates="faculties")
     students = relationship("Student", back_populates="faculty")
@@ -45,7 +45,7 @@ class Faculty(Base):
 
     def __repr__(self):
         return f'{self.__class__.__name__}(faculty_id="{self.faculty_id}", name="{self.name}", shortname="{self.shortname}", ' \
-               f'main_email="{self.main_email}", dekan_id="{self.dekan_id}", university_id="{self.university_id}")'
+               f'main_email="{self.main_email}", dean_id="{self.dean_id}", university_id="{self.university_id}")'
 
 
 class Speciality(Base):  # TODO: rename to "Specialty"
@@ -63,18 +63,18 @@ class Speciality(Base):  # TODO: rename to "Specialty"
                f'faculty_id="{self.faculty_id}")'
 
 
-class Dekan(Base):
-    __tablename__ = 'dekan'
+class Dean(Base):
+    __tablename__ = 'dean'
 
-    dekan_id = Column(INTEGER, primary_key=True, nullable=False)
+    dean_id = Column(INTEGER, primary_key=True, nullable=False)
     last_name = Column(VARCHAR(length=50), nullable=False)
     first_name = Column(VARCHAR(length=50), nullable=False)
     middle_name = Column(VARCHAR(length=50))
 
-    faculty = relationship("Faculty", back_populates="dekan")
+    faculty = relationship("Faculty", back_populates="dean")
 
     def __repr__(self):
-        return f'{self.__class__.__name__}(dekan_id="{self.dekan_id}", last_name="{self.last_name}",' \
+        return f'{self.__class__.__name__}(dean_id="{self.dean_id}", last_name="{self.last_name}",' \
                f'first_name="{self.first_name}", middle_name="{self.middle_name}")'
 
 
@@ -109,8 +109,8 @@ faculty_list_view = Table('faculty_list_view', metadata_obj,
                           Column('shortname', VARCHAR(20)),
                           Column('main_email', VARCHAR(50)),
                           Column('university_id', INTEGER),
-                          Column('dekan_id', INTEGER),
-                          Column('dekan_full_name', JSON))
+                          Column('dean_id', INTEGER),
+                          Column('dean_full_name', JSON))
 
 
 speciality_list_view = Table('speciality_list_view', metadata_obj,

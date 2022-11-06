@@ -15,19 +15,19 @@ INSERT INTO status(status_id, status_name) VALUES (2, 'Відхилено');
 INSERT INTO status(status_id, status_name) VALUES (3, 'Розглядається');
 INSERT INTO status(status_id, status_name) VALUES (4, 'Скасовано');
 
-INSERT INTO dekan(dekan_id, last_name, first_name, middle_name) VALUES (1, 'Коц', 'Григорій', 'Павлович');
-INSERT INTO dekan(dekan_id, last_name, first_name, middle_name) VALUES (2, 'Птащенко', 'Олена', 'Валеріївна');
-INSERT INTO dekan(dekan_id, last_name, first_name, middle_name) VALUES (3, 'Шталь', 'Тетяна', 'Валеріївна');
-INSERT INTO dekan(dekan_id, last_name, first_name, middle_name) VALUES (4, 'Проноза', 'Павло', 'Володимирович');
-INSERT INTO dekan(dekan_id, last_name, first_name, middle_name) VALUES (5, 'Вовк', 'Володимир', 'Анатолійович');
-INSERT INTO dekan(dekan_id, last_name, first_name, middle_name) VALUES (6, 'Бріль', 'Михайло', 'Сергійович');
+INSERT INTO dean(dean_id, last_name, first_name, middle_name) VALUES (1, 'Коц', 'Григорій', 'Павлович');
+INSERT INTO dean(dean_id, last_name, first_name, middle_name) VALUES (2, 'Птащенко', 'Олена', 'Валеріївна');
+INSERT INTO dean(dean_id, last_name, first_name, middle_name) VALUES (3, 'Шталь', 'Тетяна', 'Валеріївна');
+INSERT INTO dean(dean_id, last_name, first_name, middle_name) VALUES (4, 'Проноза', 'Павло', 'Володимирович');
+INSERT INTO dean(dean_id, last_name, first_name, middle_name) VALUES (5, 'Вовк', 'Володимир', 'Анатолійович');
+INSERT INTO dean(dean_id, last_name, first_name, middle_name) VALUES (6, 'Бріль', 'Михайло', 'Сергійович');
 
-INSERT INTO faculty(faculty_id, name, shortname, university_id, dekan_id) VALUES (1, 'Інформаційних технологій', 'ІТ', 1, 1);
-INSERT INTO faculty(faculty_id, name, shortname, university_id, dekan_id) VALUES (2, 'Міжнародних відносин і журналістики', 'МВЖ', 1, 2);
-INSERT INTO faculty(faculty_id, name, shortname, university_id, dekan_id) VALUES (3, 'Міжнародної економіки і підприємництва', 'МЕП', 1, 3);
-INSERT INTO faculty(faculty_id, name, shortname, university_id, dekan_id) VALUES (4, 'Фінансів і обліку', 'ФіО', 1, 4);
-INSERT INTO faculty(faculty_id, name, shortname, university_id, dekan_id) VALUES (5, 'Менеджмента і маркетингу', 'МіМ', 1, 5);
-INSERT INTO faculty(faculty_id, name, shortname, university_id, dekan_id) VALUES (6, 'Економіки і права', 'ЕіП', 1, 6);
+INSERT INTO faculty(faculty_id, name, shortname, university_id, dean_id) VALUES (1, 'Інформаційних технологій', 'ІТ', 1, 1);
+INSERT INTO faculty(faculty_id, name, shortname, university_id, dean_id) VALUES (2, 'Міжнародних відносин і журналістики', 'МВЖ', 1, 2);
+INSERT INTO faculty(faculty_id, name, shortname, university_id, dean_id) VALUES (3, 'Міжнародної економіки і підприємництва', 'МЕП', 1, 3);
+INSERT INTO faculty(faculty_id, name, shortname, university_id, dean_id) VALUES (4, 'Фінансів і обліку', 'ФіО', 1, 4);
+INSERT INTO faculty(faculty_id, name, shortname, university_id, dean_id) VALUES (5, 'Менеджмента і маркетингу', 'МіМ', 1, 5);
+INSERT INTO faculty(faculty_id, name, shortname, university_id, dean_id) VALUES (6, 'Економіки і права', 'ЕіП', 1, 6);
 
 INSERT INTO bed_place(bed_place_id, bed_place_name) VALUES (1, '0.75');
 INSERT INTO bed_place(bed_place_id, bed_place_name) VALUES (2, '1');

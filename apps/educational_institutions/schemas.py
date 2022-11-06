@@ -11,7 +11,7 @@ class FacultyIn(BaseInSchema):
     name: str
     shortname: str
     main_email: str = None
-    dekan_id: int = None
+    dean_id: int = None
 
     @validator('main_email')
     def validate_email(cls, v):
@@ -45,7 +45,7 @@ class FacultyOut(BaseOutSchema):
     shortname: str
     main_email: str = None
     university_id: int
-    dekan_full_name: Dict[str, str] = None
+    dean_full_name: Dict[str, str] = None
 
 
 class SpecialityListOut(BaseOutSchema):

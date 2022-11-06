@@ -23,12 +23,12 @@ ALTER TABLE university ADD CONSTRAINT university_rector_fk
 FOREIGN KEY (rector_id) REFERENCES rector(rector_id)
 MATCH FULL ON DELETE CASCADE ON UPDATE CASCADE;
 
-CREATE TABLE IF NOT EXISTS dekan(
-    dekan_id integer NOT NULL,
+CREATE TABLE IF NOT EXISTS dean(
+    dean_id integer NOT NULL,
     first_name varchar(50) NOT NULL,
     last_name varchar(50) NOT NULL,
     middle_name varchar(50),
-    CONSTRAINT dekan_pk PRIMARY KEY (dekan_id));
+    CONSTRAINT dean_pk PRIMARY KEY (dean_id));
 
 CREATE TABLE IF NOT EXISTS faculty(
     faculty_id integer NOT NULL,
@@ -36,7 +36,7 @@ CREATE TABLE IF NOT EXISTS faculty(
     shortname varchar(20),
     main_email varchar(50),
     university_id integer NOT NULL,
-    dekan_id INTEGER NOT NULL,
+    dean_id INTEGER NOT NULL,
     CONSTRAINT faculty_pk PRIMARY KEY (faculty_id));
 
 CREATE SEQUENCE IF NOT EXISTS faculty_id_seq AS bigint START WITH 1 INCREMENT BY 1;
@@ -47,8 +47,8 @@ ALTER TABLE faculty ADD CONSTRAINT faculty_university_fk
 FOREIGN KEY (university_id) REFERENCES university (university_id)
 MATCH FULL ON DELETE CASCADE ON UPDATE CASCADE;
 
-ALTER TABLE faculty ADD CONSTRAINT faculty_dekan_fk
-FOREIGN KEY (dekan_id) REFERENCES dekan(dekan_id)
+ALTER TABLE faculty ADD CONSTRAINT faculty_dean_fk
+FOREIGN KEY (dean_id) REFERENCES dean(dean_id)
 MATCH FULL ON DELETE CASCADE ON UPDATE CASCADE;
 
 CREATE TABLE IF NOT EXISTS speciality(
@@ -521,17 +521,17 @@ CREATE VIEW faculty_list_view AS
         f.name,
         f.shortname,
         f.main_email,
-        f.dekan_id,
+        f.dean_id,
         json_build_object('last_name', d.last_name, 'first_name', d.first_name, 'middle_name', d.middle_name)
-            as dekan_full_name
+            as dean_full_name
     FROM
         faculty f
-    LEFT JOIN dekan d ON
-        d.dekan_id = f.dekan_id
+    LEFT JOIN dean d ON
+        d.dean_id = f.dean_id
     ORDER BY
         f.university_id,
         f.faculty_id,
-        f.dekan_id;
+        f.dean_id;
 
 DROP VIEW IF EXISTS user_list_view;
 CREATE VIEW user_list_view AS
