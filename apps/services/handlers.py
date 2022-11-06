@@ -1,9 +1,11 @@
 from apps.services.models import STATUS_MAPPING
-from apps.services.schemas import CancelRequestIn, CreateUserRequestIn, UserRequestReviewIn
+from apps.services.schemas import CancelRequestIn, CreateUserRequestIn, UserRequestReviewIn, \
+    CountHostelAccommodationCostIn
 from apps.services.services import (
     create_user_document, hostel_accommodation_service, request_existence_service, user_request_list_service,
     user_faculty_service, user_request_service, user_request_booking_hostel_service, user_request_review_service,
-    user_request_detail_service
+    user_request_detail_service, calculate_difference_between_dates_in_months, get_month_price_by_bed_place,
+    calculate_total_hostel_accommodation_cost, hostel_service
 )
 from apps.users.schemas import UserOut
 
@@ -105,9 +107,9 @@ class ServiceHandler:
             session: AsyncSession):
         CancelRequestIn(status_id=cancel_request.status_id)
         await user_request_service.update(
-                session=session,
-                data={"user_request_id": user_request_id},
-                obj=cancel_request)
+            session=session,
+            data={"user_request_id": user_request_id},
+            obj=cancel_request)
         return {
             "user_request_id": user_request_id,
             "status_id": cancel_request.status_id
@@ -162,7 +164,7 @@ class ServiceHandler:
                 "university_id": university_id,
                 "user_request_id": user_request_id
             })
-        # TODO AttributeError: 'NoneType' object has no attribute 'documents' (it's heppend only if user request doesn't have review)
+        # TODO AttributeError: 'NoneType' object has no attribute 'documents' (it's happened only if user request doesn't have review)
         return response
 
     async def read_request_details(
@@ -178,6 +180,31 @@ class ServiceHandler:
                 "university_id": university_id,
                 "user_request_id": user_request_id
             })
+
+    async def count_hostel_accommodation_cost(
+            self,
+            *,
+            request: Request,
+            university_id: int,
+            data: CountHostelAccommodationCostIn,
+            session: AsyncSession):
+
+        hostel = await hostel_service.list(
+            session=session,
+            filters={"hostel_id": data.hostel_id}
+        )
+
+        bed_place = await hostel_service.list(
+            session=session,
+            filters={"bed_place_id": data.bed_place_id}
+        )
+
+        months_count = calculate_difference_between_dates_in_months(data.end_date_accommodation,
+                                                                    data.start_date_accommodation)
+        month_price = get_month_price_by_bed_place(hostel.month_price, bed_place.bed_place_name)
+        response = calculate_total_hostel_accommodation_cost(month_price, months_count)
+
+        return response
 
 
 service_handler = ServiceHandler()
