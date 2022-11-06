@@ -1,15 +1,17 @@
+from apps.common.schemas import BaseOutSchema, BaseInSchema
+
 import re
 
 from pydantic import BaseModel, validator
-
 from typing import Dict, Union
 
 
-class FacultyIn(BaseModel):
+class FacultyIn(BaseInSchema):
     university_id: int
     name: str
     shortname: str
     main_email: str = None
+    dekan_id: int = None
 
     @validator('main_email')
     def validate_email(cls, v):
@@ -37,7 +39,7 @@ class FacultyIn(BaseModel):
         return v
 
 
-class FacultyOut(BaseModel):
+class FacultyOut(BaseOutSchema):
     faculty_id: int
     name: str
     shortname: str
@@ -46,14 +48,14 @@ class FacultyOut(BaseModel):
     dekan_full_name: str = None
 
 
-class SpecialityListOut(BaseModel):
+class SpecialityListOut(BaseOutSchema):
     faculty_id: int
     speciality_id: int
     university_id: int
     speciality_info: Dict[str, Union[int, str]]
 
 
-class CourseListOut(BaseModel):
+class CourseListOut(BaseOutSchema):
     course_id: int
     value: int 
 

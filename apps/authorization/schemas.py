@@ -1,6 +1,6 @@
-from pydantic import BaseModel
+from apps.common.schemas import BaseOutSchema
 
 
-class AvailableRolesOut(BaseModel):
+class AvailableRolesOut(BaseOutSchema):
     role_id: int
     role_name: str

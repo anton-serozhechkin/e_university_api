@@ -66,7 +66,7 @@ CREATE TABLE IF NOT EXISTS course(
 CREATE TABLE IF NOT EXISTS student (
     student_id integer NOT NULL,
     full_name varchar(255) NOT NULL,
-    telephone_number varchar(255) NOT NULL UNIQUE,
+    telephone_number varchar(50) NOT NULL UNIQUE,
     faculty_id integer NOT NULL,
     user_id integer,
     speciality_id INTEGER NOT NULL,
@@ -241,7 +241,7 @@ CREATE TABLE IF NOT EXISTS hostel(
     street VARCHAR(100) NOT NULL,
     build VARCHAR(10) NOT NULL,
     commandant_id integer NOT NULL,
-    month_price float NOT NULL,
+    month_price decimal(6, 2) NOT NULL,
     instagram VARCHAR(255),
     telegram VARCHAR(255),
     CONSTRAINT hostel_pk PRIMARY KEY(hostel_id));
@@ -264,7 +264,7 @@ CREATE TABLE IF NOT EXISTS user_request_review(
     room_number integer,
     start_date_accommodation timestamp,
     end_date_accommodation timestamp,
-    total_sum float,
+    total_sum decimal(7, 2),
     payment_deadline timestamp,
     remark varchar(255),
     date_review timestamp NOT NULL,

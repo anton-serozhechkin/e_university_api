@@ -1,15 +1,14 @@
 from settings import Settings
 
 import databases
-import sqlalchemy
+from sqlalchemy import create_engine, MetaData
 from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
+from sqlalchemy.orm import Session, sessionmaker
 
-
-Base = declarative_base()
 
 database = databases.Database(Settings.POSTGRES_DSN)
 
-engine = sqlalchemy.create_engine(Settings.POSTGRES_DSN)
 
 POSTGRES_INDEXES_NAMING_CONVENTION = {
     "ix": "%(column_0_label)s_idx",
@@ -19,6 +18,8 @@ POSTGRES_INDEXES_NAMING_CONVENTION = {
     "pk": "%(table_name)s_pkey",
 }
 
-metadata = sqlalchemy.MetaData(naming_convention=POSTGRES_INDEXES_NAMING_CONVENTION)
-
-metadata.create_all(engine)
+Base = declarative_base(metadata=MetaData(naming_convention=POSTGRES_INDEXES_NAMING_CONVENTION))
+async_engine = create_async_engine(url=Settings.POSTGRES_DSN_ASYNC, echo=Settings.POSTGRES_ECHO)
+engine = create_engine(url=Settings.POSTGRES_DSN, echo=Settings.POSTGRES_ECHO)
+async_session_factory = sessionmaker(bind=async_engine, class_=AsyncSession, expire_on_commit=False)
+session_factory = sessionmaker(bind=engine, class_=Session, expire_on_commit=False)
