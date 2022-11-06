@@ -23,7 +23,7 @@ users_router = APIRouter()
                        404: {"model": JSENDFailOutSchema, "description": "Invalid input data response"},
                        422: {"model": JSENDFailOutSchema, "description": "ValidationError"}
                    },
-                   tags=["Authorization"])  # TODO spelling mistake, there is need to check path in other modules
+                   tags=["Authorization"])
 async def check_student(
         request: Request,
         student: StudentCheckExistenceIn,
@@ -32,8 +32,9 @@ async def check_student(
         **Check student existence in the database**
 
         **Input**:
-        - **full name**: full name of the student in the database
-        - **telephone number**: telephone number, must be 12 digits
+        - **last_name**: last name of the student
+        - **first_name**: first name of the student
+        - **telephone_number**: telephone number, must be 12 digits
 
         **Return**: student id; token, which is used for registering user; token expires datetime
     """
