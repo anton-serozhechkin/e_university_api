@@ -86,8 +86,8 @@ class UserHandler:
         token_data = await one_time_token_service.read(session=session, data={"token": user.token})
         expires, student_id = get_token_data(token_data)
         student = await student_service.read(session=session, data={"student_id": student_id})
-        full_name, faculty_id = get_student_attr(student)
-        login = get_generated_username(full_name)
+        last_name, first_name, faculty_id = get_student_attr(student)
+        login = get_generated_username(last_name, first_name)
         # Encoding password
         encoded_user_password = get_hashed_password(user.password)
         registered_user = await user_service.create(
