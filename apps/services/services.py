@@ -1,5 +1,6 @@
 from apps.common.db import database
 from apps.common.services import AsyncCRUDBase
+from apps.hostel.models import Hostel, BedPlace
 from apps.services.models import (
     hostel_accommodation_view, Service, UserDocument, user_request_exist_view, user_request_list_view,
     UserRequest, user_request_booking_hostel_view, UserRequestReview, user_request_details_view
@@ -57,3 +58,5 @@ user_request_review_service = AsyncCRUDBase(model=UserRequestReview)
 hostel_accommodation_service = AsyncCRUDBase(model=hostel_accommodation_view)
 user_request_detail_service = AsyncCRUDBase(model=user_request_details_view)
 user_document_service = AsyncCRUDBase(model=UserDocument)
+hostel_service = AsyncCRUDBase(model=Hostel)
+bed_place_service = AsyncCRUDBase(model=BedPlace)
