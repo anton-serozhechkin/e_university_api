@@ -1,14 +1,13 @@
 from apps.common.dependencies import get_async_session, get_current_user
 from apps.common.schemas import JSENDFailOutSchema, JSENDOutSchema
 from apps.services.handlers import service_handler
-from apps.services.schemas import (UserRequestExistenceOut, UserRequestsListOut, 
-                                    CreateUserRequestOut, CreateUserRequestIn, 
-                                    UserRequestBookingHostelOut, CancelRequestOut, 
-                                    CancelRequestIn, UserRequestReviewOut,
-                                    UserRequestReviewIn, HostelAccomodationViewOut, 
-                                    UserRequestDetailsViewOut)
+from apps.services.schemas import (
+    UserRequestExistenceOut, UserRequestsListOut, CreateUserRequestOut, CreateUserRequestIn,
+    UserRequestBookingHostelOut, CancelRequestOut, CancelRequestIn, UserRequestReviewOut,
+    UserRequestReviewIn, HostelAccomodationViewOut, UserRequestDetailsViewOut)
+from apps.users.schemas import StudentsListOut
 
-from fastapi import APIRouter, Depends, Request
+from fastapi import APIRouter, Depends, File, Request, UploadFile
 from sqlalchemy.ext.asyncio import AsyncSession
 from typing import List
 
@@ -257,4 +256,27 @@ async def read_request_details(
             user_request_id=user_request_id,
             session=session),
         "message": "Got request details"
+    }
+
+
+@services_router.post("/{university_id}/create_students/",
+                      name="create_students_from_file",
+                      response_model=JSENDOutSchema[List[StudentsListOut]],
+                      summary="Create students from file",
+                      responses={200: {"description": "Successful create students from file response"}},
+                      tags=['Admin dashboard'])
+async def create_students_from_file(
+        request: Request,
+        university_id: int,
+        file: UploadFile = File(...),
+        user=Depends(get_current_user),
+        session: AsyncSession = Depends(get_async_session)):
+    response = await service_handler.create_students_from_file(
+        request=request,
+        university_id=university_id,
+        file=file,
+        session=session)
+    return {
+        "data": response,
+        "message": "Created students from file list"
     }
