@@ -1,4 +1,4 @@
-from apps.common.schemas import BaseInSchema, BaseOutSchema
+from apps.common.schemas import BaseInSchema, BaseOutSchema, FullaNameSchema
 
 from datetime import datetime
 from typing import List, Dict, Union
@@ -217,7 +217,7 @@ class CreateStudentOut(BaseOutSchema):
 
 class StudentsListOut(BaseOutSchema):
     student_id: int
-    student_full_name: Dict[str, str]
+    student_full_name: FullaNameSchema
     telephone_number: str
     user_id: int = None
     university_id: int

@@ -1,4 +1,4 @@
-from apps.common.schemas import BaseOutSchema, BaseInSchema
+from apps.common.schemas import BaseOutSchema, BaseInSchema, FullaNameSchema
 
 import re
 
@@ -45,7 +45,7 @@ class FacultyOut(BaseOutSchema):
     shortname: str
     main_email: str = None
     university_id: int
-    dean_full_name: Dict[str, str] = None
+    dean_full_name: FullaNameSchema = None
 
 
 class SpecialityListOut(BaseOutSchema):
@@ -58,7 +58,3 @@ class SpecialityListOut(BaseOutSchema):
 class CourseListOut(BaseOutSchema):
     course_id: int
     value: int 
-
-   
-
-
