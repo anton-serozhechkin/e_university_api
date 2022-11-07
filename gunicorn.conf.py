@@ -1,3 +1,5 @@
+from settings import Settings
+
 import uvicorn
 
 
@@ -10,7 +12,7 @@ print_config = False
 
 
 # Server socket
-HOST = '0.0.0.0:$PORT'
+HOST = f'{Settings.HOST}:{Settings.PORT}'
 POST = '5432'
 backlog = 2048
 
