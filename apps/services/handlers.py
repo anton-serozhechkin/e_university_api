@@ -1,8 +1,8 @@
 from apps.common.exceptions import BackendException
 from apps.services.services import (
-    create_user_document, hostel_accommodation_service, request_existence_service, user_request_list_service,
-    user_faculty_service, user_request_service, user_request_booking_hostel_service, user_request_review_service,
-    user_request_detail_service
+    create_user_document, get_specialties_list, hostel_accommodation_service, request_existence_service,
+    user_request_list_service, user_faculty_service, user_request_service, user_request_booking_hostel_service,
+    user_request_review_service, user_request_detail_service
 )
 from apps.common.db import database
 from apps.educational_institutions.models import Faculty, Speciality
@@ -11,7 +11,12 @@ from apps.services.models import user_request_exist_view, user_request_list_view
 from apps.services.schemas import UserRequestExistenceOut, UserRequestsListOut, CreateUserRequestOut, \
     CreateUserRequestIn, UserRequestBookingHostelOut, CancelRequestOut, CancelRequestIn, UserRequestReviewOut, \
     UserRequestReviewIn, HostelAccomodationViewOut, UserRequestDetailsViewOut
+from apps.services.utils import (
+    check_content_type, create_faculty_dict, create_telephone_set, get_worksheet_cell_col_row, check_faculty_existence,
+    check_specialty_existence, check_telephone_number_existence
+)
 from apps.users.schemas import CreateStudentIn, UserOut
+from apps.users.services import student_list_service
 
 from datetime import datetime
 import xlrd
@@ -199,58 +204,29 @@ class ServiceHandler:
             university_id: int,
             file: UploadFile = File(...),
             session: AsyncSession):
-        if file.content_type != "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet":
-            raise BackendException(
-                message="Uploaded file have invalid type.",
-                code=http_status.HTTP_406_NOT_ACCEPTABLE
-            )
-        query = select(Faculty, Speciality).filter(
-            Speciality.faculty_id == Faculty.faculty_id
-        ).where(Faculty.university_id == university_id)
-        specialties, faculty_dict, schema_list = await database.fetch_all(query), defaultdict(dict), []
-        for specialty in specialties:
-            faculty_dict[specialty.shortname]["faculty_id"] = specialty.faculty_id
-            faculty_dict[specialty.shortname][specialty.name_1] = specialty.speciality_id
-        workbook = xlrd.open_workbook(file_contents=file.file.read())
-        worksheet = workbook.sheet_by_name("список студентів")
-        row, col = 0, 0
-        for i, elem in enumerate(worksheet.col(1)):
-            if elem.value:
-                row = i + 1
-                break
-            if i > 100:
-                raise BackendException(
-                    message="Empty second column. Please, check the correctness of the file content.",
-                    code=http_status.HTTP_406_NOT_ACCEPTABLE
-                )
-        for j, elem in enumerate(worksheet.row(row-1)):
-            if elem.value == "Прізвище":
-                col = j
-                break
-            if j > 100:
-                raise BackendException(
-                    message="Can't find cell with content 'Прізвище'. Please, check the correctness of the file content.",
-                    code=http_status.HTTP_406_NOT_ACCEPTABLE
-                )
+        check_content_type(file)
+
+        specialties, schema_list = await get_specialties_list(university_id), []
+
+        faculty_dict = create_faculty_dict(specialties)
+
+        telephone_set = await create_telephone_set(session=session, filters={"university_id": university_id})
+
+        worksheet, cell, col, row = get_worksheet_cell_col_row(file)
+
         for i in range(row, len(worksheet.col(1))):
-            if worksheet.cell_value(i, col + 7) not in faculty_dict:
-                raise BackendException(
-                    message=f"Row {i}. There is no such faculty name.",
-                    code=http_status.HTTP_406_NOT_ACCEPTABLE
-                )
-            specialties_dict = faculty_dict.get(worksheet.cell_value(i, col + 7))
-            if worksheet.cell_value(i, col + 6) not in specialties_dict:
-                raise BackendException(
-                    message=f"Row {i}. There is no such speciality in {worksheet.cell_value(i, col + 7)} faculty",
-                    code=http_status.HTTP_406_NOT_ACCEPTABLE
-                )
+
+            check_faculty_existence(cell, col, i, faculty_dict)
+            specialties_dict = faculty_dict.get(cell(i, col + 7))
+            check_specialty_existence(cell, col, i, specialties_dict)
+            check_telephone_number_existence(cell, col, i, telephone_set)
             schema = CreateStudentIn(
-                full_name=worksheet.cell_value(i, col),
-                telephone_number=worksheet.cell_value(i, col + 3),
-                course_id=worksheet.cell_value(i, col + 4),
+                full_name=cell(i, col),
+                telephone_number=cell(i, col + 3),
+                course_id=cell(i, col + 4),
                 faculty_id=specialties_dict.get("faculty_id"),
-                speciality_id=specialties_dict.get(worksheet.cell_value(i, col + 6)),
-                gender=worksheet.cell_value(i, col + 8)
+                speciality_id=specialties_dict.get(cell(i, col + 6)),
+                gender=cell(i, col + 8)
             )
             schema_list.append(schema)
 

@@ -9,7 +9,7 @@ from apps.users.schemas import StudentsListOut
 
 from fastapi import APIRouter, Depends, File, Request, UploadFile
 from sqlalchemy.ext.asyncio import AsyncSession
-from typing import List
+from typing import List, Union
 
 
 services_router = APIRouter(
@@ -261,7 +261,7 @@ async def read_request_details(
 
 @services_router.post("/{university_id}/create_students/",
                       name="create_students_from_file",
-                      response_model=JSENDOutSchema[List[StudentsListOut]],
+                      response_model=JSENDOutSchema[Union[List[StudentsListOut], None]],
                       summary="Create students from file",
                       responses={200: {"description": "Successful create students from file response"}},
                       tags=['Admin dashboard'])

@@ -1,5 +1,6 @@
 from apps.common.db import database
 from apps.common.services import AsyncCRUDBase
+from apps.educational_institutions.models import Faculty, Speciality
 from apps.services.models import (
     hostel_accommodation_view, Service, UserDocument, user_request_exist_view, user_request_list_view,
     UserRequest, user_request_booking_hostel_view, UserRequestReview, user_request_details_view
@@ -46,6 +47,13 @@ async def create_user_document(**kwargs):
                                         user_request_id=kwargs.get("user_request_id"))
     result = await database.execute(query)
     return result
+
+
+async def get_specialties_list(university_id):
+    query = select(Faculty, Speciality).filter(
+        Speciality.faculty_id == Faculty.faculty_id
+    ).where(Faculty.university_id == university_id)
+    return await database.fetch_all(query)
 
 
 request_existence_service = AsyncCRUDBase(model=user_request_exist_view)
