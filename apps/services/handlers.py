@@ -139,7 +139,6 @@ class ServiceHandler:
                 "total_sum": user_request_review.total_sum,
                 "payment_deadline": user_request_review.payment_deadline.now(),
                 "remark": user_request_review.remark,
-                "date_review": datetime.now(),
                 "bed_place_id": user_request_review.bed_place_id
             })
         await user_request_service.update(

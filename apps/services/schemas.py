@@ -121,7 +121,6 @@ class UserRequestDetailsViewOut(BaseOutSchema):
     hostel_name: Dict[str, Union[int, str]] = None
     room_number: int = None
     bed_place_name: str = None
-    date_review: datetime = None
     remark: str = None
     documents: List[Dict[str, str]]
 
