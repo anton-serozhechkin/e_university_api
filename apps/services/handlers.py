@@ -199,11 +199,11 @@ class ServiceHandler:
             data={"bed_place_id": data.bed_place_id}
         )
 
-        months_count = ServiceHandler.calculate_difference_between_dates_in_months(data.end_date_accommodation,
-                                                                                   data.start_date_accommodation)
-        month_price = ServiceHandler.get_month_price_by_bed_place(hostel.month_price, bed_place.bed_place_name)
+        months_count = self.calculate_difference_between_dates_in_months(data.end_date_accommodation,
+                                                                         data.start_date_accommodation)
+        month_price = self.get_month_price_by_bed_place(hostel.month_price, bed_place.bed_place_name)
 
-        response = ServiceHandler.calculate_total_hostel_accommodation_cost(month_price, months_count)
+        response = self.calculate_total_hostel_accommodation_cost(month_price, months_count)
         return {
             'total_hostel_accommodation_cost': response
         }
@@ -215,10 +215,10 @@ class ServiceHandler:
     @classmethod
     def get_month_price_by_bed_place(cls, hostel_month_price: Decimal, bed_place_name: str) -> Decimal:
         return Decimal(hostel_month_price) * Decimal(bed_place_name)
+
     @classmethod
     def calculate_total_hostel_accommodation_cost(cls, month_price: Decimal, month_difference: int) -> Decimal:
         return month_price * month_difference
-
 
 
 service_handler = ServiceHandler()
