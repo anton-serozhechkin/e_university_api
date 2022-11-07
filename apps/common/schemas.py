@@ -10,6 +10,19 @@ from apps.common.enums import JSENDStatus
 SchemaVar = TypeVar("SchemaVar", bound=Union[BaseModel, NoneType, str])
 
 
+class BaseInSchema(BaseModel):
+    class Config:
+        orm_mode = True
+        arbitrary_types_allowed = True
+        validate_assignment = True
+        allow_population_by_field_name = True
+        use_enum_values = True
+
+
+class BaseOutSchema(BaseInSchema):
+    pass
+
+
 class JSENDOutSchema(GenericModel, Generic[SchemaVar]):
     status: JSENDStatus = Field(default=JSENDStatus.SUCCESS)
     data: SchemaVar
