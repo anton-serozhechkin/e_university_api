@@ -1,4 +1,4 @@
-from apps.common.schemas import BaseInSchema, BaseOutSchema, FullaNameSchema
+from apps.common.schemas import BaseInSchema, BaseOutSchema, FullNameSchema
 
 from datetime import date, datetime
 from typing import Dict, Union, List
@@ -24,12 +24,12 @@ class UserRequestExistenceOut(BaseOutSchema):
 
 
 class UserRequestBookingHostelOut(BaseOutSchema):
-    full_name: FullaNameSchema
+    full_name: FullNameSchema
     user_id: int
     faculty_name: str
     university_id: int
     short_university_name: str
-    rector_full_name: FullaNameSchema
+    rector_full_name: FullNameSchema
     date_today: date
     start_year: int
     finish_year: int
@@ -105,7 +105,7 @@ class HostelAccomodationViewOut(BaseOutSchema):
     university_name: str
     organisation_code: str
     payment_recognation: str  # TODO spelling error
-    commandant_full_name: FullaNameSchema
+    commandant_full_name: FullNameSchema
     telephone_number: str
     documents: Dict[str, str]
 

@@ -1,4 +1,4 @@
-from apps.common.schemas import BaseOutSchema, FullaNameSchema
+from apps.common.schemas import BaseOutSchema, FullNameSchema
 
 
 class HostelListOut(BaseOutSchema):
@@ -10,7 +10,7 @@ class HostelListOut(BaseOutSchema):
     street: str
     build: str
     commandant_id: int
-    commandant_full_name: FullaNameSchema
+    commandant_full_name: FullNameSchema
 
 
 class BedPlaceOut(BaseOutSchema):

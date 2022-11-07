@@ -42,7 +42,7 @@ class JSENDErrorOutSchema(JSENDOutSchema):
     code: int = Field(default=http_status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
-class FullaNameSchema(BaseOutSchema):
+class FullNameSchema(BaseOutSchema):
     last_name: str
     first_name: str
     middle_name: str = None
