@@ -5,7 +5,7 @@ from apps.services.schemas import (
     UserRequestExistenceOut, UserRequestsListOut, CreateUserRequestOut, CreateUserRequestIn,
     UserRequestBookingHostelOut, CancelRequestOut, CancelRequestIn, UserRequestReviewOut,
     UserRequestReviewIn, HostelAccomodationViewOut, UserRequestDetailsViewOut)
-from apps.users.schemas import StudentsListOut
+from apps.users.schemas import CreateStudentsOut
 
 from fastapi import APIRouter, Depends, File, Request, UploadFile
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -261,7 +261,7 @@ async def read_request_details(
 
 @services_router.post("/{university_id}/create_students/",
                       name="create_students_from_file",
-                      response_model=JSENDOutSchema[Union[List[StudentsListOut], None]],
+                      response_model=JSENDOutSchema[Union[List[CreateStudentsOut], None]],
                       summary="Create students from file",
                       responses={200: {"description": "Successful create students from file response"}},
                       tags=['Admin dashboard'])

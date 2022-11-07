@@ -10,6 +10,7 @@ from apps.services.utils import (
     check_specialty_existence, check_telephone_number_existence
 )
 from apps.users.schemas import CreateStudentIn, UserOut
+from apps.users.services import student_service
 
 from datetime import datetime
 from fastapi import File, Request, UploadFile
@@ -215,8 +216,10 @@ class ServiceHandler:
                 gender=cell(i, col + 8)
             )
             schema_list.append(schema)
-
-        print(schema_list, 888)
+        return await student_service.create_many(
+            session=session,
+            objs=schema_list
+        )
 
 
 service_handler = ServiceHandler()

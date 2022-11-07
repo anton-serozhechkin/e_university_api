@@ -207,6 +207,17 @@ class CreateStudentOut(BaseOutSchema):
     student_id: int
 
 
+class CreateStudentsOut(BaseOutSchema):
+    student_id: int
+    full_name: str
+    telephone_number: str
+    gender: str
+    course_id: int
+    speciality_id: int
+    user_id: None
+    faculty_id: int
+
+
 class StudentsListOut(BaseOutSchema):
     student_id: int
     student_full_name: str
