@@ -193,7 +193,7 @@ class CreateStudentIn(BaseModel):
 
     @validator('gender')
     def validate_gender(cls, value):
-        exists_genders = ['Ч', 'М']
+        exists_genders = ['Ч', 'Ж']
         if not value:
             raise ValueError('The student gender cannot be empty!')
         if value.upper() not in exists_genders:

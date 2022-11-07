@@ -9,14 +9,14 @@ from apps.services.schemas import UserRequestExistenceOut, UserRequestsListOut, 
 from apps.services.services import create_user_document
 from apps.users.handlers import get_current_user
 from apps.users.models import UserFaculty
-from apps.users.schemas import StudentsListOut
+from apps.users.schemas import CreateStudentIn, StudentsListOut
 
 from datetime import datetime
 from typing import List
 import json
+import xlrd
 from collections import defaultdict
 from fastapi import Depends, APIRouter, File, status as http_status, UploadFile
-from fastapi.encoders import jsonable_encoder
 from sqlalchemy import select, insert, update
 from apps.common.schemas import JSENDOutSchema, JSENDFailOutSchema
 services_router = APIRouter(
@@ -301,11 +301,54 @@ async def create_students_from_file(
     query = select(Faculty, Speciality).filter(
         Speciality.faculty_id == Faculty.faculty_id
     ).where(Faculty.university_id == university_id)
-    specialties, faculty_dict = await database.fetch_all(query), defaultdict(dict)
+    specialties, faculty_dict, schema_list = await database.fetch_all(query), defaultdict(dict), []
     for specialty in specialties:
         faculty_dict[specialty.shortname]["faculty_id"] = specialty.faculty_id
         faculty_dict[specialty.shortname][specialty.name_1] = specialty.speciality_id
+    workbook = xlrd.open_workbook(file_contents=file.file.read())
+    worksheet = workbook.sheet_by_name("список студентів")
+    row, col = 0, 0
+    for i, elem in enumerate(worksheet.col(1)):
+        if elem.value:
+            row = i + 1
+            break
+        if i > 100:
+            raise BackendException(
+                message="Empty second column. Please, check the correctness of the file content.",
+                code=http_status.HTTP_406_NOT_ACCEPTABLE
+            )
+    for j, elem in enumerate(worksheet.row(row-1)):
+        if elem.value == "Прізвище":
+            col = j
+            break
+        if j > 100:
+            raise BackendException(
+                message="Can't find cell with content 'Прізвище'. Please, check the correctness of the file content.",
+                code=http_status.HTTP_406_NOT_ACCEPTABLE
+            )
+    for i in range(row, len(worksheet.col(1))):
+        if worksheet.cell_value(i, col + 7) not in faculty_dict:
+            raise BackendException(
+                message=f"Row {i}. There is no such faculty name.",
+                code=http_status.HTTP_406_NOT_ACCEPTABLE
+            )
+        specialties_dict = faculty_dict.get(worksheet.cell_value(i, col + 7))
+        if worksheet.cell_value(i, col + 6) not in specialties_dict:
+            raise BackendException(
+                message=f"Row {i}. There is no such speciality in {worksheet.cell_value(i, col + 7)} faculty",
+                code=http_status.HTTP_406_NOT_ACCEPTABLE
+            )
+        schema = CreateStudentIn(
+            full_name=worksheet.cell_value(i, col),
+            telephone_number=worksheet.cell_value(i, col + 3),
+            course_id=worksheet.cell_value(i, col + 4),
+            faculty_id=specialties_dict.get("faculty_id"),
+            speciality_id=specialties_dict.get(worksheet.cell_value(i, col + 6)),
+            gender=worksheet.cell_value(i, col + 8)
+        )
+        schema_list.append(schema)
 
+    print(schema_list, 888)
 
 
 
