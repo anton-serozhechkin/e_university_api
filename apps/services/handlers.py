@@ -1,33 +1,19 @@
-from apps.common.exceptions import BackendException
 from apps.services.services import (
     create_user_document, get_specialties_list, hostel_accommodation_service, request_existence_service,
     user_request_list_service, user_faculty_service, user_request_service, user_request_booking_hostel_service,
     user_request_review_service, user_request_detail_service
 )
-from apps.common.db import database
-from apps.educational_institutions.models import Faculty, Speciality
-from apps.services.models import user_request_exist_view, user_request_list_view, STATUS_MAPPING, UserRequest, \
-    user_request_booking_hostel_view, UserRequestReview, hostel_accommodation_view, user_request_details_view
-from apps.services.schemas import UserRequestExistenceOut, UserRequestsListOut, CreateUserRequestOut, \
-    CreateUserRequestIn, UserRequestBookingHostelOut, CancelRequestOut, CancelRequestIn, UserRequestReviewOut, \
-    UserRequestReviewIn, HostelAccomodationViewOut, UserRequestDetailsViewOut
+from apps.services.models import STATUS_MAPPING
+from apps.services.schemas import CreateUserRequestIn, CancelRequestIn, UserRequestReviewIn
 from apps.services.utils import (
     check_content_type, create_faculty_dict, create_telephone_set, get_worksheet_cell_col_row, check_faculty_existence,
     check_specialty_existence, check_telephone_number_existence
 )
 from apps.users.schemas import CreateStudentIn, UserOut
-from apps.users.services import student_list_service
 
 from datetime import datetime
-import xlrd
-from collections import defaultdict
-from fastapi import Depends, APIRouter, File, status as http_status, UploadFile
-from sqlalchemy import select, insert, update
-from apps.common.schemas import JSENDOutSchema, JSENDFailOutSchema
-services_router = APIRouter(
-    responses={422: {"model": JSENDFailOutSchema, "description": "ValidationError"}}
-)
-from fastapi import Request
+from fastapi import File, Request, UploadFile
+
 from sqlalchemy.ext.asyncio import AsyncSession
 
 
