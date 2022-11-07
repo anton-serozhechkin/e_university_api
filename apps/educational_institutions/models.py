@@ -74,8 +74,8 @@ class Dean(Base):
     faculty = relationship("Faculty", back_populates="dean")
 
     def __repr__(self):
-        return f'{self.__class__.__name__}(dean_id="{self.dean_id}", last_name="{self.last_name}",' \
-               f'first_name="{self.first_name}", middle_name="{self.middle_name}")'
+        return f'{self.__class__.__name__}(dean_id="{self.dean_id}", first_name="{self.first_name}", ' \
+               f'middle_name="{self.middle_name}", last_name="{self.last_name}")'
 
 
 class Rector(Base):
@@ -89,8 +89,8 @@ class Rector(Base):
     university = relationship("University", back_populates="rector")
 
     def __str__(self):
-        return f'{self.__class__.__name__}(rector_id="{self.rector_id}", last_name="{self.last_name}",' \
-               f'first_name="{self.first_name}", middle_name="{self.middle_name}")'
+        return f'{self.__class__.__name__}(rector_id="{self.rector_id}", first_name="{self.first_name}", ' \
+               f'middle_name="{self.middle_name}", last_name="{self.last_name}")'
 
 
 class Course(Base):

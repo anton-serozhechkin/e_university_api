@@ -38,7 +38,7 @@ def get_student_attr(student):
             message="A user account already exists. Please check your email for details.",
             code=http_status.HTTP_409_CONFLICT
         )
-    return student.last_name, student.first_name, student.faculty_id
+    return student.first_name, student.last_name, student.faculty_id
 
 
 def get_token_data(token_data):

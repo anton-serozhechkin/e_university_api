@@ -42,8 +42,8 @@ class Commandant(Base):
     hostel = relationship("Hostel", back_populates="commandant")
 
     def __repr__(self):
-        return (f'{self.__class__.__name__}(commandant_id="{self.commandant_id}", last_name="{self.last_name}",'
-                f'first_name="{self.first_name}", middle_name="{self.middle_name}", telephone_number="{self.telephone_number}")')
+        return (f'{self.__class__.__name__}(commandant_id="{self.commandant_id}", first_name="{self.first_name}", '
+                f'middle_name="{self.middle_name}", last_name="{self.last_name}", telephone_number="{self.telephone_number}")')
 
 
 class BedPlace(Base):
