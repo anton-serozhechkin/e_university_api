@@ -59,7 +59,7 @@ class MainSettings(BaseSettings):
     PORT: int = Field(default=8000)
     WORKERS_COUNT: int = Field(default=1)
     TRUSTED_HOSTS: List[str] = Field(default=["*"])
-    DATETIME_FORMAT: str = Field("%Y-%m-%d %H-%M-%S")
+    DATETIME_FORMAT: str = Field("%Y-%m-%d %H:%M:%S")
 
     # ONE-TIME TOKEN SETTINGS
     TOKEN_LIFE_TIME: int = Field(default=3600)
