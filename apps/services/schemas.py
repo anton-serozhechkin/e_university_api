@@ -65,11 +65,6 @@ class CancelRequestIn(BaseInSchema):
         return v
 
 
-class CancelRequestOut(BaseOutSchema):
-    user_request_id: int
-    status_id: int
-
-
 class UserRequestReviewIn(BaseInSchema):
     status_id: int
     room_number: int = None

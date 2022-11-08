@@ -17,12 +17,6 @@ class UsersListViewOut(BaseOutSchema):
     university_id: int
 
 
-class RegistrationOut(BaseOutSchema):
-    user_id: int
-    faculty_id: int
-    login: str
-
-
 class RegistrationIn(BaseInSchema):
 
     token: str

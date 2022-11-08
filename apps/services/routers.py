@@ -3,7 +3,7 @@ from apps.common.schemas import JSENDFailOutSchema, JSENDOutSchema
 from apps.services.handlers import service_handler
 from apps.services.schemas import (UserRequestExistenceOut, UserRequestsListOut,
                                    CreateUserRequestOut, CreateUserRequestIn,
-                                   UserRequestBookingHostelOut, CancelRequestOut,
+                                   UserRequestBookingHostelOut,
                                    CancelRequestIn, UserRequestReviewOut,
                                    UserRequestReviewIn, HostelAccomodationViewOut,
                                    UserRequestDetailsViewOut, CountHostelAccommodationCostIn,
