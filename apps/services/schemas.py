@@ -4,7 +4,7 @@ from datetime import date, datetime
 from typing import Dict, Union, List
 from decimal import Decimal
 
-from pydantic import BaseModel, validator
+from pydantic import validator, root_validator
 
 
 class CreateUserRequestIn(BaseInSchema):
@@ -123,3 +123,22 @@ class UserRequestDetailsViewOut(BaseOutSchema):
     bed_place_name: str = None
     remark: str = None
     documents: List[Dict[str, str]]
+
+
+class CountHostelAccommodationCostIn(BaseInSchema):
+    hostel_id: int
+    start_date_accommodation: date
+    end_date_accommodation: date
+    bed_place_id: int
+
+    @root_validator
+    def validate_two_dates(cls, values):
+        if values.get('start_date_accommodation') >= values.get('end_date_accommodation'):
+            raise ValueError(
+                "Start date of hostel accommodation can't be more or equal than end date of hostel accommodation"
+            )
+        return values
+
+
+class CountHostelAccommodationCostOut(BaseOutSchema):
+    total_hostel_accommodation_cost: Decimal
