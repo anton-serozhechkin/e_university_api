@@ -104,14 +104,11 @@ class ServiceHandler:
             cancel_request: CancelRequestIn,
             session: AsyncSession):
         CancelRequestIn(status_id=cancel_request.status_id)
-        await user_request_service.update(
+        user_request = await user_request_service.update(
             session=session,
             data={"user_request_id": user_request_id},
             obj=cancel_request)
-        return {
-            "user_request_id": user_request_id,
-            "status_id": cancel_request.status_id
-        }
+        return user_request
 
     async def create_user_request_review(
             self,

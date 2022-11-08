@@ -139,7 +139,7 @@ async def read_user_request_booking_hostel(
 
 @services_router.put("/{university_id}/user-request/{user_request_id}",
                      name="update_cancel_user_request",
-                     response_model=JSENDOutSchema[CancelRequestOut],
+                     response_model=JSENDOutSchema[CreateUserRequestOut],
                      summary="Cancel user request",
                      responses={200: {"description": "Successful cancel user request response"}},
                      tags=["Student dashboard"])
