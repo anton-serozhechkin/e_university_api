@@ -140,10 +140,7 @@ class ServiceHandler:
             data={"user_request_id": user_request_id},
             obj={"status_id": user_request_review.status_id}
         )
-        return {
-            "status_id": user_request_review.status_id,
-            "user_request_review_id": created_user_request_review.user_request_review_id
-        }
+        return created_user_request_review
 
     async def read_hostel_accommodation(
             self,

@@ -90,8 +90,19 @@ class UserRequestReviewIn(BaseInSchema):
 
 
 class UserRequestReviewOut(BaseOutSchema):
-    status_id: int
     user_request_review_id: int
+    date_created: datetime
+    room_number: int
+    start_date_accommodation: datetime
+    end_date_accommodation: datetime
+    total_sum: Decimal
+    payment_deadline: datetime
+    remark: str
+    bed_place_id: int
+    reviewer: int
+    hostel_id: int
+    university_id: int
+    user_request_id: int
 
 
 class HostelAccomodationViewOut(BaseOutSchema):

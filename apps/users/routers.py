@@ -99,7 +99,7 @@ async def create_user(
         - **role_id**: user role id, required
         - **faculty_id**: user faculty id, required
 
-        **Return**: created user
+        **Return**: created user data
     """
     user = await user_handler.create_user(request=request, user=user, session=session)
     return {
