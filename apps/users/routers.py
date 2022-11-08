@@ -134,7 +134,7 @@ async def delete_user(
 
 @users_router.post("/registration",
                    name="registration",
-                   response_model=JSENDOutSchema[RegistrationOut],
+                   response_model=JSENDOutSchema[CreateUserOut],
                    summary="User registration",
                    responses={
                        200: {"description": "Successful user registration response"},
@@ -156,12 +156,12 @@ async def registration(
         - **email**: enter user email; only letters (a-z), numbers (0-9) and periods (.) are allowed
         - **password**: enter password; password cannot be empty
 
-        **Return**: user id; faculty id; login, which consists of name and random number
+        **Return**: registered user data
     """
-    response = await user_handler.registration(request=request, user=user, session=session)
+    created_user = await user_handler.registration(request=request, user=user, session=session)
     return {
-        "data": response,
-        "message": f"User with id {response['user_id']} was registered successfully"
+        "data": created_user,
+        "message": f"User with id {created_user.user_id} was registered successfully"
     }
 
 
@@ -183,8 +183,10 @@ async def create_student(
         session: AsyncSession = Depends(get_async_session)):
     """
         **Create university student**
+
         **Path**:
         - **university_id**: university id
+
         **Input**:
         - **full_name**: student fist name and last name, required
         - **telephone_number**: student telephone number, must consists of 12 digits, required
@@ -192,6 +194,7 @@ async def create_student(
         - **faculty_id**: faculty id, required
         - **speciality_id**: speciality id, required
         - **gender**: student gender, 'Ч' or 'Ж', required
+
         **Return**: created student data
     """
     student = await user_handler.create_student(request=request, student=student, session=session)

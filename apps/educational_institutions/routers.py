@@ -73,8 +73,7 @@ async def create_faculty(
         - **shortname**: string, short faculty name
         - **main_email**: string, faculty main email
 
-        **Return**: list of all university faculties with info: faculty id in table, name and shortname,
-        email, university id in table, decan full name
+        **Return**: created faculty data
     """
     response = await edu_institutions_handler.create_faculty(
         request=request,

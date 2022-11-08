@@ -117,11 +117,14 @@ class UserHandler:
                 "user_id": registered_user.user_id,
                 "faculty_id": faculty_id
             })
-        return {
-            "user_id": registered_user.user_id,
-            "faculty_id": user_faculty_data.user_id,
-            "login": login
-        }
+        return CreateUserOut(
+            user_id=registered_user.user_id,
+            login=registered_user.login,
+            last_visit=registered_user.last_visit,
+            email=registered_user.email,
+            is_active=registered_user.is_active,
+            role_id=registered_user.role_id,
+        )
 
     async def create_student(
             self,
