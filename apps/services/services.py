@@ -1,10 +1,13 @@
-from decimal import Decimal
-
 from apps.common.db import database
-from apps.services.models import Service, UserDocument
+from apps.common.services import AsyncCRUDBase
+from apps.services.models import (
+    hostel_accommodation_view, Service, UserDocument, user_request_exist_view, user_request_list_view,
+    UserRequest, user_request_booking_hostel_view, UserRequestReview, user_request_details_view
+)
+from apps.users.models import UserFaculty
 from settings import (Settings, TEMPLATES_PATH, SETTLEMENT_HOSTEL_PATH)
 
-from datetime import datetime, date
+from datetime import datetime
 from docxtpl import DocxTemplate
 from sqlalchemy import select, insert
 
@@ -24,7 +27,7 @@ async def create_user_document_content(**kwargs) -> str:
         context = kwargs.get("context")
         doc.render(context)
         document_name = f"hostel_settlement_{kwargs.get('date_created')}_{kwargs.get('user_request_id')}.docx"
-        path_to_storage = SETTLEMENT_HOSTEL_PATH / document_name
+        path_to_storage = SETTLEMENT_HOSTEL_PATH / document_name.replace(":", "_")
         doc.save(path_to_storage)
         return str(path_to_storage)
     raise RuntimeError(f"create_user_document_content({kwargs}) | there is no service_id!!!")
@@ -41,22 +44,15 @@ async def create_user_document(**kwargs):
                                         name=name,
                                         content=content,
                                         user_request_id=kwargs.get("user_request_id"))
-    return await database.execute(query)
+    result = await database.execute(query)
+    return result
 
 
-def calculate_difference_between_dates_in_months(end_date: date, start_date: date) -> int:
-    # TODO move it to IN schema, because now it raise, but user see internal server error
-    if end_date <= start_date:
-        raise ValueError(
-            "Start date of hostel accommodation can't be more or equal than end date of hostel accommodation"
-        )
-    return end_date.month - start_date.month + 12*(end_date.year - start_date.year)
-
-
-def get_month_price_by_bed_place(hostel_month_price: Decimal, bed_place_name: str) -> Decimal:
-    return hostel_month_price * Decimal(bed_place_name)
-
-
-def calculate_total_hostel_accommodation_cost(month_price: Decimal, months_count: int) -> Decimal:
-    return month_price * months_count
-
+request_existence_service = AsyncCRUDBase(model=user_request_exist_view)
+user_request_list_service = AsyncCRUDBase(model=user_request_list_view)
+user_faculty_service = AsyncCRUDBase(model=UserFaculty)
+user_request_service = AsyncCRUDBase(model=UserRequest)
+user_request_booking_hostel_service = AsyncCRUDBase(model=user_request_booking_hostel_view)
+user_request_review_service = AsyncCRUDBase(model=UserRequestReview)
+hostel_accommodation_service = AsyncCRUDBase(model=hostel_accommodation_view)
+user_request_detail_service = AsyncCRUDBase(model=user_request_details_view)
