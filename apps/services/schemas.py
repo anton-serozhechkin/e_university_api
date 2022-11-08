@@ -14,6 +14,12 @@ class CreateUserRequestIn(BaseInSchema):
 
 class CreateUserRequestOut(BaseOutSchema):
     user_request_id: int
+    date_created: datetime
+    comment: str
+    user_id: int
+    service_id: int
+    faculty_id: int
+    university_id: int
     status_id: int
 
 

@@ -82,10 +82,7 @@ class ServiceHandler:
             "user_request_id": user_request.user_request_id
         }
         await create_user_document(**prepared_data)
-        return {
-            "status_id": STATUS_MAPPING.get("Розглядається"),
-            "user_request_id": user_request.user_request_id
-        }
+        return user_request
 
     async def read_user_request_booking_hostel(
             self,

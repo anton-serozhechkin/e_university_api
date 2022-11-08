@@ -45,7 +45,7 @@ class FacultyOut(BaseOutSchema):
     shortname: str
     main_email: str = None
     university_id: int
-    dekan_full_name: str = None
+    dekan_full_name: str = None     # TODO it must be id: int or there is need to make additional request to the database in handler "create faculty"
 
 
 class SpecialityListOut(BaseOutSchema):

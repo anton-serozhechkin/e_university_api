@@ -101,7 +101,7 @@ async def create_user_request(
     - **service_id**: service id, required
     - **comment**: comment for the creating user request
 
-    **Return**: user request id; request status id
+    **Return**: user request
     """
     response = await service_handler.create_user_request(
         request=request,
@@ -112,7 +112,7 @@ async def create_user_request(
     )
     return {
         "data": response,
-        "message": f"Created user request with id {response['user_request_id']}"
+        "message": f"Created user request with id {response.user_request_id}"
     }
 
 
