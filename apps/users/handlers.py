@@ -3,7 +3,7 @@ from apps.common.exceptions import BackendException
 from apps.common.utils import (get_login, get_student_attr, get_token_data, get_generated_username,
                                get_token_and_expires)
 from apps.users.schemas import (CreateUserIn, DeleteUserIn, RegistrationIn, CreateStudentIn,
-                                DeleteStudentIn, StudentCheckExistanceIn)
+                                DeleteStudentIn, StudentCheckExistanceIn, CreateUserOut)
 from apps.services.services import user_faculty_service
 from apps.users.services import (student_service, one_time_token_service, student_list_service,
                                  user_list_service, user_service)
@@ -52,7 +52,7 @@ class UserHandler:
             request: Request,
             user: CreateUserIn,
             session: AsyncSession):     # TODO refactor this method
-        hashed_password = get_hashed_password(user.password)
+        hashed_password, faculties = get_hashed_password(user.password), []
         created_user = await user_service.create(
             session=session,
             data={
@@ -67,7 +67,14 @@ class UserHandler:
                 session=session,
                 data={"user_id": created_user.user_id,
                       "faculty_id": faculty_id})
-        return created_user.user_id
+        return CreateUserOut(
+            user_id=created_user.user_id,
+            login=created_user.login,
+            last_visit=created_user.last_visit,
+            email=created_user.email,
+            is_active=created_user.is_active,
+            role_id=created_user.role_id,
+        )
 
     async def del_user(
             self,
