@@ -41,8 +41,8 @@ python-jose = {version = "3.3.0", extras = ["cryptography"]}
 
 
 [tool.poetry.group.parcing.dependencies]
-pydantic = {version = "^1.10.2", extras = ["doenv"]}
 python-multipart = "0.0.5"
+pydantic = {version = "^1.10.2", extras = ["dotenv"]}
 
 
 [tool.poetry.group.database.dependencies]
