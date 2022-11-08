@@ -210,6 +210,13 @@ class CreateStudentIn(BaseInSchema):
 
 class CreateStudentOut(BaseOutSchema):
     student_id: int
+    full_name: str
+    telephone_number: str
+    gender: str
+    course_id: int
+    speciality_id: int
+    user_id: int = None
+    faculty_id: int
 
 
 class StudentsListOut(BaseOutSchema):

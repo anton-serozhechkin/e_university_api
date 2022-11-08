@@ -129,11 +129,10 @@ class UserHandler:
             request: Request,
             student: CreateStudentIn,
             session: AsyncSession):
-        created_student = await student_service.create(
+        return await student_service.create(
             session=session,
             obj=student
         )
-        return {"student_id": created_student.student_id}
 
     async def read_students_list(
             self,

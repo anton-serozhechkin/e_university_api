@@ -192,12 +192,12 @@ async def create_student(
         - **faculty_id**: faculty id, required
         - **speciality_id**: speciality id, required
         - **gender**: student gender, 'Ч' or 'Ж', required
-        **Return**: created student id
+        **Return**: created student data
     """
     student = await user_handler.create_student(request=request, student=student, session=session)
     return {
         "data": student,
-        "message": f"Created student with id {student.get('student_id')}"
+        "message": f"Created student with id {student.student_id}"
     }
 
 
