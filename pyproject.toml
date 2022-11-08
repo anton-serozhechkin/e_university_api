@@ -38,6 +38,7 @@ faker = "^15.3.1"
 [tool.poetry.group.database.dependencies]
 psycopg2-binary = "^2.9.3"
 asyncpg = "^0.25.0"
+databases = "^0.6.0"
 
 [build-system]
 requires = ["poetry-core"]
