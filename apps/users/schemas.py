@@ -3,7 +3,7 @@ from apps.common.schemas import BaseInSchema, BaseOutSchema, FullNameSchema
 from datetime import datetime
 from typing import List, Dict, Union
 import re
-from pydantic import validator
+from pydantic import Field, validator
 
 
 class UsersListViewOut(BaseOutSchema):
@@ -140,9 +140,9 @@ class DeleteUserIn(BaseInSchema):
 
 
 class StudentCheckExistenceIn(BaseInSchema):
-    last_name: str
-    first_name: str
-    telephone_number: str
+    last_name: str = Field(default="Петренко", max_length=50)
+    first_name: str = Field(default="Петро", max_length=50)
+    telephone_number: str = Field(default="380979889988", max_length=12, min_length=12)
 
     @validator('last_name')
     def validate_last_name(cls, value):
@@ -150,8 +150,6 @@ class StudentCheckExistenceIn(BaseInSchema):
             raise ValueError("The student's surname is mandatory!")
         if not value.istitle():
             raise ValueError("The first letter must be uppercase!")
-        if len(value) > 50:
-            raise ValueError("Letters number must be lower then 50!")
         return value
 
     @validator('first_name')
@@ -160,16 +158,12 @@ class StudentCheckExistenceIn(BaseInSchema):
             raise ValueError("The student's name is mandatory!")
         if not value.istitle():
             raise ValueError("The first letter must be uppercase!")
-        if len(value) > 50:
-            raise ValueError("Letters number must be lower then 50!")
         return value
 
     @validator('telephone_number')
     def validate_telephone_number(cls, value):
-        if not value:
-            raise ValueError('The phone number cannot be empty!')
-        elif len(value) != 12:
-            raise ValueError('The phone number must contain 12 digits!')
+        if not value.isdigit():
+            raise ValueError('The phone number must consist of digits!')
         return value
 
 
@@ -180,10 +174,10 @@ class StudentCheckExistenceOut(BaseOutSchema):
 
 
 class CreateStudentIn(BaseInSchema):
-    last_name: str
-    first_name: str
+    last_name: str = Field(default="Петренко", max_length=50)
+    first_name: str = Field(default="Петро", max_length=50)
     middle_name: str = None
-    telephone_number: str
+    telephone_number: str = Field(default="380979889988", max_length=12, min_length=12)
     course_id: int
     faculty_id: int
     speciality_id: int
@@ -195,8 +189,6 @@ class CreateStudentIn(BaseInSchema):
             raise ValueError("The student's surname is mandatory!")
         if not value.istitle():
             raise ValueError("The first letter must be uppercase!")
-        if len(value) > 50:
-            raise ValueError("Letters number must be lower then 50!")
         return value
 
     @validator('first_name')
@@ -205,16 +197,12 @@ class CreateStudentIn(BaseInSchema):
             raise ValueError("The student's name is mandatory!")
         if not value.istitle():
             raise ValueError("The first letter must be uppercase!")
-        if len(value) > 50:
-            raise ValueError("Letters number must be lower then 50!")
         return value
 
     @validator('telephone_number')
     def validate_telephone_number(cls, value):
-        if not value:
-            raise ValueError('The phone number cannot be empty!')
-        elif len(value) != 12:
-            raise ValueError('The phone number must contain 12 digits!')
+        if not value.isdigit():
+            raise ValueError('The phone number must consist of digits!')
         return value
 
     @validator('course_id')
