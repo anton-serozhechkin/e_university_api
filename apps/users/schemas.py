@@ -144,6 +144,34 @@ class StudentCheckExistenceIn(BaseInSchema):
     first_name: str
     telephone_number: str
 
+    @validator('last_name')
+    def validate_last_name(cls, value):
+        if not value:
+            raise ValueError("The student's surname is mandatory!")
+        if not value.istitle():
+            raise ValueError("The first letter must be uppercase!")
+        if len(value) > 50:
+            raise ValueError("Letters number must be lower then 50!")
+        return value
+
+    @validator('first_name')
+    def validate_first_name(cls, value):
+        if not value:
+            raise ValueError("The student's name is mandatory!")
+        if not value.istitle():
+            raise ValueError("The first letter must be uppercase!")
+        if len(value) > 50:
+            raise ValueError("Letters number must be lower then 50!")
+        return value
+
+    @validator('telephone_number')
+    def validate_telephone_number(cls, value):
+        if not value:
+            raise ValueError('The phone number cannot be empty!')
+        elif len(value) != 12:
+            raise ValueError('The phone number must contain 12 digits!')
+        return value
+
 
 class StudentCheckExistenceOut(BaseOutSchema):
     student: int
@@ -165,12 +193,20 @@ class CreateStudentIn(BaseInSchema):
     def validate_last_name(cls, value):
         if not value:
             raise ValueError("The student's surname is mandatory!")
+        if not value.istitle():
+            raise ValueError("The first letter must be uppercase!")
+        if len(value) > 50:
+            raise ValueError("Letters number must be lower then 50!")
         return value
 
     @validator('first_name')
     def validate_first_name(cls, value):
         if not value:
             raise ValueError("The student's name is mandatory!")
+        if not value.istitle():
+            raise ValueError("The first letter must be uppercase!")
+        if len(value) > 50:
+            raise ValueError("Letters number must be lower then 50!")
         return value
 
     @validator('telephone_number')

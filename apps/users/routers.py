@@ -202,7 +202,7 @@ async def create_student(
     student = await user_handler.create_student(request=request, student=student, session=session)
     return {
         "data": student,
-        "message": f"Created student with id {student.student_id}"
+        "message": f"Created student with id {student.get('student_id')}"
     }
 
 
