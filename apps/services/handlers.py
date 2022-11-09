@@ -1,13 +1,16 @@
+from decimal import Decimal
+
 from apps.services.models import STATUS_MAPPING
-from apps.services.schemas import CancelRequestIn, CreateUserRequestIn, UserRequestReviewIn
+from apps.services.schemas import CancelRequestIn, CreateUserRequestIn, UserRequestReviewIn, \
+    CountHostelAccommodationCostIn
 from apps.services.services import (
     create_user_document, hostel_accommodation_service, request_existence_service, user_request_list_service,
     user_faculty_service, user_request_service, user_request_booking_hostel_service, user_request_review_service,
-    user_request_detail_service
+    user_request_detail_service, hostel_service, bed_place_service
 )
 from apps.users.schemas import UserOut
 
-from datetime import datetime
+from datetime import datetime, date
 from fastapi import Request
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -105,9 +108,9 @@ class ServiceHandler:
             session: AsyncSession):
         CancelRequestIn(status_id=cancel_request.status_id)
         await user_request_service.update(
-                session=session,
-                data={"user_request_id": user_request_id},
-                obj=cancel_request)
+            session=session,
+            data={"user_request_id": user_request_id},
+            obj=cancel_request)
         return {
             "user_request_id": user_request_id,
             "status_id": cancel_request.status_id
@@ -136,7 +139,6 @@ class ServiceHandler:
                 "total_sum": user_request_review.total_sum,
                 "payment_deadline": user_request_review.payment_deadline.now(),
                 "remark": user_request_review.remark,
-                "date_review": datetime.now(),
                 "bed_place_id": user_request_review.bed_place_id
             })
         await user_request_service.update(
@@ -162,7 +164,7 @@ class ServiceHandler:
                 "university_id": university_id,
                 "user_request_id": user_request_id
             })
-        # TODO AttributeError: 'NoneType' object has no attribute 'documents' (it's heppend only if user request doesn't have review)
+        # TODO AttributeError: 'NoneType' object has no attribute 'documents' (it's happened only if user request doesn't have review)
         return response
 
     async def read_request_details(
@@ -178,6 +180,45 @@ class ServiceHandler:
                 "university_id": university_id,
                 "user_request_id": user_request_id
             })
+
+    async def count_hostel_accommodation_cost(
+            self,
+            *,
+            request: Request,
+            university_id: int,
+            data: CountHostelAccommodationCostIn,
+            session: AsyncSession):
+
+        hostel = await hostel_service.read(
+            session=session,
+            data={"hostel_id": data.hostel_id}
+        )
+
+        bed_place = await bed_place_service.read(
+            session=session,
+            data={"bed_place_id": data.bed_place_id}
+        )
+
+        months_count = self.calculate_difference_between_dates_in_months(data.end_date_accommodation,
+                                                                         data.start_date_accommodation)
+        month_price = self.get_month_price_by_bed_place(hostel.month_price, bed_place.bed_place_name)
+
+        response = self.calculate_total_hostel_accommodation_cost(month_price, months_count)
+        return {
+            'total_hostel_accommodation_cost': response
+        }
+
+    @classmethod
+    def calculate_difference_between_dates_in_months(cls, end_date: date, start_date: date) -> int:
+        return end_date.month - start_date.month + 12 * (end_date.year - start_date.year)
+
+    @classmethod
+    def get_month_price_by_bed_place(cls, hostel_month_price: Decimal, bed_place_name: str) -> Decimal:
+        return Decimal(hostel_month_price) * Decimal(bed_place_name)
+
+    @classmethod
+    def calculate_total_hostel_accommodation_cost(cls, month_price: Decimal, month_difference: int) -> Decimal:
+        return month_price * month_difference
 
 
 service_handler = ServiceHandler()
