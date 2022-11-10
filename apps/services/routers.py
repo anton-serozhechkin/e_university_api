@@ -262,7 +262,7 @@ async def read_request_details(
     }
 
 
-@services_router.get("/{university_id}/service-document/{user_request_id}",
+@services_router.get("/{university_id}/service-document/{user_document_id}",
                      name="read_service_document",
                      response_class=StreamingResponse,
                      summary="Read service document",
@@ -274,14 +274,14 @@ async def read_request_details(
 async def read_service_document(
         request: Request,
         university_id: int,
-        user_request_id: int,
+        user_document_id: int,
         user=Depends(get_current_user),
         session: AsyncSession = Depends(get_async_session)):
     return StreamingResponse(
         content=await service_handler.read_service_document(
             request=request,
             university_id=university_id,
-            user_request_id=user_request_id,
+            user_document_id=user_document_id,
             user=user,
             session=session),
         status_code=http_status.HTTP_200_OK,

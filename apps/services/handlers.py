@@ -187,7 +187,7 @@ class ServiceHandler:
             *,
             request: Request,
             university_id: int,
-            user_request_id: int,
+            user_document_id: int,
             user: UserOut,
             session: AsyncSession):
         if user.university_id != university_id:
@@ -195,7 +195,7 @@ class ServiceHandler:
                 message="Access denied. May be input is not correct",
                 code=http_status.HTTP_403_FORBIDDEN
             )
-        user_document = await user_document_service.read(session=session, data={"user_request_id": user_request_id})
+        user_document = await user_document_service.read(session=session, data={"user_document_id": user_document_id})
         return file_manager.get(user_document.content)
 
     async def count_hostel_accommodation_cost(
