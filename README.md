@@ -87,6 +87,36 @@ For work with application, you need to setup your database in docker container. 
        docker-compose build --no-cache
        docker-compose up
 
+## Add dependency
+
+<h5>Firstly you should be sure that poetry is installed.</h5>
+* Run this command:<br>
+```
+poetry --version
+```
+* If it isn't installed - go here: https://python-poetry.org/docs/master/ 
+
+<h5>To add dependency(library)</h5>
+* Run this command:<br>
+`poetry add <library name> --group <group name>`<br><br>
+For example, if your want to add **_"pytest"_** - you should run:<br>
+```
+poetry add pytest --group test
+```
+
+* If you want to add dependency, but there isn't group for it - run:<br>
+`poetry add <library name> --group <group name>`<br><br>
+   * Add this group to DockerFile to line <br>**(don't use space between library names)**
+```
+RUN poetry install --with parcing,documents,security,database,main
+```
+* Update your poetry:<br>
+```
+poetry install
+poetry update
+```
+
+
 ## Project layout
 
 - main.py: FastAPI app definition
