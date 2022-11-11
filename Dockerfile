@@ -17,11 +17,8 @@ WORKDIR /app
 
 # install dependencies
 COPY poetry.lock pyproject.toml ./
-RUN poetry install --with parcing
-RUN poetry install --with documents
-RUN poetry install --with security
-RUN poetry install --with database
-RUN poetry install --with main
+RUN poetry install --with parcing,documents,security,database,main
+
 
 # add project files *after* dependencies
 # https://docs.docker.com/build/building/cache/#order-your-layers
