@@ -108,13 +108,19 @@ poetry add pytest --group test
 
 * If you want to add dependency, but there isn't group for it - run:<br>
 `poetry add <library name> --group <group name>`<br><br>
-   * Add this group to DockerFile to line(before main) <br>**(don't use space between library names)**<br>
+   * Add this group to DockerFile to line
+     * **before main**
+     * **don't use space between library names**<br>
+
+  
 `
-RUN poetry install --with parcing,documents,security,database,main
+RUN poetry install --with <dependencies>,main
 `
   
    * For example, if you want to add group **_logging_** - change Dockerfile line like this:<br><br>
-   RUN poetry install --with **_logging_**,parcing,documents,security,database,main
+        EXAMPLE: 
+
+`RUN poetry install --with logging,parcing,documents,security,database,main`
    
 
 
