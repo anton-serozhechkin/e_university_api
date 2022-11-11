@@ -94,10 +94,12 @@ For work with application, you need to setup your database in docker container. 
 ```
 poetry --version
 ```
+
 * If it isn't installed - go here: https://python-poetry.org/docs/master/ 
+<br><br>
 
 <h5>To add dependency(library)</h5>
-* Run this command:<br>
+* Use this schema:<br>
 `poetry add <library name> --group <group name>`<br><br>
 For example, if your want to add **_"pytest"_** - you should run:<br>
 ```
@@ -106,10 +108,16 @@ poetry add pytest --group test
 
 * If you want to add dependency, but there isn't group for it - run:<br>
 `poetry add <library name> --group <group name>`<br><br>
-   * Add this group to DockerFile to line <br>**(don't use space between library names)**
-```
+   * Add this group to DockerFile to line(before main) <br>**(don't use space between library names)**<br>
+`
 RUN poetry install --with parcing,documents,security,database,main
-```
+`
+  
+   * For example, if you want to add group **_logging_** - change Dockerfile line like this:<br><br>
+   RUN poetry install --with **_logging_**,parcing,documents,security,database,main
+   
+
+
 * Update your poetry:<br>
 ```
 poetry install
