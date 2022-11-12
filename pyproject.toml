@@ -31,6 +31,24 @@ asyncpg = "0.25.0"
 psycopg2-binary = "2.9.3"
 databases = "0.6.0"
 
+
+[tool.poetry.group.lint.dependencies]
+black = "^22.10.0"
+flake8-docstrings = "^1.6.0"
+flake8 = "^5.0.4"
+xenon = "^0.9.0"
+isort = "^5.10.1"
+mypy = "^0.990"
+
+
+[tool.poetry.group.test.dependencies]
+pytest = "^7.2.0"
+pytest-asyncio = "^0.20.2"
+pytest-mock = "^3.10.0"
+pytest-sugar = "^0.9.6"
+pytest-cov = "^4.0.0"
+faker = "^15.3.1"
+
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
