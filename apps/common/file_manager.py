@@ -12,45 +12,39 @@ class FileManagerInterface(metaclass=abc.ABCMeta):
                 hasattr(subclass, 'get') and 
                 callable(subclass.get) and 
                 hasattr(subclass, 'delete') and 
-                callable(subclass.delete) or 
+                callable(subclass.delete) and
+                hasattr(subclass, 'render') and
+                callable(subclass.render) or
                 NotImplemented)
 
     @abc.abstractmethod
     def create(self, path: str, file_name: str, rendered_template: DocxTemplate) -> str:
-        """Create new file"""
         raise NotImplementedError
 
     @abc.abstractmethod
     def get(self, full_file_path: str):
-        """Get file"""
         raise NotImplementedError
 
     @abc.abstractmethod
     def delete(self, full_file_path: str) -> str:
-        """Delete file"""
         raise NotImplementedError
 
     @abc.abstractmethod
     def render(self, path: str, full_file_path: str, data: dict) -> DocxTemplate:
-        """Render template file"""
         raise NotImplementedError
 
 
 class FileManagerLocal(FileManagerInterface):
-    """Extract text from a PDF."""
     def create(self, path: str, file_name: str, rendered_template: DocxTemplate) -> str:
-        """Overrides FormalParserInterface.load_data_source()"""
         path_to_storage = Path(path) / file_name
         rendered_template.save(path_to_storage)
         return str(path_to_storage)
 
     def get(self, full_file_path: str) -> bytes:
-        """Overrides FormalParserInterface.extract_text()"""
         with open(Path(full_file_path), "rb") as in_file:
             yield from in_file
 
     def delete(self, full_file_path: str) -> str:
-        """Overrides FormalParserInterface.extract_text()"""
         Path(full_file_path).unlink()
         return f"Successfully deleted file {full_file_path}"
 

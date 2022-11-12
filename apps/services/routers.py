@@ -271,14 +271,14 @@ async def read_request_details(
                          "content": {"text/html": {"example": "bytes"}}
                      }},
                      tags=["Admin dashboard", "Student dashboard"])
-async def read_service_document(
+async def read_user_document(
         request: Request,
         university_id: int,
         user_document_id: int,
         user=Depends(get_current_user),
         session: AsyncSession = Depends(get_async_session)):
     return StreamingResponse(
-        content=await service_handler.read_service_document(
+        content=await service_handler.read_user_document(
             request=request,
             university_id=university_id,
             user_document_id=user_document_id,
