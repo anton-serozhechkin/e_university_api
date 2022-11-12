@@ -20,10 +20,10 @@ def get_generated_username(last_name: str, first_name: str) -> str:
     if len(last_name) < 4:
         last_name = last_name.join(first_name)
     transliterated_last_name = translit(last_name)
-    return get_login(transliterated_last_name)
+    return get_generated_login(transliterated_last_name)
 
 
-def get_login(data: str) -> str:
+def get_generated_login(data: str) -> str:
     return f"{(data[:4])}-{randint(100, 999)}".lower()
 
 

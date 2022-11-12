@@ -140,8 +140,8 @@ class DeleteUserIn(BaseInSchema):
 
 
 class StudentCheckExistenceIn(BaseInSchema):
-    last_name: str = Field(default="Петренко", max_length=50)
-    first_name: str = Field(default="Петро", max_length=50)
+    last_name: str = Field(default="Petrenko", max_length=50)
+    first_name: str = Field(default="Petro", max_length=50)
     telephone_number: str = Field(default="380979889988", max_length=12, min_length=12)
 
     @validator('last_name')
@@ -149,7 +149,7 @@ class StudentCheckExistenceIn(BaseInSchema):
         if not value:
             raise ValueError("The student's surname is mandatory!")
         if not value.istitle():
-            raise ValueError("The first letter must be uppercase!")
+            raise ValueError("The last name first letter must be uppercase!")
         return value
 
     @validator('first_name')
@@ -157,7 +157,7 @@ class StudentCheckExistenceIn(BaseInSchema):
         if not value:
             raise ValueError("The student's name is mandatory!")
         if not value.istitle():
-            raise ValueError("The first letter must be uppercase!")
+            raise ValueError("The name first letter must be uppercase!")
         return value
 
     @validator('telephone_number')
@@ -173,31 +173,12 @@ class StudentCheckExistenceOut(BaseOutSchema):
     expires: datetime
 
 
-class CreateStudentIn(BaseInSchema):
-    last_name: str = Field(default="Петренко", max_length=50)
-    first_name: str = Field(default="Петро", max_length=50)
+class CreateStudentIn(StudentCheckExistenceIn):
     middle_name: str = None
-    telephone_number: str = Field(default="380979889988", max_length=12, min_length=12)
     course_id: int
     faculty_id: int
     speciality_id: int
     gender: str
-
-    @validator('last_name')
-    def validate_last_name(cls, value):
-        if not value:
-            raise ValueError("The student's surname is mandatory!")
-        if not value.istitle():
-            raise ValueError("The first letter must be uppercase!")
-        return value
-
-    @validator('first_name')
-    def validate_first_name(cls, value):
-        if not value:
-            raise ValueError("The student's name is mandatory!")
-        if not value.istitle():
-            raise ValueError("The first letter must be uppercase!")
-        return value
 
     @validator('telephone_number')
     def validate_telephone_number(cls, value):

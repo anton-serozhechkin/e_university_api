@@ -1,6 +1,6 @@
 from apps.authorization.services import get_hashed_password
 from apps.common.exceptions import BackendException
-from apps.common.utils import (get_login, get_student_attr, get_token_data, get_generated_username,
+from apps.common.utils import (get_generated_login, get_student_attr, get_token_data, get_generated_username,
                                get_token_and_expires)
 from apps.users.schemas import (CreateUserIn, DeleteUserIn, RegistrationIn, CreateStudentIn,
                                 DeleteStudentIn, StudentCheckExistenceIn)
@@ -56,7 +56,7 @@ class UserHandler:
         created_user = await user_service.create(
             session=session,
             data={
-                "login": get_login(user.email),
+                "login": get_generated_login(user.email),
                 "password": hashed_password,
                 "email": user.email,
                 "role_id": user.role_id,
