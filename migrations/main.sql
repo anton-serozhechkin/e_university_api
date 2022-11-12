@@ -432,7 +432,7 @@ CREATE VIEW user_request_details_view AS
 	LEFT JOIN bed_place bd ON
 		bd.bed_place_id = urr.bed_place_id
     LEFT JOIN user_document ud ON
-		ud.user_request_id = urr.user_request_id
+		ud.user_request_id = ur.user_request_id
 	GROUP BY
 		ur.user_request_id,
         ur.university_id,
