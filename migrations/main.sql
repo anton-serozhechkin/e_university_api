@@ -418,7 +418,7 @@ CREATE VIEW user_request_details_view AS
         urr.room_number,
         bd.bed_place_name,
         urr.remark,
-        jsonb_agg(jsonb_build_object('name', ud.name, 'content', ud.content)) as documents
+        jsonb_agg(jsonb_build_object('id', ud.user_document_id, 'name', ud.name,'date_created', ud.date_created)) as documents
     FROM
         user_request ur
     LEFT JOIN user_request_review urr ON
