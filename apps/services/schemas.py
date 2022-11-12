@@ -110,6 +110,17 @@ class HostelAccomodationViewOut(BaseOutSchema):
     documents: Dict[str, str]
 
 
+class UserDocumentsSchema(BaseOutSchema):
+    id: int
+    name: str
+    date_created: datetime
+
+
+class HostelNameSchema(BaseOutSchema):
+    name: str = None
+    number: int = None
+
+
 class UserRequestDetailsViewOut(BaseOutSchema):
     user_request_id: int
     university_id: int
@@ -118,11 +129,11 @@ class UserRequestDetailsViewOut(BaseOutSchema):
     status_name: str
     status_id: int
     comment: str = None
-    hostel_name: Dict[str, Union[int, str]] = None
+    hostel_name: HostelNameSchema
     room_number: int = None
     bed_place_name: str = None
     remark: str = None
-    documents: List[Dict[str, str]]
+    documents: List[UserDocumentsSchema]
 
 
 class CountHostelAccommodationCostIn(BaseInSchema):
