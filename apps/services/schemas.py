@@ -1,4 +1,4 @@
-from apps.common.schemas import BaseInSchema, BaseOutSchema
+from apps.common.schemas import BaseInSchema, BaseOutSchema, UserDocumentsSchema, HostelNameSchema
 
 from datetime import date, datetime
 from typing import Dict, Union, List
@@ -118,11 +118,11 @@ class UserRequestDetailsViewOut(BaseOutSchema):
     status_name: str
     status_id: int
     comment: str = None
-    hostel_name: Dict[str, Union[int, str]] = None
+    hostel_name: HostelNameSchema
     room_number: int = None
     bed_place_name: str = None
     remark: str = None
-    documents: List[Dict[str, str]]
+    documents: List[UserDocumentsSchema]
 
 
 class CountHostelAccommodationCostIn(BaseInSchema):
