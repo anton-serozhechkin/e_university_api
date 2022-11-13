@@ -114,7 +114,7 @@ poetry add pytest --group test
 
   
 `
-RUN poetry install --with <dependencies>,main
+RUN poetry install --with <group name>,main
 `
   
    * For example, if you want to add group **_logging_** - change Dockerfile line like this:<br><br>
