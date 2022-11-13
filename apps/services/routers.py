@@ -7,12 +7,11 @@ from apps.services.schemas import (UserRequestExistenceOut, UserRequestsListOut,
                                    CancelRequestIn, UserRequestReviewOut,
                                    UserRequestReviewIn, HostelAccomodationViewOut,
                                    UserRequestDetailsViewOut, CountHostelAccommodationCostIn,
-                                   CountHostelAccommodationCostOut)
+                                   CountHostelAccommodationCostOut, ReturnStudentDocuments)
 
 from fastapi import APIRouter, Depends, Request
 from sqlalchemy.ext.asyncio import AsyncSession
 from typing import List
-
 
 services_router = APIRouter(
     responses={422: {"model": JSENDFailOutSchema, "description": "ValidationError"}}
@@ -280,4 +279,25 @@ async def count_hostel_accommodation_cost(
             data=data,
             session=session),
         "message": "Cost of hostel accommodation of student was counted successfully"
+    }
+
+
+@services_router.get("/{university_id}/get-student-documents/",
+                     name="get_student_documents",
+                     summary="Get Student Documents",
+                     response_model=JSENDOutSchema[ReturnStudentDocuments],
+                     responses={200: {"description": "Successful returned student_documents"}},
+                     tags=["Student dashboard"])
+async def get_student_documents(
+        request: Request,
+        university_id: int,
+        user=Depends(get_current_user),
+        session: AsyncSession = Depends(get_async_session)):
+    return {
+        "data": await service_handler.get_student_documents(
+            request=request,
+            university_id=university_id,
+            user=user,
+            session=session),
+        "message": "Successful returned student_documents"
     }
