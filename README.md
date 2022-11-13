@@ -120,7 +120,7 @@ RUN poetry install --with <group name>,main
    * For example, if you want to add group **_logging_** - change Dockerfile line like this:<br><br>
         EXAMPLE: 
 
-`RUN poetry install --with logging,parcing,documents,security,database,main`
+`RUN poetry install --with logging,main`
    
 
 
