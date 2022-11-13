@@ -142,3 +142,9 @@ class CountHostelAccommodationCostIn(BaseInSchema):
 
 class CountHostelAccommodationCostOut(BaseOutSchema):
     total_hostel_accommodation_cost: Decimal
+
+
+class ReturnStudentDocuments(BaseOutSchema):
+    user_document_id: int
+    name: str
+    date_create: datetime
