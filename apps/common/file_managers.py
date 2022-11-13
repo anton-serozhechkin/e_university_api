@@ -1,7 +1,7 @@
 import abc
+from pathlib import Path
 
 from docxtpl import DocxTemplate
-from pathlib import Path
 
 
 class FileManagerInterface(metaclass=abc.ABCMeta):

@@ -1,5 +1,4 @@
-from apps.common.exceptions import BackendException
-from apps.common.file_manager import file_manager
+from apps.common.file_managers import file_manager
 from apps.services.models import STATUS_MAPPING
 from apps.services.schemas import CancelRequestIn, CreateUserRequestIn, UserRequestReviewIn, \
     CountHostelAccommodationCostIn
@@ -12,7 +11,7 @@ from apps.users.schemas import UserOut
 
 from datetime import datetime, date
 from decimal import Decimal
-from fastapi import Request, status as http_status
+from fastapi import Request
 from sqlalchemy.ext.asyncio import AsyncSession
 
 

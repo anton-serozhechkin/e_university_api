@@ -262,15 +262,15 @@ async def read_request_details(
     }
 
 
-@services_router.get("/{university_id}/service-document/{user_document_id}",
-                     name="read_service_document",
+@services_router.get("/{university_id}/user-document/{user_document_id}",
+                     name="read_user_document",
                      response_class=StreamingResponse,
-                     summary="Read service document",
+                     summary="Read user document",
                      responses={200: {
-                         "description": "Successful get service document response",
+                         "description": "Successful get user document response",
                          "content": {"text/html": {"example": "bytes"}}
                      }},
-                     tags=["Admin dashboard", "Student dashboard"])
+                     tags=["Admin dashboard"])
 async def read_user_document(
         request: Request,
         university_id: int,

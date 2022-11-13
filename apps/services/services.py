@@ -6,7 +6,7 @@ from apps.services.models import (
     UserRequest, user_request_booking_hostel_view, UserRequestReview, user_request_details_view
 )
 from apps.users.models import UserFaculty
-from apps.common.file_manager import file_manager
+from apps.common.file_managers import file_manager
 from settings import (Settings, TEMPLATES_PATH, SETTLEMENT_HOSTEL_PATH)
 
 from datetime import datetime
