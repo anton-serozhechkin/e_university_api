@@ -7,8 +7,8 @@ from pydantic import BaseSettings, Field, validator, Extra, PostgresDsn
 
 from sqlalchemy.engine.url import URL
 
-__all__ = ['BASE_DIR', 'Settings', 'TEMPLATES_PATH', 'STORAGE_PATH', 'SETTLEMENT_HOSTEL_PATH', 
-            "SERVICES_PATH"]
+__all__ = ['BASE_DIR', 'Settings', 'TEMPLATES_PATH', 'STORAGE_PATH', 'SETTLEMENT_HOSTEL_PATH',
+           "SERVICES_PATH", "HOSTEL_BOOKING_TEMPLATE"]
 
 BASE_DIR = Path(__file__).resolve().parent
 
@@ -107,7 +107,6 @@ def get_settings() -> MainSettings:
 
 
 Settings: MainSettings = get_settings()
-
 
 if Settings.DEBUG:
     import pprint  # noqa
