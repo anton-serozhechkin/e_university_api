@@ -60,6 +60,40 @@ During development it may be useful to run application outside of docker contain
 
    Now API must be accessible at <http:/localhost:8778> and docs at <http:/localhost:8778/docs>
 
+<br>
+
+<h3>To add dependency(library)</h3>
+* Use this schema:<br>
+`poetry add <library name> --group <group name>`<br><br>
+For example, if your want to add **_"pytest"_** - you should run:<br>
+```
+poetry add pytest --group test
+```
+
+<br>
+<h4>Add to DockerFile</h4>
+To initialize group in project change Dockerfile.<br>
+
+There is initializing dependencies line, so if you want, for example, add 
+**_logging_** group - change line like this:
+
+
+   `RUN poetry install --with logging,main`
+
+
+<h5>Dependency adding rules in DockerFile</h5>
+   * have to be **_before main_**
+   * **_don't use space_** between library names<br>
+
+<br>
+
+<h5>Update your poetry:</h5>
+```
+poetry update
+```
+
+<br>
+
 ### Setup database
 
 For work with application, you need to setup your database in docker container. To perform this:
@@ -87,48 +121,6 @@ For work with application, you need to setup your database in docker container. 
        docker-compose build --no-cache
        docker-compose up
 
-## Add dependency
-
-<h5>Firstly you should be sure that poetry is installed.</h5>
-* Run this command:<br>
-```
-poetry --version
-```
-
-* If it isn't installed - go here: https://python-poetry.org/docs/master/ 
-<br><br>
-
-<h5>To add dependency(library)</h5>
-* Use this schema:<br>
-`poetry add <library name> --group <group name>`<br><br>
-For example, if your want to add **_"pytest"_** - you should run:<br>
-```
-poetry add pytest --group test
-```
-
-* If you want to add dependency, but there isn't group for it - run:<br>
-`poetry add <library name> --group <group name>`<br><br>
-   * Add this group to DockerFile to line
-     * **before main**
-     * **don't use space between library names**<br>
-
-  
-`
-RUN poetry install --with <group name>,main
-`
-  
-   * For example, if you want to add group **_logging_** - change Dockerfile line like this:<br><br>
-        EXAMPLE: 
-
-`RUN poetry install --with logging,main`
-   
-
-
-* Update your poetry:<br>
-```
-poetry install
-poetry update
-```
 
 
 ## Project layout
