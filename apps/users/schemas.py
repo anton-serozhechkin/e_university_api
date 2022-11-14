@@ -180,11 +180,12 @@ class CreateStudentIn(StudentCheckExistenceIn):
     speciality_id: int
     gender: str
 
-    @validator('telephone_number')
-    def validate_telephone_number(cls, value):
-        if not value.isdigit():
-            raise ValueError('The phone number must consist of digits!')
-        return value
+    @validator('middle_name')
+    def validate_middle_name(cls, value):
+        if value:
+            if not value.istitle():
+                raise ValueError("The middle name first letter must be uppercase!")
+            return value
 
     @validator('course_id')
     def validate_course_id(cls, value):
