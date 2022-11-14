@@ -62,37 +62,15 @@ During development it may be useful to run application outside of docker contain
 
 <br>
 
-<h3>To add dependency(library)</h3>
-* Use this schema:<br>
-`poetry add <library name> --group <group name>`<br><br>
-For example, if your want to add **_"pytest"_** - you should run:<br>
+<h4>Working with dependency(library) groups</h4>
+If you need to work with specific dependency group - change in `poetry.toml` group 'optional' status from `True` to `False`.
+
+**EXAMPLE**<br> You're working with testing, and connect dependency group to project, so you need to change here `optional = true` to `optional = false`:<br>
 ```
-poetry add pytest --group test
-```
-
-<br>
-<h4>Add to DockerFile</h4>
-To initialize group in project change Dockerfile.<br>
-
-There is initializing dependencies line, so if you want, for example, add 
-**_logging_** group - change line like this:
-
-
-   `RUN poetry install --with logging,main`
-
-
-<h5>Dependency adding rules in DockerFile</h5>
-   * have to be **_before main_**
-   * **_don't use space_** between library names<br>
-
-<br>
-
-<h5>Update your poetry:</h5>
-```
-poetry update
+[tool.poetry.group.test]
+optional = false
 ```
 
-<br>
 
 ### Setup database
 
