@@ -17,7 +17,7 @@ WORKDIR /app
 
 # install dependencies
 COPY poetry.lock pyproject.toml ./
-RUN poetry install --only main
+RUN poetry install
 
 
 # add project files *after* dependencies
