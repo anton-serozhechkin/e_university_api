@@ -3,6 +3,7 @@ from fastapi import status as http_status
 from pydantic import Field, BaseModel
 from pydantic.generics import GenericModel
 from pydantic.typing import NoneType
+from datetime import datetime
 
 from apps.common.enums import JSENDStatus
 
@@ -40,6 +41,17 @@ class JSENDErrorOutSchema(JSENDOutSchema):
     status: JSENDStatus = Field(default=JSENDStatus.ERROR)
     data: Union[str, NoneType]
     code: int = Field(default=http_status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+class UserDocumentsSchema(BaseOutSchema):
+    id: int
+    name: str
+    date_created: datetime
+
+
+class HostelNameSchema(BaseOutSchema):
+    name: str = None
+    number: int = None
 
 
 class FullNameSchema(BaseOutSchema):
