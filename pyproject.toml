@@ -19,6 +19,8 @@ databases = "0.6.0"
 docxtpl = "0.16.0"
 python-multipart = "0.0.5"
 
+[tool.poetry.group.lint]
+optional = true
 
 [tool.poetry.group.lint.dependencies]
 black = "^22.10.0"
@@ -28,6 +30,8 @@ xenon = "^0.9.0"
 isort = "^5.10.1"
 mypy = "^0.990"
 
+[tool.poetry.group.test]
+optional = true
 
 [tool.poetry.group.test.dependencies]
 pytest = "^7.2.0"
