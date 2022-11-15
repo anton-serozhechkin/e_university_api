@@ -3,7 +3,7 @@ from apps.common.exceptions import BackendException
 from apps.common.utils import (add_random_digits_and_cut_username, get_student_attr, get_token_data,
                                get_generated_username, get_token_and_expires)
 from apps.users.schemas import (CreateUserIn, DeleteUserIn, RegistrationIn, CreateStudentIn,
-                                DeleteStudentIn, StudentCheckExistanceIn, CreateUserOut)
+                                DeleteStudentIn, StudentCheckExistenceIn, CreateUserOut)
 from apps.services.services import user_faculty_service
 from apps.users.services import (student_service, one_time_token_service, student_list_service,
                                  user_list_service, user_service)
