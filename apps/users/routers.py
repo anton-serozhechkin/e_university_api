@@ -3,7 +3,7 @@ from apps.users.handlers import user_handler
 from apps.users.schemas import (UserOut, UsersListViewOut, CreateUserOut, CreateUserIn, 
                                 DeleteUserIn, RegistrationIn, CreateStudentOut,
                                 CreateStudentIn, StudentsListOut, UserIn, DeleteStudentIn,
-                                StudentCheckExistanceOut, StudentCheckExistanceIn)
+                                StudentCheckExistenceOut, StudentCheckExistenceIn)
 from apps.common.schemas import JSENDOutSchema, JSENDFailOutSchema
 
 from fastapi import APIRouter, Depends, Request
@@ -14,26 +14,27 @@ from typing import List, Optional
 users_router = APIRouter()
 
 
-@users_router.post("/check-student-existance",
+@users_router.post("/check-student-existence/",
                    name="create_student_existence",
-                   response_model=JSENDOutSchema[StudentCheckExistanceOut],
+                   response_model=JSENDOutSchema[StudentCheckExistenceOut],
                    summary="Check student existence",
                    responses={
                        200: {"description": "Successful check student existence response"},
                        404: {"model": JSENDFailOutSchema, "description": "Invalid input data response"},
                        422: {"model": JSENDFailOutSchema, "description": "ValidationError"}
                    },
-                   tags=["Authorization"])  # TODO spelling mistake, there is need to check path in other modules
+                   tags=["Authorization"])
 async def check_student(
         request: Request,
-        student: StudentCheckExistanceIn,
+        student: StudentCheckExistenceIn,
         session: AsyncSession = Depends(get_async_session)):
     """
         **Check student existence in the database**
 
         **Input**:
-        - **full name**: full name of the student in the database
-        - **telephone number**: telephone number, must be 12 digits
+        - **last_name**: last name of the student
+        - **first_name**: first name of the student
+        - **telephone_number**: telephone number, must be 12 digits
 
         **Return**: student id; token, which is used for registering user; token expires datetime
     """
@@ -188,7 +189,9 @@ async def create_student(
         - **university_id**: university id
 
         **Input**:
-        - **full_name**: student fist name and last name, required
+        - **last_name**: student last name, required
+        - **first_name**: student fist name, required
+        - **middle_name**: student middle name
         - **telephone_number**: student telephone number, must consists of 12 digits, required
         - **course_id**: student course id, must be between 1 and 6, required
         - **faculty_id**: faculty id, required

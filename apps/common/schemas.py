@@ -52,3 +52,9 @@ class UserDocumentsSchema(BaseOutSchema):
 class HostelNameSchema(BaseOutSchema):
     name: str = None
     number: int = None
+
+
+class FullNameSchema(BaseOutSchema):
+    last_name: str
+    first_name: str
+    middle_name: str = None

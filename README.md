@@ -60,6 +60,18 @@ During development it may be useful to run application outside of docker contain
 
    Now API must be accessible at <http:/localhost:8778> and docs at <http:/localhost:8778/docs>
 
+<br>
+
+<h4>Working with dependency(library) groups</h4>
+If you need to work with specific dependency group - change in `poetry.toml` group 'optional' status from `True` to `False`.
+
+**EXAMPLE**<br> You're working with testing, and connect dependency group to project, so you need to change here `optional = true` to `optional = false`:<br>
+```
+[tool.poetry.group.test]
+optional = false
+```
+
+
 ### Setup database
 
 For work with application, you need to setup your database in docker container. To perform this:
@@ -86,6 +98,8 @@ For work with application, you need to setup your database in docker container. 
 
        docker-compose build --no-cache
        docker-compose up
+
+
 
 ## Project layout
 
