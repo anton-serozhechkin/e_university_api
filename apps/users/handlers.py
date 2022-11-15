@@ -1,9 +1,9 @@
 from apps.authorization.services import get_hashed_password
 from apps.common.exceptions import BackendException
-from apps.common.utils import (get_login, get_student_attr, get_token_data, get_generated_username,
-                               get_token_and_expires)
+from apps.common.utils import (add_random_digits_and_cut_username, get_student_attr, get_token_data,
+                               get_generated_username, get_token_and_expires)
 from apps.users.schemas import (CreateUserIn, DeleteUserIn, RegistrationIn, CreateStudentIn,
-                                DeleteStudentIn, StudentCheckExistanceIn)
+                                DeleteStudentIn, StudentCheckExistenceIn)
 from apps.services.services import user_faculty_service
 from apps.users.services import (student_service, one_time_token_service, student_list_service,
                                  user_list_service, user_service)
@@ -19,7 +19,7 @@ class UserHandler:
             self,
             *,
             request: Request,
-            student: StudentCheckExistanceIn,
+            student: StudentCheckExistenceIn,
             session: AsyncSession):     # TODO Refactor this method
         result = await student_service.read(session=session, obj=student)
         if not result:
@@ -56,7 +56,7 @@ class UserHandler:
         created_user = await user_service.create(
             session=session,
             data={
-                "login": get_login(user.email),
+                "login": add_random_digits_and_cut_username(user.email),
                 "password": hashed_password,
                 "email": user.email,
                 "role_id": user.role_id,
@@ -86,8 +86,8 @@ class UserHandler:
         token_data = await one_time_token_service.read(session=session, data={"token": user.token})
         expires, student_id = get_token_data(token_data)
         student = await student_service.read(session=session, data={"student_id": student_id})
-        full_name, faculty_id = get_student_attr(student)
-        login = get_generated_username(full_name)
+        first_name, last_name, faculty_id = get_student_attr(student)
+        login = get_generated_username(last_name, first_name)
         # Encoding password
         encoded_user_password = get_hashed_password(user.password)
         registered_user = await user_service.create(
