@@ -1,4 +1,4 @@
-from apps.common.schemas import BaseInSchema, BaseOutSchema, UserDocumentsSchema, HostelNameSchema
+from apps.common.schemas import BaseInSchema, BaseOutSchema, UserDocumentsSchema, HostelNameSchema, FullNameSchema
 
 from datetime import date, datetime
 from typing import Dict, Union, List
@@ -25,17 +25,17 @@ class UserRequestExistenceOut(BaseOutSchema):
 
 
 class UserRequestBookingHostelOut(BaseOutSchema):
-    full_name: str
+    full_name: FullNameSchema
     user_id: int
     faculty_name: str
     university_id: int
     short_university_name: str
-    rector_full_name: str
+    rector_full_name: FullNameSchema
     date_today: date
     start_year: int
     finish_year: int
-    speciality_code: int = None  # delete it after table speciality won't be empty
-    speciality_name: str = None  # delete it after table speciality won't be empty
+    speciality_code: int
+    speciality_name: str
     course: int
     educ_level: str
     gender: Gender = [Gender.MALE, Gender.FEMALE]
@@ -107,7 +107,7 @@ class HostelAccomodationViewOut(BaseOutSchema):
     university_name: str
     organisation_code: str
     payment_recognation: str  # TODO spelling error
-    commandant_full_name: str
+    commandant_full_name: FullNameSchema
     telephone_number: str
     documents: Dict[str, str]
 

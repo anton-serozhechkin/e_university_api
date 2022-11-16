@@ -46,7 +46,9 @@ class Student(Base):
     __tablename__ = 'student'
 
     student_id = Column(INTEGER, primary_key=True, nullable=False)
-    full_name = Column(VARCHAR(length=255), nullable=False)
+    last_name = Column(VARCHAR(length=50), nullable=False)
+    first_name = Column(VARCHAR(length=50), nullable=False)
+    middle_name = Column(VARCHAR(length=50))
     telephone_number = Column(VARCHAR(length=50), nullable=False, unique=True)
     gender = Column(Enum(Gender), nullable=False)
     course_id = Column(INTEGER, ForeignKey("course.course_id"), nullable=False)
@@ -61,8 +63,8 @@ class Student(Base):
     one_time_tokens = relationship("OneTimeToken", back_populates="student")
 
     def __repr__(self):
-        return f'{self.__class__.__name__}(student_id="{self.student_id}",full_name="{self.full_name}",' \
-               f'telephone_number="{self.telephone_number}",gender="{self.gender}",' \
+        return f'{self.__class__.__name__}(student_id="{self.student_id}",first_name="{self.first_name}",' \
+               f'middle_name="{self.middle_name}",last_name="{self.last_name}",telephone_number="{self.telephone_number}",gender="{self.gender}",' \
                f'course_id="{self.course_id}",speciality_id="{self.speciality_id}",user_id="{self.user_id}",faculty_id="{self.faculty_id}")'
 
 
@@ -78,7 +80,7 @@ class UserFaculty(Base):
 
 students_list_view = Table('students_list_view', metadata_obj,
                            Column('student_id', INTEGER),
-                           Column('student_full_name', VARCHAR(255)),
+                           Column('student_full_name', JSON),
                            Column('telephone_number', VARCHAR(50)),
                            Column('user_id', INTEGER),
                            Column('university_id', INTEGER),
@@ -86,6 +88,7 @@ students_list_view = Table('students_list_view', metadata_obj,
                            Column('speciality_id', INTEGER),
                            Column('course_id', INTEGER),
                            Column('gender', VARCHAR(1)))
+
 
 user_list_view = Table('user_list_view', metadata_obj,
                        Column('user_id', INTEGER),
