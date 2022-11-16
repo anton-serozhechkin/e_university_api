@@ -4,6 +4,7 @@ from datetime import datetime
 from typing import List, Dict, Union
 import re
 from pydantic import validator
+from apps.users.enums import Gender, CourseOfStudy
 
 
 class UsersListViewOut(BaseOutSchema):
@@ -153,10 +154,11 @@ class StudentCheckExistanceOut(BaseOutSchema):
 class CreateStudentIn(BaseInSchema):
     full_name: str
     telephone_number: str
-    course_id: int
+    course_id: CourseOfStudy = [CourseOfStudy.FIRST_COURSE, CourseOfStudy.SECOND_COURSE, CourseOfStudy.THIRD_COURSE,
+                                CourseOfStudy.FOURTH_COURSE, CourseOfStudy.FIFTH_COURSE, CourseOfStudy.SIXTH_COURSE]
     faculty_id: int
     speciality_id: int
-    gender: str
+    gender: Gender = [Gender.MALE, Gender.FEMALE]
 
     @validator('full_name')
     def validate_full_name(cls, value):
@@ -195,7 +197,7 @@ class CreateStudentIn(BaseInSchema):
 
     @validator('gender')
     def validate_gender(cls, value):
-        exists_genders = ['Ч', 'М']
+        exists_genders = Gender.value
         if not value:
             raise ValueError('The student gender cannot be empty!')
         if value.upper() not in exists_genders:
@@ -215,8 +217,9 @@ class StudentsListOut(BaseOutSchema):
     university_id: int
     faculty_id: int
     speciality_id: int
-    course_id: int
-    gender: str
+    course_id: CourseOfStudy = [CourseOfStudy.FIRST_COURSE, CourseOfStudy.SECOND_COURSE, CourseOfStudy.THIRD_COURSE,
+                                CourseOfStudy.FOURTH_COURSE, CourseOfStudy.FIFTH_COURSE, CourseOfStudy.SIXTH_COURSE]
+    gender: Gender = [Gender.MALE, Gender.FEMALE]
 
 
 class DeleteStudentIn(BaseInSchema):

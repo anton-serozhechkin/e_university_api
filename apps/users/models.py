@@ -1,8 +1,8 @@
 from apps.common.db import Base
 
-from sqlalchemy import (MetaData, Column, Table, INTEGER, VARCHAR, ForeignKey, BOOLEAN, TIMESTAMP, JSON)
+from sqlalchemy import (MetaData, Column, Table, INTEGER, VARCHAR, ForeignKey, BOOLEAN, TIMESTAMP, JSON, Enum)
 from sqlalchemy.orm import relationship
-
+from apps.users.enums import Gender, CourseOfStudy
 metadata_obj = MetaData()
 
 
@@ -48,7 +48,7 @@ class Student(Base):
     student_id = Column(INTEGER, primary_key=True, nullable=False)
     full_name = Column(VARCHAR(length=255), nullable=False)
     telephone_number = Column(VARCHAR(length=50), nullable=False, unique=True)
-    gender = Column(VARCHAR(length=1), nullable=False)
+    gender = Column(Enum(Gender), nullable=False)
     course_id = Column(INTEGER, ForeignKey("course.course_id"), nullable=False)
     speciality_id = Column(INTEGER, ForeignKey("speciality.speciality_id"), nullable=False)
     user_id = Column(INTEGER, ForeignKey("user.user_id"))
