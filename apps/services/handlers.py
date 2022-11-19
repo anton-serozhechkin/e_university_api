@@ -6,7 +6,7 @@ from apps.services.schemas import CancelRequestIn, CreateUserRequestIn, UserRequ
 from apps.services.services import (
     create_user_document, hostel_accommodation_service, request_existence_service, user_request_list_service,
     user_faculty_service, user_request_service, user_request_booking_hostel_service, user_request_review_service,
-    user_request_detail_service, hostel_service, bed_place_service, user_document_service
+    user_request_detail_service, hostel_service, bed_place_service
 )
 from apps.users.schemas import UserOut
 
@@ -219,25 +219,6 @@ class ServiceHandler:
     @classmethod
     def calculate_total_hostel_accommodation_cost(cls, month_price: Decimal, month_difference: int) -> Decimal:
         return month_price * month_difference
-
-    async def get_student_documents(
-            self,
-            *,
-            request: Request,
-            university_id: int,
-            user: UserOut,
-            session: AsyncSession
-    ):
-        user_document = await user_document_service.read(
-            session=session,
-            data={"...": ...}
-        )
-
-        return {
-            "user_document_id": ...,
-            "name": ...,
-            "date_create": ...
-        }
 
 
 service_handler = ServiceHandler()

@@ -9,7 +9,8 @@ from apps.services.schemas import (UserRequestExistenceOut, UserRequestsListOut,
                                    UserRequestDetailsViewOut, CountHostelAccommodationCostIn,
                                    CountHostelAccommodationCostOut, ReturnStudentDocuments)
 
-from fastapi import APIRouter, Depends, Request
+from fastapi import APIRouter, Depends, Request, status as http_status
+from starlette.responses import StreamingResponse
 from sqlalchemy.ext.asyncio import AsyncSession
 from typing import List
 
@@ -258,6 +259,33 @@ async def read_request_details(
             session=session),
         "message": "Got request details"
     }
+
+
+@services_router.get("/{university_id}/user-document/{user_document_id}",
+                     name="read_user_document",
+                     response_class=StreamingResponse,
+                     summary="Read user document",
+                     responses={200: {
+                         "description": "Successful get user document response",
+                         "content": {"text/html": {"example": "bytes"}}
+                     }},
+                     tags=["Admin dashboard"])
+async def read_user_document(
+        request: Request,
+        university_id: int,
+        user_document_id: int,
+        user=Depends(get_current_user),
+        session: AsyncSession = Depends(get_async_session)):
+    return StreamingResponse(
+        content=await service_handler.read_user_document(
+            request=request,
+            university_id=university_id,
+            user_document_id=user_document_id,
+            user=user,
+            session=session),
+        status_code=http_status.HTTP_200_OK,
+        media_type="text/html"
+    )
 
 
 @services_router.post("/{university_id}/count-hostel-accommodation-cost/",
