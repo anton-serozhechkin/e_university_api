@@ -189,7 +189,7 @@ class ServiceHandler:
             *,
             request: Request,
             university_id: int,
-            file: UploadFile = File(...),
+            file: UploadFile = File(),
             session: AsyncSession):
         check_content_type(file)
 
