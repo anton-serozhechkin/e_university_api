@@ -181,15 +181,14 @@ class StudentCheckExistenceOut(BaseOutSchema):
 class CreateStudentIn(BaseInSchema):
     full_name: str
     telephone_number: str
-    course_id: CourseOfStudy = [CourseOfStudy.FIRST_COURSE, CourseOfStudy.SECOND_COURSE, CourseOfStudy.THIRD_COURSE,
-                                CourseOfStudy.FOURTH_COURSE, CourseOfStudy.FIFTH_COURSE, CourseOfStudy.SIXTH_COURSE]
+    course_id: CourseOfStudy
 
 class CreateStudentIn(StudentCheckExistenceIn):
     middle_name: str = None
-    course_id: int
+    course_id: CourseOfStudy
     faculty_id: int
     speciality_id: int
-    gender: Gender = [Gender.MALE, Gender.FEMALE]
+    gender: Gender
 
     @validator('middle_name')
     def validate_middle_name(cls, value):
@@ -220,7 +219,7 @@ class CreateStudentIn(StudentCheckExistenceIn):
 
     @validator('gender')
     def validate_gender(cls, value):
-        exists_genders = Gender.value
+        exists_genders = Gender
         if not value:
             raise ValueError('The student gender cannot be empty!')
         if value.upper() not in exists_genders:
@@ -240,9 +239,8 @@ class StudentsListOut(BaseOutSchema):
     university_id: int
     faculty_id: int
     speciality_id: int
-    course_id: CourseOfStudy = [CourseOfStudy.FIRST_COURSE, CourseOfStudy.SECOND_COURSE, CourseOfStudy.THIRD_COURSE,
-                                CourseOfStudy.FOURTH_COURSE, CourseOfStudy.FIFTH_COURSE, CourseOfStudy.SIXTH_COURSE]
-    gender: Gender = [Gender.MALE, Gender.FEMALE]
+    course_id: CourseOfStudy
+    gender: Gender
 
 
 class DeleteStudentIn(BaseInSchema):

@@ -1,9 +1,8 @@
 from apps.common.db import Base
 
-from sqlalchemy import (MetaData, Column, INTEGER, VARCHAR, ForeignKey, Table, DECIMAL, Enum, JSON)
+from sqlalchemy import (MetaData, Column, INTEGER, VARCHAR, ForeignKey, Table, DECIMAL, JSON)
 
 from sqlalchemy.orm import relationship
-from apps.hostel.enums import BedPlaceItem
 
 metadata_obj = MetaData()
 
@@ -50,7 +49,7 @@ class Commandant(Base):
 class BedPlace(Base):
     __tablename__ = 'bed_place'
 
-    bed_place_id = Column(Enum(BedPlaceItem), primary_key=True, nullable=False)
+    bed_place_id = Column(INTEGER, primary_key=True, nullable=False)
     bed_place_name = Column(VARCHAR(length=50), nullable=False)
 
     user_request_review = relationship("UserRequestReview", back_populates='bed_place')

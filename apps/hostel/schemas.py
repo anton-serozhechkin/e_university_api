@@ -16,5 +16,5 @@ class HostelListOut(BaseOutSchema):
 
 
 class BedPlaceOut(BaseOutSchema):
-    bed_place_id: BedPlaceItem = [BedPlaceItem.FIRST_OPTION, BedPlaceItem.SECOND_OPTION, BedPlaceItem.THIRD_OPTION]
+    bed_place_id: BedPlaceItem
     bed_place_name: str

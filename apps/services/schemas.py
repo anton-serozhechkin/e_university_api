@@ -7,7 +7,8 @@ from decimal import Decimal
 from pydantic import validator, root_validator
 
 from apps.services.enums import ApplicationStatus
-from apps.users.enums import Gender
+from apps.users.enums import Gender, CourseOfStudy
+
 class CreateUserRequestIn(BaseInSchema):
     service_id: int
     comment: str = None
@@ -36,9 +37,9 @@ class UserRequestBookingHostelOut(BaseOutSchema):
     finish_year: int
     speciality_code: int
     speciality_name: str
-    course: int
+    course: CourseOfStudy
     educ_level: str
-    gender: Gender = [Gender.MALE, Gender.FEMALE]
+    gender: Gender
 
 
 class UserRequestsListOut(BaseOutSchema):
@@ -66,8 +67,7 @@ class CancelRequestOut(BaseOutSchema):
 
 
 class UserRequestReviewIn(BaseInSchema):
-    status_id: ApplicationStatus = [ApplicationStatus.ACCEPTED, ApplicationStatus.REJECTED,
-                                    ApplicationStatus.ON_REVIEW,ApplicationStatus.CANCELED]
+    status_id: ApplicationStatus
     room_number: int = None
     start_date_accommodation: datetime = None
     end_date_accommodation: datetime = None
