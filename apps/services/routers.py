@@ -268,7 +268,7 @@ async def read_request_details(
 async def create_students_from_file(
         request: Request,
         university_id: int,
-        file: UploadFile = File(...),
+        file: UploadFile = File(),
         user=Depends(get_current_user),
         session: AsyncSession = Depends(get_async_session)):
     response = await service_handler.create_students_from_file(
