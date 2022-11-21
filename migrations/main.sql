@@ -423,7 +423,7 @@ CREATE VIEW user_request_details_view AS
         ur.university_id,
         ur.date_created,
         sr.service_name,
-        urs.name,
+        urs.name as user_request_status_name,
         ur.user_request_status_id,
         ur.comment,
         jsonb_build_object('name', ht.name, 'number', ht.number) as hostel_name,
