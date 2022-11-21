@@ -1,9 +1,9 @@
 from apps.common.file_managers import file_manager
-from apps.services.schemas import (CancelRequestIn, CreateUserRequestIn, UserRequestReviewIn,
-    CountHostelAccommodationCostIn)
+from apps.services.schemas import CountHostelAccommodationCostIn
 from apps.services.services import (
-    create_user_document, get_specialties_list, hostel_accommodation_service, request_existence_service,
-    user_request_list_service, user_faculty_service, user_request_service, user_request_booking_hostel_service,
+    bed_place_service, get_specialties_list, hostel_accommodation_service, hostel_service,
+    request_existence_service, user_document_service, service_service, user_request_list_service,
+    user_faculty_service, user_request_service, user_request_booking_hostel_service,
     user_request_review_service, user_request_detail_service
 )
 from settings import (Settings, TEMPLATES_PATH, SETTLEMENT_HOSTEL_PATH, HOSTEL_BOOKING_TEMPLATE)
@@ -295,13 +295,14 @@ class ServiceHandler:
         worksheet, cell, col, row = get_worksheet_cell_col_row(file)
 
         for i in range(row, len(worksheet.col(1))):
-
             check_faculty_existence(cell, col, i, faculty_dict)
             specialties_dict = faculty_dict.get(cell(i, col + 7))
             check_specialty_existence(cell, col, i, specialties_dict)
             check_telephone_number_existence(cell, col, i, telephone_set)
             schema = CreateStudentIn(
-                full_name=cell(i, col),
+                last_name=cell(i, col),
+                first_name=cell(i, col + 1),
+                middle_name=cell(i, col + 2),
                 telephone_number=cell(i, col + 3),
                 course_id=cell(i, col + 4),
                 faculty_id=specialties_dict.get("faculty_id"),

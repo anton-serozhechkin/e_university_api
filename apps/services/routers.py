@@ -286,7 +286,6 @@ async def create_students_from_file(
     }
 
 
-
 @services_router.get("/{university_id}/user-document/{user_document_id}",
                      name="read_user_document",
                      response_class=StreamingResponse,
