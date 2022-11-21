@@ -1,13 +1,17 @@
 from apps.common.dependencies import get_async_session, get_current_user
 from apps.common.schemas import JSENDFailOutSchema, JSENDOutSchema
 from apps.services.handlers import service_handler
-from apps.services.schemas import (
-    UserRequestExistenceOut, UserRequestsListOut, CreateUserRequestOut, CreateUserRequestIn,
-    UserRequestBookingHostelOut, CancelRequestOut, CancelRequestIn, UserRequestReviewOut,
-    UserRequestReviewIn, HostelAccomodationViewOut, UserRequestDetailsViewOut)
+from apps.services.schemas import (UserRequestExistenceOut, UserRequestsListOut,
+                                   CreateUserRequestOut, CreateUserRequestIn,
+                                   UserRequestBookingHostelOut, CancelRequestOut,
+                                   CancelRequestIn, UserRequestReviewOut,
+                                   UserRequestReviewIn, HostelAccomodationViewOut,
+                                   UserRequestDetailsViewOut, CountHostelAccommodationCostIn,
+                                   CountHostelAccommodationCostOut)
 from apps.users.schemas import CreateStudentsOut
 
-from fastapi import APIRouter, Depends, File, Request, UploadFile
+from fastapi import APIRouter, Depends, File, Request, UploadFile, status as http_status
+from starlette.responses import StreamingResponse
 from sqlalchemy.ext.asyncio import AsyncSession
 from typing import List, Union
 
@@ -242,7 +246,7 @@ async def read_hostel_accommodation(
                      response_model=JSENDOutSchema[UserRequestDetailsViewOut],
                      summary="Get user request",
                      responses={200: {"description": "Successful get user request response"}},
-                     tags=["Student dashboard"])   # TODO Return Validation error with empty data
+                     tags=["Student dashboard"])  # TODO Return Validation error with empty data
 async def read_request_details(
         request: Request,
         university_id: int,
@@ -279,4 +283,54 @@ async def create_students_from_file(
     return {
         "data": response,
         "message": "Created students from file list"
+    }
+
+
+
+@services_router.get("/{university_id}/user-document/{user_document_id}",
+                     name="read_user_document",
+                     response_class=StreamingResponse,
+                     summary="Read user document",
+                     responses={200: {
+                         "description": "Successful get user document response",
+                         "content": {"text/html": {"example": "bytes"}}
+                     }},
+                     tags=["Admin dashboard"])
+async def read_user_document(
+        request: Request,
+        university_id: int,
+        user_document_id: int,
+        user=Depends(get_current_user),
+        session: AsyncSession = Depends(get_async_session)):
+    return StreamingResponse(
+        content=await service_handler.read_user_document(
+            request=request,
+            university_id=university_id,
+            user_document_id=user_document_id,
+            user=user,
+            session=session),
+        status_code=http_status.HTTP_200_OK,
+        media_type="text/html"
+    )
+
+
+@services_router.post("/{university_id}/count-hostel-accommodation-cost/",
+                      name="create_count_hostel_accommodation_cost ",
+                      summary="Create Count Hostel Accommodation Cost",
+                      response_model=JSENDOutSchema[CountHostelAccommodationCostOut],
+                      responses={200: {"description": "Successful create count hostel accommodation cost response"}},
+                      tags=["Admin dashboard"])
+async def count_hostel_accommodation_cost(
+        request: Request,
+        university_id: int,
+        data: CountHostelAccommodationCostIn,
+        user=Depends(get_current_user),
+        session: AsyncSession = Depends(get_async_session)):
+    return {
+        "data": await service_handler.count_hostel_accommodation_cost(
+            request=request,
+            university_id=university_id,
+            data=data,
+            session=session),
+        "message": "Cost of hostel accommodation of student was counted successfully"
     }

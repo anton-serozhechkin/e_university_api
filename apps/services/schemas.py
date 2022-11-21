@@ -1,10 +1,10 @@
-from apps.common.schemas import BaseInSchema, BaseOutSchema
+from apps.common.schemas import BaseInSchema, BaseOutSchema, UserDocumentsSchema, HostelNameSchema, FullNameSchema
 
 from datetime import date, datetime
 from typing import Dict, Union, List
 from decimal import Decimal
 
-from pydantic import BaseModel, validator
+from pydantic import validator, root_validator
 
 
 class CreateUserRequestIn(BaseInSchema):
@@ -24,17 +24,17 @@ class UserRequestExistenceOut(BaseOutSchema):
 
 
 class UserRequestBookingHostelOut(BaseOutSchema):
-    full_name: str
+    full_name: FullNameSchema
     user_id: int
     faculty_name: str
     university_id: int
     short_university_name: str
-    rector_full_name: str
+    rector_full_name: FullNameSchema
     date_today: date
     start_year: int
     finish_year: int
-    speciality_code: int = None  # delete it after table speciality won't be empty
-    speciality_name: str = None  # delete it after table speciality won't be empty
+    speciality_code: int
+    speciality_name: str
     course: int
     educ_level: str
     gender: str
@@ -105,7 +105,7 @@ class HostelAccomodationViewOut(BaseOutSchema):
     university_name: str
     organisation_code: str
     payment_recognation: str  # TODO spelling error
-    commandant_full_name: str
+    commandant_full_name: FullNameSchema
     telephone_number: str
     documents: Dict[str, str]
 
@@ -118,8 +118,27 @@ class UserRequestDetailsViewOut(BaseOutSchema):
     status_name: str
     status_id: int
     comment: str = None
-    hostel_name: Dict[str, Union[int, str]] = None
+    hostel_name: HostelNameSchema
     room_number: int = None
     bed_place_name: str = None
     remark: str = None
-    documents: List[Dict[str, str]]
+    documents: List[UserDocumentsSchema]
+
+
+class CountHostelAccommodationCostIn(BaseInSchema):
+    hostel_id: int
+    start_date_accommodation: date
+    end_date_accommodation: date
+    bed_place_id: int
+
+    @root_validator
+    def validate_two_dates(cls, values):
+        if values.get('start_date_accommodation') >= values.get('end_date_accommodation'):
+            raise ValueError(
+                "Start date of hostel accommodation can't be more or equal than end date of hostel accommodation"
+            )
+        return values
+
+
+class CountHostelAccommodationCostOut(BaseOutSchema):
+    total_hostel_accommodation_cost: Decimal

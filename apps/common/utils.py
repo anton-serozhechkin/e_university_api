@@ -16,13 +16,15 @@ reusable_oauth = OAuth2PasswordBearer(
 )
 
 
-def get_login(data):
+def get_generated_username(last_name: str, first_name: str) -> str:
+    if len(last_name) < 4:
+        last_name = last_name.join(first_name)
+    transliterated_last_name = translit(last_name)
+    return add_random_digits_and_cut_username(transliterated_last_name)
+
+
+def add_random_digits_and_cut_username(data: str) -> str:
     return f"{(data[:4])}-{randint(100, 999)}".lower()
-
-
-def get_generated_username(full_name):
-    transliterated_full_name = translit(full_name)
-    return get_login(transliterated_full_name)
 
 
 def get_student_attr(student):
@@ -36,7 +38,7 @@ def get_student_attr(student):
             message="A user account already exists. Please check your email for details.",
             code=http_status.HTTP_409_CONFLICT
         )
-    return student.full_name, student.faculty_id
+    return student.first_name, student.last_name, student.faculty_id
 
 
 def get_token_data(token_data):
