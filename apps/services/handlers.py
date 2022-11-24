@@ -1,13 +1,14 @@
 from apps.common.file_managers import file_manager
 from apps.services.models import STATUS_MAPPING
-from apps.services.schemas import (CancelRequestIn, CreateUserRequestIn, UserRequestReviewIn, 
-    CountHostelAccommodationCostIn)
+from apps.services.schemas import (CancelRequestIn, CreateUserRequestIn, UserRequestReviewIn,
+                                   CountHostelAccommodationCostIn)
 from apps.services.services import (
     hostel_accommodation_service, request_existence_service, user_request_list_service,
     user_faculty_service, user_request_service, user_request_booking_hostel_service, user_request_review_service,
     user_request_detail_service, hostel_service, bed_place_service, user_document_service, service_service
 )
 from apps.users.schemas import UserOut
+from apps.users.services import student_service
 from settings import (Settings, TEMPLATES_PATH, SETTLEMENT_HOSTEL_PATH, HOSTEL_BOOKING_TEMPLATE)
 
 from datetime import datetime, date
@@ -194,6 +195,21 @@ class ServiceHandler:
         user_document = await user_document_service.read(session=session, data={"user_document_id": user_document_id})
         return file_manager.get(user_document.content)
 
+    async def download_user_document(
+            self,
+            *,
+            request: Request,
+            university_id: int,
+            user_document_id: int,
+            user: UserOut,
+            session: AsyncSession):
+        student = await student_service.read(session=session, data={"user_id": user.user_id})
+        user_document = await user_document_service.read(
+            session=session, data={"user_document_id": user_document_id})
+        file_name = (user_document.name.replace(' ', '_') + student.last_name
+                     + "_" + student.first_name + "_" + student.middlename + ".docx")
+        return user_document.content, file_name
+
     async def count_hostel_accommodation_cost(
             self,
             *,
@@ -201,7 +217,6 @@ class ServiceHandler:
             university_id: int,
             data: CountHostelAccommodationCostIn,
             session: AsyncSession):
-
         hostel = await hostel_service.read(
             session=session,
             data={"hostel_id": data.hostel_id}
