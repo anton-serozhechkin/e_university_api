@@ -297,7 +297,7 @@ async def read_user_document(
                          "description": "Successful download user document response",
                          "content": {"text/html": {"example": "file"}}
                      }},
-                     tags=["Admin dashboard"])
+                     tags=["Student dashboard"])
 async def download_user_document(
         request: Request,
         university_id: int,
