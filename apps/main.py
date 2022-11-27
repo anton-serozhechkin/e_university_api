@@ -13,6 +13,11 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from starlette.exceptions import HTTPException as StarletteHTTPException
 
+from utils import get_logger_by_name
+
+
+logger = get_logger_by_name('root')
+
 app = FastAPI(openapi_tags=metadata)
 
 origins = ["*"]
@@ -38,11 +43,21 @@ app.include_router(services_router)
 app.include_router(authorization_router)
 
 
+
+@app.on_event('startup')
+async def start_logging():
+    from logging.config import dictConfig
+    from loggers import dict_config
+    dictConfig(dict_config)
+
+
 @app.on_event("startup")
 async def startup():
     await database.connect()
+    logger.info('Database startup.')
 
 
 @app.on_event("shutdown")
 async def shutdown():
     await database.disconnect()
+    logger.info('Database shutdown.')
