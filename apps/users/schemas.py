@@ -3,7 +3,11 @@ from apps.common.schemas import BaseInSchema, BaseOutSchema, FullNameSchema
 from datetime import datetime
 from typing import List, Dict, Union
 import re
+
+from apps.users.enums import Gender, CourseOfStudy
+
 from pydantic import Field, validator
+
 
 
 class UsersListViewOut(BaseOutSchema):
@@ -173,12 +177,18 @@ class StudentCheckExistenceOut(BaseOutSchema):
     expires: datetime
 
 
+
+class CreateStudentIn(BaseInSchema):
+    full_name: str
+    telephone_number: str
+    course_id: CourseOfStudy
+
 class CreateStudentIn(StudentCheckExistenceIn):
     middle_name: str = None
-    course_id: int
+    course_id: CourseOfStudy
     faculty_id: int
     speciality_id: int
-    gender: str
+    gender: Gender
 
     @validator('middle_name')
     def validate_middle_name(cls, value):
@@ -209,7 +219,7 @@ class CreateStudentIn(StudentCheckExistenceIn):
 
     @validator('gender')
     def validate_gender(cls, value):
-        exists_genders = ['Ч', 'М']
+        exists_genders = Gender
         if not value:
             raise ValueError('The student gender cannot be empty!')
         if value.upper() not in exists_genders:
@@ -229,8 +239,8 @@ class StudentsListOut(BaseOutSchema):
     university_id: int
     faculty_id: int
     speciality_id: int
-    course_id: int
-    gender: str
+    course_id: CourseOfStudy
+    gender: Gender
 
 
 class DeleteStudentIn(BaseInSchema):
