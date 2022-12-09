@@ -193,3 +193,11 @@ hostel_accommodation_view = Table('hostel_accommodation_view', metadata_obj,
                                   Column('commandant_full_name', JSON),
                                   Column('telephone_number', VARCHAR(50)),
                                   Column('documents', JSON))
+
+
+return_user_document_view = Table('return_user_document_view', metadata_obj,
+                                  Column('university_id', INTEGER),
+                                  Column('date_created', DATETIME),
+                                  Column('name', VARCHAR(255)),
+                                  Column('user_document_id', INTEGER)
+                                  )
