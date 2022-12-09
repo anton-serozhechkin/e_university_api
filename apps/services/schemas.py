@@ -125,6 +125,13 @@ class UserRequestDetailsViewOut(BaseOutSchema):
     documents: List[UserDocumentsSchema]
 
 
+class ReturnUserDocumentOut(BaseOutSchema):
+    university_id: int
+    date_created: datetime
+    name: str
+    user_document_id: int
+
+
 class CountHostelAccommodationCostIn(BaseInSchema):
     hostel_id: int
     start_date_accommodation: date
