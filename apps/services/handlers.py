@@ -1,11 +1,12 @@
 from apps.common.file_managers import file_manager
 from apps.services.models import STATUS_MAPPING
-from apps.services.schemas import (CancelRequestIn, CreateUserRequestIn, UserRequestReviewIn, 
+from apps.services.schemas import (CancelRequestIn, CreateUserRequestIn, UserRequestReviewIn,
     CountHostelAccommodationCostIn)
 from apps.services.services import (
     hostel_accommodation_service, request_existence_service, user_request_list_service,
     user_faculty_service, user_request_service, user_request_booking_hostel_service, user_request_review_service,
-    user_request_detail_service, hostel_service, bed_place_service, user_document_service, service_service
+    user_request_detail_service, hostel_service, bed_place_service, user_document_service, service_service,
+    return_user_document
 )
 from apps.users.schemas import UserOut
 from settings import (Settings, TEMPLATES_PATH, SETTLEMENT_HOSTEL_PATH, HOSTEL_BOOKING_TEMPLATE)
@@ -166,7 +167,8 @@ class ServiceHandler:
                 "university_id": university_id,
                 "user_request_id": user_request_id
             })
-        # TODO AttributeError: 'NoneType' object has no attribute 'documents' (it's happened only if user request doesn't have review)
+        # TODO AttributeError: 'NoneType' object has no attribute 'documents' (it's happened only if user request
+        #  doesn't have review)
         return response
 
     async def read_request_details(
@@ -181,6 +183,18 @@ class ServiceHandler:
             data={
                 "university_id": university_id,
                 "user_request_id": user_request_id
+            })
+
+    async def return_user_document(
+            self,
+            *,
+            request: Request,
+            university_id: int,
+            session: AsyncSession):
+        return await return_user_document.read(
+            session=session,
+            data={
+                "university_id": university_id,
             })
 
     async def read_user_document(
