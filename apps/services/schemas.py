@@ -125,11 +125,22 @@ class UserRequestDetailsViewOut(BaseOutSchema):
     documents: List[UserDocumentsSchema]
 
 
+class ReturnUserDocumentIn(BaseInSchema):
+    status_id: int
+
+    @validator('status_id')
+    def validate_status_id(cls, v):
+        if v != 1 and v != 3:
+            raise ValueError("The documents can't be returned")
+        return v
+
+
 class ReturnUserDocumentOut(BaseOutSchema):
     university_id: int
-    date_created: datetime
-    name: str
+    user_id: int
     user_document_id: int
+    name: str
+    date_created: datetime
 
 
 class CountHostelAccommodationCostIn(BaseInSchema):
