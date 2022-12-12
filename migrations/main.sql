@@ -641,7 +641,8 @@ CREATE VIEW return_user_document_view AS
         ur.university_id,
         ur.date_created,
         ud.name,
-        ud.user_document_id
+        ud.user_document_id,
+        ur.user_id
     FROM
         user_request ur
     LEFT JOIN status st ON
@@ -652,6 +653,7 @@ CREATE VIEW return_user_document_view AS
         ur.university_id,
         ur.date_created,
         ud.name,
-        ud.user_document_id
+        ud.user_document_id,
+        ur.user_id
     ORDER BY
         ur.university_id;
