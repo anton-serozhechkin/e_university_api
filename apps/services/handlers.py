@@ -1,7 +1,7 @@
 from apps.common.file_managers import file_manager
 from apps.services.models import STATUS_MAPPING
 from apps.services.schemas import (CancelRequestIn, CreateUserRequestIn, UserRequestReviewIn,
-    CountHostelAccommodationCostIn)
+                                   CountHostelAccommodationCostIn, ReturnUserDocumentIn)
 from apps.services.services import (
     hostel_accommodation_service, request_existence_service, user_request_list_service,
     user_faculty_service, user_request_service, user_request_booking_hostel_service, user_request_review_service,
@@ -190,12 +190,35 @@ class ServiceHandler:
             *,
             request: Request,
             university_id: int,
+            user: UserOut,
             session: AsyncSession):
+
+        user_request_response = await service_handler.read_user_request(
+            request=request,
+            university_id=university_id,
+            user=user,
+            session=session
+        )
+
+        ReturnUserDocumentIn(status_id=user_request_response.status_id)
+
         return await return_user_document.read(
             session=session,
-            data={
-                "university_id": university_id,
-            })
+            data={"university_id": university_id}
+        )
+
+    async def read_user_request(
+            self,
+            *,
+            request: Request,
+            university_id: int,
+            user: UserOut,
+            session: AsyncSession
+    ):
+        return await user_request_service.read(
+            session=session,
+            data={"university_id": university_id, "user_id": user.user_id}
+        )
 
     async def read_user_document(
             self,
@@ -215,7 +238,6 @@ class ServiceHandler:
             university_id: int,
             data: CountHostelAccommodationCostIn,
             session: AsyncSession):
-
         hostel = await hostel_service.read(
             session=session,
             data={"hostel_id": data.hostel_id}
