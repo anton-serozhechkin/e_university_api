@@ -263,7 +263,7 @@ async def read_request_details(
     }
 
 
-@services_router.post("/{university_id}/create_students/",
+@services_router.post("/{university_id}/create-students/",
                       name="create_students_from_file",
                       response_model=JSENDOutSchema[Union[List[CreateStudentsOut], None]],
                       summary="Create students from file",

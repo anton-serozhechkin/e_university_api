@@ -10,7 +10,7 @@ from settings import (Settings, TEMPLATES_PATH, SETTLEMENT_HOSTEL_PATH, HOSTEL_B
 from apps.services.models import STATUS_MAPPING
 from apps.services.schemas import CreateUserRequestIn, CancelRequestIn, UserRequestReviewIn
 from apps.services.utils import (
-    check_content_type, create_faculty_dict, create_telephone_set, get_worksheet_cell_col_row, check_faculty_existence,
+    check_file_content_type, create_faculty_dict, create_telephone_set, get_worksheet_cell_col_row, check_faculty_existence,
     check_specialty_existence, check_telephone_number_existence
 )
 from apps.users.schemas import CreateStudentIn, UserOut
@@ -282,10 +282,9 @@ class ServiceHandler:
             *,
             request: Request,
             university_id: int,
-            file: UploadFile = File(),
+            file: UploadFile = File(...),
             session: AsyncSession):
-        check_content_type(file)
-
+        check_file_content_type(file)
         specialties, schema_list = await get_specialties_list(university_id), []
 
         faculty_dict = create_faculty_dict(specialties)

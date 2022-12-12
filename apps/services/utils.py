@@ -2,11 +2,13 @@ from apps.common.exceptions import BackendException
 from apps.users.services import student_list_service
 
 from collections import defaultdict
-from fastapi import status as http_status
+from fastapi import UploadFile, status as http_status
+from sqlalchemy.ext.asyncio import AsyncSession
+from typing import Callable, DefaultDict, Dict, List, Set, Tuple
 import xlrd
 
 
-def check_content_type(file):
+def check_file_content_type(file: UploadFile) -> None:
     if file.content_type != "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet":
         raise BackendException(
             message="Uploaded file have invalid type.",
@@ -14,7 +16,7 @@ def check_content_type(file):
         )
 
 
-def create_faculty_dict(specialties):
+def create_faculty_dict(specialties: List) -> DefaultDict[str, Dict[str, int]]:
     faculty_dict = defaultdict(dict)
     for specialty in specialties:
         faculty_dict[specialty.shortname]["faculty_id"] = specialty.faculty_id
@@ -22,12 +24,12 @@ def create_faculty_dict(specialties):
     return faculty_dict
 
 
-async def create_telephone_set(session, filters):
+async def create_telephone_set(session: AsyncSession, filters: Dict[str, int]) -> Set[str]:
     students = await student_list_service.list(session=session, filters=filters)
     return {student.telephone_number for student in students}
 
 
-def get_worksheet_cell_col_row(file):
+def get_worksheet_cell_col_row(file: UploadFile) -> Tuple[xlrd.sheet.Sheet, Callable, int, int]:
     workbook = xlrd.open_workbook(file_contents=file.file.read())
     worksheet = workbook.sheet_by_name("список студентів")
     row, col = 0, 0
@@ -52,7 +54,10 @@ def get_worksheet_cell_col_row(file):
     return worksheet, worksheet.cell_value, col, row
 
 
-def check_faculty_existence(cell, col, i, faculty_dict):
+def check_faculty_existence(cell: Callable,
+                            col: int,
+                            i: int,
+                            faculty_dict: DefaultDict[str, Dict[str, int]]) -> None:
     if cell(i, col + 7) not in faculty_dict:
         raise BackendException(
             message=f"Row {i}. There is no such faculty name.",
@@ -60,7 +65,10 @@ def check_faculty_existence(cell, col, i, faculty_dict):
         )
 
 
-def check_specialty_existence(cell, col, i, specialties_dict):
+def check_specialty_existence(cell: Callable,
+                              col: int,
+                              i: int,
+                              specialties_dict: Dict[str, int]) -> None:
     if cell(i, col + 6) not in specialties_dict:
         raise BackendException(
             message=f"Row {i}. There is no such speciality in {cell(i, col + 7)} faculty",
@@ -68,7 +76,7 @@ def check_specialty_existence(cell, col, i, specialties_dict):
         )
 
 
-def check_telephone_number_existence(cell, col, i, telephone_set):
+def check_telephone_number_existence(cell: Callable, col: int, i: int, telephone_set: Set[str]) -> None:
     if cell(i, col + 3) in telephone_set:
         raise BackendException(
             message=f"Row {i}. The student with telephone number {cell(i, col + 3)} is already exist",
