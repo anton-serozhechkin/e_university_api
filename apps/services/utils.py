@@ -8,14 +8,6 @@ from typing import Callable, DefaultDict, Dict, List, Set, Tuple
 import xlrd
 
 
-def check_file_content_type(file: UploadFile) -> None:
-    if file.content_type != "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet":
-        raise BackendException(
-            message="Uploaded file have invalid type.",
-            code=http_status.HTTP_406_NOT_ACCEPTABLE
-        )
-
-
 def create_faculty_dict(specialties: List) -> DefaultDict[str, Dict[str, int]]:
     faculty_dict = defaultdict(dict)
     for specialty in specialties:
