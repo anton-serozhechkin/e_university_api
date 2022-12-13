@@ -314,7 +314,7 @@ async def download_user_document(
         path=path,
         filename=file_name,
         status_code=http_status.HTTP_200_OK,
-        media_type="text/plain"
+        media_type="application/vnd.openxmlformats-officedocument.wordprocessingml.document"
     )
 
 
