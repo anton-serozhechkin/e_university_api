@@ -646,8 +646,8 @@ CREATE VIEW user_document_list_view AS
     FROM
         user_request ur
 	LEFT JOIN user_document ud ON
-		ur.service_id = ud.user_request_id
-        LEFT JOIN status st ON
+		ur.service_id = ud.
+    LEFT JOIN status st ON
         ur.status_id = st.status_id
     WHERE
         ur.status_id in (1, 3)
