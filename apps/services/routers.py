@@ -264,7 +264,7 @@ async def read_request_details(
 
 @services_router.get("/{university_id}/get_user_document_list/",
                      name="het_user_document_list",
-                     response_model=JSENDOutSchema[ReturnUserDocumentOut],
+                     response_model=JSENDOutSchema[List[ReturnUserDocumentOut]],
                      summary="Return user document",
                      responses={200: {"description": "Successful get user documents list"}},
                      tags=["Student dashboard"])
