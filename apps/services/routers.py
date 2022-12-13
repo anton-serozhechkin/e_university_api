@@ -262,7 +262,7 @@ async def read_request_details(
     }
 
 
-@services_router.get("/{university_id}/return_user_document/{user_request_id}",
+@services_router.get("/{university_id}/return_user_document/",
                      name="return_user_document",
                      response_model=JSENDOutSchema[ReturnUserDocumentOut],
                      summary="Return user document",
