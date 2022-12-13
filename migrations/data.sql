@@ -9,6 +9,7 @@ INSERT INTO role(role_name) VALUES ('Адміністратор');
 INSERT INTO role(role_name) VALUES ('Супер Адміністратор');
 
 INSERT INTO service(service_id, service_name) VALUES (1, 'Поселення в гуртожиток');
+INSERT INTO service(service_id, service_name) VALUES (2, 'Медична картка');
 
 INSERT INTO status(status_id, status_name) VALUES (1, 'Схвалено');
 INSERT INTO status(status_id, status_name) VALUES (2, 'Відхилено');
