@@ -645,10 +645,12 @@ CREATE VIEW user_document_list_view AS
         ur.user_id
     FROM
         user_request ur
-    LEFT JOIN status st ON
-        ur.status_id = st.status_id
 	LEFT JOIN user_document ud ON
 		ur.service_id = ud.user_request_id
+        LEFT JOIN status st ON
+        ur.status_id = st.status_id
+    WHERE
+        ur.status_id in (1, 3)
 	GROUP BY
         ur.university_id,
         ur.date_created,
