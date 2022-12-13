@@ -193,13 +193,6 @@ class ServiceHandler:
             user: UserOut,
             session: AsyncSession):
 
-        user_request_response = await service_handler.read_user_request(
-            request=request,
-            university_id=university_id,
-            user=user,
-            session=session
-        )
-
         return await get_user_document_list_service.list(
             session=session,
             filters={"university_id": university_id, "user_id": user.user_id}
