@@ -263,25 +263,25 @@ async def read_request_details(
 
 
 @services_router.post("/{university_id}/create-students/",
-                      name="create_students_from_file",
+                      name="create_students_list_from_file",
                       response_model=JSENDOutSchema[Union[List[CreateStudentsOut], None]],
                       summary="Create students from file",
                       responses={200: {"description": "Successful create students from file response"}},
                       tags=['Admin dashboard'])
-async def create_students_from_file(
+async def create_students_list_from_file(
         request: Request,
         university_id: int,
         file: UploadFile = Depends(check_content_type),
         user=Depends(get_current_user),
         session: AsyncSession = Depends(get_async_session)):
-    response = await service_handler.create_students_from_file(
+    response = await service_handler.create_students_list_from_file(
         request=request,
         university_id=university_id,
         file=file,
         session=session)
     return {
         "data": response,
-        "message": "Created students from file list"
+        "message": "Created students list from file"
     }
 
 
