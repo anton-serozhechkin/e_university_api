@@ -207,7 +207,7 @@ class ServiceHandler:
         user_document = await user_document_service.read(
             session=session, data={"user_document_id": user_document_id})
         file_name = (user_document.name.replace(' ', '_') + student.last_name
-                     + "_" + student.first_name + "_" + student.middlename + ".docx")
+                     + "_" + student.first_name + "_" + student.middle_name + ".docx")
         return user_document.content, file_name
 
     async def count_hostel_accommodation_cost(
