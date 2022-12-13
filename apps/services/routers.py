@@ -265,8 +265,8 @@ async def read_request_details(
 @services_router.post("/{university_id}/create-students/",
                       name="create_students_list_from_file",
                       response_model=JSENDOutSchema[Union[List[CreateStudentsOut], None]],
-                      summary="Create students from file",
-                      responses={200: {"description": "Successful create students from file response"}},
+                      summary="Create students list from file",
+                      responses={200: {"description": "Successful create students list from file response"}},
                       tags=['Admin dashboard'])
 async def create_students_list_from_file(
         request: Request,

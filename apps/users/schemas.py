@@ -230,7 +230,7 @@ class CreateStudentsOut(BaseOutSchema):
     gender: str
     course_id: int
     speciality_id: int
-    user_id: None
+    user_id: int = None
     faculty_id: int
 
 
