@@ -6,7 +6,7 @@ from apps.services.services import (
     hostel_accommodation_service, request_existence_service, user_request_list_service,
     user_faculty_service, user_request_service, user_request_booking_hostel_service, user_request_review_service,
     user_request_detail_service, hostel_service, bed_place_service, user_document_service, service_service,
-    return_user_document
+    get_user_document_list_service
 )
 from apps.users.schemas import UserOut
 from settings import (Settings, TEMPLATES_PATH, SETTLEMENT_HOSTEL_PATH, HOSTEL_BOOKING_TEMPLATE)
@@ -185,7 +185,7 @@ class ServiceHandler:
                 "user_request_id": user_request_id
             })
 
-    async def return_user_document(
+    async def get_user_document_list(
             self,
             *,
             request: Request,
@@ -202,7 +202,7 @@ class ServiceHandler:
 
         ReturnUserDocumentIn(status_id=user_request_response.status_id)
 
-        return await return_user_document.read(
+        return await get_user_document_list_service.read(
             session=session,
             data={"university_id": university_id}
         )

@@ -635,8 +635,8 @@ CREATE VIEW user_request_booking_hostel_view AS
         s.user_id;
 
 
-DROP VIEW IF EXISTS return_user_document_view;
-CREATE VIEW return_user_document_view AS
+DROP VIEW IF EXISTS user_document_list_view;
+CREATE VIEW user_document_list_view AS
     SELECT
         ur.university_id,
         ur.date_created,

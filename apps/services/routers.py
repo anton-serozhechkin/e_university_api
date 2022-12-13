@@ -262,19 +262,19 @@ async def read_request_details(
     }
 
 
-@services_router.get("/{university_id}/return_user_document/",
-                     name="return_user_document",
+@services_router.get("/{university_id}/get_user_document_list/",
+                     name="het_user_document_list",
                      response_model=JSENDOutSchema[ReturnUserDocumentOut],
                      summary="Return user document",
-                     responses={200: {"description": "Successful returned user document"}},
+                     responses={200: {"description": "Successful get user documents list"}},
                      tags=["Student dashboard"])
-async def return_user_document(
+async def get_user_document_list(
         request: Request,
         university_id: int,
         user=Depends(get_current_user),
         session: AsyncSession = Depends(get_async_session)):
 
-    response = await service_handler.return_user_document(
+    response = await service_handler.get_user_document_list(
         request=request,
         university_id=university_id,
         user=user,
@@ -282,7 +282,7 @@ async def return_user_document(
 
     return {
         "data": response,
-        "message": "User documents were returned"
+        "message": "Get user documents list"
     }
 
 
