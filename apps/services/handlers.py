@@ -200,11 +200,9 @@ class ServiceHandler:
             session=session
         )
 
-        ReturnUserDocumentIn(status_id=user_request_response.status_id)
-
-        return await get_user_document_list_service.read(
+        return await get_user_document_list_service.list(
             session=session,
-            data={"university_id": university_id}
+            filters={"university_id": university_id, "user_id": user.user_id}
         )
 
     async def read_user_request(
