@@ -52,7 +52,7 @@ def check_faculty_existence(cell: Callable,
                             faculty_dict: DefaultDict[str, Dict[str, int]]) -> None:
     if cell(i, col + 7) not in faculty_dict:
         raise BackendException(
-            message=f"Row {i}. There is no such faculty name.",
+            message=f"Row {i + 1}. There is no such faculty name.",
             code=http_status.HTTP_406_NOT_ACCEPTABLE
         )
 
@@ -63,14 +63,24 @@ def check_specialty_existence(cell: Callable,
                               specialties_dict: Dict[str, int]) -> None:
     if cell(i, col + 6) not in specialties_dict:
         raise BackendException(
-            message=f"Row {i}. There is no such speciality in {cell(i, col + 7)} faculty",
+            message=f"Row {i + 1}. There is no such speciality in {cell(i, col + 7)} faculty",
             code=http_status.HTTP_406_NOT_ACCEPTABLE
         )
 
 
 def check_telephone_number_existence(cell: Callable, col: int, i: int, telephone_set: Set[str]) -> None:
+    tel = cell(i, col + 3)
+    if not tel:
+        raise BackendException(
+            message=f"Cell {i + 1} of column 'Phone number' is empty",
+            code=http_status.HTTP_406_NOT_ACCEPTABLE
+        )
+    if not tel.isdigit() or len(tel) < 12:
+        raise BackendException(
+            message=f"Cell {i + 1} of column 'Phone number' is not valid"
+        )
     if cell(i, col + 3) in telephone_set:
         raise BackendException(
-            message=f"Row {i}. The student with telephone number {cell(i, col + 3)} is already exist",
+            message=f"Row {i + 1}. The student with telephone number {cell(i, col + 3)} is already exist",
             code=http_status.HTTP_409_CONFLICT
         )

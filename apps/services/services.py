@@ -9,9 +9,10 @@ from apps.services.models import (
 )
 from apps.users.models import UserFaculty
 from sqlalchemy import select
+from typing import List
 
 
-async def get_specialties_list(university_id):
+async def get_specialties_list(university_id: int) -> List:
     query = select(Faculty, Speciality).filter(
         Speciality.faculty_id == Faculty.faculty_id
     ).where(Faculty.university_id == university_id)

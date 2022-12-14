@@ -8,7 +8,7 @@ from apps.services.schemas import (UserRequestExistenceOut, UserRequestsListOut,
                                    UserRequestReviewIn, HostelAccomodationViewOut,
                                    UserRequestDetailsViewOut, CountHostelAccommodationCostIn,
                                    CountHostelAccommodationCostOut)
-from apps.users.schemas import CreateStudentsOut
+from apps.users.schemas import CreateStudentsListOut
 
 from fastapi import APIRouter, Depends, File, Request, UploadFile, status as http_status
 from starlette.responses import StreamingResponse
@@ -264,7 +264,7 @@ async def read_request_details(
 
 @services_router.post("/{university_id}/create-students/",
                       name="create_students_list_from_file",
-                      response_model=JSENDOutSchema[Union[List[CreateStudentsOut], None]],
+                      response_model=JSENDOutSchema[Union[List[CreateStudentsListOut], None]],
                       summary="Create students list from file",
                       responses={200: {"description": "Successful create students list from file response"}},
                       tags=['Admin dashboard'])
