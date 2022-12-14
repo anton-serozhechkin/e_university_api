@@ -295,7 +295,15 @@ async def read_user_document(
                      summary="Download user document",
                      responses={200: {
                          "description": "Successful download user document response",
-                         "content": {"text/html": {"example": "file"}}
+                         "content": {"text/html": {"example": "\n".join([
+                             "content-disposition: attachment; filename*=utf-8''some_file_name.docx",
+                             "content-length: 1010",
+                             "content-type: application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+                             "date: Wed,14 Dec 2022 15:58:49 GMT",
+                             "etag: 9744b58c8e99ca7c251c717ad9b28bd2",
+                             "last-modified: Wed,23 Nov 2022 17:49:14 GMT",
+                             "server: uvicorn"
+                         ])}}
                      }},
                      tags=["Student dashboard"])
 async def download_user_document(
