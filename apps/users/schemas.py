@@ -216,13 +216,6 @@ class CreateStudentIn(StudentCheckExistenceIn):
             raise ValueError('Choose your gender from the list provided.')
         return value
 
-    @validator('course_id')
-    def validate_course_id(cls, value):
-        if not value:
-            raise ValueError('Course_id field cannot be empty')
-        if type(value) is not int:
-            raise ValueError('Invalid course_id value')
-
 
 class CreateStudentOut(BaseOutSchema):
     student_id: int
