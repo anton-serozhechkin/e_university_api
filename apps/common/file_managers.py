@@ -22,7 +22,7 @@ class FileManagerInterface(metaclass=abc.ABCMeta):
         raise NotImplementedError
 
     @abc.abstractmethod
-    def get(self, full_file_path: str):
+    def get(self, full_file_path: str) -> bytes:
         raise NotImplementedError
 
     @abc.abstractmethod

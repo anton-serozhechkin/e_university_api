@@ -1,4 +1,5 @@
 from apps.common.exceptions import BackendException
+from apps.common.services import ModelType
 from settings import Settings
 
 from translitua import translit
@@ -8,6 +9,7 @@ import os
 from datetime import datetime, timedelta
 from fastapi import status as http_status
 from fastapi.security import OAuth2PasswordBearer
+from typing import Optional, Tuple
 
 
 reusable_oauth = OAuth2PasswordBearer(
@@ -27,7 +29,7 @@ def add_random_digits_and_cut_username(data: str) -> str:
     return f"{(data[:4])}-{randint(100, 999)}".lower()
 
 
-def get_student_attr(student):
+def get_student_attr(student: Optional[ModelType]) -> Tuple[str, str, int]:
     if not student:
         raise BackendException(
             message="Student is not found.",
@@ -41,7 +43,7 @@ def get_student_attr(student):
     return student.first_name, student.last_name, student.faculty_id
 
 
-def get_token_data(token_data):
+def get_token_data(token_data: Optional[ModelType]) -> Tuple[datetime, int]:
     if not token_data:
         raise BackendException(
             message="To register a user, first go to the page for checking the presence of a student in the register.",
@@ -56,7 +58,7 @@ def get_token_data(token_data):
     return token_data.expires, token_data.student_id
 
 
-def get_token_and_expires():
+def get_token_and_expires() -> Tuple[str, datetime]:
     token = hashlib.sha1(os.urandom(128)).hexdigest()
     expires = datetime.utcnow() + timedelta(seconds=Settings.TOKEN_LIFE_TIME)
     return token, expires
