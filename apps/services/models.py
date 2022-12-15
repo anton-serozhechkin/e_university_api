@@ -113,7 +113,7 @@ class UserDocument(Base):
 
     user_document_id = Column(INTEGER, primary_key=True, nullable=False)
     date_created = Column(DATETIME, nullable=False)
-    name = Column(VARCHAR(length=255), nullable=False)
+    name = Column(VARCHAR(length=255), nullable=False, unique=True)
     content = Column(VARCHAR(length=255), nullable=False)
     user_request_id = Column(INTEGER, ForeignKey("user_request.user_request_id"), nullable=False)
 
