@@ -1,10 +1,10 @@
 from apps.authorization.models import Role
 from apps.common.exceptions import BackendException
-from apps.common.services import AsyncCRUDBase
+from apps.common.services import AsyncCRUDBase, ModelType
 
 from settings import Settings
 from datetime import datetime, timedelta
-from typing import Union, Any
+from typing import Any, Optional, Union
 
 from jose import jwt
 from passlib.context import CryptContext
@@ -39,12 +39,12 @@ def create_refresh_token(subject: Union[str, Any], expires_delta: int = None) ->
     return encoded_jwt
 
 
-def verify_user(user):
+def verify_user(user: Optional[ModelType]) -> None:
     if not user:
         raise BackendException(message="Login or password is invalid. Please, try again.")
 
 
-def verify_password(user, password):
+def verify_password(user: ModelType, password: str) -> None:
     if not check_password(password, user.password):
         raise BackendException(message="Login or password is invalid. Please, try again.")
 

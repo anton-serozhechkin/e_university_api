@@ -1,13 +1,14 @@
 from apps.common.dependencies import get_async_session, get_current_user
 from apps.authorization.schemas import AvailableRolesOut
 from apps.common.schemas import JSENDOutSchema, JSENDFailOutSchema
-from apps.users.schemas import AuthOut
+from apps.common.services import ReadSchemaType
+from apps.users.schemas import AuthOut, UserOut
 from apps.authorization.handlers import authorization_handler
 
 from fastapi import APIRouter, Depends, Request
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.ext.asyncio import AsyncSession
-from typing import List
+from typing import Dict, List
 
 
 authorization_router = APIRouter()
@@ -26,7 +27,7 @@ authorization_router = APIRouter()
 async def login(
         request: Request,
         form_data: OAuth2PasswordRequestForm = Depends(),
-        session: AsyncSession = Depends(get_async_session)):
+        session: AsyncSession = Depends(get_async_session)) -> Dict[str, int]:
     """
         **Login user**
 
@@ -47,8 +48,8 @@ async def login(
                           tags=["SuperAdmin dashboard"])
 async def available_roles(
         request: Request,
-        user=Depends(get_current_user),
-        session: AsyncSession = Depends(get_async_session)):
+        user: UserOut = Depends(get_current_user),
+        session: AsyncSession = Depends(get_async_session)) -> Dict[str, List[ReadSchemaType]]:
     return {
         "data": await authorization_handler.available_roles(request=request, session=session),
         "message": "Got roles"
