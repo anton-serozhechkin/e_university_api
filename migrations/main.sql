@@ -217,7 +217,7 @@ MATCH FULL ON DELETE CASCADE ON UPDATE CASCADE;
 
 CREATE TABLE IF NOT EXISTS user_document(
     user_document_id integer NOT NULL,
-    name varchar(255) NOT NULL,
+    name varchar(255) NOT NULL UNIQUE,
     content varchar(255) NOT NULL,
     date_created timestamp NOT NULL,
     user_request_id integer NOT NULL,
@@ -644,9 +644,9 @@ CREATE VIEW user_document_list_view AS
         ud.user_document_id,
         ur.user_id
     FROM
-        user_request ur
-	LEFT JOIN user_document ud ON
-		ur.service_id = ud.
+        user_document ud
+    LEFT JOIN user_request ur ON
+        ur.user_request_id = ud.user_request_id
     LEFT JOIN status st ON
         ur.status_id = st.status_id
     WHERE
