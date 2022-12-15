@@ -81,7 +81,7 @@ async def get_current_user(
     return await user_list_service.read(session=session, data={"user_id": user.user_id})
 
 
-def check_content_type(file: UploadFile = File(...)) -> File:
+def check_file_content_type(file: UploadFile = File(...)) -> File:
     if file.content_type != "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet":
         raise BackendException(
             message="Uploaded file have invalid type.",

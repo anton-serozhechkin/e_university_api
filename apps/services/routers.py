@@ -1,4 +1,4 @@
-from apps.common.dependencies import check_content_type, get_async_session, get_current_user
+from apps.common.dependencies import check_file_content_type, get_async_session, get_current_user
 from apps.common.schemas import JSENDFailOutSchema, JSENDOutSchema
 from apps.services.handlers import service_handler
 from apps.services.schemas import (UserRequestExistenceOut, UserRequestsListOut,
@@ -271,8 +271,8 @@ async def read_request_details(
 async def create_students_list_from_file(
         request: Request,
         university_id: int,
-        file: UploadFile = Depends(check_content_type),
-        user=Depends(get_current_user),
+        file: UploadFile = Depends(check_file_content_type),
+        user = Depends(get_current_user),
         session: AsyncSession = Depends(get_async_session)):
     response = await service_handler.create_students_list_from_file(
         request=request,

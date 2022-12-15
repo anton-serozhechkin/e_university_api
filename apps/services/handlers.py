@@ -1,5 +1,4 @@
 from apps.common.file_managers import file_manager
-from apps.services.schemas import CountHostelAccommodationCostIn
 from apps.services.services import (
     bed_place_service, get_specialties_list, hostel_accommodation_service, hostel_service,
     request_existence_service, user_document_service, service_service, user_request_list_service,
@@ -8,7 +7,8 @@ from apps.services.services import (
 )
 from settings import (Settings, TEMPLATES_PATH, SETTLEMENT_HOSTEL_PATH, HOSTEL_BOOKING_TEMPLATE)
 from apps.services.models import STATUS_MAPPING
-from apps.services.schemas import CreateUserRequestIn, CancelRequestIn, UserRequestReviewIn
+from apps.services.schemas import (CancelRequestIn, CountHostelAccommodationCostIn, 
+    CreateUserRequestIn, UserRequestReviewIn)
 from apps.services.utils import (
     create_faculty_dict, create_telephone_set, get_worksheet_cell_col_row, check_faculty_existence,
     check_specialty_existence, check_telephone_number_existence
@@ -284,7 +284,7 @@ class ServiceHandler:
             university_id: int,
             file: UploadFile = File(...),
             session: AsyncSession):
-        specialties, schema_list = await get_specialties_list(university_id), []
+        specialties, students = await get_specialties_list(university_id), []
 
         faculty_dict = create_faculty_dict(specialties)
 
@@ -297,7 +297,7 @@ class ServiceHandler:
             specialties_dict = faculty_dict.get(cell(i, col + 7))
             check_specialty_existence(cell, col, i, specialties_dict)
             check_telephone_number_existence(cell, col, i, telephone_set)
-            schema = CreateStudentIn(
+            student = CreateStudentIn(
                 last_name=cell(i, col),
                 first_name=cell(i, col + 1),
                 middle_name=cell(i, col + 2),
@@ -307,10 +307,10 @@ class ServiceHandler:
                 speciality_id=specialties_dict.get(cell(i, col + 6)),
                 gender=cell(i, col + 8)
             )
-            schema_list.append(schema)
+            students.append(student)
         return await student_service.create_many(
             session=session,
-            objs=schema_list
+            objs=students
         )
 
 
