@@ -8,6 +8,7 @@ from apps.services.schemas import (UserRequestExistenceOut, UserRequestsListOut,
                                    UserRequestReviewIn, HostelAccomodationViewOut,
                                    UserRequestDetailsViewOut, CountHostelAccommodationCostIn,
                                    CountHostelAccommodationCostOut)
+from apps.users.schemas import UserOut
 
 from fastapi import APIRouter, Depends, Request, status as http_status
 from starlette.responses import StreamingResponse
@@ -32,7 +33,7 @@ async def check_user_request_existence(
         request: Request,
         university_id: int,
         service_id: int,
-        user=Depends(get_current_user),
+        user: UserOut = Depends(get_current_user),
         session: AsyncSession = Depends(get_async_session)
 ):  # TODO: nothing prevents student from creating multiple requests with the same id
     """
@@ -65,7 +66,7 @@ async def check_user_request_existence(
 async def read_user_request_list(
         request: Request,
         university_id: int,
-        user=Depends(get_current_user),
+        user: UserOut = Depends(get_current_user),
         session: AsyncSession = Depends(get_async_session)
 ):
     return {
@@ -89,7 +90,7 @@ async def create_user_request(
         request: Request,
         university_id: int,
         user_request: CreateUserRequestIn,
-        user=Depends(get_current_user),
+        user: UserOut = Depends(get_current_user),
         session: AsyncSession = Depends(get_async_session)
 ):
     """
@@ -126,7 +127,7 @@ async def create_user_request(
 async def read_user_request_booking_hostel(
         request: Request,
         university_id: int,
-        user=Depends(get_current_user),
+        user: UserOut = Depends(get_current_user),
         session: AsyncSession = Depends(get_async_session)):
     return {
         "data": await service_handler.read_user_request_booking_hostel(
@@ -144,12 +145,12 @@ async def read_user_request_booking_hostel(
                      summary="Cancel user request",
                      responses={200: {"description": "Successful cancel user request response"}},
                      tags=["Student dashboard"])
-async def cancel_request(
+async def cancel_student_request(
         request: Request,
         university_id: int,
         user_request_id: int,
         cancel_request: CancelRequestIn,
-        user=Depends(get_current_user),
+        user: UserOut = Depends(get_current_user),
         session: AsyncSession = Depends(get_async_session)):
     """
     **Cancel user request**
@@ -184,7 +185,7 @@ async def create_user_request_review(
         university_id: int,
         user_request_id: int,
         user_request_review: UserRequestReviewIn,
-        user=Depends(get_current_user),
+        user: UserOut = Depends(get_current_user),
         session: AsyncSession = Depends(get_async_session)):
     """
         **Create user request review**
@@ -228,7 +229,7 @@ async def read_hostel_accommodation(
         request: Request,
         university_id: int,
         user_request_id: int,
-        user=Depends(get_current_user),
+        user: UserOut = Depends(get_current_user),
         session: AsyncSession = Depends(get_async_session)):
     return {
         "data": await service_handler.read_hostel_accommodation(
@@ -250,7 +251,7 @@ async def read_request_details(
         request: Request,
         university_id: int,
         user_request_id: int,
-        user=Depends(get_current_user),
+        user: UserOut = Depends(get_current_user),
         session: AsyncSession = Depends(get_async_session)):
     return {
         "data": await service_handler.read_request_details(
@@ -275,7 +276,7 @@ async def read_user_document(
         request: Request,
         university_id: int,
         user_document_id: int,
-        user=Depends(get_current_user),
+        user: UserOut = Depends(get_current_user),
         session: AsyncSession = Depends(get_async_session)):
     return StreamingResponse(
         content=await service_handler.read_user_document(
@@ -299,7 +300,7 @@ async def count_hostel_accommodation_cost(
         request: Request,
         university_id: int,
         data: CountHostelAccommodationCostIn,
-        user=Depends(get_current_user),
+        user: UserOut = Depends(get_current_user),
         session: AsyncSession = Depends(get_async_session)):
     return {
         "data": await service_handler.count_hostel_accommodation_cost(

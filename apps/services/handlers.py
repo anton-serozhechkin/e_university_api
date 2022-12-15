@@ -1,6 +1,6 @@
 from apps.common.file_managers import file_manager
 from apps.services.models import STATUS_MAPPING
-from apps.services.schemas import (CancelRequestIn, CreateUserRequestIn, UserRequestReviewIn, 
+from apps.services.schemas import (CancelRequestIn, CreateUserRequestIn, UserRequestReviewIn,
     CountHostelAccommodationCostIn)
 from apps.services.services import (
     hostel_accommodation_service, request_existence_service, user_request_list_service,
@@ -19,8 +19,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 class ServiceHandler:
 
+    @staticmethod
     async def read_user_request_existence(
-            self,
             *,
             request: Request,
             university_id: int,
@@ -44,8 +44,8 @@ class ServiceHandler:
             "user_request_exist": False
         }
 
+    @staticmethod
     async def read_user_request_list(
-            self,
             *,
             request: Request,
             university_id: int,
@@ -89,8 +89,8 @@ class ServiceHandler:
             "user_request_id": user_request.user_request_id
         }
 
+    @staticmethod
     async def read_user_request_booking_hostel(
-            self,
             *,
             request: Request,
             university_id: int,
@@ -101,8 +101,8 @@ class ServiceHandler:
             session=session,
             data={"user_id": user.user_id, "university_id": university_id})
 
+    @staticmethod
     async def cancel_request(
-            self,
             *,
             request: Request,
             user_request_id: int,
@@ -118,8 +118,8 @@ class ServiceHandler:
             "status_id": cancel_request.status_id
         }
 
+    @staticmethod
     async def create_user_request_review(
-            self,
             *,
             request: Request,
             university_id: int,
@@ -153,8 +153,8 @@ class ServiceHandler:
             "user_request_review_id": created_user_request_review.user_request_review_id
         }
 
+    @staticmethod
     async def read_hostel_accommodation(
-            self,
             *,
             request: Request,
             university_id: int,
@@ -169,8 +169,8 @@ class ServiceHandler:
         # TODO AttributeError: 'NoneType' object has no attribute 'documents' (it's happened only if user request doesn't have review)
         return response
 
+    @staticmethod
     async def read_request_details(
-            self,
             *,
             request: Request,
             university_id: int,
@@ -183,8 +183,8 @@ class ServiceHandler:
                 "user_request_id": user_request_id
             })
 
+    @staticmethod
     async def read_user_document(
-            self,
             *,
             request: Request,
             university_id: int,
@@ -201,7 +201,6 @@ class ServiceHandler:
             university_id: int,
             data: CountHostelAccommodationCostIn,
             session: AsyncSession):
-
         hostel = await hostel_service.read(
             session=session,
             data={"hostel_id": data.hostel_id}
