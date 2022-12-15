@@ -16,7 +16,6 @@ from decimal import Decimal
 from fastapi import Request
 from pathlib import Path
 from sqlalchemy.ext.asyncio import AsyncSession
-from urllib.parse import quote
 
 
 class ServiceHandler:
@@ -196,7 +195,7 @@ class ServiceHandler:
         user_document = await user_document_service.read(session=session, data={"user_document_id": user_document_id})
         return file_manager.get(user_document.content)
 
-    @staticmethod
+
     async def download_user_document(
             self,
             *,
@@ -208,7 +207,7 @@ class ServiceHandler:
         user_document = await user_document_service.read(
             session=session, data={"user_document_id": user_document_id})
         file_name = await self.__generate_user_document_name_for_download(user_document.name, user.user_id, session)
-        return user_document.content, quote(file_name)
+        return user_document.content, file_name
 
     async def count_hostel_accommodation_cost(
             self,
