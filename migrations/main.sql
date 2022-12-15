@@ -185,7 +185,7 @@ CREATE TABLE IF NOT EXISTS user_request(
     faculty_id integer NOT NULL,
     university_id integer NOT NULL,
     user_id integer NOT NULL,
-    service_id integer NOT NULL,
+    service_id integer NOT NULL UNIQUE,
     date_created timestamp NOT NULL,
     status_id integer NOT NULL,
     comment VARCHAR(255),
@@ -646,7 +646,7 @@ CREATE VIEW user_document_list_view AS
     FROM
         user_document ud
 	LEFT JOIN user_request ur ON
-		ur.user_request_id = ud.user_request_id
+		ur.service_id = ud.user_document_id
     LEFT JOIN status st ON
         ur.status_id = st.status_id
     WHERE
