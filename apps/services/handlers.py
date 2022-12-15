@@ -195,7 +195,6 @@ class ServiceHandler:
         user_document = await user_document_service.read(session=session, data={"user_document_id": user_document_id})
         return file_manager.get(user_document.content)
 
-
     async def download_user_document(
             self,
             *,
