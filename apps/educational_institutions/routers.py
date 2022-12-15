@@ -2,6 +2,7 @@ from apps.common.dependencies import get_async_session, get_current_user
 from apps.common.schemas import JSENDFailOutSchema, JSENDOutSchema
 from apps.educational_institutions.handlers import edu_institutions_handler
 from apps.educational_institutions.schemas import FacultyIn, FacultyOut, CourseListOut, SpecialityListOut
+from apps.users.schemas import UserOut
 
 from fastapi import APIRouter, Depends, Request
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -23,7 +24,7 @@ educational_institutions_router = APIRouter(
                                      tags=["SuperAdmin dashboard"])
 async def read_faculties(request: Request,
                          university_id: int,
-                         user=Depends(get_current_user),
+                         user: UserOut = Depends(get_current_user),
                          session: AsyncSession = Depends(get_async_session)):
     """
         **Get list of university faculties**
@@ -56,7 +57,7 @@ async def create_faculty(
         request: Request,
         university_id: int,
         faculty: FacultyIn,
-        user=Depends(get_current_user),
+        user: UserOut = Depends(get_current_user),
         session: AsyncSession = Depends(get_async_session)
 ):
     """
@@ -98,7 +99,7 @@ async def create_faculty(
 async def read_speciality_list(
         request: Request,
         university_id: int,
-        auth=Depends(get_current_user),
+        auth: UserOut = Depends(get_current_user),
         session: AsyncSession = Depends(get_async_session)
 ):
     return {
@@ -119,7 +120,7 @@ async def read_speciality_list(
                                      tags=["Admin dashboard"])
 async def read_courses_list(
         request: Request,
-        auth=Depends(get_current_user),
+        auth: UserOut = Depends(get_current_user),
         session: AsyncSession = Depends(get_async_session)
 ):
     return {

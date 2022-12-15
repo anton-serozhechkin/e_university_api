@@ -1,7 +1,6 @@
 from apps.common.dependencies import get_async_session, get_current_user
 from apps.authorization.schemas import AvailableRolesOut
 from apps.common.schemas import JSENDOutSchema, JSENDFailOutSchema
-from apps.common.services import ReadSchemaType
 from apps.users.schemas import AuthOut, UserOut
 from apps.authorization.handlers import authorization_handler
 
@@ -49,7 +48,7 @@ async def login(
 async def available_roles(
         request: Request,
         user: UserOut = Depends(get_current_user),
-        session: AsyncSession = Depends(get_async_session)) -> Dict[str, List[ReadSchemaType]]:
+        session: AsyncSession = Depends(get_async_session)):
     return {
         "data": await authorization_handler.available_roles(request=request, session=session),
         "message": "Got roles"
