@@ -1,20 +1,22 @@
 from apps.authorization.services import (verify_password, create_access_token, create_refresh_token, verify_user,
                                          role_service)
+from apps.common.services import ReadSchemaType
 from apps.users.services import user_service
 
 from fastapi import Depends, Request
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.ext.asyncio import AsyncSession
+from typing import Dict, List
 
 
 class AuthorizationHandler:
 
+    @staticmethod
     async def login(
-            self,
             *,
             request: Request,
             form_data: OAuth2PasswordRequestForm = Depends(),
-            session: AsyncSession):
+            session: AsyncSession) -> Dict:
         user = await user_service.read(session=session, data={"login": form_data.username})
         verify_user(user)
         verify_password(user, form_data.password)
@@ -24,13 +26,12 @@ class AuthorizationHandler:
             "user_id": user.user_id
         }
 
-
+    @staticmethod
     async def available_roles(
-            self,
             *,
             request: Request,
             session: AsyncSession
-    ):
+    ) -> List[ReadSchemaType]:
         return await role_service.list(session=session)
 
 
