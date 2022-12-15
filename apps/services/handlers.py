@@ -205,12 +205,10 @@ class ServiceHandler:
             user_document_id: int,
             user: UserOut,
             session: AsyncSession):
-        student = await student_service.read(session=session, data={"user_id": user.user_id})
         user_document = await user_document_service.read(
             session=session, data={"user_document_id": user_document_id})
-        name = user_document.name.replace(' ', '_')
-        file_name = quote(f"{name}_{student.last_name}_{student.first_name}_{student.middle_name}.docx")
-        return user_document.content, file_name
+        file_name = await self.__generate_user_document_name_for_download(user_document.name, user.user_id, session)
+        return user_document.content, quote(file_name)
 
     async def count_hostel_accommodation_cost(
             self,
@@ -286,6 +284,11 @@ class ServiceHandler:
             data={"service_id": service_id}
         )
         return f"Заява на {service.service_name.lower()}"
+
+    @classmethod
+    async def __generate_user_document_name_for_download(cls, document_name: str, user_id: int, session: AsyncSession) -> str:
+        student = await student_service.read(session=session, data={"user_id": user_id})
+        return f"{document_name.replace(' ', '_')}_{student.first_name}_{student.last_name}.docx"
 
 
 service_handler = ServiceHandler()

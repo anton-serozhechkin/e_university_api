@@ -312,14 +312,14 @@ async def download_user_document(
         user_document_id: int,
         user=Depends(get_current_user),
         session: AsyncSession = Depends(get_async_session)):
-    path, file_name = await service_handler.download_user_document(
+    file_path, file_name = await service_handler.download_user_document(
             request=request,
             university_id=university_id,
             user_document_id=user_document_id,
             user=user,
             session=session)
     return FileResponse(
-        path=path,
+        path=file_path,
         filename=file_name,
         status_code=http_status.HTTP_200_OK,
         media_type="application/vnd.openxmlformats-officedocument.wordprocessingml.document"
