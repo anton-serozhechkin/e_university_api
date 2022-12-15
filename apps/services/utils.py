@@ -75,7 +75,7 @@ def check_telephone_number_existence(cell: Callable, col: int, i: int, telephone
             message=f"Cell {i + 1} of column 'Phone number' is empty",
             code=http_status.HTTP_406_NOT_ACCEPTABLE
         )
-    if not tel.isdigit() or len(tel) < 12:
+    if not tel.isdigit() or len(tel) != 12:
         raise BackendException(
             message=f"Cell {i + 1} of column 'Phone number' is not valid"
         )
