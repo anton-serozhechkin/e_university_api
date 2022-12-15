@@ -16,7 +16,7 @@ class AuthorizationHandler:
             *,
             request: Request,
             form_data: OAuth2PasswordRequestForm = Depends(),
-            session: AsyncSession) -> Dict:
+            session: AsyncSession) -> Dict[str, int]:
         user = await user_service.read(session=session, data={"login": form_data.username})
         verify_user(user)
         verify_password(user, form_data.password)
