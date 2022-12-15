@@ -13,7 +13,9 @@ from tags_metadata import metadata
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.exceptions import RequestValidationError
+from pydantic import ValidationError
 from starlette.exceptions import HTTPException as StarletteHTTPException
+
 
 app = FastAPI(openapi_tags=metadata)
 
@@ -31,6 +33,7 @@ app.add_middleware(
 app.add_exception_handler(BackendException, backend_exception_handler)
 app.add_exception_handler(StarletteHTTPException, http_exception_handler)
 app.add_exception_handler(RequestValidationError, validation_exception_handler)
+app.add_exception_handler(ValidationError, validation_exception_handler)
 
 
 # Endpoints registration

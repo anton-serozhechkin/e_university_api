@@ -55,7 +55,7 @@ class CancelRequestIn(BaseInSchema):
     @validator('status_id')
     def validate_status_id(cls, v):
         if v != 4:
-            raise ValueError("The application can only be canceled.")
+            raise ValueError("The application can only be canceled")
         return v
 
 
@@ -79,7 +79,7 @@ class UserRequestReviewIn(BaseInSchema):
     @validator('status_id')
     def validate_status_id(cls, v):
         if v not in [1, 2]:
-            raise ValueError("The application can only be approved or rejected.")
+            raise ValueError("The application can only be approved or rejected")
         return v
 
 

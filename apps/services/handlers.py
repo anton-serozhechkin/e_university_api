@@ -3,18 +3,28 @@ from apps.services.models import STATUS_MAPPING
 from apps.services.schemas import (CancelRequestIn, CreateUserRequestIn, UserRequestReviewIn,
                                    CountHostelAccommodationCostIn)
 from apps.services.services import (
-    hostel_accommodation_service, request_existence_service, user_request_list_service,
-    user_faculty_service, user_request_service, user_request_booking_hostel_service, user_request_review_service,
-    user_request_detail_service, hostel_service, bed_place_service, user_document_service, service_service
+    bed_place_service, get_specialties_list, hostel_accommodation_service, hostel_service,
+    request_existence_service, user_document_service, service_service, user_request_list_service,
+    user_faculty_service, user_request_service, user_request_booking_hostel_service,
+    user_request_review_service, user_request_detail_service
 )
 from apps.services.utils import check_for_empty_value
 from apps.users.schemas import UserOut
 from apps.users.services import student_service
 from settings import (Settings, TEMPLATES_PATH, SETTLEMENT_HOSTEL_PATH, HOSTEL_BOOKING_TEMPLATE)
+from apps.services.models import STATUS_MAPPING
+from apps.services.schemas import (CancelRequestIn, CountHostelAccommodationCostIn,
+    CreateUserRequestIn, UserRequestReviewIn)
+from apps.services.utils import (
+    create_faculty_dict, create_telephone_set, get_worksheet_cell_col_row, check_faculty_existence,
+    check_specialty_existence, check_telephone_number_existence
+)
+from apps.users.schemas import CreateStudentIn, UserOut
+from apps.users.services import student_service
 
 from datetime import datetime, date
 from decimal import Decimal
-from fastapi import Request
+from fastapi import File, Request, UploadFile
 from pathlib import Path
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -289,6 +299,42 @@ class ServiceHandler:
     async def __generate_user_document_name_for_download(cls, document_name: str, user_id: int, session: AsyncSession) -> str:
         student = await student_service.read(session=session, data={"user_id": user_id})
         return f"{document_name.replace(' ', '_')}_{student.first_name}_{student.last_name}.docx"
+
+    @staticmethod
+    async def create_students_list_from_file(
+            *,
+            request: Request,
+            university_id: int,
+            file: UploadFile = File(...),
+            session: AsyncSession):
+        specialties, students = await get_specialties_list(university_id), []
+
+        faculty_dict = create_faculty_dict(specialties)
+
+        telephone_set = await create_telephone_set(session=session, filters={"university_id": university_id})
+
+        worksheet, cell, col, row = get_worksheet_cell_col_row(file)
+
+        for i in range(row, len(worksheet.col(1))):
+            check_faculty_existence(cell, col, i, faculty_dict)
+            specialties_dict = faculty_dict.get(cell(i, col + 7))
+            check_specialty_existence(cell, col, i, specialties_dict)
+            check_telephone_number_existence(cell, col, i, telephone_set)
+            student = CreateStudentIn(
+                last_name=cell(i, col),
+                first_name=cell(i, col + 1),
+                middle_name=cell(i, col + 2),
+                telephone_number=cell(i, col + 3),
+                course_id=cell(i, col + 4),
+                faculty_id=specialties_dict.get("faculty_id"),
+                speciality_id=specialties_dict.get(cell(i, col + 6)),
+                gender=cell(i, col + 8)
+            )
+            students.append(student)
+        return await student_service.create_many(
+            session=session,
+            objs=students
+        )
 
 
 service_handler = ServiceHandler()
