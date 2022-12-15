@@ -7,6 +7,7 @@ from apps.services.services import (
     user_faculty_service, user_request_service, user_request_booking_hostel_service, user_request_review_service,
     user_request_detail_service, hostel_service, bed_place_service, user_document_service, service_service
 )
+from apps.services.utils import check_for_empty_value
 from apps.users.schemas import UserOut
 from apps.users.services import student_service
 from settings import (Settings, TEMPLATES_PATH, SETTLEMENT_HOSTEL_PATH, HOSTEL_BOOKING_TEMPLATE)
@@ -205,6 +206,7 @@ class ServiceHandler:
             session: AsyncSession):
         user_document = await user_document_service.read(
             session=session, data={"user_document_id": user_document_id})
+        check_for_empty_value(user_document, 'user_document_id')
         file_name = await self.__generate_user_document_name_for_download(user_document.name, user.user_id, session)
         return user_document.content, file_name
 
