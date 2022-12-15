@@ -1,3 +1,5 @@
+import os.path
+
 from apps.common.exceptions import BackendException
 from apps.users.services import student_list_service
 
@@ -83,6 +85,7 @@ def check_telephone_number_existence(cell: Callable, col: int, i: int, telephone
         raise BackendException(
             message=f"Row {i + 1}. The student with telephone number {cell(i, col + 3)} is already exist",
             code=http_status.HTTP_409_CONFLICT
+        )
 
 
 def check_for_empty_value(value: Any, value_name: str = '') -> None:
@@ -90,4 +93,12 @@ def check_for_empty_value(value: Any, value_name: str = '') -> None:
         raise BackendException(
             message=f'Input {value_name} is incorrect',
             code=http_status.HTTP_404_NOT_FOUND
+        )
+
+
+def check_file_existing(path: str) -> None:
+    if not os.path.exists(path):
+        raise BackendException(
+            message=f'File with path {path} was removed or deleted',
+            code=http_status.HTTP_409_CONFLICT
         )

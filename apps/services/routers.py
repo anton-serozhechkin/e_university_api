@@ -10,10 +10,8 @@ from apps.services.schemas import (UserRequestExistenceOut, UserRequestsListOut,
                                    CountHostelAccommodationCostOut)
 from apps.users.schemas import CreateStudentsListOut
 
-from fastapi import APIRouter, Depends, Request, status as http_status
+from fastapi import APIRouter, Depends, Request, UploadFile, status as http_status
 from starlette.responses import StreamingResponse, FileResponse
-from fastapi import APIRouter, Depends, File, Request, UploadFile, status as http_status
-from starlette.responses import StreamingResponse
 from sqlalchemy.ext.asyncio import AsyncSession
 from typing import List, Union
 

@@ -1,26 +1,20 @@
 from apps.common.file_managers import file_manager
 from apps.services.models import STATUS_MAPPING
-from apps.services.schemas import (CancelRequestIn, CreateUserRequestIn, UserRequestReviewIn,
-                                   CountHostelAccommodationCostIn)
+from apps.services.schemas import (CancelRequestIn, CountHostelAccommodationCostIn,
+                                   CreateUserRequestIn, UserRequestReviewIn)
 from apps.services.services import (
     bed_place_service, get_specialties_list, hostel_accommodation_service, hostel_service,
     request_existence_service, user_document_service, service_service, user_request_list_service,
     user_faculty_service, user_request_service, user_request_booking_hostel_service,
     user_request_review_service, user_request_detail_service
 )
-from apps.services.utils import check_for_empty_value
-from apps.users.schemas import UserOut
-from apps.users.services import student_service
-from settings import (Settings, TEMPLATES_PATH, SETTLEMENT_HOSTEL_PATH, HOSTEL_BOOKING_TEMPLATE)
-from apps.services.models import STATUS_MAPPING
-from apps.services.schemas import (CancelRequestIn, CountHostelAccommodationCostIn,
-    CreateUserRequestIn, UserRequestReviewIn)
 from apps.services.utils import (
     create_faculty_dict, create_telephone_set, get_worksheet_cell_col_row, check_faculty_existence,
-    check_specialty_existence, check_telephone_number_existence
+    check_specialty_existence, check_telephone_number_existence, check_for_empty_value, check_file_existing
 )
 from apps.users.schemas import CreateStudentIn, UserOut
 from apps.users.services import student_service
+from settings import (Settings, TEMPLATES_PATH, SETTLEMENT_HOSTEL_PATH, HOSTEL_BOOKING_TEMPLATE)
 
 from datetime import datetime, date
 from decimal import Decimal
@@ -217,6 +211,7 @@ class ServiceHandler:
         user_document = await user_document_service.read(
             session=session, data={"user_document_id": user_document_id})
         check_for_empty_value(user_document, 'user_document_id')
+        check_file_existing(user_document.content)
         file_name = await self.__generate_user_document_name_for_download(user_document.name, user.user_id, session)
         return user_document.content, file_name
 
@@ -296,7 +291,8 @@ class ServiceHandler:
         return f"Заява на {service.service_name.lower()}"
 
     @classmethod
-    async def __generate_user_document_name_for_download(cls, document_name: str, user_id: int, session: AsyncSession) -> str:
+    async def __generate_user_document_name_for_download(cls, document_name: str, user_id: int,
+                                                         session: AsyncSession) -> str:
         student = await student_service.read(session=session, data={"user_id": user_id})
         return f"{document_name.replace(' ', '_')}_{student.first_name}_{student.last_name}.docx"
 
