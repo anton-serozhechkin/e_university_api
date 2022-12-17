@@ -1,8 +1,8 @@
 from apps.common.file_managers import file_manager
 from apps.services.models import STATUS_MAPPING, UserDocument
-from apps.services.schemas import (CancelRequestIn, CreateUserRequestIn, UserRequestReviewIn,
-                                   CountHostelAccommodationCostIn, CountHostelAccommodationCostOut, HostelAccomodationViewOut, UserRequestsListOut,
-                                   UserRequestBookingHostelOut, UserRequestReviewOut, UserRequestDetailsViewOut)
+from apps.services.schemas import (CancelRequestIn, CreateUserRequestIn, CountHostelAccommodationCostIn,
+                                   HostelAccomodationViewOut, UserRequestBookingHostelOut, UserRequestDetailsViewOut,
+                                   UserRequestsListOut, UserRequestReviewIn)
 from apps.services.services import (
     hostel_accommodation_service, request_existence_service, user_request_list_service,
     user_faculty_service, user_request_service, user_request_booking_hostel_service, user_request_review_service,

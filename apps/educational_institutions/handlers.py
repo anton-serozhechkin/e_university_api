@@ -1,7 +1,7 @@
 from apps.educational_institutions.models import Faculty
 from apps.educational_institutions.schemas import CourseListOut, FacultyIn, FacultyOut, SpecialityListOut
-from apps.educational_institutions.services import (
-    course_list_service, faculty_service, faculty_list_service, speciality_list_service)
+from apps.educational_institutions.services import (course_list_service, faculty_service, faculty_list_service,
+                                                    speciality_list_service)
 
 from fastapi import Request
 from sqlalchemy.ext.asyncio import AsyncSession

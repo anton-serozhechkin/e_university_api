@@ -2,8 +2,8 @@ from apps.authorization.services import get_hashed_password
 from apps.common.exceptions import BackendException
 from apps.common.utils import (add_random_digits_and_cut_username, get_student_attr, get_token_data,
                                get_generated_username, get_token_and_expires)
-from apps.users.schemas import (CreateUserIn, CreateUserOut, CreateStudentOut, DeleteUserIn, RegistrationIn, CreateStudentIn,
-                                DeleteStudentIn, RegistrationOut, StudentCheckExistenceIn, StudentsListOut, StudentCheckExistenceOut,
+from apps.users.schemas import (CreateStudentIn, CreateUserIn, CreateUserOut, DeleteStudentIn, DeleteUserIn,
+                                RegistrationIn, StudentCheckExistenceIn, StudentCheckExistenceOut, StudentsListOut,
                                 UsersListViewOut)
 from apps.services.services import user_faculty_service
 from apps.users.services import (student_service, one_time_token_service, student_list_service,
@@ -18,7 +18,6 @@ class UserHandler:
 
     @staticmethod
     async def check_student(
-            self,
             *,
             request: Request,
             student: StudentCheckExistenceIn,
@@ -42,7 +41,6 @@ class UserHandler:
 
     @staticmethod
     async def read_users_list(
-            self,
             *,
             request: Request,
             university_id: int,
@@ -51,7 +49,6 @@ class UserHandler:
 
     @staticmethod
     async def create_user(
-            self,
             *,
             request: Request,
             user: CreateUserIn,
@@ -75,7 +72,6 @@ class UserHandler:
 
     @staticmethod
     async def del_user(
-            self,
             *,
             request: Request,
             delete_user: DeleteUserIn,
@@ -84,7 +80,6 @@ class UserHandler:
 
     @staticmethod
     async def registration(
-            self,
             *,
             request: Request,
             user: RegistrationIn,
@@ -124,7 +119,6 @@ class UserHandler:
 
     @staticmethod
     async def create_student(
-            self,
             *,
             request: Request,
             student: CreateStudentIn,
@@ -137,7 +131,6 @@ class UserHandler:
 
     @staticmethod
     async def read_students_list(
-            self,
             *,
             request: Request,
             university_id: int,
@@ -153,13 +146,12 @@ class UserHandler:
 
     @staticmethod
     async def delete_student(
-            self,
             *,
             request: Request,
             del_student: DeleteStudentIn,
             session: AsyncSession) -> None:
         await student_service.delete(session=session, obj=del_student)
-        # TODO: in response key data has empty dict value, not like it's discribed
+        # TODO: in response key data has empty dict value, not like it's described
 
 
 user_handler = UserHandler()
