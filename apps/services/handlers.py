@@ -16,7 +16,7 @@ from decimal import Decimal
 from fastapi import Request
 from pathlib import Path
 from sqlalchemy.ext.asyncio import AsyncSession
-from typing import Dict, List, Union
+from typing import Dict, List, Optional, Union
 
 
 class ServiceHandler:
@@ -161,7 +161,7 @@ class ServiceHandler:
             request: Request,
             university_id: int,
             user_request_id: int,
-            session: AsyncSession) -> HostelAccomodationViewOut:
+            session: AsyncSession) -> Optional[HostelAccomodationViewOut]:
         response = await hostel_accommodation_service.read(
             session=session,
             data={

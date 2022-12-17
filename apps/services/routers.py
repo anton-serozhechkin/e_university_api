@@ -13,7 +13,7 @@ from apps.users.schemas import UserOut
 from fastapi import APIRouter, Depends, Request, status as http_status
 from starlette.responses import StreamingResponse
 from sqlalchemy.ext.asyncio import AsyncSession
-from typing import List
+from typing import List, Optional
 
 
 services_router = APIRouter(
@@ -221,7 +221,7 @@ async def create_user_request_review(
 
 @services_router.get("/{university_id}/hostel-accommodation/{user_request_id}",
                      name="read_hostel_accommodation",
-                     response_model=JSENDOutSchema[HostelAccomodationViewOut],
+                     response_model=JSENDOutSchema[Optional[HostelAccomodationViewOut]],
                      summary="Get hostel accommodation",
                      responses={200: {"description": "Successful get user request hostel accommodation response"}},
                      tags=["Student dashboard"])
