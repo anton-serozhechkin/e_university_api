@@ -1,7 +1,8 @@
 from apps.common.file_managers import file_manager
-from apps.services.models import STATUS_MAPPING
+from apps.services.models import STATUS_MAPPING, UserDocument
 from apps.services.schemas import (CancelRequestIn, CreateUserRequestIn, UserRequestReviewIn,
-    CountHostelAccommodationCostIn)
+                                   CountHostelAccommodationCostIn, CountHostelAccommodationCostOut, HostelAccomodationViewOut, UserRequestsListOut,
+                                   UserRequestBookingHostelOut, UserRequestReviewOut, UserRequestDetailsViewOut)
 from apps.services.services import (
     hostel_accommodation_service, request_existence_service, user_request_list_service,
     user_faculty_service, user_request_service, user_request_booking_hostel_service, user_request_review_service,
@@ -15,6 +16,7 @@ from decimal import Decimal
 from fastapi import Request
 from pathlib import Path
 from sqlalchemy.ext.asyncio import AsyncSession
+from typing import Dict, List, Union
 
 
 class ServiceHandler:
@@ -27,7 +29,7 @@ class ServiceHandler:
             service_id: int,
             user: UserOut,
             session: AsyncSession
-    ):
+    ) -> Dict[str, Union[bool, int, None]]:
         user_request_result = await request_existence_service.read(
             session=session,
             data={"university_id": university_id, "service_id": service_id, "user_id": user.user_id}
@@ -51,7 +53,7 @@ class ServiceHandler:
             university_id: int,
             user: UserOut,
             session: AsyncSession
-    ):
+    ) -> List[UserRequestsListOut]:
         return await user_request_list_service.list(
             session=session,
             filters={"university_id": university_id, "user_id": user.user_id}
@@ -65,7 +67,7 @@ class ServiceHandler:
             user_request: CreateUserRequestIn,
             user: UserOut,
             session: AsyncSession
-    ):
+    ) -> Dict[str, int]:
         user_faculty_result = await user_faculty_service.read(data={"user_id": user.user_id}, session=session)
         data = {"date_created": datetime.now(),
                 "comment": user_request.comment,
@@ -96,7 +98,7 @@ class ServiceHandler:
             university_id: int,
             user: UserOut,
             session: AsyncSession
-    ):
+    ) -> UserRequestBookingHostelOut:
         return await user_request_booking_hostel_service.read(
             session=session,
             data={"user_id": user.user_id, "university_id": university_id})
@@ -107,7 +109,7 @@ class ServiceHandler:
             request: Request,
             user_request_id: int,
             cancel_request: CancelRequestIn,
-            session: AsyncSession):
+            session: AsyncSession) -> Dict[str, int]:
         CancelRequestIn(status_id=cancel_request.status_id)
         await user_request_service.update(
             session=session,
@@ -126,7 +128,7 @@ class ServiceHandler:
             user_request_id: int,
             user_request_review: UserRequestReviewIn,
             user: UserOut,
-            session: AsyncSession):
+            session: AsyncSession) -> Dict[str, int]:
         created_user_request_review = await user_request_review_service.create(
             session=session,
             data={
@@ -159,7 +161,7 @@ class ServiceHandler:
             request: Request,
             university_id: int,
             user_request_id: int,
-            session: AsyncSession):
+            session: AsyncSession) -> HostelAccomodationViewOut:
         response = await hostel_accommodation_service.read(
             session=session,
             data={
@@ -175,7 +177,7 @@ class ServiceHandler:
             request: Request,
             university_id: int,
             user_request_id: int,
-            session: AsyncSession):
+            session: AsyncSession) -> UserRequestDetailsViewOut:
         return await user_request_detail_service.read(
             session=session,
             data={
@@ -190,7 +192,7 @@ class ServiceHandler:
             university_id: int,
             user_document_id: int,
             user: UserOut,
-            session: AsyncSession):
+            session: AsyncSession) -> str:
         user_document = await user_document_service.read(session=session, data={"user_document_id": user_document_id})
         return file_manager.get(user_document.content)
 
@@ -200,7 +202,7 @@ class ServiceHandler:
             request: Request,
             university_id: int,
             data: CountHostelAccommodationCostIn,
-            session: AsyncSession):
+            session: AsyncSession) -> Dict[str, Decimal]:
         hostel = await hostel_service.read(
             session=session,
             data={"hostel_id": data.hostel_id}
@@ -233,7 +235,7 @@ class ServiceHandler:
         return month_price * month_difference
 
     @classmethod
-    async def __create_user_document(cls, session, **kwargs):
+    async def __create_user_document(cls, session: AsyncSession, **kwargs) -> UserDocument:
         service_id = kwargs.get("service_id")
         name = await cls.__generate_user_document_name(service_id, session)
         date_created = datetime.strptime(datetime.now().strftime(Settings.DATETIME_FORMAT),
