@@ -2,25 +2,27 @@ from apps.authorization.services import get_hashed_password
 from apps.common.exceptions import BackendException
 from apps.common.utils import (add_random_digits_and_cut_username, get_student_attr, get_token_data,
                                get_generated_username, get_token_and_expires)
-from apps.users.schemas import (CreateUserIn, DeleteUserIn, RegistrationIn, CreateStudentIn,
-                                DeleteStudentIn, StudentCheckExistenceIn)
+from apps.users.schemas import (CreateUserIn, CreateUserOut, CreateStudentOut, DeleteUserIn, RegistrationIn, CreateStudentIn,
+                                DeleteStudentIn, RegistrationOut, StudentCheckExistenceIn, StudentsListOut, StudentCheckExistenceOut,
+                                UsersListViewOut)
 from apps.services.services import user_faculty_service
 from apps.users.services import (student_service, one_time_token_service, student_list_service,
                                  user_list_service, user_service)
 
 from fastapi import Request, status as http_status
 from sqlalchemy.ext.asyncio import AsyncSession
-from typing import Optional
+from typing import Dict, List, Optional, Union
 
 
 class UserHandler:
 
+    @staticmethod
     async def check_student(
             self,
             *,
             request: Request,
             student: StudentCheckExistenceIn,
-            session: AsyncSession):     # TODO Refactor this method
+            session: AsyncSession) -> StudentCheckExistenceOut:     # TODO Refactor this method
         result = await student_service.read(session=session, obj=student)
         if not result:
             raise BackendException(
@@ -38,20 +40,22 @@ class UserHandler:
             })
         return one_time_token
 
+    @staticmethod
     async def read_users_list(
             self,
             *,
             request: Request,
             university_id: int,
-            session: AsyncSession):
+            session: AsyncSession) -> List[UsersListViewOut]:
         return await user_list_service.list(session=session, filters={"university_id": university_id})
 
+    @staticmethod
     async def create_user(
             self,
             *,
             request: Request,
             user: CreateUserIn,
-            session: AsyncSession):     # TODO refactor this method
+            session: AsyncSession) -> CreateUserOut:     # TODO refactor this method
         hashed_password = get_hashed_password(user.password)
         created_user = await user_service.create(
             session=session,
@@ -69,20 +73,22 @@ class UserHandler:
                       "faculty_id": faculty_id})
         return created_user.user_id
 
+    @staticmethod
     async def del_user(
             self,
             *,
             request: Request,
             delete_user: DeleteUserIn,
-            session: AsyncSession):
+            session: AsyncSession) -> None:
         await user_service.delete(session=session, obj=delete_user)
 
+    @staticmethod
     async def registration(
             self,
             *,
             request: Request,
             user: RegistrationIn,
-            session: AsyncSession):
+            session: AsyncSession) -> Dict[str, Union[int, str]]:
         token_data = await one_time_token_service.read(session=session, data={"token": user.token})
         expires, student_id = get_token_data(token_data)
         student = await student_service.read(session=session, data={"student_id": student_id})
@@ -116,25 +122,27 @@ class UserHandler:
             "login": login
         }
 
+    @staticmethod
     async def create_student(
             self,
             *,
             request: Request,
             student: CreateStudentIn,
-            session: AsyncSession):
+            session: AsyncSession) -> Dict[str, int]:
         created_student = await student_service.create(
             session=session,
             obj=student
         )
         return {"student_id": created_student.student_id}
 
+    @staticmethod
     async def read_students_list(
             self,
             *,
             request: Request,
             university_id: int,
             faculty_id: Optional[int] = None,
-            session: AsyncSession):  # TODO after input id of the non-existent university it returns the students
+            session: AsyncSession) -> List[StudentsListOut]:  # TODO after input id of the non-existent university it returns the students
         filters = {"university_id": university_id}
         if faculty_id:
             filters["faculty_id"] = faculty_id
@@ -143,12 +151,13 @@ class UserHandler:
             filters=filters
         )
 
+    @staticmethod
     async def delete_student(
             self,
             *,
             request: Request,
             del_student: DeleteStudentIn,
-            session: AsyncSession):
+            session: AsyncSession) -> None:
         await student_service.delete(session=session, obj=del_student)
         # TODO: in response key data has empty dict value, not like it's discribed
 
