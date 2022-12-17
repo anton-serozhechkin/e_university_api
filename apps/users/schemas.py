@@ -31,7 +31,7 @@ class RegistrationIn(BaseInSchema):
     password_re_check: str
 
     @validator('email')
-    def validate_email(cls, v):
+    def validate_email(cls, v: str) -> str:
         """
         The method is using for email validation. Only letters (a-z), numbers (0-9) and periods (.) are allowed
         :return: True or not None string
@@ -55,7 +55,7 @@ class RegistrationIn(BaseInSchema):
         return v
 
     @validator('password_re_check')
-    def validate_password(cls, v, values):
+    def validate_password(cls, v: str, values: Dict) -> str:
         password = values.get('password')
 
         if not password or not v:
@@ -80,7 +80,7 @@ class CreateUserIn(BaseInSchema):
     faculty_id: List[int]
 
     @validator('email')
-    def validate_email(cls, v):
+    def validate_email(cls, v: str) -> str:
         """
         The method is using for email validation. Only letters (a-z), numbers (0-9) and periods (.) are allowed
         :return: True or not None string
@@ -101,7 +101,7 @@ class CreateUserIn(BaseInSchema):
         return v
 
     @validator('password_re_check')
-    def validate_password(cls, v, values):
+    def validate_password(cls, v: str, values: Dict) -> str:
         password = values.get('password')
 
         if not password or not v:
@@ -145,7 +145,7 @@ class StudentCheckExistenceIn(BaseInSchema):
     telephone_number: str = Field(default="380979889988", max_length=12, min_length=12)
 
     @validator('last_name')
-    def validate_last_name(cls, value):
+    def validate_last_name(cls, value: str) -> str:
         if not value:
             raise ValueError("The student's surname is mandatory!")
         if not value.istitle():
@@ -153,7 +153,7 @@ class StudentCheckExistenceIn(BaseInSchema):
         return value
 
     @validator('first_name')
-    def validate_first_name(cls, value):
+    def validate_first_name(cls, value: str) -> str:
         if not value:
             raise ValueError("The student's name is mandatory!")
         if not value.istitle():
@@ -161,7 +161,7 @@ class StudentCheckExistenceIn(BaseInSchema):
         return value
 
     @validator('telephone_number')
-    def validate_telephone_number(cls, value):
+    def validate_telephone_number(cls, value: str) -> str:
         if not value.isdigit():
             raise ValueError('The phone number must consist of digits!')
         return value
@@ -181,14 +181,14 @@ class CreateStudentIn(StudentCheckExistenceIn):
     gender: str
 
     @validator('middle_name')
-    def validate_middle_name(cls, value):
+    def validate_middle_name(cls, value: str) -> str:
         if value:
             if not value.istitle():
                 raise ValueError("The middle name first letter must be uppercase!")
             return value
 
     @validator('course_id')
-    def validate_course_id(cls, value):
+    def validate_course_id(cls, value: int) -> int:
         if not value:
             raise ValueError('The course cannot be empty!')
         elif value not in range(1, 7):
@@ -196,19 +196,19 @@ class CreateStudentIn(StudentCheckExistenceIn):
         return value
 
     @validator('speciality_id')
-    def validate_speciality_id(cls, value):
+    def validate_speciality_id(cls, value: int) -> int:
         if not value:
             raise ValueError('The specialty cannot be empty!')
         return value
 
     @validator('faculty_id')
-    def validate_faculty_id(cls, value):
+    def validate_faculty_id(cls, value: int) -> int:
         if not value:
             raise ValueError('The faculty cannot be empty!')
         return value
 
     @validator('gender')
-    def validate_gender(cls, value):
+    def validate_gender(cls, value: str) -> str:
         exists_genders = ['Ч', 'М']
         if not value:
             raise ValueError('The student gender cannot be empty!')

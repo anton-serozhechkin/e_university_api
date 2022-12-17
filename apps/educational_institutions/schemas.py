@@ -14,7 +14,7 @@ class FacultyIn(BaseInSchema):
     dean_id: int = None
 
     @validator('main_email')
-    def validate_email(cls, v):
+    def validate_email(cls, v: str) -> str:
         """
         The method is using for email validation. Only letters (a-z), numbers (0-9) and periods (.) are allowed
         :return: True or not None string
