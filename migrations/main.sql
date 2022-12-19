@@ -78,6 +78,8 @@ CREATE TABLE IF NOT EXISTS student (
     speciality_id INTEGER NOT NULL,
     course_id INTEGER NOT NULL,
     gender VARCHAR(1) NOT NULL,
+    created_at timestamp with time zone default (now() at time zone 'utc'),
+    updated_at timestamp with time zone default (now() at time zone 'utc'),
     CONSTRAINT student_pk PRIMARY KEY(student_id));
 
 CREATE SEQUENCE IF NOT EXISTS student_id_seq AS bigint START WITH 1 INCREMENT BY 1;
@@ -100,10 +102,12 @@ CREATE TABLE IF NOT EXISTS "user"(
     user_id integer NOT NULL,
     login varchar(50) NOT NULL,
     password varchar(255) NOT NULL,
-    last_visit timestamp,
+    last_visit_at timestamp with time zone default (now() at time zone 'utc'),
     email varchar(100) NOT NULL,
     role_id integer NOT NULL,
     is_active BOOLEAN DEFAULT FALSE,
+    created_at timestamp with time zone default (now() at time zone 'utc'),
+    updated_at timestamp with time zone default (now() at time zone 'utc'),
     UNIQUE (login, email),
     CONSTRAINT user_pk PRIMARY KEY(user_id));
 
@@ -118,6 +122,8 @@ MATCH FULL ON DELETE SET NULL ON UPDATE CASCADE;
 CREATE TABLE IF NOT EXISTS role(
     role_id integer NOT NULL,
     role_name varchar(50) NOT NULL,
+    created_at timestamp with time zone default (now() at time zone 'utc'),
+    updated_at timestamp with time zone default (now() at time zone 'utc'),
     CONSTRAINT role_pk PRIMARY KEY(role_id));
 
 CREATE SEQUENCE IF NOT EXISTS role_id_seq AS bigint START WITH 1 INCREMENT BY 1;
@@ -186,9 +192,10 @@ CREATE TABLE IF NOT EXISTS user_request(
     university_id integer NOT NULL,
     user_id integer NOT NULL,
     service_id integer NOT NULL,
-    date_created timestamp NOT NULL,
     status_id integer NOT NULL,
     comment VARCHAR(255),
+    created_at timestamp with time zone default (now() at time zone 'utc'),
+    updated_at timestamp with time zone default (now() at time zone 'utc'),
     CONSTRAINT user_request_pk PRIMARY KEY(user_request_id));
 
 CREATE SEQUENCE IF NOT EXISTS user_request_id_seq AS bigint START WITH 1 INCREMENT BY 1;
@@ -219,8 +226,9 @@ CREATE TABLE IF NOT EXISTS user_document(
     user_document_id integer NOT NULL,
     name varchar(255) NOT NULL,
     content varchar(255) NOT NULL,
-    date_created timestamp NOT NULL,
     user_request_id integer NOT NULL,
+    created_at timestamp with time zone default (now() at time zone 'utc'),
+    updated_at timestamp with time zone default (now() at time zone 'utc'),
     CONSTRAINT user_document_pk PRIMARY KEY (user_document_id));
 
 CREATE SEQUENCE IF NOT EXISTS user_document_id_seq AS bigint START WITH 1 INCREMENT BY 1;
@@ -266,14 +274,15 @@ CREATE TABLE IF NOT EXISTS user_request_review(
     user_request_review_id integer NOT NULL,
     university_id integer NOT NULL,
     user_request_id integer NOT NULL,
-    date_created timestamp NOT NULL,
     reviewer integer NOT NULL,
     hostel_id integer,
     room_number integer,
-    start_date_accommodation timestamp,
-    end_date_accommodation timestamp,
+    created_at timestamp with time zone default (now() at time zone 'utc'),
+    updated_at timestamp with time zone default (now() at time zone 'utc'),
+    start_accommodation_date date,
+    end_accommodation_date date,
     total_sum decimal(7, 2),
-    payment_deadline timestamp,
+    payment_deadline_date date,
     remark varchar(255),
     bed_place_id integer,
     CONSTRAINT user_req_rew_pk PRIMARY KEY(user_request_review_id));
@@ -308,7 +317,9 @@ CREATE TABLE IF NOT EXISTS requisites(
     university_id integer NOT NULL,
     organisation_code VARCHAR(50),
     service_id integer NOT NULL,
-    payment_recognation VARCHAR(255),
+    payment_recognition VARCHAR(255),
+    created_at timestamp with time zone default (now() at time zone 'utc'),
+    updated_at timestamp with time zone default (now() at time zone 'utc'),
     CONSTRAINT requisites_pk PRIMARY KEY(requisites_id));
 
 ALTER TABLE requisites ADD CONSTRAINT requisites_university_fk
@@ -324,6 +335,8 @@ CREATE TABLE IF NOT EXISTS service_document(
     service_id INTEGER NOT NULL,
     university_id INTEGER NOT NULL,
     documents JSON NOT NULL,
+    created_at timestamp with time zone default (now() at time zone 'utc'),
+    updated_at timestamp with time zone default (now() at time zone 'utc'),
     CONSTRAINT service_document_pk PRIMARY KEY(service_document_id));
 
 ALTER TABLE service_document ADD CONSTRAINT service_document_service_fk
@@ -341,8 +354,8 @@ CREATE VIEW hostel_accommodation_view AS
         urr.university_id,
         urr.user_request_id,
         urr.room_number,
-        urr.start_date_accommodation,
-        urr.end_date_accommodation,
+        urr.start_accommodation_date,
+        urr.end_accommodation_date,
         ht.month_price,
         jsonb_build_object('name', ht.name, 'number', ht.number)
             as hostel_name,
@@ -353,7 +366,7 @@ CREATE VIEW hostel_accommodation_view AS
         re.iban,
         un.university_name,
         re.organisation_code,
-        re.payment_recognation,
+        re.payment_recognition,
         jsonb_build_object('last_name', co.last_name, 'first_name', co.first_name, 'middle_name', co.middle_name) 
             as commandant_full_name,
         co.telephone_number,
@@ -421,7 +434,7 @@ CREATE VIEW user_request_details_view AS
     SELECT
         ur.user_request_id,
         ur.university_id,
-        ur.date_created,
+        ur.created_at,
         sr.service_name,
         st.status_name,
         ur.status_id,
@@ -430,7 +443,7 @@ CREATE VIEW user_request_details_view AS
         urr.room_number,
         bd.bed_place_name,
         urr.remark,
-        jsonb_agg(jsonb_build_object('id', ud.user_document_id, 'name', ud.name,'date_created', ud.date_created)) as documents
+        jsonb_agg(jsonb_build_object('id', ud.user_document_id, 'name', ud.name,'created_at', ud.created_at)) as documents
     FROM
         user_request ur
     LEFT JOIN user_request_review urr ON
@@ -448,7 +461,7 @@ CREATE VIEW user_request_details_view AS
 	GROUP BY
 		ur.user_request_id,
         ur.university_id,
-        ur.date_created,
+        ur.created_at,
         sr.service_name,
         st.status_name,
         ur.status_id,
@@ -492,7 +505,7 @@ CREATE VIEW user_request_list_view AS
         ur.user_request_id,
         sr.service_name,
         jsonb_build_object('status_id', ur.status_id, 'status_name', st.status_name) as status,
-        ur.date_created
+        ur.created_at
     FROM
         user_request ur
     LEFT JOIN status st ON
@@ -535,7 +548,7 @@ CREATE VIEW user_list_view AS
     SELECT
         u.user_id,
         u.login,
-        u.last_visit,
+        u.last_visit_at,
         u.email,
         u.is_active,
         COALESCE(json_agg(json_build_object('role', u.role_id, 'role_name', r.role_name)) FILTER (WHERE r.role_name IS NOT NULL), NULL) as role,
@@ -553,7 +566,7 @@ CREATE VIEW user_list_view AS
     GROUP BY
         u.user_id,
         u.login,
-        u.last_visit,
+        u.last_visit_at,
         u.email,
         u.is_active,
         un.university_id
