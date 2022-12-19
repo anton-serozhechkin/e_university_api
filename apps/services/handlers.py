@@ -7,8 +7,8 @@ from apps.services.services import (
 )
 from settings import (Settings, TEMPLATES_PATH, SETTLEMENT_HOSTEL_PATH, HOSTEL_BOOKING_TEMPLATE)
 from apps.services.models import STATUS_MAPPING
-from apps.services.schemas import (CancelRequestIn, CountHostelAccommodationCostIn, 
-    CreateUserRequestIn, UserRequestReviewIn)
+from apps.services.schemas import (CancelRequestIn, CountHostelAccommodationCostIn,
+                                   CreateUserRequestIn, UserRequestReviewIn)
 from apps.services.utils import (
     create_faculty_dict, create_telephone_set, get_worksheet_cell_col_row, check_faculty_existence,
     check_specialty_existence, check_telephone_number_existence
@@ -173,7 +173,8 @@ class ServiceHandler:
                 "university_id": university_id,
                 "user_request_id": user_request_id
             })
-        # TODO AttributeError: 'NoneType' object has no attribute 'documents' (it's happened only if user request doesn't have review)
+        # TODO AttributeError: 'NoneType' object has no attribute 'documents'
+        # (it's happened only if user request doesn't have review)
         return response
 
     async def read_request_details(

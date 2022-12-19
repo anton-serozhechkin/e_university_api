@@ -10,7 +10,7 @@ from apps.services.schemas import (UserRequestExistenceOut, UserRequestsListOut,
                                    CountHostelAccommodationCostOut)
 from apps.users.schemas import CreateStudentsListOut
 
-from fastapi import APIRouter, Depends, File, Request, UploadFile, status as http_status
+from fastapi import APIRouter, Depends, Request, UploadFile, status as http_status
 from starlette.responses import StreamingResponse
 from sqlalchemy.ext.asyncio import AsyncSession
 from typing import List, Union
@@ -35,14 +35,13 @@ async def check_user_request_existence(
         user=Depends(get_current_user),
         session: AsyncSession = Depends(get_async_session)
 ):  # TODO: nothing prevents student from creating multiple requests with the same id
-    """
-    **Checking user request existence**
+    """Method for checking user request existence.
 
-    **Path**
-    - **university_id**: user university id
-    - **service_id**: id of the service requested by the student
+    Path:
+    - university_id: user university id
+    - service_id: id of the service requested by the student
 
-    **Return**: user request id; user request status; user request existence
+    Return: user request id; user request status; user request existence
     """
     return {
         "data": await service_handler.read_user_request_existence(
@@ -92,17 +91,16 @@ async def create_user_request(
         user=Depends(get_current_user),
         session: AsyncSession = Depends(get_async_session)
 ):
-    """
-    **Create user request**
+    """Method for create user request.
 
-    **Path**:
-    - **university_id**: user university id
+    Path:
+    - university_id: user university id
 
-    **Input**:
-    - **service_id**: service id, required
-    - **comment**: comment for the creating user request
+    Input:
+    - service_id: service id, required
+    - comment: comment for the creating user request
 
-    **Return**: user request id; request status id
+    Return: user request id; request status id
     """
     response = await service_handler.create_user_request(
         request=request,
@@ -151,17 +149,16 @@ async def cancel_request(
         cancel_request: CancelRequestIn,
         user=Depends(get_current_user),
         session: AsyncSession = Depends(get_async_session)):
-    """
-    **Cancel user request**
+    """Method for cancel user request.
 
-    **Path**:
-    - **university_id**: user university id
-    - **user_request_id**: user request id
+    Path:
+    - university_id: user university id
+    - user_request_id: user request id
 
-    **Input**:
-    - **status_id**: user request status id, required
+    Input:
+    - status_id: user request status id, required
 
-    **Return**: canceled user request id and status id
+    Return: canceled user request id and status id
     """
     return {
         "data": await service_handler.cancel_request(
@@ -186,25 +183,24 @@ async def create_user_request_review(
         user_request_review: UserRequestReviewIn,
         user=Depends(get_current_user),
         session: AsyncSession = Depends(get_async_session)):
-    """
-        **Create user request review**
+    """Create user request review.
 
-        **Path**:
-        - **university_id**: user university id
-        - **user_request_id**: user request id
+    **Path**:
+    - **university_id**: user university id
+    - **user_request_id**: user request id
 
-        **Input**:
-        - **status_id**: user request status id, required
-        - **room_number**: user room number
-        - **start_date_accommodation**: starting datetime hostel accommodation
-        - **end_date_accommodation**: end datetime hostel accommodation
-        - **total_sum**: total sum of hostel accommodation payment
-        - **payment_deadline**: deadline datetime for hostel accommodation payment
-        - **remark**: additional info for request review
-        - **hostel_id**: hostel id in the database
-        - **bed_place_id**: hostel bed place id
+    **Input**:
+    - **status_id**: user request status id, required
+    - **room_number**: user room number
+    - **start_date_accommodation**: starting datetime hostel accommodation
+    - **end_date_accommodation**: end datetime hostel accommodation
+    - **total_sum**: total sum of hostel accommodation payment
+    - **payment_deadline**: deadline datetime for hostel accommodation payment
+    - **remark**: additional info for request review
+    - **hostel_id**: hostel id in the database
+    - **bed_place_id**: hostel bed place id
 
-        **Return**: user request status id; user request review id
+    **Return**: user request status id; user request review id
     """
     return {
         "data": await service_handler.create_user_request_review(
@@ -272,7 +268,7 @@ async def create_students_list_from_file(
         request: Request,
         university_id: int,
         file: UploadFile = Depends(check_file_content_type),
-        user = Depends(get_current_user),
+        user=Depends(get_current_user),
         session: AsyncSession = Depends(get_async_session)):
     response = await service_handler.create_students_list_from_file(
         request=request,

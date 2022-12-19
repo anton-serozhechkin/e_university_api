@@ -45,9 +45,10 @@ class UserRequest(Base):
     user_request_review = relationship("UserRequestReview", back_populates='user_request')
 
     def __repr__(self):
-        return f'{self.__class__.__name__}(user_request_id="{self.user_request_id}",' \
-               f'date_created="{self.date_created}", comment="{self.comment}",user_id="{self.user_id}", service_id="{self.service_id}",' \
-               f'faculty_id="{self.faculty_id}", university_id="{self.university_id}", status_id="{self.status_id}")'
+        return f'{self.__class__.__name__}(user_request_id="{self.user_request_id}", ' \
+               f'date_created="{self.date_created}", comment="{self.comment}", user_id="{self.user_id}", ' \
+               f'service_id="{self.service_id}", faculty_id="{self.faculty_id}", ' \
+               f'university_id="{self.university_id}", status_id="{self.status_id}")'
 
 
 class Status(Base):
@@ -76,8 +77,9 @@ class Requisites(Base):
     service = relationship("Service", back_populates="requisites")
 
     def __repr__(self):
-        return f'{self.__class__.__name__}(requisites_id="{self.requisites_id}",iban="{self.iban}",organisation_code="{self.organisation_code}",' \
-               f'payment_recognition="{self.payment_recognation}",university_id="{self.university_id}",service_id="{self.service_id}")'
+        return f'{self.__class__.__name__}(requisites_id="{self.requisites_id}", iban="{self.iban}", ' \
+               f'organisation_code="{self.organisation_code}", payment_recognition="{self.payment_recognation}", ' \
+               f'university_id="{self.university_id}", service_id="{self.service_id}")'
 
 
 class UserRequestReview(Base):
@@ -103,9 +105,13 @@ class UserRequestReview(Base):
     user_request = relationship("UserRequest", back_populates='user_request_review')
 
     def __repr__(self):
-        return f'{self.__class__.__name__}(user_request_review_id="{self.user_request_review_id}",date_created="{self.date_created}",' \
-               f'room_number="{self.room_number}", start_date_accommodation="{self.start_date_accommodation}",end_date_accommodation="{self.end_date_accommodation}", total_sum="{self.total_sum}", payment_deadline="{self.payment_deadline}",' \
-               f'remark="{self.remark}", bed_place_id="{self.bed_place_id}",reviewer="{self.reviewer}",hostel_id="{self.hostel_id}",university_id="{self.university_id}",user_request_id="{self.user_request_id}")'
+        return f'{self.__class__.__name__}(user_request_review_id="{self.user_request_review_id}", ' \
+               f'date_created="{self.date_created}", room_number="{self.room_number}", ' \
+               f'start_date_accommodation="{self.start_date_accommodation}", ' \
+               f'end_date_accommodation="{self.end_date_accommodation}", total_sum="{self.total_sum}", ' \
+               f'payment_deadline="{self.payment_deadline}", remark="{self.remark}", ' \
+               f'bed_place_id="{self.bed_place_id}", reviewer="{self.reviewer}", hostel_id="{self.hostel_id}", ' \
+               f'university_id="{self.university_id}", user_request_id="{self.user_request_id}")'
 
 
 class UserDocument(Base):
@@ -120,8 +126,9 @@ class UserDocument(Base):
     user_request = relationship("UserRequest", back_populates="user_documents")
 
     def __repr__(self):
-        return f'{self.__class__.__name__}(user_document_id="{self.user_document_id}", date_created="{self.date_created}", ' \
-               f'name="{self.name}", content="{self.content}", user_request_id="{self.user_request_id}")'
+        return f'{self.__class__.__name__}(user_document_id="{self.user_document_id}", ' \
+               f'date_created="{self.date_created}", name="{self.name}", ' \
+               f'content="{self.content}", user_request_id="{self.user_request_id}")'
 
 
 user_request_booking_hostel_view = Table('user_request_booking_hostel_view', metadata_obj,

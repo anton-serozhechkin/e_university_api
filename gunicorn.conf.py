@@ -54,20 +54,26 @@ default_proc_name = 'gunicorn'
 def on_starting(server):
     pass
 
+
 def when_ready(server):
     pass
+
 
 def pre_fork(server, worker):
     pass
 
+
 def post_fork(server, worker):
     pass
+
 
 def worker_int(worker):
     pass
 
+
 def worker_abort(worker):
     pass
+
 
 def pre_exec(server):
     pass
