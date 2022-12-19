@@ -1,7 +1,9 @@
 from apps.common.db import Base
 
-from sqlalchemy import (MetaData, Column, Table, INTEGER, VARCHAR, ForeignKey, BOOLEAN, TIMESTAMP, JSON)
+from datetime import datetime
+from sqlalchemy import (MetaData, Column, DATETIME, Table, INTEGER, VARCHAR, ForeignKey, BOOLEAN, TIMESTAMP, JSON)
 from sqlalchemy.orm import relationship
+
 
 metadata_obj = MetaData()
 
@@ -12,10 +14,12 @@ class User(Base):
     user_id = Column(INTEGER, primary_key=True, nullable=False)
     login = Column(VARCHAR(length=50), nullable=False, unique=True)
     password = Column(VARCHAR(length=50), nullable=False)
-    last_visit = Column(TIMESTAMP)
+    last_visit_at = Column(TIMESTAMP)
     email = Column(VARCHAR(length=100), nullable=False, unique=True)
     is_active = Column(BOOLEAN, default=False)
     role_id = Column(INTEGER, ForeignKey("role.role_id"), nullable=True)
+    created_at = Column(DATETIME(timezone=True), default=datetime.utcnow())
+    updated_at = Column(DATETIME(timezone=True), default=datetime.utcnow())
 
     student = relationship("Student", back_populates="user")
     user_request_reviews = relationship("UserRequestReview", back_populates="reviewer_user")
@@ -25,7 +29,7 @@ class User(Base):
 
     def __repr__(self):
         return f'{self.__class__.__name__}(user_id="{self.user_id}", login="{self.login}", password="{self.password}", ' \
-               f'last_visit="{self.last_visit}", email="{self.email}", is_active="{self.is_active}", role_id="{self.role_id}")'
+               f'last_visit_at="{self.last_visit_at}", email="{self.email}", is_active="{self.is_active}", role_id="{self.role_id}")'
 
 
 class OneTimeToken(Base):
@@ -55,6 +59,8 @@ class Student(Base):
     speciality_id = Column(INTEGER, ForeignKey("speciality.speciality_id"), nullable=False)
     user_id = Column(INTEGER, ForeignKey("user.user_id"))
     faculty_id = Column(INTEGER, ForeignKey("faculty.faculty_id"), nullable=False)
+    created_at = Column(DATETIME(timezone=True), default=datetime.utcnow())
+    updated_at = Column(DATETIME(timezone=True), default=datetime.utcnow())
 
     course = relationship("Course", sync_backref=False, lazy="joined")
     speciality = relationship("Speciality", sync_backref=False)
@@ -64,7 +70,7 @@ class Student(Base):
 
     def __repr__(self):
         return f'{self.__class__.__name__}(student_id="{self.student_id}",first_name="{self.first_name}",' \
-               f'middle_name="{self.middle_name}",last_name="{self.last_name}",telephone_number="{self.telephone_number}",gender="{self.gender}",' \
+               f'middle_name="{self.middle_name}",last_name="{self.last_name}",telephone_number="{self.telephone_number}", gender="{self.gender}",' \
                f'course_id="{self.course_id}",speciality_id="{self.speciality_id}",user_id="{self.user_id}",faculty_id="{self.faculty_id}")'
 
 
@@ -93,7 +99,7 @@ students_list_view = Table('students_list_view', metadata_obj,
 user_list_view = Table('user_list_view', metadata_obj,
                        Column('user_id', INTEGER),
                        Column('login', VARCHAR(50)),
-                       Column('last_visit', TIMESTAMP),
+                       Column('last_visit_at', TIMESTAMP),
                        Column('email', VARCHAR(50)),
                        Column('role', JSON),
                        Column('is_active', BOOLEAN),

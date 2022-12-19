@@ -9,7 +9,7 @@ from pydantic import Field, validator
 class UsersListViewOut(BaseOutSchema):
     user_id: int
     login: str
-    last_visit: datetime = None
+    last_visit_at: datetime = None
     email: str
     is_active: bool = None
     role: List[Dict[str, Union[int, str]]]
@@ -123,7 +123,7 @@ class TokenPayload(BaseInSchema):
 class UserOut(BaseOutSchema):
     user_id: int
     login: str
-    last_visit: datetime = None
+    last_visit_at: datetime = None
     email: str
     is_active: bool = None
     role: List[Dict[str, Union[int, str]]]
