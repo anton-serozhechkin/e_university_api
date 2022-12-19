@@ -1,7 +1,7 @@
 from apps.common.dependencies import get_async_session, get_current_user
 from apps.users.handlers import user_handler
-from apps.users.schemas import (UserOut, UsersListViewOut, CreateUserOut, CreateUserIn, 
-                                DeleteUserIn, RegistrationOut, RegistrationIn, CreateStudentOut, 
+from apps.users.schemas import (UserOut, UsersListViewOut, CreateUserOut, CreateUserIn,
+                                DeleteUserIn, RegistrationOut, RegistrationIn, CreateStudentOut,
                                 CreateStudentIn, StudentsListOut, UserIn, DeleteStudentIn,
                                 StudentCheckExistenceOut, StudentCheckExistenceIn)
 from apps.common.schemas import JSENDOutSchema, JSENDFailOutSchema
@@ -28,15 +28,14 @@ async def check_student(
         request: Request,
         student: StudentCheckExistenceIn,
         session: AsyncSession = Depends(get_async_session)):
-    """
-        **Check student existence in the database**
+    """Check student existence in the database.
 
-        **Input**:
-        - **last_name**: last name of the student
-        - **first_name**: first name of the student
-        - **telephone_number**: telephone number, must be 12 digits
+    Input:
+        - last_name: last name of the student
+        - first_name: first name of the student
+        - telephone_number: telephone number, must be 12 digits
 
-        **Return**: student id; token, which is used for registering user; token expires datetime
+    Return: student id; token, which is used for registering user; token expires datetime
     """
     result = await user_handler.check_student(request=request, student=student, session=session)
     return {
@@ -87,20 +86,19 @@ async def create_user(
         user: CreateUserIn,
         auth=Depends(get_current_user),
         session: AsyncSession = Depends(get_async_session)):
-    """
-        **Create user**
+    """Method for create user record.
 
-        **Path**:
-        - **university_id**: university id for creating user
+    Path:
+        - university_id: university id for creating user
 
-        **Input**:
-        - **email**: user email, only letters (a-z), numbers (0-9) and periods (.) are allowed, required
-        - **password**: password, cannot be empty, required
-        - **password_re_check**: password recheck, required
-        - **role_id**: user role id, required
-        - **faculty_id**: user faculty id, required
+    Input:
+        - email: user email, only letters (a-z), numbers (0-9) and periods (.) are allowed, required
+        - password: password, cannot be empty, required
+        - password_re_check: password recheck, required
+        - role_id: user role id, required
+        - faculty_id: user faculty id, required
 
-        **Return**: created user id
+    Return: created user id
     """
     user_id = await user_handler.create_user(request=request, user=user, session=session)
     return {
@@ -151,15 +149,14 @@ async def registration(
         request: Request,
         user: RegistrationIn,
         session: AsyncSession = Depends(get_async_session)):
-    """
-        **User registration**
+    """Method for user registration, using token based on student's record.
 
-        **Input**:
-        - **token**: token from "Check user existence"
-        - **email**: enter user email; only letters (a-z), numbers (0-9) and periods (.) are allowed
-        - **password**: enter password; password cannot be empty
+    Input:
+        - token**: token from "Check user existence"
+        - email: enter user email; only letters (a-z), numbers (0-9) and periods (.) are allowed
+        - password: enter password; password cannot be empty
 
-        **Return**: user id; faculty id; login, which consists of name and random number
+    Return: user id; faculty id; login, which consists of name and random number
     """
     response = await user_handler.registration(request=request, user=user, session=session)
     return {
@@ -184,20 +181,22 @@ async def create_student(
         student: CreateStudentIn,
         auth=Depends(get_current_user),
         session: AsyncSession = Depends(get_async_session)):
-    """
-        **Create university student**
-        **Path**:
-        - **university_id**: university id
-        **Input**:
-        - **last_name**: student last name, required
-        - **first_name**: student fist name, required
-        - **middle_name**: student middle name
-        - **telephone_number**: student telephone number, must consists of 12 digits, required
-        - **course_id**: student course id, must be between 1 and 6, required
-        - **faculty_id**: faculty id, required
-        - **speciality_id**: speciality id, required
-        - **gender**: student gender, 'Ч' or 'Ж', required
-        **Return**: created student id
+    """Method for create university student record.
+
+    Path:
+        - university_id: university id
+
+    Input:
+        - last_name: student last name, required
+        - first_name: student fist name, required
+        - middle_name: student middle name
+        - telephone_number: student telephone number, must consists of 12 digits, required
+        - course_id: student course id, must be between 1 and 6, required
+        - faculty_id: faculty id, required
+        - speciality_id: speciality id, required
+        - gender: student gender, 'Ч' or 'Ж', required
+
+    Return: created student id
     """
     student = await user_handler.create_student(request=request, student=student, session=session)
     return {
@@ -220,7 +219,7 @@ async def read_students_list(
         university_id: int,
         faculty_id: Optional[int] = None,
         user=Depends(get_current_user),
-        session: AsyncSession = Depends(get_async_session)):  # TODO after input id of the non-existent university it returns the students
+        session: AsyncSession = Depends(get_async_session)):  # TODO returns students if url params aren't exists in DB
     return {
         "data": await user_handler.read_students_list(
             request=request,
