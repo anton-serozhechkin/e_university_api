@@ -35,8 +35,8 @@ class AsyncCRUDBase:
     async def create_many(self, *, session: AsyncSession, objs: List[CreateSchemaType]) -> Optional[List[ModelType]]:
         insert_statement = (
             insert(self.model)
-                .values([jsonable_encoder(obj=obj, exclude_unset=True, by_alias=False) for obj in objs])
-                .returning(self.model)
+            .values([jsonable_encoder(obj=obj, exclude_unset=True, by_alias=False) for obj in objs])
+            .returning(self.model)
         )
         statement = select(self.model).from_statement(insert_statement).execution_options(populate_existing=True)
         result: ChunkedIteratorResult = await session.execute(statement=statement)
@@ -66,10 +66,10 @@ class AsyncCRUDBase:
             where_expr.append(getattr(self.model, k) == v)
         update_statement = (
             update(self.model)
-                .where(and_(*where_expr))
-                .values(**values)
-                .returning(self.model)
-                .execution_options(synchronize_session="fetch")
+            .where(and_(*where_expr))
+            .values(**values)
+            .returning(self.model)
+            .execution_options(synchronize_session="fetch")
         )
         statement = (
             select(self.model).from_statement(statement=update_statement).execution_options(populate_existing=True)

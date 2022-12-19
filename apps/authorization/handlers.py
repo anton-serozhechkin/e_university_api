@@ -24,7 +24,6 @@ class AuthorizationHandler:
             "user_id": user.user_id
         }
 
-
     async def available_roles(
             self,
             *,

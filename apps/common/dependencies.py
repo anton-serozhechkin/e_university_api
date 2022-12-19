@@ -18,6 +18,7 @@ import typing
 
 async def get_async_session() -> typing.AsyncGenerator[AsyncSession, None]:
     """Creates FastAPI dependency for generation of SQLAlchemy AsyncSession.
+
     Yields:
         AsyncSession: SQLAlchemy AsyncSession.
     """
@@ -33,6 +34,7 @@ async def get_async_session() -> typing.AsyncGenerator[AsyncSession, None]:
 
 def get_session() -> typing.Generator[Session, None, None]:
     """Creates FastAPI dependency for generation of SQLAlchemy Session.
+
     Yields:
         Session: SQLAlchemy Session.
     """
@@ -66,7 +68,7 @@ async def get_current_user(
                 detail="Token data has expired",
                 headers={"WWW-Authenticate": "Bearer"}
             )
-    except(jwt.JWTError, ValidationError):
+    except (jwt.JWTError, ValidationError):
         raise HTTPException(
             status_code=http_status.HTTP_403_FORBIDDEN,
             detail="Credential verification failed",

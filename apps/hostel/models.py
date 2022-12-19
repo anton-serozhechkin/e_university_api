@@ -25,9 +25,10 @@ class Hostel(Base):
     user_request_reviews = relationship('UserRequestReview', back_populates='hostel')
 
     def __repr__(self):
-        return f'{self.__class__.__name__}(hostel_id="{self.hostel_id}",' \
-               f'number="{self.number}",name="{self.name}",city="{self.city}",street="{self.street}",' \
-               f'build="{self.build}",month_price="{self.month_price}",university_id="{self.university_id}",commandant_id="{self.commandant_id}")'
+        return f'{self.__class__.__name__}(hostel_id="{self.hostel_id}", number="{self.number}", ' \
+               f'name="{self.name}", city="{self.city}", street="{self.street}", build="{self.build}", ' \
+               f'month_price="{self.month_price}", university_id="{self.university_id}", ' \
+               f'commandant_id="{self.commandant_id}")'
 
 
 class Commandant(Base):
@@ -42,8 +43,9 @@ class Commandant(Base):
     hostel = relationship("Hostel", back_populates="commandant")
 
     def __repr__(self):
-        return (f'{self.__class__.__name__}(commandant_id="{self.commandant_id}", first_name="{self.first_name}", '
-                f'middle_name="{self.middle_name}", last_name="{self.last_name}", telephone_number="{self.telephone_number}")')
+        return f'{self.__class__.__name__}(commandant_id="{self.commandant_id}", first_name="{self.first_name}", ' \
+               f'middle_name="{self.middle_name}", last_name="{self.last_name}", ' \
+               f'telephone_number="{self.telephone_number}")'
 
 
 class BedPlace(Base):

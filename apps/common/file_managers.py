@@ -7,11 +7,11 @@ from docxtpl import DocxTemplate
 class FileManagerInterface(metaclass=abc.ABCMeta):
     @classmethod
     def __subclasshook__(cls, subclass):
-        return (hasattr(subclass, 'create') and 
-                callable(subclass.create) and 
-                hasattr(subclass, 'get') and 
-                callable(subclass.get) and 
-                hasattr(subclass, 'delete') and 
+        return (hasattr(subclass, 'create') and
+                callable(subclass.create) and
+                hasattr(subclass, 'get') and
+                callable(subclass.get) and
+                hasattr(subclass, 'delete') and
                 callable(subclass.delete) and
                 hasattr(subclass, 'render') and
                 callable(subclass.render) or

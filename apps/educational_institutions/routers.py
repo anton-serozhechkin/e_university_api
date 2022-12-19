@@ -25,13 +25,12 @@ async def read_faculties(request: Request,
                          university_id: int,
                          user=Depends(get_current_user),
                          session: AsyncSession = Depends(get_async_session)):
-    """
-        **Get list of university faculties**
+    """Get list of university faculties.
 
-        **Path**:
-        - **university_id**: integer, required, university id in table
+    Path:
+        - university_id: integer, required, university id in table
 
-        **Return**: list of all university faculties with info: faculty id in table, name and shortname,
+    Return: list of all university faculties with info: faculty id in table, name and shortname,
         email, university id in table, dean full name
     """
     return {
@@ -59,21 +58,20 @@ async def create_faculty(
         user=Depends(get_current_user),
         session: AsyncSession = Depends(get_async_session)
 ):
-    """
-        **Create faculty in university**
+    """Create faculty in university.
 
-        **Auth**: only authenticated user can get courses list.
+    Auth: only authenticated user can get courses list.
 
-        **Path**:
-        - **university_id**: path, integer, required, university id in table
+    Path:
+        - university_id: path, integer, required, university id in table
 
-        **Input** required
-        - **university_id**: integer, university id in table
-        - **name**: string, full faculty name
-        - **shortname**: string, short faculty name
-        - **main_email**: string, faculty main email
+    Input required
+        - university_id: integer, university id in table
+        - name: string, full faculty name
+        - shortname: string, short faculty name
+        - main_email: string, faculty main email
 
-        **Return**: list of all university faculties with info: faculty id in table, name and shortname,
+    Return: list of all university faculties with info: faculty id in table, name and shortname,
         email, university id in table, dean full name
     """
     response = await edu_institutions_handler.create_faculty(

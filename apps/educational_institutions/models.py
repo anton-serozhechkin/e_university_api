@@ -22,8 +22,9 @@ class University(Base):
     user_requests = relationship("UserRequest", back_populates="university")
 
     def __repr__(self):
-        return f'{self.__class__.__name__}(university_id="{self.university_id}", university_name="{self.university_name}",' \
-               f'logo="{self.logo}", rector_id="{self.rector_id}")'
+        return f'{self.__class__.__name__}(university_id="{self.university_id}", ' \
+               f'university_name="{self.university_name}", logo="{self.logo}", ' \
+               f'rector_id="{self.rector_id}")'
 
 
 class Faculty(Base):
@@ -44,8 +45,9 @@ class Faculty(Base):
     user_requests = relationship("UserRequest", back_populates="faculty")
 
     def __repr__(self):
-        return f'{self.__class__.__name__}(faculty_id="{self.faculty_id}", name="{self.name}", shortname="{self.shortname}", ' \
-               f'main_email="{self.main_email}", dean_id="{self.dean_id}", university_id="{self.university_id}")'
+        return f'{self.__class__.__name__}(faculty_id="{self.faculty_id}", name="{self.name}", ' \
+               f'shortname="{self.shortname}", main_email="{self.main_email}", dean_id="{self.dean_id}", ' \
+               f'university_id="{self.university_id}"'
 
 
 class Speciality(Base):  # TODO: rename to "Specialty"
@@ -59,8 +61,8 @@ class Speciality(Base):  # TODO: rename to "Specialty"
     faculties = relationship("Faculty", back_populates="speciality")
 
     def __repr__(self):
-        return f'{self.__class__.__name__}(speciality_id="{self.speciality_id}",code="{self.code}",name="{self.name}",' \
-               f'faculty_id="{self.faculty_id}")'
+        return f'{self.__class__.__name__}(speciality_id="{self.speciality_id}", code="{self.code}", ' \
+               f'name="{self.name}", faculty_id="{self.faculty_id}")'
 
 
 class Dean(Base):

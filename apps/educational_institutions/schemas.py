@@ -15,16 +15,19 @@ class FacultyIn(BaseInSchema):
 
     @validator('main_email')
     def validate_email(cls, v):
-        """
-        The method is using for email validation. Only letters (a-z), numbers (0-9) and periods (.) are allowed
-        :return: True or not None string
+        """The method is using for email validation.
+
+        Only letters (a-z), numbers (0-9) and periods (.) are allowed
+
+        Return: True or not None string
         """
         specials = '!#$%&\'*+-/=?^_`{|?.'
         specials = re.escape(specials)
         regex = re.compile('^(?![' + specials + '])'
-                                                '(?!.*[' + specials + ']{2})'
-                                                                      '(?!.*[' + specials + ']$)'
-                                                                                            '[A-Za-z0-9' + specials + ']+(?<![' + specials + '])@[A-Za-z0-9.-]+\.[A-Za-z]{2,4}$')
+                           '(?!.*[' + specials + ']{2})'
+                           '(?!.*[' + specials + ']$)'
+                           '[A-Za-z0-9' + specials + ']+(?<![' +
+                           specials + '])@[A-Za-z0-9.-]+\.[A-Za-z]{2,4}$')
         message = False
 
         if not v:
@@ -57,4 +60,4 @@ class SpecialityListOut(BaseOutSchema):
 
 class CourseListOut(BaseOutSchema):
     course_id: int
-    value: int 
+    value: int
