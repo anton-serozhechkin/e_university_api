@@ -1,4 +1,4 @@
-from sqlalchemy import (MetaData, Column, INTEGER, VARCHAR, ForeignKey, Table, JSON)
+from sqlalchemy import MetaData, Column, INTEGER, VARCHAR, ForeignKey, Table, JSON
 from sqlalchemy.orm import relationship
 
 from apps.common.db import Base
@@ -18,24 +18,30 @@ class University(Base):
     faculties = relationship("Faculty", back_populates="university")
     hostels = relationship("Hostel", back_populates="university")
     requisites = relationship("Requisites", back_populates="university")
-    user_request_reviews = relationship("UserRequestReview", back_populates="university")
+    user_request_reviews = relationship(
+        "UserRequestReview", back_populates="university"
+    )
     user_requests = relationship("UserRequest", back_populates="university")
 
     def __repr__(self):
-        return f'{self.__class__.__name__}(university_id="{self.university_id}", ' \
-               f'university_name="{self.university_name}", logo="{self.logo}", ' \
-               f'rector_id="{self.rector_id}")'
+        return (
+            f'{self.__class__.__name__}(university_id="{self.university_id}", '
+            f'university_name="{self.university_name}", logo="{self.logo}", '
+            f'rector_id="{self.rector_id}")'
+        )
 
 
 class Faculty(Base):
-    __tablename__ = 'faculty'
+    __tablename__ = "faculty"
 
     faculty_id = Column(INTEGER, primary_key=True, nullable=False)
     name = Column(VARCHAR(length=255), nullable=False)
     shortname = Column(VARCHAR(length=20))
     main_email = Column(VARCHAR(length=50))
-    dean_id = Column(INTEGER, ForeignKey('dean.dean_id'))
-    university_id = Column(INTEGER, ForeignKey("university.university_id"), nullable=False)
+    dean_id = Column(INTEGER, ForeignKey("dean.dean_id"))
+    university_id = Column(
+        INTEGER, ForeignKey("university.university_id"), nullable=False
+    )
 
     dean = relationship("Dean", back_populates="faculty")
     university = relationship("University", back_populates="faculties")
@@ -45,13 +51,15 @@ class Faculty(Base):
     user_requests = relationship("UserRequest", back_populates="faculty")
 
     def __repr__(self):
-        return f'{self.__class__.__name__}(faculty_id="{self.faculty_id}", name="{self.name}", ' \
-               f'shortname="{self.shortname}", main_email="{self.main_email}", dean_id="{self.dean_id}", ' \
-               f'university_id="{self.university_id}"'
+        return (
+            f'{self.__class__.__name__}(faculty_id="{self.faculty_id}", name="{self.name}", '
+            f'shortname="{self.shortname}", main_email="{self.main_email}", dean_id="{self.dean_id}", '
+            f'university_id="{self.university_id}"'
+        )
 
 
 class Speciality(Base):  # TODO: rename to "Specialty"
-    __tablename__ = 'speciality'  # TODO: rename to "specialty"
+    __tablename__ = "speciality"  # TODO: rename to "specialty"
 
     speciality_id = Column(INTEGER, primary_key=True, nullable=False)
     code = Column(INTEGER, nullable=False)
@@ -61,12 +69,14 @@ class Speciality(Base):  # TODO: rename to "Specialty"
     faculties = relationship("Faculty", back_populates="speciality")
 
     def __repr__(self):
-        return f'{self.__class__.__name__}(speciality_id="{self.speciality_id}", code="{self.code}", ' \
-               f'name="{self.name}", faculty_id="{self.faculty_id}")'
+        return (
+            f'{self.__class__.__name__}(speciality_id="{self.speciality_id}", code="{self.code}", '
+            f'name="{self.name}", faculty_id="{self.faculty_id}")'
+        )
 
 
 class Dean(Base):
-    __tablename__ = 'dean'
+    __tablename__ = "dean"
 
     dean_id = Column(INTEGER, primary_key=True, nullable=False)
     last_name = Column(VARCHAR(length=50), nullable=False)
@@ -76,12 +86,14 @@ class Dean(Base):
     faculty = relationship("Faculty", back_populates="dean")
 
     def __repr__(self):
-        return f'{self.__class__.__name__}(dean_id="{self.dean_id}", first_name="{self.first_name}", ' \
-               f'middle_name="{self.middle_name}", last_name="{self.last_name}")'
+        return (
+            f'{self.__class__.__name__}(dean_id="{self.dean_id}", first_name="{self.first_name}", '
+            f'middle_name="{self.middle_name}", last_name="{self.last_name}")'
+        )
 
 
 class Rector(Base):
-    __tablename__ = 'rector'
+    __tablename__ = "rector"
 
     rector_id = Column(INTEGER, primary_key=True, nullable=False)
     last_name = Column(VARCHAR(length=50), nullable=False)
@@ -91,12 +103,14 @@ class Rector(Base):
     university = relationship("University", back_populates="rector")
 
     def __str__(self):
-        return f'{self.__class__.__name__}(rector_id="{self.rector_id}", first_name="{self.first_name}", ' \
-               f'middle_name="{self.middle_name}", last_name="{self.last_name}")'
+        return (
+            f'{self.__class__.__name__}(rector_id="{self.rector_id}", first_name="{self.first_name}", '
+            f'middle_name="{self.middle_name}", last_name="{self.last_name}")'
+        )
 
 
 class Course(Base):
-    __tablename__ = 'course'
+    __tablename__ = "course"
 
     course_id = Column(INTEGER, primary_key=True, nullable=False)
     value = Column(INTEGER, nullable=False)
@@ -105,18 +119,24 @@ class Course(Base):
         return f'{self.__class__.__name__}(course_id="{self.course_id}", value="{self.value}")'
 
 
-faculty_list_view = Table('faculty_list_view', metadata_obj,
-                          Column('faculty_id', INTEGER),
-                          Column('name', VARCHAR(255)),
-                          Column('shortname', VARCHAR(20)),
-                          Column('main_email', VARCHAR(50)),
-                          Column('university_id', INTEGER),
-                          Column('dean_id', INTEGER),
-                          Column('dean_full_name', JSON))
+faculty_list_view = Table(
+    "faculty_list_view",
+    metadata_obj,
+    Column("faculty_id", INTEGER),
+    Column("name", VARCHAR(255)),
+    Column("shortname", VARCHAR(20)),
+    Column("main_email", VARCHAR(50)),
+    Column("university_id", INTEGER),
+    Column("dean_id", INTEGER),
+    Column("dean_full_name", JSON),
+)
 
 
-speciality_list_view = Table('speciality_list_view', metadata_obj,
-                             Column('faculty_id', INTEGER),
-                             Column('speciality_id', INTEGER),
-                             Column('university_id', INTEGER),
-                             Column('speciality_info', JSON))
+speciality_list_view = Table(
+    "speciality_list_view",
+    metadata_obj,
+    Column("faculty_id", INTEGER),
+    Column("speciality_id", INTEGER),
+    Column("university_id", INTEGER),
+    Column("speciality_info", JSON),
+)

@@ -13,7 +13,7 @@ class FacultyIn(BaseInSchema):
     main_email: str = None
     dean_id: int = None
 
-    @validator('main_email')
+    @validator("main_email")
     def validate_email(cls, v):
         """The method is using for email validation.
 
@@ -21,13 +21,18 @@ class FacultyIn(BaseInSchema):
 
         Return: True or not None string
         """
-        specials = '!#$%&\'*+-/=?^_`{|?.'
+        specials = "!#$%&'*+-/=?^_`{|?."
         specials = re.escape(specials)
-        regex = re.compile('^(?![' + specials + '])'
-                           '(?!.*[' + specials + ']{2})'
-                           '(?!.*[' + specials + ']$)'
-                           '[A-Za-z0-9' + specials + ']+(?<![' +
-                           specials + '])@[A-Za-z0-9.-]+\.[A-Za-z]{2,4}$')
+        regex = re.compile(
+            "^(?![" + specials + "])"
+            "(?!.*[" + specials + "]{2})"
+            "(?!.*[" + specials + "]$)"
+            "[A-Za-z0-9"
+            + specials
+            + "]+(?<!["
+            + specials
+            + "])@[A-Za-z0-9.-]+\.[A-Za-z]{2,4}$"
+        )
         message = False
 
         if not v:
