@@ -87,7 +87,6 @@ class Requisites(Base):
 class UserRequestReview(Base):
     __tablename__ = "user_request_review"
     user_request_review_id = Column(INTEGER, primary_key=True, nullable=False)
-    date_created = Column(DATETIME, nullable=False)
     room_number = Column(INTEGER)
     created_at = Column(DATETIME(timezone=True), default=datetime.utcnow())
     updated_at = Column(DATETIME(timezone=True), default=datetime.utcnow())
@@ -118,7 +117,6 @@ class UserDocument(Base):
     __tablename__ = "user_document"
 
     user_document_id = Column(INTEGER, primary_key=True, nullable=False)
-    date_created = Column(DATETIME, nullable=False)
     name = Column(VARCHAR(length=255), nullable=False)
     content = Column(VARCHAR(length=255), nullable=False)
     user_request_id = Column(INTEGER, ForeignKey("user_request.user_request_id"), nullable=False)
