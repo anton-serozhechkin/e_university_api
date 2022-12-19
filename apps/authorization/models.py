@@ -1,4 +1,5 @@
-from sqlalchemy import (Column, ForeignKey, VARCHAR, INTEGER)
+from datetime import datetime
+from sqlalchemy import (Column, DATETIME, ForeignKey, VARCHAR, INTEGER)
 from sqlalchemy.orm import relationship
 
 from apps.common.db import Base
@@ -9,6 +10,8 @@ class Role(Base):
 
     role_id = Column(INTEGER, primary_key=True)
     role_name = Column(VARCHAR(length=50))
+    created_at = Column(DATETIME(timezone=True), default=datetime.utcnow())
+    updated_at = Column(DATETIME(timezone=True), default=datetime.utcnow())
 
     actions = relationship('Action', back_populates='roles')
     users = relationship('User', back_populates='roles')

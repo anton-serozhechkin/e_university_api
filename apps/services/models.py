@@ -1,7 +1,8 @@
 from apps.common.db import Base
 
+from datetime import datetime
 from sqlalchemy import (
-    MetaData, Column, Table, INTEGER, VARCHAR, ForeignKey, DATETIME, JSON, TIMESTAMP, DECIMAL
+    MetaData, Column, Table, INTEGER, VARCHAR, ForeignKey, DATE, DATETIME, JSON, TIMESTAMP, DECIMAL
 )
 from sqlalchemy.orm import relationship
 
@@ -28,13 +29,14 @@ class UserRequest(Base):
     __tablename__ = "user_request"
 
     user_request_id = Column(INTEGER, primary_key=True, nullable=False)
-    date_created = Column(DATETIME, nullable=False)
     comment = Column(VARCHAR(length=255))
     user_id = Column(INTEGER, ForeignKey("user.user_id"), nullable=False)
     service_id = Column(INTEGER, ForeignKey("service.service_id"), nullable=False)
     faculty_id = Column(INTEGER, ForeignKey("faculty.faculty_id"), nullable=False)
     university_id = Column(INTEGER, ForeignKey("university.university_id"), nullable=False)
     status_id = Column(INTEGER, ForeignKey("status.status_id"), nullable=False)
+    created_at = Column(DATETIME(timezone=True), default=datetime.utcnow())
+    updated_at = Column(DATETIME(timezone=True), default=datetime.utcnow())
 
     user = relationship("User", back_populates="user_requests")
     service = relationship("Service", back_populates="user_requests")
@@ -71,6 +73,8 @@ class Requisites(Base):
     payment_recognition = Column(VARCHAR(length=255))
     university_id = Column(INTEGER, ForeignKey("university.university_id"), nullable=False)
     service_id = Column(INTEGER, ForeignKey("service.service_id"), nullable=False)
+    created_at = Column(DATETIME(timezone=True), default=datetime.utcnow())
+    updated_at = Column(DATETIME(timezone=True), default=datetime.utcnow())
 
     university = relationship("University", back_populates="requisites")
     service = relationship("Service", back_populates="requisites")
@@ -85,10 +89,12 @@ class UserRequestReview(Base):
     user_request_review_id = Column(INTEGER, primary_key=True, nullable=False)
     date_created = Column(DATETIME, nullable=False)
     room_number = Column(INTEGER)
-    start_date_accommodation = Column(DATETIME)
-    end_date_accommodation = Column(DATETIME)
+    created_at = Column(DATETIME(timezone=True), default=datetime.utcnow())
+    updated_at = Column(DATETIME(timezone=True), default=datetime.utcnow())
+    start_accommodation_date = Column(DATE)
+    end_accommodation_date = Column(DATE)
     total_sum = Column(DECIMAL(7, 2))
-    payment_deadline = Column(DATETIME)
+    payment_deadline_date = Column(DATE)
     remark = Column(VARCHAR(length=255))
     bed_place_id = Column(INTEGER, ForeignKey("bed_place.bed_place_id"))
     reviewer = Column(INTEGER, ForeignKey("user.user_id"), nullable=False)  # TODO: rename column to reviewer_id
@@ -103,8 +109,8 @@ class UserRequestReview(Base):
     user_request = relationship("UserRequest", back_populates='user_request_review')
 
     def __repr__(self):
-        return f'{self.__class__.__name__}(user_request_review_id="{self.user_request_review_id}",date_created="{self.date_created}",' \
-               f'room_number="{self.room_number}", start_date_accommodation="{self.start_date_accommodation}",end_date_accommodation="{self.end_date_accommodation}", total_sum="{self.total_sum}", payment_deadline="{self.payment_deadline}",' \
+        return f'{self.__class__.__name__}(user_request_review_id="{self.user_request_review_id}",date_created="{self.created_at}",' \
+               f'room_number="{self.room_number}", start_date_accommodation="{self.start_accommodation_date}",end_date_accommodation="{self.end_accommodation_date}", total_sum="{self.total_sum}", payment_deadline="{self.payment_deadline_date}",' \
                f'remark="{self.remark}", bed_place_id="{self.bed_place_id}",reviewer="{self.reviewer}",hostel_id="{self.hostel_id}",university_id="{self.university_id}",user_request_id="{self.user_request_id}")'
 
 
@@ -116,6 +122,8 @@ class UserDocument(Base):
     name = Column(VARCHAR(length=255), nullable=False)
     content = Column(VARCHAR(length=255), nullable=False)
     user_request_id = Column(INTEGER, ForeignKey("user_request.user_request_id"), nullable=False)
+    created_at = Column(DATETIME(timezone=True), default=datetime.utcnow())
+    updated_at = Column(DATETIME(timezone=True), default=datetime.utcnow())
 
     user_request = relationship("UserRequest", back_populates="user_documents")
 
@@ -144,7 +152,7 @@ user_request_booking_hostel_view = Table('user_request_booking_hostel_view', met
 user_request_details_view = Table('user_request_details_view', metadata_obj,
                                   Column('user_request_id', INTEGER),
                                   Column('university_id', INTEGER),
-                                  Column('date_created', DATETIME),
+                                  Column('created_at', DATETIME),
                                   Column('service_name', VARCHAR(255)),
                                   Column('status_name', VARCHAR(50)),
                                   Column('status_id', INTEGER),
@@ -171,7 +179,7 @@ user_request_list_view = Table('user_request_list_view', metadata_obj,
                                Column('user_request_id', INTEGER),
                                Column('service_name', VARCHAR(255)),
                                Column('status', JSON),
-                               Column('date_created', DATETIME))
+                               Column('created_at', DATETIME))
 
 
 hostel_accommodation_view = Table('hostel_accommodation_view', metadata_obj,
@@ -183,13 +191,13 @@ hostel_accommodation_view = Table('hostel_accommodation_view', metadata_obj,
                                   Column('room_number', INTEGER),
                                   Column('bed_place_name', VARCHAR(50)),
                                   Column('month_price', DECIMAL(6, 2)),
-                                  Column('start_date_accommodation', TIMESTAMP),
-                                  Column('end_date_accommodation', TIMESTAMP),
+                                  Column('start_accommodation_date', TIMESTAMP),
+                                  Column('end_accommodation_date', TIMESTAMP),
                                   Column('total_sum', DECIMAL(7, 2)),
                                   Column('iban', VARCHAR(100)),
                                   Column('university_name', VARCHAR(255)),
                                   Column('organisation_code', VARCHAR(50)),
-                                  Column('payment_recognation', VARCHAR(255)),
+                                  Column('payment_recognition', VARCHAR(255)),
                                   Column('commandant_full_name', JSON),
                                   Column('telephone_number', VARCHAR(50)),
                                   Column('documents', JSON))

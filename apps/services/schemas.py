@@ -46,7 +46,7 @@ class UserRequestsListOut(BaseOutSchema):
     user_request_id: int
     service_name: str
     status: Dict[str, Union[int, str]]
-    date_created: datetime
+    created_at: datetime
 
 
 class CancelRequestIn(BaseInSchema):
@@ -67,11 +67,11 @@ class CancelRequestOut(BaseOutSchema):
 class UserRequestReviewIn(BaseInSchema):
     status_id: int
     room_number: int = None
-    start_date_accommodation: datetime = None
-    end_date_accommodation: datetime = None
+    start_accommodation_date: date = None
+    end_accommodation_date: date = None
     # TODO it's define as decimal, but return int
     total_sum: Decimal = None
-    payment_deadline: datetime = None
+    payment_deadline_date: date = None
     remark: str = None
     hostel_id: int = None
     bed_place_id: int = None
@@ -97,14 +97,14 @@ class HostelAccomodationViewOut(BaseOutSchema):
     bed_place_name: str
     # TODO it's define as decimal, but return int
     month_price: Decimal
-    start_date_accommodation: datetime
-    end_date_accommodation: datetime
+    start_accommodation_date: date
+    end_accommodation_date: date
     # TODO it's define as decimal, but return int
     total_sum: Decimal
     iban: str
     university_name: str
     organisation_code: str
-    payment_recognation: str  # TODO spelling error
+    payment_recognition: str  # TODO spelling error
     commandant_full_name: FullNameSchema
     telephone_number: str
     documents: Dict[str, str]
@@ -113,7 +113,7 @@ class HostelAccomodationViewOut(BaseOutSchema):
 class UserRequestDetailsViewOut(BaseOutSchema):
     user_request_id: int
     university_id: int
-    date_created: datetime
+    created_at: datetime
     service_name: str
     status_name: str
     status_id: int
@@ -127,13 +127,13 @@ class UserRequestDetailsViewOut(BaseOutSchema):
 
 class CountHostelAccommodationCostIn(BaseInSchema):
     hostel_id: int
-    start_date_accommodation: date
-    end_date_accommodation: date
+    start_accommodation_date: date
+    end_accommodation_date: date
     bed_place_id: int
 
     @root_validator
     def validate_two_dates(cls, values):
-        if values.get('start_date_accommodation') >= values.get('end_date_accommodation'):
+        if values.get('start_accommodation_date') >= values.get('end_accommodation_date'):
             raise ValueError(
                 "Start date of hostel accommodation can't be more or equal than end date of hostel accommodation"
             )
