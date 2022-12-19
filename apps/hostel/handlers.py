@@ -7,22 +7,20 @@ from typing import List
 
 
 class HostelHandler:
-
-    async def read_hostels_list(self,
-                                *,
-                                request: Request,
-                                university_id: int,
-                                session: AsyncSession,
-                                ) -> HostelListOut:
+    async def read_hostels_list(
+        self,
+        *,
+        request: Request,
+        university_id: int,
+        session: AsyncSession,
+    ) -> HostelListOut:
         return await hostel_service.list(
-            session=session,
-            filters={"university_id": university_id}
+            session=session, filters={"university_id": university_id}
         )
 
-    async def read_available_bed_places(self,
-                                        *,
-                                        request: Request,
-                                        session: AsyncSession) -> List[BedPlaceOut]:
+    async def read_available_bed_places(
+        self, *, request: Request, session: AsyncSession
+    ) -> List[BedPlaceOut]:
         return await bed_place_service.list(session=session)
 
 

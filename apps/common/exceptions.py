@@ -13,13 +13,14 @@ class BackendException(Exception):
     code: http_status_code
     }
     """
+
     def __init__(
         self,
         *,
         status: JSENDStatus = JSENDStatus.FAIL,
         data: typing.Union[None, int, str, list, dict] = None,
         message: str,
-        code: int = http_status.HTTP_400_BAD_REQUEST
+        code: int = http_status.HTTP_400_BAD_REQUEST,
     ):
         self.status = status
         self.data = data

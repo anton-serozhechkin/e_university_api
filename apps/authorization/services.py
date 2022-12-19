@@ -21,7 +21,9 @@ def create_access_token(subject: Union[str, Any], expires_delta: int = None) -> 
     if expires_delta is not None:
         expires_delta = datetime.utcnow() + expires_delta
     else:
-        expires_delta = datetime.utcnow() + timedelta(seconds=Settings.JWT_ACCESS_TOKEN_EXPIRE_SECONDS)
+        expires_delta = datetime.utcnow() + timedelta(
+            seconds=Settings.JWT_ACCESS_TOKEN_EXPIRE_SECONDS
+        )
 
     to_encode = {"exp": expires_delta, "sub": str(subject)}
     encoded_jwt = jwt.encode(to_encode, Settings.JWT_SECRET_KEY, Settings.JWT_ALGORITHM)
@@ -32,21 +34,29 @@ def create_refresh_token(subject: Union[str, Any], expires_delta: int = None) ->
     if expires_delta is not None:
         expires_delta = datetime.utcnow() + expires_delta
     else:
-        expires_delta = datetime.utcnow() + timedelta(seconds=Settings.JWT_REFRESH_TOKEN_EXPIRE_SECONDS)
+        expires_delta = datetime.utcnow() + timedelta(
+            seconds=Settings.JWT_REFRESH_TOKEN_EXPIRE_SECONDS
+        )
 
     to_encode = {"exp": expires_delta, "sub": str(subject)}
-    encoded_jwt = jwt.encode(to_encode, Settings.JWT_REFRESH_SECRET_KEY, Settings.JWT_ALGORITHM)
+    encoded_jwt = jwt.encode(
+        to_encode, Settings.JWT_REFRESH_SECRET_KEY, Settings.JWT_ALGORITHM
+    )
     return encoded_jwt
 
 
 def verify_user(user):
     if not user:
-        raise BackendException(message="Login or password is invalid. Please, try again.")
+        raise BackendException(
+            message="Login or password is invalid. Please, try again."
+        )
 
 
 def verify_password(user, password):
     if not check_password(password, user.password):
-        raise BackendException(message="Login or password is invalid. Please, try again.")
+        raise BackendException(
+            message="Login or password is invalid. Please, try again."
+        )
 
 
 def check_password(password: str, hashed_pass: str) -> bool:

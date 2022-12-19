@@ -18,8 +18,14 @@ POSTGRES_INDEXES_NAMING_CONVENTION = {
     "pk": "%(table_name)s_pkey",
 }
 
-Base = declarative_base(metadata=MetaData(naming_convention=POSTGRES_INDEXES_NAMING_CONVENTION))
-async_engine = create_async_engine(url=Settings.POSTGRES_DSN_ASYNC, echo=Settings.POSTGRES_ECHO)
+Base = declarative_base(
+    metadata=MetaData(naming_convention=POSTGRES_INDEXES_NAMING_CONVENTION)
+)
+async_engine = create_async_engine(
+    url=Settings.POSTGRES_DSN_ASYNC, echo=Settings.POSTGRES_ECHO
+)
 engine = create_engine(url=Settings.POSTGRES_DSN, echo=Settings.POSTGRES_ECHO)
-async_session_factory = sessionmaker(bind=async_engine, class_=AsyncSession, expire_on_commit=False)
+async_session_factory = sessionmaker(
+    bind=async_engine, class_=AsyncSession, expire_on_commit=False
+)
 session_factory = sessionmaker(bind=engine, class_=Session, expire_on_commit=False)

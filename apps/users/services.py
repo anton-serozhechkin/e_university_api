@@ -1,5 +1,11 @@
 from apps.common.services import AsyncCRUDBase
-from apps.users.models import OneTimeToken, Student, User, user_list_view, students_list_view
+from apps.users.models import (
+    OneTimeToken,
+    Student,
+    User,
+    user_list_view,
+    students_list_view,
+)
 
 
 student_service = AsyncCRUDBase(model=Student)

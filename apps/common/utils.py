@@ -10,10 +10,7 @@ from fastapi import status as http_status
 from fastapi.security import OAuth2PasswordBearer
 
 
-reusable_oauth = OAuth2PasswordBearer(
-    tokenUrl="/login",
-    scheme_name="JWT"
-)
+reusable_oauth = OAuth2PasswordBearer(tokenUrl="/login", scheme_name="JWT")
 
 
 def get_generated_username(last_name: str, first_name: str) -> str:
@@ -30,13 +27,12 @@ def add_random_digits_and_cut_username(data: str) -> str:
 def get_student_attr(student):
     if not student:
         raise BackendException(
-            message="Student is not found.",
-            code=http_status.HTTP_404_NOT_FOUND
+            message="Student is not found.", code=http_status.HTTP_404_NOT_FOUND
         )
     if student.user_id:
         raise BackendException(
             message="A user account already exists. Please check your email for details.",
-            code=http_status.HTTP_409_CONFLICT
+            code=http_status.HTTP_409_CONFLICT,
         )
     return student.first_name, student.last_name, student.faculty_id
 
@@ -45,13 +41,15 @@ def get_token_data(token_data):
     if not token_data:
         raise BackendException(
             message="To register a user, first go to the page for checking the presence of a student in the register.",
-            code=http_status.HTTP_404_NOT_FOUND
+            code=http_status.HTTP_404_NOT_FOUND,
         )
     if token_data.expires < datetime.utcnow():
         raise BackendException(
-            message=("Registration time has expired."
-                     " Please go to the link to check the availability of students on the register."),
-            code=http_status.HTTP_403_FORBIDDEN
+            message=(
+                "Registration time has expired."
+                " Please go to the link to check the availability of students on the register."
+            ),
+            code=http_status.HTTP_403_FORBIDDEN,
         )
     return token_data.expires, token_data.student_id
 
