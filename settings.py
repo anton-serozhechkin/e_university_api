@@ -1,10 +1,9 @@
 import logging
 from functools import lru_cache
 from pathlib import Path
-from typing import Union, List
+from typing import List, Union
 
-from pydantic import BaseSettings, Field, validator, Extra, PostgresDsn
-
+from pydantic import BaseSettings, Extra, Field, PostgresDsn, validator
 from sqlalchemy.engine.url import URL
 
 __all__ = [

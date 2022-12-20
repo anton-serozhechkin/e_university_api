@@ -1,7 +1,6 @@
-from settings import Settings
-
 import uvicorn
 
+from settings import Settings
 
 # Debugging
 reload = False
