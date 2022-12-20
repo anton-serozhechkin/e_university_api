@@ -28,10 +28,10 @@ class FacultyIn(BaseInSchema):
         message = False
 
         if not v:
-            message = "The email address cannot be empty."
+            message = "The email address cannot be empty"
 
         elif not re.fullmatch(regex, v):
-            message = f"Invalid email address format: {v}."
+            message = f"Invalid email address format: {v}"
 
         if message:
             raise ValueError(message)
