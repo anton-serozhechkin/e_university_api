@@ -1,4 +1,4 @@
-from sqlalchemy import MetaData, Column, INTEGER, VARCHAR, ForeignKey, Table, JSON
+from sqlalchemy import INTEGER, JSON, VARCHAR, Column, ForeignKey, MetaData, Table
 from sqlalchemy.orm import relationship
 
 from apps.common.db import Base

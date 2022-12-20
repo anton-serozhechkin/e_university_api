@@ -1,16 +1,16 @@
+from datetime import date, datetime
+from decimal import Decimal
+from typing import Dict, List, Union
+
+from pydantic import root_validator, validator
+
 from apps.common.schemas import (
     BaseInSchema,
     BaseOutSchema,
-    UserDocumentsSchema,
-    HostelNameSchema,
     FullNameSchema,
+    HostelNameSchema,
+    UserDocumentsSchema,
 )
-
-from datetime import date, datetime
-from typing import Dict, Union, List
-from decimal import Decimal
-
-from pydantic import validator, root_validator
 
 
 class CreateUserRequestIn(BaseInSchema):

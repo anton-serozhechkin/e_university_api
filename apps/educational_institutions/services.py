@@ -1,11 +1,10 @@
-from apps.hostel.services import AsyncCRUDBase
 from apps.educational_institutions.models import (
-    faculty_list_view,
-    Faculty,
-    speciality_list_view,
     Course,
+    Faculty,
+    faculty_list_view,
+    speciality_list_view,
 )
-
+from apps.hostel.services import AsyncCRUDBase
 
 faculty_list_service = AsyncCRUDBase(model=faculty_list_view)
 faculty_service = AsyncCRUDBase(model=Faculty)

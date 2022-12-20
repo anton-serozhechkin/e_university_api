@@ -1,14 +1,13 @@
-from apps.authorization.models import Role
-from apps.common.exceptions import BackendException
-from apps.common.services import AsyncCRUDBase
-
-from settings import Settings
 from datetime import datetime, timedelta
-from typing import Union, Any
+from typing import Any, Union
 
 from jose import jwt
 from passlib.context import CryptContext
 
+from apps.authorization.models import Role
+from apps.common.exceptions import BackendException
+from apps.common.services import AsyncCRUDBase
+from settings import Settings
 
 password_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 

@@ -1,11 +1,10 @@
-from settings import Settings
-
 import databases
-from sqlalchemy import create_engine, MetaData
-from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy import MetaData, create_engine
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
+from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import Session, sessionmaker
 
+from settings import Settings
 
 database = databases.Database(Settings.POSTGRES_DSN)
 

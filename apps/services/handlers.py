@@ -1,3 +1,10 @@
+from datetime import date, datetime
+from decimal import Decimal
+from pathlib import Path
+
+from fastapi import File, Request, UploadFile
+from sqlalchemy.ext.asyncio import AsyncSession
+
 from apps.common.file_managers import file_manager
 from apps.services.models import STATUS_MAPPING
 from apps.services.schemas import (
@@ -12,39 +19,33 @@ from apps.services.services import (
     hostel_accommodation_service,
     hostel_service,
     request_existence_service,
-    user_document_service,
     service_service,
-    user_request_list_service,
+    user_document_service,
     user_faculty_service,
-    user_request_service,
     user_request_booking_hostel_service,
-    user_request_review_service,
     user_request_detail_service,
+    user_request_list_service,
+    user_request_review_service,
+    user_request_service,
 )
 from apps.services.utils import (
+    check_faculty_existence,
+    check_file_existing,
+    check_for_empty_value,
+    check_specialty_existence,
+    check_telephone_number_existence,
     create_faculty_dict,
     create_telephone_set,
     get_worksheet_cell_col_row,
-    check_faculty_existence,
-    check_specialty_existence,
-    check_telephone_number_existence,
-    check_for_empty_value,
-    check_file_existing,
 )
 from apps.users.schemas import CreateStudentIn, UserOut
 from apps.users.services import student_service
 from settings import (
-    Settings,
-    TEMPLATES_PATH,
-    SETTLEMENT_HOSTEL_PATH,
     HOSTEL_BOOKING_TEMPLATE,
+    SETTLEMENT_HOSTEL_PATH,
+    TEMPLATES_PATH,
+    Settings,
 )
-
-from datetime import datetime, date
-from decimal import Decimal
-from fastapi import File, Request, UploadFile
-from pathlib import Path
-from sqlalchemy.ext.asyncio import AsyncSession
 
 
 class ServiceHandler:

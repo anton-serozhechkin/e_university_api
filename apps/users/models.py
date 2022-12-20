@@ -1,17 +1,17 @@
-from apps.common.db import Base
-
 from sqlalchemy import (
-    MetaData,
-    Column,
-    Table,
-    INTEGER,
-    VARCHAR,
-    ForeignKey,
     BOOLEAN,
-    TIMESTAMP,
+    INTEGER,
     JSON,
+    TIMESTAMP,
+    VARCHAR,
+    Column,
+    ForeignKey,
+    MetaData,
+    Table,
 )
 from sqlalchemy.orm import relationship
+
+from apps.common.db import Base
 
 metadata_obj = MetaData()
 

@@ -1,3 +1,10 @@
+from typing import List, Union
+
+from fastapi import APIRouter, Depends, Request, UploadFile
+from fastapi import status as http_status
+from sqlalchemy.ext.asyncio import AsyncSession
+from starlette.responses import FileResponse, StreamingResponse
+
 from apps.common.dependencies import (
     check_file_content_type,
     get_async_session,
@@ -6,26 +13,21 @@ from apps.common.dependencies import (
 from apps.common.schemas import JSENDFailOutSchema, JSENDOutSchema
 from apps.services.handlers import service_handler
 from apps.services.schemas import (
-    UserRequestExistenceOut,
-    UserRequestsListOut,
-    CreateUserRequestOut,
-    CreateUserRequestIn,
-    UserRequestBookingHostelOut,
-    CancelRequestOut,
     CancelRequestIn,
-    UserRequestReviewOut,
-    UserRequestReviewIn,
-    HostelAccomodationViewOut,
-    UserRequestDetailsViewOut,
+    CancelRequestOut,
     CountHostelAccommodationCostIn,
     CountHostelAccommodationCostOut,
+    CreateUserRequestIn,
+    CreateUserRequestOut,
+    HostelAccomodationViewOut,
+    UserRequestBookingHostelOut,
+    UserRequestDetailsViewOut,
+    UserRequestExistenceOut,
+    UserRequestReviewIn,
+    UserRequestReviewOut,
+    UserRequestsListOut,
 )
 from apps.users.schemas import CreateStudentsListOut
-
-from fastapi import APIRouter, Depends, Request, UploadFile, status as http_status
-from starlette.responses import StreamingResponse, FileResponse
-from sqlalchemy.ext.asyncio import AsyncSession
-from typing import List, Union
 
 services_router = APIRouter(
     responses={422: {"model": JSENDFailOutSchema, "description": "ValidationError"}}

@@ -1,17 +1,17 @@
+from typing import List
+
+from fastapi import APIRouter, Depends, Request
+from sqlalchemy.ext.asyncio import AsyncSession
+
 from apps.common.dependencies import get_async_session, get_current_user
 from apps.common.schemas import JSENDFailOutSchema, JSENDOutSchema
 from apps.educational_institutions.handlers import edu_institutions_handler
 from apps.educational_institutions.schemas import (
+    CourseListOut,
     FacultyIn,
     FacultyOut,
-    CourseListOut,
     SpecialityListOut,
 )
-
-from fastapi import APIRouter, Depends, Request
-from sqlalchemy.ext.asyncio import AsyncSession
-from typing import List
-
 
 educational_institutions_router = APIRouter(
     responses={422: {"model": JSENDFailOutSchema, "description": "ValidationError"}}

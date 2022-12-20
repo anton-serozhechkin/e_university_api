@@ -1,9 +1,10 @@
-from apps.common.schemas import BaseInSchema, BaseOutSchema, FullNameSchema
-
 from datetime import datetime
-from typing import List, Dict, Union
-import re
+from re import compile, escape, fullmatch
+from typing import Dict, List, Union
+
 from pydantic import Field, validator
+
+from apps.common.schemas import BaseInSchema, BaseOutSchema, FullNameSchema
 
 
 class UsersListViewOut(BaseOutSchema):
@@ -37,8 +38,8 @@ class RegistrationIn(BaseInSchema):
         Return: True or not None string
         """
         specials = "!#$%&'*+-/=?^_`{|?."
-        specials = re.escape(specials)
-        regex = re.compile(
+        specials = escape(specials)
+        regex = compile(
             "^(?![" + specials + "])"
             "(?!.*[" + specials + "]{2})"
             "(?!.*[" + specials + "]$)"
@@ -53,7 +54,7 @@ class RegistrationIn(BaseInSchema):
         if not v:
             message = "The email address cannot be empty"
 
-        elif not re.fullmatch(regex, v):
+        elif not fullmatch(regex, v):
             message = f"Invalid email address format: {v}"
 
         if message:
@@ -92,8 +93,8 @@ class CreateUserIn(BaseInSchema):
         Return: True or not None string
         """
         specials = "!#$%&'*+-/=?^_`{|?."
-        specials = re.escape(specials)
-        regex = re.compile(
+        specials = escape(specials)
+        regex = compile(
             "^(?![" + specials + "])"
             "(?!.*[" + specials + "]{2})"
             "(?!.*[" + specials + "]$)"
@@ -106,7 +107,7 @@ class CreateUserIn(BaseInSchema):
         message = False
         if not v:
             message = "The email address cannot be empty"
-        elif not re.fullmatch(regex, v):
+        elif not fullmatch(regex, v):
             message = f"Invalid email address format: {v}"
         if message:
             raise ValueError(message)

@@ -1,22 +1,24 @@
-from apps.common.db import async_session_factory, session_factory
-from apps.common.exceptions import BackendException
-from apps.common.exception_handlers import integrity_error_handler
-from apps.users.schemas import TokenPayload, UserOut
-from apps.users.services import user_service, user_list_service
-from settings import Settings
-
 from datetime import datetime
-from fastapi import Depends, File, HTTPException, UploadFile, status as http_status
+from typing import AsyncGenerator, Generator
+
+from fastapi import Depends, File, HTTPException, UploadFile
+from fastapi import status as http_status
 from fastapi.security import OAuth2PasswordBearer
 from jose import jwt
 from pydantic import ValidationError
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import Session
-import typing
+
+from apps.common.db import async_session_factory, session_factory
+from apps.common.exception_handlers import integrity_error_handler
+from apps.common.exceptions import BackendException
+from apps.users.schemas import TokenPayload, UserOut
+from apps.users.services import user_list_service, user_service
+from settings import Settings
 
 
-async def get_async_session() -> typing.AsyncGenerator[AsyncSession, None]:
+async def get_async_session() -> AsyncGenerator[AsyncSession, None]:
     """Creates FastAPI dependency for generation of SQLAlchemy AsyncSession.
 
     Yields:
@@ -32,7 +34,7 @@ async def get_async_session() -> typing.AsyncGenerator[AsyncSession, None]:
             await session.close()
 
 
-def get_session() -> typing.Generator[Session, None, None]:
+def get_session() -> Generator[Session, None, None]:
     """Creates FastAPI dependency for generation of SQLAlchemy Session.
 
     Yields:

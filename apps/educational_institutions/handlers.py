@@ -1,15 +1,16 @@
+from typing import List
+
+from fastapi import Request
+from sqlalchemy.ext.asyncio import AsyncSession
+
 from apps.educational_institutions.models import Faculty
 from apps.educational_institutions.schemas import FacultyIn, FacultyOut
 from apps.educational_institutions.services import (
     course_list_service,
-    faculty_service,
     faculty_list_service,
+    faculty_service,
     speciality_list_service,
 )
-
-from fastapi import Request
-from sqlalchemy.ext.asyncio import AsyncSession
-from typing import List
 
 
 class EduInstitutionHandler:

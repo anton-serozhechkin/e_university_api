@@ -1,27 +1,27 @@
-from apps.common.dependencies import get_async_session, get_current_user
-from apps.users.handlers import user_handler
-from apps.users.schemas import (
-    UserOut,
-    UsersListViewOut,
-    CreateUserOut,
-    CreateUserIn,
-    DeleteUserIn,
-    RegistrationOut,
-    RegistrationIn,
-    CreateStudentOut,
-    CreateStudentIn,
-    StudentsListOut,
-    UserIn,
-    DeleteStudentIn,
-    StudentCheckExistenceOut,
-    StudentCheckExistenceIn,
-)
-from apps.common.schemas import JSENDOutSchema, JSENDFailOutSchema
+from typing import List, Optional
 
 from fastapi import APIRouter, Depends, Request
 from sqlalchemy.ext.asyncio import AsyncSession
-from typing import List, Optional
 
+from apps.common.dependencies import get_async_session, get_current_user
+from apps.common.schemas import JSENDFailOutSchema, JSENDOutSchema
+from apps.users.handlers import user_handler
+from apps.users.schemas import (
+    CreateStudentIn,
+    CreateStudentOut,
+    CreateUserIn,
+    CreateUserOut,
+    DeleteStudentIn,
+    DeleteUserIn,
+    RegistrationIn,
+    RegistrationOut,
+    StudentCheckExistenceIn,
+    StudentCheckExistenceOut,
+    StudentsListOut,
+    UserIn,
+    UserOut,
+    UsersListViewOut,
+)
 
 users_router = APIRouter()
 

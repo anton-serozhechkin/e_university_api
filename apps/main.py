@@ -1,4 +1,11 @@
+from fastapi import FastAPI
+from fastapi.exceptions import RequestValidationError
+from fastapi.middleware.cors import CORSMiddleware
+from pydantic import ValidationError
+from starlette.exceptions import HTTPException as StarletteHTTPException
+
 from apps.authorization.routers import authorization_router
+from apps.common.db import database
 from apps.common.exception_handlers import (
     backend_exception_handler,
     http_exception_handler,
@@ -9,16 +16,8 @@ from apps.educational_institutions.routers import educational_institutions_route
 from apps.hostel.routers import hostel_router
 from apps.services.routers import services_router
 from apps.users.routers import users_router
-from apps.common.db import database
 from settings import Settings
 from tags_metadata import metadata
-
-from fastapi import FastAPI
-from fastapi.middleware.cors import CORSMiddleware
-from fastapi.exceptions import RequestValidationError
-from pydantic import ValidationError
-from starlette.exceptions import HTTPException as StarletteHTTPException
-
 
 app = FastAPI(openapi_tags=metadata)
 

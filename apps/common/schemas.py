@@ -1,12 +1,12 @@
+from datetime import datetime
 from typing import Generic, TypeVar, Union
+
 from fastapi import status as http_status
-from pydantic import Field, BaseModel
+from pydantic import BaseModel, Field
 from pydantic.generics import GenericModel
 from pydantic.typing import NoneType
-from datetime import datetime
 
 from apps.common.enums import JSENDStatus
-
 
 SchemaVar = TypeVar("SchemaVar", bound=Union[BaseModel, NoneType, str])
 

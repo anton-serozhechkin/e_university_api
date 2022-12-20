@@ -1,14 +1,14 @@
-from apps.common.exceptions import BackendException
-from settings import Settings
-
-from translitua import translit
-from random import randint
-import hashlib
-import os
 from datetime import datetime, timedelta
+from hashlib import sha1
+from os import urandom
+from random import randint
+
 from fastapi import status as http_status
 from fastapi.security import OAuth2PasswordBearer
+from translitua import translit
 
+from apps.common.exceptions import BackendException
+from settings import Settings
 
 reusable_oauth = OAuth2PasswordBearer(tokenUrl="/login", scheme_name="JWT")
 
@@ -55,6 +55,6 @@ def get_token_data(token_data):
 
 
 def get_token_and_expires():
-    token = hashlib.sha1(os.urandom(128)).hexdigest()
+    token = sha1(urandom(128)).hexdigest()
     expires = datetime.utcnow() + timedelta(seconds=Settings.TOKEN_LIFE_TIME)
     return token, expires

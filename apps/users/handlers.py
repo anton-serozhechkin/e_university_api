@@ -1,32 +1,34 @@
+from typing import Optional
+
+from fastapi import Request
+from fastapi import status as http_status
+from sqlalchemy.ext.asyncio import AsyncSession
+
 from apps.authorization.services import get_hashed_password
 from apps.common.exceptions import BackendException
 from apps.common.utils import (
     add_random_digits_and_cut_username,
-    get_student_attr,
-    get_token_data,
     get_generated_username,
+    get_student_attr,
     get_token_and_expires,
-)
-from apps.users.schemas import (
-    CreateUserIn,
-    DeleteUserIn,
-    RegistrationIn,
-    CreateStudentIn,
-    DeleteStudentIn,
-    StudentCheckExistenceIn,
+    get_token_data,
 )
 from apps.services.services import user_faculty_service
+from apps.users.schemas import (
+    CreateStudentIn,
+    CreateUserIn,
+    DeleteStudentIn,
+    DeleteUserIn,
+    RegistrationIn,
+    StudentCheckExistenceIn,
+)
 from apps.users.services import (
-    student_service,
     one_time_token_service,
     student_list_service,
+    student_service,
     user_list_service,
     user_service,
 )
-
-from fastapi import Request, status as http_status
-from sqlalchemy.ext.asyncio import AsyncSession
-from typing import Optional
 
 
 class UserHandler:

@@ -1,22 +1,23 @@
+from typing import List
+
+from sqlalchemy import select
+
 from apps.common.db import database
 from apps.common.services import AsyncCRUDBase
 from apps.educational_institutions.models import Faculty, Speciality
-
-from apps.hostel.models import Hostel, BedPlace
+from apps.hostel.models import BedPlace, Hostel
 from apps.services.models import (
-    hostel_accommodation_view,
     Service,
     UserDocument,
+    UserRequest,
+    UserRequestReview,
+    hostel_accommodation_view,
+    user_request_booking_hostel_view,
+    user_request_details_view,
     user_request_exist_view,
     user_request_list_view,
-    UserRequest,
-    user_request_booking_hostel_view,
-    UserRequestReview,
-    user_request_details_view,
 )
 from apps.users.models import UserFaculty
-from sqlalchemy import select
-from typing import List
 
 
 async def get_specialties_list(university_id: int) -> List:

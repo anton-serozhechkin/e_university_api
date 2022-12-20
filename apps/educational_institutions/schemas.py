@@ -1,9 +1,9 @@
-from apps.common.schemas import BaseOutSchema, BaseInSchema, FullNameSchema
-
 import re
+from typing import Dict, Union
 
 from pydantic import validator
-from typing import Dict, Union
+
+from apps.common.schemas import BaseInSchema, BaseOutSchema, FullNameSchema
 
 
 class FacultyIn(BaseInSchema):

@@ -1,13 +1,14 @@
 import os.path
+from collections import defaultdict
+from typing import Any, Callable, DefaultDict, Dict, List, Set, Tuple
+
+import xlrd
+from fastapi import UploadFile
+from fastapi import status as http_status
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from apps.common.exceptions import BackendException
 from apps.users.services import student_list_service
-
-from collections import defaultdict
-from fastapi import UploadFile, status as http_status
-from sqlalchemy.ext.asyncio import AsyncSession
-from typing import Any, Callable, DefaultDict, Dict, List, Set, Tuple
-import xlrd
 
 
 def create_faculty_dict(specialties: List) -> DefaultDict[str, Dict[str, int]]:

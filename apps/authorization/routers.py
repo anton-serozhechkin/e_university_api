@@ -1,14 +1,14 @@
-from apps.common.dependencies import get_async_session, get_current_user
-from apps.authorization.schemas import AvailableRolesOut
-from apps.common.schemas import JSENDOutSchema, JSENDFailOutSchema
-from apps.users.schemas import AuthOut
-from apps.authorization.handlers import authorization_handler
+from typing import List
 
 from fastapi import APIRouter, Depends, Request
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.ext.asyncio import AsyncSession
-from typing import List
 
+from apps.authorization.handlers import authorization_handler
+from apps.authorization.schemas import AvailableRolesOut
+from apps.common.dependencies import get_async_session, get_current_user
+from apps.common.schemas import JSENDFailOutSchema, JSENDOutSchema
+from apps.users.schemas import AuthOut
 
 authorization_router = APIRouter()
 

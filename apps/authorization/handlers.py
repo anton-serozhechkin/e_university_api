@@ -1,15 +1,15 @@
-from apps.authorization.services import (
-    verify_password,
-    create_access_token,
-    create_refresh_token,
-    verify_user,
-    role_service,
-)
-from apps.users.services import user_service
-
 from fastapi import Depends, Request
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.ext.asyncio import AsyncSession
+
+from apps.authorization.services import (
+    create_access_token,
+    create_refresh_token,
+    role_service,
+    verify_password,
+    verify_user,
+)
+from apps.users.services import user_service
 
 
 class AuthorizationHandler:
