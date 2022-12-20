@@ -10,8 +10,8 @@ from apps.services.schemas import (UserRequestExistenceOut, UserRequestsListOut,
                                    CountHostelAccommodationCostOut)
 from apps.users.schemas import CreateStudentsListOut
 
-from fastapi import APIRouter, Depends, File, Request, UploadFile, status as http_status
-from starlette.responses import StreamingResponse
+from fastapi import APIRouter, Depends, Request, UploadFile, status as http_status
+from starlette.responses import StreamingResponse, FileResponse
 from sqlalchemy.ext.asyncio import AsyncSession
 from typing import List, Union
 
@@ -309,6 +309,43 @@ async def read_user_document(
             session=session),
         status_code=http_status.HTTP_200_OK,
         media_type="text/html"
+    )
+
+
+@services_router.get("/{university_id}/download-user-document/{user_document_id}",
+                     name="download_user_document",
+                     response_class=FileResponse,
+                     summary="Download user document",
+                     responses={200: {
+                         "description": "Successful download user document response",
+                         "content": {"text/html": {"example": "\n".join([
+                             "content-disposition: attachment; filename*=utf-8''some_file_name.docx",
+                             "content-length: 1010",
+                             "content-type: application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+                             "date: Wed,14 Dec 2022 15:58:49 GMT",
+                             "etag: 9744b58c8e99ca7c251c717ad9b28bd2",
+                             "last-modified: Wed,23 Nov 2022 17:49:14 GMT",
+                             "server: uvicorn"
+                         ])}}
+                     }},
+                     tags=["Student dashboard"])
+async def download_user_document(
+        request: Request,
+        university_id: int,
+        user_document_id: int,
+        user=Depends(get_current_user),
+        session: AsyncSession = Depends(get_async_session)):
+    file_path, file_name = await service_handler.download_user_document(
+            request=request,
+            university_id=university_id,
+            user_document_id=user_document_id,
+            user=user,
+            session=session)
+    return FileResponse(
+        path=file_path,
+        filename=file_name,
+        status_code=http_status.HTTP_200_OK,
+        media_type="application/vnd.openxmlformats-officedocument.wordprocessingml.document"
     )
 
 
