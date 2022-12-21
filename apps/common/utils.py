@@ -47,16 +47,16 @@ def get_token_data(token_data):
             message="To register a user, first go to the page for checking the presence of a student in the register.",
             code=http_status.HTTP_404_NOT_FOUND
         )
-    if token_data.expires < datetime.utcnow():
+    if token_data.expires_at < datetime.utcnow():
         raise BackendException(
             message=("Registration time has expired."
                      " Please go to the link to check the availability of students on the register."),
             code=http_status.HTTP_403_FORBIDDEN
         )
-    return token_data.expires, token_data.student_id
+    return token_data.expires_at, token_data.student_id
 
 
-def get_token_and_expires():
+def get_token_and_expires_at():
     token = hashlib.sha1(os.urandom(128)).hexdigest()
-    expires = datetime.utcnow() + timedelta(seconds=Settings.TOKEN_LIFE_TIME)
-    return token, expires
+    expires_at = datetime.utcnow() + timedelta(seconds=Settings.TOKEN_LIFE_TIME)
+    return token, expires_at

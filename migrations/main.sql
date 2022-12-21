@@ -165,7 +165,7 @@ CREATE TABLE IF NOT EXISTS one_time_token(
     student_id integer NOT NULL,
     token_id integer NOT NULL,
     token varchar(255) NOT NULL,
-    expires timestamp with time zone default (now() at time zone 'utc'),
+    expires_at timestamp with time zone default (now() at time zone 'utc'),
     CONSTRAINT one_time_token_pk PRIMARY KEY (token_id));
 
 CREATE SEQUENCE IF NOT EXISTS token_id_seq AS bigint START WITH 1 INCREMENT BY 1;

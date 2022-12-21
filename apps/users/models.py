@@ -37,13 +37,13 @@ class OneTimeToken(Base):
 
     token_id = Column(INTEGER, primary_key=True, nullable=False)
     token = Column(VARCHAR(length=255), nullable=False)
-    expires = Column(DATETIME(timezone=True), default=datetime.utcnow())
+    expires_at = Column(DATETIME(timezone=True), default=datetime.utcnow())
     student_id = Column(INTEGER, ForeignKey("student.student_id"), nullable=False)
 
     student = relationship("Student", back_populates="one_time_tokens")
 
     def __repr__(self):
-        return f'{self.__class__.__name__}(token_id="{self.token_id}",token="{self.token}",expires="{self.expires}",student_id="{self.student_id}")'
+        return f'{self.__class__.__name__}(token_id="{self.token_id}",token="{self.token}",expires_at="{self.expires_at}",student_id="{self.student_id}")'
 
 
 class Student(Base):
