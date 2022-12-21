@@ -22,7 +22,7 @@ authorization_router = APIRouter()
                                422: {"model": JSENDFailOutSchema, "description": "ValidationError"},
                                401: {"model": JSENDFailOutSchema, "description": "Not authorized response"}
                            },
-                           tags=["Authorization"])
+                           tags=["User dashboard"])
 async def login(
         request: Request,
         form_data: OAuth2PasswordRequestForm = Depends(),
@@ -44,7 +44,7 @@ async def login(
                           response_model=JSENDOutSchema[List[AvailableRolesOut]],
                           summary="Get available roles",
                           responses={200: {"description": "Successful get list of available roles response"}},
-                          tags=["SuperAdmin dashboard"])
+                          tags=["User dashboard"])
 async def available_roles(
         request: Request,
         user=Depends(get_current_user),

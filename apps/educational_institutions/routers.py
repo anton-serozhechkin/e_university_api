@@ -20,7 +20,7 @@ educational_institutions_router = APIRouter(
                                      responses={
                                          200: {"description": "Successful get faculty list of university response"},
                                      },  # TODO after input id of non-existent university it returns success,
-                                     tags=["SuperAdmin dashboard"])
+                                     tags=["Educational institution dashboard"])
 async def read_faculties(request: Request,
                          university_id: int,
                          user=Depends(get_current_user),
@@ -51,7 +51,7 @@ async def read_faculties(request: Request,
                                       responses={
                                           200: {"description": "Successful create faculty in university response"}
                                       },
-                                      tags=["SuperAdmin dashboard"])
+                                      tags=["Educational institution dashboard"])
 async def create_faculty(
         request: Request,
         university_id: int,
@@ -94,7 +94,7 @@ async def create_faculty(
                                      responses={200: {
                                          "description": "Successful get all speciality list of university response"}
                                      },
-                                     tags=["Admin dashboard"])
+                                     tags=["Educational institution dashboard"])
 async def read_speciality_list(
         request: Request,
         university_id: int,
@@ -116,7 +116,7 @@ async def read_speciality_list(
                                      response_model=JSENDOutSchema[List[CourseListOut]],
                                      summary="Get courses list",
                                      responses={200: {"description": "Successful get all courses list response"}},
-                                     tags=["Admin dashboard"])
+                                     tags=["Educational institution dashboard"])
 async def read_courses_list(
         request: Request,
         auth=Depends(get_current_user),

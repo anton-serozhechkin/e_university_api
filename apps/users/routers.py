@@ -23,7 +23,7 @@ users_router = APIRouter()
                        404: {"model": JSENDFailOutSchema, "description": "Invalid input data response"},
                        422: {"model": JSENDFailOutSchema, "description": "ValidationError"}
                    },
-                   tags=["Authorization"])
+                   tags=["Student dashboard"])
 async def check_student(
         request: Request,
         student: StudentCheckExistenceIn,
@@ -57,7 +57,7 @@ async def check_student(
                       200: {"description": "Successful get all users list of the university response"},
                       422: {"model": JSENDFailOutSchema, "description": "ValidationError"}
                   },
-                  tags=["SuperAdmin dashboard"])
+                  tags=["User dashboard"])
 async def read_users_list(
         request: Request,
         university_id: int,
@@ -80,7 +80,7 @@ async def read_users_list(
                        200: {"description": "Successful create user response"},
                        422: {"model": JSENDFailOutSchema, "description": "ValidationError"}
                    },
-                   tags=["SuperAdmin dashboard"])
+                   tags=["User dashboard"])
 async def create_user(
         request: Request,
         university_id: int,
@@ -119,7 +119,7 @@ async def create_user(
                          200: {"description": "Successful delete user response"},
                          422: {"model": JSENDFailOutSchema, "description": "ValidationError"}
                      },
-                     tags=["SuperAdmin dashboard"])
+                     tags=["User dashboard"])
 async def delete_user(
         request: Request,
         university_id: int,
@@ -146,7 +146,7 @@ async def delete_user(
                        409: {"model": JSENDFailOutSchema, "description": "Input data already exist response"},
                        422: {"model": JSENDFailOutSchema, "description": "ValidationError"}
                    },
-                   tags=["Authorization"])
+                   tags=["User dashboard"])
 async def registration(
         request: Request,
         user: RegistrationIn,
@@ -176,7 +176,7 @@ async def registration(
                        200: {"description": "Successful create student of the university response"},
                        422: {"model": JSENDFailOutSchema, "description": "ValidationError"}
                    },
-                   tags=["Admin dashboard"])
+                   tags=["Student dashboard"])
 # TODO after input id of the non-existent university it creates student
 async def create_student(
         request: Request,
@@ -214,7 +214,7 @@ async def create_student(
                       200: {"description": "Successful get all university students list response"},
                       422: {"model": JSENDFailOutSchema, "description": "ValidationError"}
                   },
-                  tags=["Admin dashboard"])
+                  tags=["Student dashboard"])
 async def read_students_list(
         request: Request,
         university_id: int,
@@ -239,7 +239,7 @@ async def read_students_list(
                          200: {"description": "Successful delete university student response"},
                          422: {"model": JSENDFailOutSchema, "description": "ValidationError"}
                      },
-                     tags=["SuperAdmin dashboard"])
+                     tags=["Student dashboard"])
 async def delete_student(
         request: Request,
         university_id: int,
@@ -260,7 +260,7 @@ async def delete_student(
                   response_model=JSENDOutSchema[UserOut],
                   summary='Get current user info',
                   responses={200: {"description": "Successful get current user information response"}},
-                  tags=["Authorization"])
+                  tags=["User dashboard"])
 async def get_me(user: UserIn = Depends(get_current_user)):
     return {
         "data": user,

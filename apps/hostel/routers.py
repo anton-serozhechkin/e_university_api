@@ -21,7 +21,7 @@ hostel_router = APIRouter(
                        200: {"description": "Successful get all university hostels response"},
                        422: {"model": JSENDFailOutSchema, "description": "ValidationError"}
                    },
-                   tags=["Admin dashboard"])
+                   tags=["Hostel dashboard"])
 async def read_hostels_list(request: Request,
                             university_id: int,
                             user=Depends(get_current_user),
@@ -39,7 +39,7 @@ async def read_hostels_list(request: Request,
                    response_model=JSENDOutSchema[List[BedPlaceOut]],
                    summary="Get bed places list",
                    responses={200: {"description": "Successful get list of available bed places response"}},
-                   tags=["Admin dashboard"])
+                   tags=["Hostel dashboard"])
 async def available_bed_places(request: Request,
                                session: AsyncSession = Depends(get_async_session),
                                user=Depends(get_current_user)):
