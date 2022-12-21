@@ -1,34 +1,42 @@
 metadata = [
     {
-        "name": "Authorization",
-        "description": "Operations with signin, signup of user. Also included checking student existense and changing password endpoint.",
+        "name": "User dashboard",
+        "description": "All endpoints concerning user functionality.",
         "externalDocs": {
             "description": "See epic for more info",
-            "url": "https://euniversity.atlassian.net/browse/EU-12",
+            "url": "https://euniversity.atlassian.net/browse/EU-127",
         },
     },
     {
         "name": "Student dashboard",
-        "description": "All endpoints avaliable for user with role 'Student'.",
+        "description": "All endpoints concerning student functionality.",
         "externalDocs": {
             "description": "See epic for more info",
-            "url": "https://euniversity.atlassian.net/browse/EU-15",
+            "url": "https://euniversity.atlassian.net/browse/EU-127",
         },
     },
     {
-        "name": "Admin dashboard",
-        "description": "All endpoints avaliable for user with role 'Admin'.",
+        "name": "Service dashboard",
+        "description": "All endpoints concerning service functionality.",
         "externalDocs": {
             "description": "See epic for more info",
-            "url": "https://euniversity.atlassian.net/browse/EU-16",
+            "url": "https://euniversity.atlassian.net/browse/EU-127",
         },
     },
     {
-        "name": "SuperAdmin dashboard",
-        "description": "All endpoints avaliable for user with role 'Super Admin'.",
+        "name": "Hostel dashboard",
+        "description": "All endpoints concerning hostel functionality.",
         "externalDocs": {
             "description": "See epic for more info",
-            "url": "https://euniversity.atlassian.net/browse/EU-17",
+            "url": "https://euniversity.atlassian.net/browse/EU-127",
+        },
+    },
+    {
+        "name": "Educational institution dashboard",
+        "description": "All endpoints concerning educational institution functionality.",
+        "externalDocs": {
+            "description": "See epic for more info",
+            "url": "https://euniversity.atlassian.net/browse/EU-127",
         },
     }
 ]
