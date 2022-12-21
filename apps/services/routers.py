@@ -7,7 +7,7 @@ from apps.services.schemas import (UserRequestExistenceOut, UserRequestsListOut,
                                    CancelRequestIn, UserRequestReviewOut,
                                    UserRequestReviewIn, HostelAccomodationViewOut,
                                    UserRequestDetailsViewOut, CountHostelAccommodationCostIn,
-                                   CountHostelAccommodationCostOut, ReturnUserDocumentOut)
+                                   CountHostelAccommodationCostOut)
 
 from fastapi import APIRouter, Depends, Request, status as http_status
 from starlette.responses import StreamingResponse
@@ -259,30 +259,6 @@ async def read_request_details(
             user_request_id=user_request_id,
             session=session),
         "message": "Got request details"
-    }
-
-
-@services_router.get("/{university_id}/get_user_document_list/",
-                     name="get_user_document_list",
-                     response_model=JSENDOutSchema[List[ReturnUserDocumentOut]],
-                     summary="Get user document list",
-                     responses={200: {"description": "Successful get user documents list"}},
-                     tags=["Student dashboard"])
-async def get_user_document_list(
-        request: Request,
-        university_id: int,
-        user=Depends(get_current_user),
-        session: AsyncSession = Depends(get_async_session)):
-
-    response = await service_handler.get_user_document_list(
-        request=request,
-        university_id=university_id,
-        user=user,
-        session=session)
-
-    return {
-        "data": response,
-        "message": "Get user documents list"
     }
 
 

@@ -54,7 +54,7 @@ class AsyncCRUDBase:
             statement = statement.where(getattr(model, k) == v)
         result: ChunkedIteratorResult = await session.execute(statement=statement)
         response: Union[ModelType, None] = result.first()
-        return response if isinstance(self.model, Table) else response[0]
+        return response if isinstance(self.model, Table) or not response else response[0]
 
     async def update(self, *, session: AsyncSession, data: Optional[Dict] = None,
                      obj: Union[Dict, UpdateSchemaType, None] = None) -> Optional[ModelType]:

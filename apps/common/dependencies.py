@@ -6,7 +6,7 @@ from apps.users.services import user_service, user_list_service
 from settings import Settings
 
 from datetime import datetime
-from fastapi import Depends, HTTPException, status as http_status
+from fastapi import Depends, File, HTTPException, UploadFile, status as http_status
 from fastapi.security import OAuth2PasswordBearer
 from jose import jwt
 from pydantic import ValidationError
@@ -79,3 +79,12 @@ async def get_current_user(
             code=http_status.HTTP_404_NOT_FOUND
         )
     return await user_list_service.read(session=session, data={"user_id": user.user_id})
+
+
+def check_file_content_type(file: UploadFile = File(...)) -> File:
+    if file.content_type != "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet":
+        raise BackendException(
+            message="Uploaded file have invalid type.",
+            code=http_status.HTTP_406_NOT_ACCEPTABLE
+        )
+    return file
