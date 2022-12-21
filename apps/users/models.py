@@ -14,7 +14,7 @@ class User(Base):
     user_id = Column(INTEGER, primary_key=True, nullable=False)
     login = Column(VARCHAR(length=50), nullable=False, unique=True)
     password = Column(VARCHAR(length=50), nullable=False)
-    last_visit_at = Column(TIMESTAMP)
+    last_visit_at = Column(DATETIME)
     email = Column(VARCHAR(length=100), nullable=False, unique=True)
     is_active = Column(BOOLEAN, default=False)
     role_id = Column(INTEGER, ForeignKey("role.role_id"), nullable=True)
@@ -99,7 +99,7 @@ students_list_view = Table('students_list_view', metadata_obj,
 user_list_view = Table('user_list_view', metadata_obj,
                        Column('user_id', INTEGER),
                        Column('login', VARCHAR(50)),
-                       Column('last_visit_at', TIMESTAMP),
+                       Column('last_visit_at', DATETIME),
                        Column('email', VARCHAR(50)),
                        Column('role', JSON),
                        Column('is_active', BOOLEAN),
