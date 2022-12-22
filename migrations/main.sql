@@ -175,10 +175,10 @@ CREATE TABLE IF NOT EXISTS service(
     service_name varchar(255) NOT NULL,
     CONSTRAINT service_pk PRIMARY KEY (service_id));
 
-CREATE TABLE IF NOT EXISTS status(
-    status_id integer NOT NULL,
-    status_name varchar(50) NOT NULL,
-    CONSTRAINT status_pk PRIMARY KEY (status_id));
+CREATE TABLE IF NOT EXISTS user_request_status(
+    id integer NOT NULL,
+    name varchar(50) NOT NULL,
+    CONSTRAINT user_request_status_pk PRIMARY KEY (id));
 
 CREATE TABLE IF NOT EXISTS user_request(
     user_request_id integer NOT NULL,
@@ -187,7 +187,7 @@ CREATE TABLE IF NOT EXISTS user_request(
     user_id integer NOT NULL,
     service_id integer NOT NULL,
     date_created timestamp NOT NULL,
-    status_id integer NOT NULL,
+    user_request_status_id integer NOT NULL,
     comment VARCHAR(255),
     CONSTRAINT user_request_pk PRIMARY KEY(user_request_id));
 
@@ -200,7 +200,7 @@ FOREIGN KEY (service_id) REFERENCES service(service_id)
 MATCH FULL ON DELETE CASCADE ON UPDATE CASCADE;
 
 ALTER TABLE user_request ADD CONSTRAINT user_request_status_fk
-FOREIGN KEY (status_id) REFERENCES status(status_id)
+FOREIGN KEY (user_request_status_id) REFERENCES user_request_status(id)
 MATCH FULL ON DELETE SET NULL ON UPDATE CASCADE;
 
 ALTER TABLE user_request ADD CONSTRAINT user_request_faculty_fk
@@ -423,8 +423,8 @@ CREATE VIEW user_request_details_view AS
         ur.university_id,
         ur.date_created,
         sr.service_name,
-        st.status_name,
-        ur.status_id,
+        urs.name as user_request_status_name,
+        ur.user_request_status_id,
         ur.comment,
         jsonb_build_object('name', ht.name, 'number', ht.number) as hostel_name,
         urr.room_number,
@@ -435,8 +435,8 @@ CREATE VIEW user_request_details_view AS
         user_request ur
     LEFT JOIN user_request_review urr ON
         ur.user_request_id = urr.user_request_id
-    LEFT JOIN status st ON
-        ur.status_id = st.status_id
+    LEFT JOIN user_request_status urs ON
+        ur.user_request_status_id = urs.id
 	LEFT JOIN service sr ON
 		ur.service_id = sr.service_id
 	LEFT JOIN hostel ht ON
@@ -450,8 +450,8 @@ CREATE VIEW user_request_details_view AS
         ur.university_id,
         ur.date_created,
         sr.service_name,
-        st.status_name,
-        ur.status_id,
+        urs.name,
+        ur.user_request_status_id,
         ur.comment,
 		ht.name,
 		ht.number,
@@ -491,12 +491,12 @@ CREATE VIEW user_request_list_view AS
         ur.user_id,
         ur.user_request_id,
         sr.service_name,
-        jsonb_build_object('status_id', ur.status_id, 'status_name', st.status_name) as status,
+        jsonb_build_object('user_request_status_id', ur.user_request_status_id, 'user_request_status_name', urs.name) as user_request_status,
         ur.date_created
     FROM
         user_request ur
-    LEFT JOIN status st ON
-        ur.status_id = st.status_id
+    LEFT JOIN user_request_status urs ON
+        ur.user_request_status_id = urs.id
     LEFT JOIN service sr ON
         ur.service_id = sr.service_id
      GROUP BY
@@ -504,7 +504,7 @@ CREATE VIEW user_request_list_view AS
         ur.user_id,
         ur.university_id,
         ur.service_id,
-        st.status_name,
+        urs.name,
         sr.service_name
     ORDER BY
         ur.university_id,
@@ -570,20 +570,20 @@ CREATE VIEW user_request_exist_view AS
         ur.faculty_id,
         ur.university_id,
         ur.service_id,
-        jsonb_build_object('status_id', ur.status_id, 'status_name', st.status_name) as status
+        jsonb_build_object('user_request_status_id', ur.user_request_status_id, 'user_request_status_name', urs.name) as user_request_status
     FROM
         user_request ur
-    LEFT JOIN status st ON
-        ur.status_id = st.status_id
+    LEFT JOIN user_request_status urs ON
+        ur.user_request_status_id = urs.id
     WHERE
-        ur.status_id in (1, 3)
+        ur.user_request_status_id in (1, 3)
     GROUP BY
         ur.user_request_id,
         ur.user_id,
         ur.faculty_id,
         ur.university_id,
         ur.service_id,
-        st.status_name
+        urs.name
     ORDER BY
         ur.university_id,
         ur.faculty_id,

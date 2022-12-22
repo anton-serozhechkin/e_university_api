@@ -14,12 +14,12 @@ class CreateUserRequestIn(BaseInSchema):
 
 class CreateUserRequestOut(BaseOutSchema):
     user_request_id: int
-    status_id: int
+    user_request_status_id: int
 
 
 class UserRequestExistenceOut(BaseOutSchema):
     user_request_id: int = None
-    status: Dict[str, Union[int, str]] = None
+    user_request_status: Dict[str, Union[int, str]] = None
     user_request_exist: bool = False
 
 
@@ -45,14 +45,14 @@ class UserRequestsListOut(BaseOutSchema):
     user_id: int
     user_request_id: int
     service_name: str
-    status: Dict[str, Union[int, str]]
+    user_request_status: Dict[str, Union[int, str]]
     date_created: datetime
 
 
 class CancelRequestIn(BaseInSchema):
-    status_id: int
+    user_request_status_id: int
 
-    @validator('status_id')
+    @validator('user_request_status_id')
     def validate_status_id(cls, v):
         if v != 4:
             raise ValueError("The application can only be canceled")
@@ -61,11 +61,11 @@ class CancelRequestIn(BaseInSchema):
 
 class CancelRequestOut(BaseOutSchema):
     user_request_id: int
-    status_id: int
+    user_request_status_id: int
 
 
 class UserRequestReviewIn(BaseInSchema):
-    status_id: int
+    user_request_status_id: int
     room_number: int = None
     start_date_accommodation: datetime = None
     end_date_accommodation: datetime = None
@@ -76,7 +76,7 @@ class UserRequestReviewIn(BaseInSchema):
     hostel_id: int = None
     bed_place_id: int = None
 
-    @validator('status_id')
+    @validator('user_request_status_id')
     def validate_status_id(cls, v):
         if v not in [1, 2]:
             raise ValueError("The application can only be approved or rejected")
@@ -84,7 +84,7 @@ class UserRequestReviewIn(BaseInSchema):
 
 
 class UserRequestReviewOut(BaseOutSchema):
-    status_id: int
+    user_request_status_id: int
     user_request_review_id: int
 
 
@@ -115,8 +115,8 @@ class UserRequestDetailsViewOut(BaseOutSchema):
     university_id: int
     date_created: datetime
     service_name: str
-    status_name: str
-    status_id: int
+    user_request_status_name: str
+    user_request_status_id: int
     comment: str = None
     hostel_name: HostelNameSchema
     room_number: int = None

@@ -41,12 +41,12 @@ class ServiceHandler:
         if user_request_result:
             return {
                 "user_request_id": user_request_result.user_request_id,
-                "status": user_request_result.status,
+                "user_request_status": user_request_result.user_request_status,
                 "user_request_exist": True
             }
         return {
             "user_request_id": None,
-            "status": None,
+            "user_request_status": None,
             "user_request_exist": False
         }
 
@@ -79,7 +79,7 @@ class ServiceHandler:
                 "service_id": user_request.service_id,
                 "faculty_id": user_faculty_result.faculty_id,
                 "university_id": university_id,
-                "status_id": STATUS_MAPPING.get("Розглядається")}
+                "user_request_status_id": STATUS_MAPPING.get("Розглядається")}
         user_request = await user_request_service.create(session=session, data=data)
         result = await user_request_booking_hostel_service.read(
             session=session,
@@ -91,7 +91,7 @@ class ServiceHandler:
         }
         await self.__create_user_document(session, **prepared_data)
         return {
-            "status_id": STATUS_MAPPING.get("Розглядається"),
+            "user_request_status_id": STATUS_MAPPING.get("Розглядається"),
             "user_request_id": user_request.user_request_id
         }
 
@@ -114,14 +114,14 @@ class ServiceHandler:
             user_request_id: int,
             cancel_request: CancelRequestIn,
             session: AsyncSession):
-        CancelRequestIn(status_id=cancel_request.status_id)
+        CancelRequestIn(user_request_status_id=cancel_request.user_request_status_id)
         await user_request_service.update(
             session=session,
             data={"user_request_id": user_request_id},
             obj=cancel_request)
         return {
             "user_request_id": user_request_id,
-            "status_id": cancel_request.status_id
+            "user_request_status_id": cancel_request.user_request_status_id
         }
 
     async def create_user_request_review(
@@ -152,10 +152,10 @@ class ServiceHandler:
         await user_request_service.update(
             session=session,
             data={"user_request_id": user_request_id},
-            obj={"status_id": user_request_review.status_id}
+            obj={"user_request_status_id": user_request_review.user_request_status_id}
         )
         return {
-            "status_id": user_request_review.status_id,
+            "user_request_status_id": user_request_review.user_request_status_id,
             "user_request_review_id": created_user_request_review.user_request_review_id
         }
 

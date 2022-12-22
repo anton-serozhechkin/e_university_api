@@ -10,10 +10,10 @@ INSERT INTO role(role_name) VALUES ('Супер Адміністратор');
 
 INSERT INTO service(service_id, service_name) VALUES (1, 'Поселення в гуртожиток');
 
-INSERT INTO status(status_id, status_name) VALUES (1, 'Схвалено');
-INSERT INTO status(status_id, status_name) VALUES (2, 'Відхилено');
-INSERT INTO status(status_id, status_name) VALUES (3, 'Розглядається');
-INSERT INTO status(status_id, status_name) VALUES (4, 'Скасовано');
+INSERT INTO user_request_status(id, name) VALUES (1, 'Схвалено');
+INSERT INTO user_request_status(id, name) VALUES (2, 'Відхилено');
+INSERT INTO user_request_status(id, name) VALUES (3, 'Розглядається');
+INSERT INTO user_request_status(id, name) VALUES (4, 'Скасовано');
 
 INSERT INTO dean(dean_id, last_name, first_name, middle_name) VALUES (1, 'Коц', 'Григорій', 'Павлович');
 INSERT INTO dean(dean_id, last_name, first_name, middle_name) VALUES (2, 'Птащенко', 'Олена', 'Валеріївна');

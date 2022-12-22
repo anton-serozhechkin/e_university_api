@@ -34,32 +34,32 @@ class UserRequest(Base):
     service_id = Column(INTEGER, ForeignKey("service.service_id"), nullable=False)
     faculty_id = Column(INTEGER, ForeignKey("faculty.faculty_id"), nullable=False)
     university_id = Column(INTEGER, ForeignKey("university.university_id"), nullable=False)
-    status_id = Column(INTEGER, ForeignKey("status.status_id"), nullable=False)
+    user_request_status_id = Column(INTEGER, ForeignKey("user_request_status.id"), nullable=False)
 
     user = relationship("User", back_populates="user_requests")
     service = relationship("Service", back_populates="user_requests")
     faculty = relationship("Faculty", back_populates="user_requests")
     university = relationship("University", back_populates="user_requests")
-    status = relationship("Status", back_populates="user_requests")
+    user_request_status = relationship("UserRequestStatus", back_populates="user_requests")
     user_documents = relationship("UserDocument", back_populates="user_request")
     user_request_review = relationship("UserRequestReview", back_populates='user_request')
 
     def __repr__(self):
         return f'{self.__class__.__name__}(user_request_id="{self.user_request_id}",' \
                f'date_created="{self.date_created}", comment="{self.comment}",user_id="{self.user_id}", service_id="{self.service_id}",' \
-               f'faculty_id="{self.faculty_id}", university_id="{self.university_id}", status_id="{self.status_id}")'
+               f'faculty_id="{self.faculty_id}", university_id="{self.university_id}", status_id="{self.user_request_status_id}")'
 
 
-class Status(Base):
-    __tablename__ = "status"
+class UserRequestStatus(Base):
+    __tablename__ = "user_request_status"
 
-    status_id = Column(INTEGER, primary_key=True, nullable=False)
-    status_name = Column(VARCHAR(length=50), nullable=False)
+    id = Column(INTEGER, primary_key=True, nullable=False)
+    name = Column(VARCHAR(length=50), nullable=False)
 
-    user_requests = relationship("UserRequest", back_populates="status")
+    user_requests = relationship("UserRequest", back_populates="user_request_status")
 
     def __repr__(self):
-        return f'{self.__class__.__name__}(status_id="{self.status_id}",status_name="{self.status_name}")'
+        return f'{self.__class__.__name__}(status_id="{self.id}",status_name="{self.name}")'
 
 
 class Requisites(Base):
@@ -146,8 +146,8 @@ user_request_details_view = Table('user_request_details_view', metadata_obj,
                                   Column('university_id', INTEGER),
                                   Column('date_created', DATETIME),
                                   Column('service_name', VARCHAR(255)),
-                                  Column('status_name', VARCHAR(50)),
-                                  Column('status_id', INTEGER),
+                                  Column('user_request_status_name', VARCHAR(50)),
+                                  Column('user_request_status_id', INTEGER),
                                   Column('comment', VARCHAR(255)),
                                   Column('hostel_name', JSON),
                                   Column('room_number', INTEGER),
@@ -162,7 +162,7 @@ user_request_exist_view = Table('user_request_exist_view', metadata_obj,
                                 Column('faculty_id', INTEGER),
                                 Column('university_id', INTEGER),
                                 Column('service_id', INTEGER),
-                                Column('status', JSON))
+                                Column('user_request_status', JSON))
 
 
 user_request_list_view = Table('user_request_list_view', metadata_obj,
@@ -170,7 +170,7 @@ user_request_list_view = Table('user_request_list_view', metadata_obj,
                                Column('user_id', INTEGER),
                                Column('user_request_id', INTEGER),
                                Column('service_name', VARCHAR(255)),
-                               Column('status', JSON),
+                               Column('user_request_status', JSON),
                                Column('date_created', DATETIME))
 
 
