@@ -8,6 +8,8 @@ import os
 from datetime import datetime, timedelta
 from fastapi import status as http_status
 from fastapi.security import OAuth2PasswordBearer
+from sqlalchemy import DATETIME, TypeDecorator
+import pytz
 
 
 reusable_oauth = OAuth2PasswordBearer(
@@ -60,3 +62,27 @@ def get_token_and_expires_at():
     token = hashlib.sha1(os.urandom(128)).hexdigest()
     expires_at = datetime.utcnow() + timedelta(seconds=Settings.TOKEN_LIFE_TIME)
     return token, expires_at
+
+
+class AwareDateTime(TypeDecorator):
+    """Results returned as aware datetimes, not naive ones.
+    """
+
+    impl = DATETIME
+
+    @property
+    def python_type(self):
+        return type(datetime)
+
+    def process_bind_param(self, value, dialect):
+        if value is not None:
+            if not value.tzinfo:
+                raise TypeError("tzinfo is required")
+            value = value.astimezone(pytz.utc).replace(tzinfo=None)
+        return value
+
+    def process_literal_param(self, value, dialect):
+        pass
+
+    def process_result_value(self, value, dialect):
+        return value.replace(tzinfo=pytz.utc)
