@@ -9,7 +9,7 @@ from datetime import datetime, timedelta
 from fastapi import status as http_status
 from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy import DATETIME, TypeDecorator
-import pytz
+from pytz import utc
 
 
 reusable_oauth = OAuth2PasswordBearer(
@@ -49,7 +49,7 @@ def get_token_data(token_data):
             message="To register a user, first go to the page for checking the presence of a student in the register.",
             code=http_status.HTTP_404_NOT_FOUND
         )
-    if token_data.expires_at < datetime.utcnow():
+    if token_data.expires_at < datetime.now(utc):
         raise BackendException(
             message=("Registration time has expired."
                      " Please go to the link to check the availability of students on the register."),
@@ -60,7 +60,7 @@ def get_token_data(token_data):
 
 def get_token_and_expires_at():
     token = hashlib.sha1(os.urandom(128)).hexdigest()
-    expires_at = datetime.utcnow() + timedelta(seconds=Settings.TOKEN_LIFE_TIME)
+    expires_at = datetime.now(utc) + timedelta(seconds=Settings.TOKEN_LIFE_TIME)
     return token, expires_at
 
 
@@ -78,11 +78,11 @@ class AwareDateTime(TypeDecorator):
         if value is not None:
             if not value.tzinfo:
                 raise TypeError("tzinfo is required")
-            value = value.astimezone(pytz.utc).replace(tzinfo=None)
+            value = value.astimezone(utc).replace(tzinfo=None)
         return value
 
     def process_literal_param(self, value, dialect):
         pass
 
     def process_result_value(self, value, dialect):
-        return value.replace(tzinfo=pytz.utc)
+        return value.replace(tzinfo=utc)

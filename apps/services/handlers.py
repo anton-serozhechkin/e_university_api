@@ -21,6 +21,7 @@ from decimal import Decimal
 from fastapi import File, Request, UploadFile
 from pathlib import Path
 from sqlalchemy.ext.asyncio import AsyncSession
+from pytz import utc
 
 
 class ServiceHandler:
@@ -73,7 +74,7 @@ class ServiceHandler:
             session: AsyncSession
     ):
         user_faculty_result = await user_faculty_service.read(data={"user_id": user.user_id}, session=session)
-        data = {"created_at": datetime.now(),
+        data = {"created_at": datetime.now(utc),
                 "comment": user_request.comment,
                 "user_id": user.user_id,
                 "service_id": user_request.service_id,
@@ -138,7 +139,7 @@ class ServiceHandler:
             data={
                 "university_id": university_id,
                 "user_request_id": user_request_id,
-                "created_at": datetime.now(),
+                "created_at": datetime.now(utc),
                 "reviewer": user.user_id,
                 "hostel_id": user_request_review.hostel_id,
                 "room_number": user_request_review.room_number,
@@ -257,8 +258,8 @@ class ServiceHandler:
     async def __create_user_document(cls, session, **kwargs):
         service_id = kwargs.get("service_id")
         name = await cls.__generate_user_document_name(service_id, session)
-        created_at = datetime.strptime(datetime.now().strftime(Settings.DATETIME_FORMAT),
-                                       Settings.DATETIME_FORMAT)
+        created_at = datetime.strptime(datetime.now(utc).strftime(Settings.DATETIME_FORMAT),
+                                       Settings.DATETIME_FORMAT).replace(tzinfo=utc)
         kwargs["created_at"] = created_at
         content = await cls.__create_user_document_content_hostel_settlement_service(**kwargs)
         user_document_record = await user_document_service.create(

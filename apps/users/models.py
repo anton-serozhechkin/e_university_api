@@ -37,7 +37,7 @@ class OneTimeToken(Base):
 
     token_id = Column(INTEGER, primary_key=True, nullable=False)
     token = Column(VARCHAR(length=255), nullable=False)
-    expires_at = Column(AwareDateTime, default=func.now(), nullable=False)
+    expires_at = Column(AwareDateTime, nullable=False)
     student_id = Column(INTEGER, ForeignKey("student.student_id"), nullable=False)
 
     student = relationship("Student", back_populates="one_time_tokens")
