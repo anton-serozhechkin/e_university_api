@@ -1,7 +1,7 @@
 from apps.common.db import Base
+from apps.common.utils import AwareDateTime
 
-from datetime import datetime
-from sqlalchemy import (MetaData, Column, DATETIME, Table, INTEGER, VARCHAR, ForeignKey, BOOLEAN, TIMESTAMP, JSON)
+from sqlalchemy import (MetaData, Column, DATETIME, func, Table, INTEGER, VARCHAR, ForeignKey, BOOLEAN, JSON)
 from sqlalchemy.orm import relationship
 
 
@@ -14,12 +14,12 @@ class User(Base):
     user_id = Column(INTEGER, primary_key=True, nullable=False)
     login = Column(VARCHAR(length=50), nullable=False, unique=True)
     password = Column(VARCHAR(length=50), nullable=False)
-    last_visit_at = Column(DATETIME)
+    last_visit_at = Column(AwareDateTime, default=func.now(), nullable=False)
     email = Column(VARCHAR(length=100), nullable=False, unique=True)
     is_active = Column(BOOLEAN, default=False)
     role_id = Column(INTEGER, ForeignKey("role.role_id"), nullable=True)
-    created_at = Column(DATETIME(timezone=True), default=datetime.utcnow())
-    updated_at = Column(DATETIME(timezone=True), default=datetime.utcnow())
+    created_at = Column(AwareDateTime, default=func.now(), nullable=False)
+    updated_at = Column(AwareDateTime, default=func.now(), nullable=False)
 
     student = relationship("Student", back_populates="user")
     user_request_reviews = relationship("UserRequestReview", back_populates="reviewer_user")
@@ -37,7 +37,7 @@ class OneTimeToken(Base):
 
     token_id = Column(INTEGER, primary_key=True, nullable=False)
     token = Column(VARCHAR(length=255), nullable=False)
-    expires_at = Column(DATETIME(timezone=True), default=datetime.utcnow())
+    expires_at = Column(AwareDateTime, default=func.now(), nullable=False)
     student_id = Column(INTEGER, ForeignKey("student.student_id"), nullable=False)
 
     student = relationship("Student", back_populates="one_time_tokens")
@@ -59,8 +59,8 @@ class Student(Base):
     speciality_id = Column(INTEGER, ForeignKey("speciality.speciality_id"), nullable=False)
     user_id = Column(INTEGER, ForeignKey("user.user_id"))
     faculty_id = Column(INTEGER, ForeignKey("faculty.faculty_id"), nullable=False)
-    created_at = Column(DATETIME(timezone=True), default=datetime.utcnow())
-    updated_at = Column(DATETIME(timezone=True), default=datetime.utcnow())
+    created_at = Column(AwareDateTime, default=func.now(), nullable=False)
+    updated_at = Column(AwareDateTime, default=func.now(), nullable=False)
 
     course = relationship("Course", sync_backref=False, lazy="joined")
     speciality = relationship("Speciality", sync_backref=False)

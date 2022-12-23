@@ -1,9 +1,10 @@
 from apps.common.db import Base
+from apps.common.utils import AwareDateTime
 
-from datetime import datetime
 from sqlalchemy import (
-    MetaData, Column, Table, INTEGER, VARCHAR, ForeignKey, DATE, DATETIME, JSON, TIMESTAMP, DECIMAL
+    MetaData, Column, Table, INTEGER, VARCHAR, ForeignKey, DATE, DATETIME, JSON, DECIMAL
 )
+from sqlalchemy import func
 from sqlalchemy.orm import relationship
 
 
@@ -35,8 +36,8 @@ class UserRequest(Base):
     faculty_id = Column(INTEGER, ForeignKey("faculty.faculty_id"), nullable=False)
     university_id = Column(INTEGER, ForeignKey("university.university_id"), nullable=False)
     status_id = Column(INTEGER, ForeignKey("status.status_id"), nullable=False)
-    created_at = Column(DATETIME(timezone=True), default=datetime.utcnow())
-    updated_at = Column(DATETIME(timezone=True), default=datetime.utcnow())
+    created_at = Column(AwareDateTime, default=func.now(), nullable=False)
+    updated_at = Column(AwareDateTime, default=func.now(), nullable=False)
 
     user = relationship("User", back_populates="user_requests")
     service = relationship("Service", back_populates="user_requests")
@@ -73,8 +74,8 @@ class Requisites(Base):
     payment_recognition = Column(VARCHAR(length=255))
     university_id = Column(INTEGER, ForeignKey("university.university_id"), nullable=False)
     service_id = Column(INTEGER, ForeignKey("service.service_id"), nullable=False)
-    created_at = Column(DATETIME(timezone=True), default=datetime.utcnow())
-    updated_at = Column(DATETIME(timezone=True), default=datetime.utcnow())
+    created_at = Column(AwareDateTime, default=func.now(), nullable=False)
+    updated_at = Column(AwareDateTime, default=func.now(), nullable=False)
 
     university = relationship("University", back_populates="requisites")
     service = relationship("Service", back_populates="requisites")
@@ -88,8 +89,8 @@ class UserRequestReview(Base):
     __tablename__ = "user_request_review"
     user_request_review_id = Column(INTEGER, primary_key=True, nullable=False)
     room_number = Column(INTEGER)
-    created_at = Column(DATETIME(timezone=True), default=datetime.utcnow())
-    updated_at = Column(DATETIME(timezone=True), default=datetime.utcnow())
+    created_at = Column(AwareDateTime, default=func.now(), nullable=False)
+    updated_at = Column(AwareDateTime, default=func.now(), nullable=False)
     start_accommodation_date = Column(DATE)
     end_accommodation_date = Column(DATE)
     total_sum = Column(DECIMAL(7, 2))
@@ -120,8 +121,8 @@ class UserDocument(Base):
     name = Column(VARCHAR(length=255), nullable=False)
     content = Column(VARCHAR(length=255), nullable=False)
     user_request_id = Column(INTEGER, ForeignKey("user_request.user_request_id"), nullable=False)
-    created_at = Column(DATETIME(timezone=True), default=datetime.utcnow())
-    updated_at = Column(DATETIME(timezone=True), default=datetime.utcnow())
+    created_at = Column(AwareDateTime, default=func.now(), nullable=False)
+    updated_at = Column(AwareDateTime, default=func.now(), nullable=False)
 
     user_request = relationship("UserRequest", back_populates="user_documents")
 
