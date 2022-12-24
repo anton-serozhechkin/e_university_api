@@ -19,6 +19,7 @@ databases = "0.6.0"
 docxtpl = "0.16.0"
 python-multipart = "0.0.5"
 xlrd = "1.2.0"
+alembic = "1.9.1"
 
 [tool.poetry.group.lint]
 optional = true
