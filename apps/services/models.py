@@ -9,8 +9,8 @@ from sqlalchemy import (
     ForeignKey,
     MetaData,
     Table,
+    func,
 )
-from sqlalchemy import func
 from sqlalchemy.orm import relationship
 
 from apps.common.db import Base

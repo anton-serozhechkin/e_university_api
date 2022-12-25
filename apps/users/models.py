@@ -1,16 +1,14 @@
-
 from sqlalchemy import (
     BOOLEAN,
     DATETIME,
-    func,
     INTEGER,
     JSON,
-    TIMESTAMP,
     VARCHAR,
     Column,
     ForeignKey,
     MetaData,
     Table,
+    func,
 )
 from sqlalchemy.orm import relationship
 

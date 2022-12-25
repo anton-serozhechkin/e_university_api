@@ -49,7 +49,11 @@ class UserHandler:
 
         one_time_token = await one_time_token_service.create(
             session=session,
-            data={"student_id": result.student_id, "token": token, "expires_at": expires_at},
+            data={
+                "student_id": result.student_id,
+                "token": token,
+                "expires_at": expires_at,
+            },
         )
         return one_time_token
 

@@ -309,7 +309,8 @@ class ServiceHandler:
         service_id = kwargs.get("service_id")
         name = await cls.__generate_user_document_name(service_id, session)
         created_at = datetime.strptime(
-            datetime.now(utc).strftime(Settings.DATETIME_FORMAT), Settings.DATETIME_FORMAT
+            datetime.now(utc).strftime(Settings.DATETIME_FORMAT),
+            Settings.DATETIME_FORMAT,
         )
         kwargs["created_at"] = created_at
         content = await cls.__create_user_document_content_hostel_settlement_service(

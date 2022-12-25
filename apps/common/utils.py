@@ -63,8 +63,7 @@ def get_token_and_expires_at():
 
 
 class AwareDateTime(TypeDecorator):
-    """Results returned as aware datetimes, not naive ones.
-    """
+    """Results returned as aware datetimes, not naive ones."""
 
     impl = DATETIME
 
