@@ -3,6 +3,7 @@ from decimal import Decimal
 from pathlib import Path
 
 from fastapi import File, Request, UploadFile
+from pytz import utc
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from apps.common.file_managers import file_manager
@@ -100,7 +101,7 @@ class ServiceHandler:
             data={"user_id": user.user_id}, session=session
         )
         data = {
-            "date_created": datetime.now(),
+            "created_at": datetime.now(utc),
             "comment": user_request.comment,
             "user_id": user.user_id,
             "service_id": user_request.service_id,
@@ -171,14 +172,14 @@ class ServiceHandler:
             data={
                 "university_id": university_id,
                 "user_request_id": user_request_id,
-                "date_created": datetime.now(),
+                "created_at": datetime.now(utc),
                 "reviewer": user.user_id,
                 "hostel_id": user_request_review.hostel_id,
                 "room_number": user_request_review.room_number,
-                "start_date_accommodation": user_request_review.start_date_accommodation.now(),
-                "end_date_accommodation": user_request_review.end_date_accommodation.now(),
+                "start_accommodation_date": user_request_review.start_accommodation_date,
+                "end_accommodation_date": user_request_review.end_accommodation_date,
                 "total_sum": user_request_review.total_sum,
-                "payment_deadline": user_request_review.payment_deadline.now(),
+                "payment_deadline_date": user_request_review.payment_deadline_date,
                 "remark": user_request_review.remark,
                 "bed_place_id": user_request_review.bed_place_id,
             },
@@ -272,7 +273,7 @@ class ServiceHandler:
         )
 
         months_count = self.calculate_difference_between_dates_in_months(
-            data.end_date_accommodation, data.start_date_accommodation
+            data.end_accommodation_date, data.start_accommodation_date
         )
         month_price = self.get_month_price_by_bed_place(
             hostel.month_price, bed_place.bed_place_name
@@ -307,17 +308,16 @@ class ServiceHandler:
     async def __create_user_document(cls, session, **kwargs):
         service_id = kwargs.get("service_id")
         name = await cls.__generate_user_document_name(service_id, session)
-        date_created = datetime.strptime(
-            datetime.now().strftime(Settings.DATETIME_FORMAT), Settings.DATETIME_FORMAT
+        created_at = datetime.strptime(
+            datetime.now(utc).strftime(Settings.DATETIME_FORMAT), Settings.DATETIME_FORMAT
         )
-        kwargs["date_created"] = date_created
+        kwargs["created_at"] = created_at
         content = await cls.__create_user_document_content_hostel_settlement_service(
             **kwargs
         )
         user_document_record = await user_document_service.create(
             session=session,
             data={
-                "date_created": date_created,
                 "name": name,
                 "content": content,
                 "user_request_id": kwargs.get("user_request_id"),
@@ -334,7 +334,7 @@ class ServiceHandler:
             TEMPLATES_PATH, HOSTEL_BOOKING_TEMPLATE, context
         )
         file_date_created = (
-            str(kwargs.get("date_created")).replace(":", "-").replace(" ", "_")
+            str(kwargs.get("created_at")).replace(":", "-").replace(" ", "_")
         )
         document_name = f"hostel_settlement_{file_date_created}_{kwargs.get('user_request_id')}.docx"
         DOCUMENT_PATH = SETTLEMENT_HOSTEL_PATH / str(context.user_id)

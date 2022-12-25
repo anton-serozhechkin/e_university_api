@@ -223,10 +223,10 @@ async def create_user_request_review(
     **Input**:
     - **status_id**: user request status id, required
     - **room_number**: user room number
-    - **start_date_accommodation**: starting datetime hostel accommodation
-    - **end_date_accommodation**: end datetime hostel accommodation
+    - **start_accommodation_date**: starting date hostel accommodation
+    - **end_accommodation_date**: end date hostel accommodation
     - **total_sum**: total sum of hostel accommodation payment
-    - **payment_deadline**: deadline datetime for hostel accommodation payment
+    - **payment_deadline_date**: deadline date for hostel accommodation payment
     - **remark**: additional info for request review
     - **hostel_id**: hostel id in the database
     - **bed_place_id**: hostel bed place id

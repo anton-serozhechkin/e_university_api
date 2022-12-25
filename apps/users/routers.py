@@ -62,7 +62,7 @@ async def check_student(
         "data": {
             "token": result.token,
             "student": result.student_id,
-            "expires": result.expires,
+            "expires_at": result.expires_at,
         },
         "message": f"Get information of student with id {result.student_id}",
     }

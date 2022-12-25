@@ -3,7 +3,6 @@ from typing import List
 from fastapi import Request
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from apps.educational_institutions.models import Faculty
 from apps.educational_institutions.schemas import FacultyIn, FacultyOut
 from apps.educational_institutions.services import (
     course_list_service,
@@ -24,8 +23,7 @@ class EduInstitutionHandler:
     async def create_faculty(
         self, *, request: Request, data: FacultyIn, session: AsyncSession
     ) -> FacultyOut:
-        faculty: Faculty = await faculty_service.create(session=session, obj=data)
-        return FacultyOut.from_orm(obj=faculty)
+        return await faculty_service.create(session=session, obj=data)
 
     async def read_speciality_list(
         self, *, request: Request, university_id: int, session: AsyncSession

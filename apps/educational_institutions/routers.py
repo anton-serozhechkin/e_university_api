@@ -88,7 +88,7 @@ async def create_faculty(
     )
     return {
         "data": response,
-        "message": f"Successfully created faculty with id {response.dict()['faculty_id']}",
+        "message": f"Successfully created faculty with id {response.faculty_id}",
     }  # TODO There is need to add dean to new faculty (change FacultyIn)
 
 

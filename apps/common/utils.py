@@ -5,6 +5,8 @@ from random import randint
 
 from fastapi import status as http_status
 from fastapi.security import OAuth2PasswordBearer
+from pytz import utc
+from sqlalchemy import DATETIME, TypeDecorator
 from translitua import translit
 
 from apps.common.exceptions import BackendException
@@ -43,7 +45,7 @@ def get_token_data(token_data):
             message="To register a user, first go to the page for checking the presence of a student in the register.",
             code=http_status.HTTP_404_NOT_FOUND,
         )
-    if token_data.expires < datetime.utcnow():
+    if token_data.expires_at < datetime.now(utc):
         raise BackendException(
             message=(
                 "Registration time has expired."
@@ -51,10 +53,34 @@ def get_token_data(token_data):
             ),
             code=http_status.HTTP_403_FORBIDDEN,
         )
-    return token_data.expires, token_data.student_id
+    return token_data.expires_at, token_data.student_id
 
 
-def get_token_and_expires():
+def get_token_and_expires_at():
     token = sha1(urandom(128)).hexdigest()
-    expires = datetime.utcnow() + timedelta(seconds=Settings.TOKEN_LIFE_TIME)
-    return token, expires
+    expires_at = datetime.now(utc) + timedelta(seconds=Settings.TOKEN_LIFE_TIME)
+    return token, expires_at
+
+
+class AwareDateTime(TypeDecorator):
+    """Results returned as aware datetimes, not naive ones.
+    """
+
+    impl = DATETIME
+
+    @property
+    def python_type(self):
+        return type(datetime)
+
+    def process_bind_param(self, value, dialect):
+        if value is not None:
+            if not value.tzinfo:
+                raise TypeError("tzinfo is required")
+            value = value.astimezone(utc).replace(tzinfo=None)
+        return value
+
+    def process_literal_param(self, value, dialect):
+        pass
+
+    def process_result_value(self, value, dialect):
+        return value.replace(tzinfo=utc)

@@ -1,7 +1,8 @@
-from sqlalchemy import INTEGER, VARCHAR, Column, ForeignKey
+from sqlalchemy import INTEGER, VARCHAR, Column, ForeignKey, func
 from sqlalchemy.orm import relationship
 
 from apps.common.db import Base
+from apps.common.utils import AwareDateTime
 
 
 class Role(Base):
@@ -9,6 +10,8 @@ class Role(Base):
 
     role_id = Column(INTEGER, primary_key=True)
     role_name = Column(VARCHAR(length=50))
+    created_at = Column(AwareDateTime, default=func.now(), nullable=False)
+    updated_at = Column(AwareDateTime, default=func.now(), nullable=False)
 
     actions = relationship("Action", back_populates="roles")
     users = relationship("User", back_populates="roles")

@@ -1,18 +1,20 @@
 from sqlalchemy import (
+    DATE,
     DATETIME,
     DECIMAL,
     INTEGER,
     JSON,
-    TIMESTAMP,
     VARCHAR,
     Column,
     ForeignKey,
     MetaData,
     Table,
 )
+from sqlalchemy import func
 from sqlalchemy.orm import relationship
 
 from apps.common.db import Base
+from apps.common.utils import AwareDateTime
 
 metadata_obj = MetaData()
 
@@ -36,7 +38,6 @@ class UserRequest(Base):
     __tablename__ = "user_request"
 
     user_request_id = Column(INTEGER, primary_key=True, nullable=False)
-    date_created = Column(DATETIME, nullable=False)
     comment = Column(VARCHAR(length=255))
     user_id = Column(INTEGER, ForeignKey("user.user_id"), nullable=False)
     service_id = Column(INTEGER, ForeignKey("service.service_id"), nullable=False)
@@ -45,6 +46,8 @@ class UserRequest(Base):
         INTEGER, ForeignKey("university.university_id"), nullable=False
     )
     status_id = Column(INTEGER, ForeignKey("status.status_id"), nullable=False)
+    created_at = Column(AwareDateTime, default=func.now(), nullable=False)
+    updated_at = Column(AwareDateTime, default=func.now(), nullable=False)
 
     user = relationship("User", back_populates="user_requests")
     service = relationship("Service", back_populates="user_requests")
@@ -88,6 +91,8 @@ class Requisites(Base):
         INTEGER, ForeignKey("university.university_id"), nullable=False
     )
     service_id = Column(INTEGER, ForeignKey("service.service_id"), nullable=False)
+    created_at = Column(AwareDateTime, default=func.now(), nullable=False)
+    updated_at = Column(AwareDateTime, default=func.now(), nullable=False)
 
     university = relationship("University", back_populates="requisites")
     service = relationship("Service", back_populates="requisites")
@@ -103,12 +108,13 @@ class Requisites(Base):
 class UserRequestReview(Base):
     __tablename__ = "user_request_review"
     user_request_review_id = Column(INTEGER, primary_key=True, nullable=False)
-    date_created = Column(DATETIME, nullable=False)
     room_number = Column(INTEGER)
-    start_date_accommodation = Column(DATETIME)
-    end_date_accommodation = Column(DATETIME)
+    created_at = Column(AwareDateTime, default=func.now(), nullable=False)
+    updated_at = Column(AwareDateTime, default=func.now(), nullable=False)
+    start_accommodation_date = Column(DATE)
+    end_accommodation_date = Column(DATE)
     total_sum = Column(DECIMAL(7, 2))
-    payment_deadline = Column(DATETIME)
+    payment_deadline_date = Column(DATE)
     remark = Column(VARCHAR(length=255))
     bed_place_id = Column(INTEGER, ForeignKey("bed_place.bed_place_id"))
     reviewer = Column(
@@ -133,10 +139,10 @@ class UserRequestReview(Base):
     def __repr__(self):
         return (
             f'{self.__class__.__name__}(user_request_review_id="{self.user_request_review_id}", '
-            f'date_created="{self.date_created}", room_number="{self.room_number}", '
-            f'start_date_accommodation="{self.start_date_accommodation}", '
-            f'end_date_accommodation="{self.end_date_accommodation}", total_sum="{self.total_sum}", '
-            f'payment_deadline="{self.payment_deadline}", remark="{self.remark}", '
+            f'created_at="{self.created_at}", room_number="{self.room_number}", '
+            f'start_accommodation_date="{self.start_accommodation_date}", '
+            f'end_accommodation_date="{self.end_accommodation_date}", total_sum="{self.total_sum}", '
+            f'payment_deadline_date="{self.payment_deadline_date}", remark="{self.remark}", '
             f'bed_place_id="{self.bed_place_id}", reviewer="{self.reviewer}", hostel_id="{self.hostel_id}", '
             f'university_id="{self.university_id}", user_request_id="{self.user_request_id}")'
         )
@@ -146,12 +152,13 @@ class UserDocument(Base):
     __tablename__ = "user_document"
 
     user_document_id = Column(INTEGER, primary_key=True, nullable=False)
-    date_created = Column(DATETIME, nullable=False)
     name = Column(VARCHAR(length=255), nullable=False)
     content = Column(VARCHAR(length=255), nullable=False)
     user_request_id = Column(
         INTEGER, ForeignKey("user_request.user_request_id"), nullable=False
     )
+    created_at = Column(AwareDateTime, default=func.now(), nullable=False)
+    updated_at = Column(AwareDateTime, default=func.now(), nullable=False)
 
     user_request = relationship("UserRequest", back_populates="user_documents")
 
@@ -176,7 +183,7 @@ user_request_booking_hostel_view = Table(
     Column("speciality_name", VARCHAR(255)),
     Column("course", INTEGER),
     Column("educ_level", VARCHAR(1)),
-    Column("date_today", DATETIME),
+    Column("date_today", DATE),
     Column("start_year", INTEGER),
     Column("finish_year", INTEGER),
     Column("gender", VARCHAR(1)),
@@ -188,7 +195,7 @@ user_request_details_view = Table(
     metadata_obj,
     Column("user_request_id", INTEGER),
     Column("university_id", INTEGER),
-    Column("date_created", DATETIME),
+    Column("created_at", DATETIME),
     Column("service_name", VARCHAR(255)),
     Column("status_name", VARCHAR(50)),
     Column("status_id", INTEGER),
@@ -221,7 +228,7 @@ user_request_list_view = Table(
     Column("user_request_id", INTEGER),
     Column("service_name", VARCHAR(255)),
     Column("status", JSON),
-    Column("date_created", DATETIME),
+    Column("created_at", DATETIME),
 )
 
 
@@ -236,13 +243,13 @@ hostel_accommodation_view = Table(
     Column("room_number", INTEGER),
     Column("bed_place_name", VARCHAR(50)),
     Column("month_price", DECIMAL(6, 2)),
-    Column("start_date_accommodation", TIMESTAMP),
-    Column("end_date_accommodation", TIMESTAMP),
+    Column("start_accommodation_date", DATE),
+    Column("end_accommodation_date", DATE),
     Column("total_sum", DECIMAL(7, 2)),
     Column("iban", VARCHAR(100)),
     Column("university_name", VARCHAR(255)),
     Column("organisation_code", VARCHAR(50)),
-    Column("payment_recognation", VARCHAR(255)),
+    Column("payment_recognition", VARCHAR(255)),
     Column("commandant_full_name", JSON),
     Column("telephone_number", VARCHAR(50)),
     Column("documents", JSON),
