@@ -1,7 +1,9 @@
 from apps.common.db import Base
+from apps.common.utils import AwareDateTime
 
-from sqlalchemy import (MetaData, Column, Table, INTEGER, VARCHAR, ForeignKey, BOOLEAN, TIMESTAMP, JSON)
+from sqlalchemy import (MetaData, Column, DATETIME, func, Table, INTEGER, VARCHAR, ForeignKey, BOOLEAN, JSON)
 from sqlalchemy.orm import relationship
+
 
 metadata_obj = MetaData()
 
@@ -12,10 +14,12 @@ class User(Base):
     user_id = Column(INTEGER, primary_key=True, nullable=False)
     login = Column(VARCHAR(length=50), nullable=False, unique=True)
     password = Column(VARCHAR(length=50), nullable=False)
-    last_visit = Column(TIMESTAMP)
+    last_visit_at = Column(AwareDateTime, default=func.now(), nullable=False)
     email = Column(VARCHAR(length=100), nullable=False, unique=True)
     is_active = Column(BOOLEAN, default=False)
     role_id = Column(INTEGER, ForeignKey("role.role_id"), nullable=True)
+    created_at = Column(AwareDateTime, default=func.now(), nullable=False)
+    updated_at = Column(AwareDateTime, default=func.now(), nullable=False)
 
     student = relationship("Student", back_populates="user")
     user_request_reviews = relationship("UserRequestReview", back_populates="reviewer_user")
@@ -25,7 +29,7 @@ class User(Base):
 
     def __repr__(self):
         return f'{self.__class__.__name__}(user_id="{self.user_id}", login="{self.login}", password="{self.password}", ' \
-               f'last_visit="{self.last_visit}", email="{self.email}", is_active="{self.is_active}", role_id="{self.role_id}")'
+               f'last_visit_at="{self.last_visit_at}", email="{self.email}", is_active="{self.is_active}", role_id="{self.role_id}")'
 
 
 class OneTimeToken(Base):
@@ -33,13 +37,13 @@ class OneTimeToken(Base):
 
     token_id = Column(INTEGER, primary_key=True, nullable=False)
     token = Column(VARCHAR(length=255), nullable=False)
-    expires = Column(TIMESTAMP, nullable=False)
+    expires_at = Column(AwareDateTime, nullable=False)
     student_id = Column(INTEGER, ForeignKey("student.student_id"), nullable=False)
 
     student = relationship("Student", back_populates="one_time_tokens")
 
     def __repr__(self):
-        return f'{self.__class__.__name__}(token_id="{self.token_id}",token="{self.token}",expires="{self.expires}",student_id="{self.student_id}")'
+        return f'{self.__class__.__name__}(token_id="{self.token_id}",token="{self.token}",expires_at="{self.expires_at}",student_id="{self.student_id}")'
 
 
 class Student(Base):
@@ -55,6 +59,8 @@ class Student(Base):
     speciality_id = Column(INTEGER, ForeignKey("speciality.speciality_id"), nullable=False)
     user_id = Column(INTEGER, ForeignKey("user.user_id"))
     faculty_id = Column(INTEGER, ForeignKey("faculty.faculty_id"), nullable=False)
+    created_at = Column(AwareDateTime, default=func.now(), nullable=False)
+    updated_at = Column(AwareDateTime, default=func.now(), nullable=False)
 
     course = relationship("Course", sync_backref=False, lazy="joined")
     speciality = relationship("Speciality", sync_backref=False)
@@ -64,7 +70,7 @@ class Student(Base):
 
     def __repr__(self):
         return f'{self.__class__.__name__}(student_id="{self.student_id}",first_name="{self.first_name}",' \
-               f'middle_name="{self.middle_name}",last_name="{self.last_name}",telephone_number="{self.telephone_number}",gender="{self.gender}",' \
+               f'middle_name="{self.middle_name}",last_name="{self.last_name}",telephone_number="{self.telephone_number}", gender="{self.gender}",' \
                f'course_id="{self.course_id}",speciality_id="{self.speciality_id}",user_id="{self.user_id}",faculty_id="{self.faculty_id}")'
 
 
@@ -93,7 +99,7 @@ students_list_view = Table('students_list_view', metadata_obj,
 user_list_view = Table('user_list_view', metadata_obj,
                        Column('user_id', INTEGER),
                        Column('login', VARCHAR(50)),
-                       Column('last_visit', TIMESTAMP),
+                       Column('last_visit_at', DATETIME),
                        Column('email', VARCHAR(50)),
                        Column('role', JSON),
                        Column('is_active', BOOLEAN),

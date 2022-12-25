@@ -1,7 +1,7 @@
 from apps.authorization.services import get_hashed_password
 from apps.common.exceptions import BackendException
 from apps.common.utils import (add_random_digits_and_cut_username, get_student_attr, get_token_data,
-                               get_generated_username, get_token_and_expires)
+                               get_generated_username, get_token_and_expires_at)
 from apps.users.schemas import (CreateUserIn, DeleteUserIn, RegistrationIn, CreateStudentIn,
                                 DeleteStudentIn, StudentCheckExistenceIn)
 from apps.services.services import user_faculty_service
@@ -27,14 +27,14 @@ class UserHandler:
                 message="Student data was not found. Please, try again.",
                 code=http_status.HTTP_404_NOT_FOUND
             )
-        token, expires = get_token_and_expires()
+        token, expires_at = get_token_and_expires_at()
 
         one_time_token = await one_time_token_service.create(
             session=session,
             data={
                 "student_id": result.student_id,
                 "token": token,
-                "expires": expires
+                "expires_at": expires_at
             })
         return one_time_token
 
@@ -84,7 +84,7 @@ class UserHandler:
             user: RegistrationIn,
             session: AsyncSession):
         token_data = await one_time_token_service.read(session=session, data={"token": user.token})
-        expires, student_id = get_token_data(token_data)
+        expires_at, student_id = get_token_data(token_data)
         student = await student_service.read(session=session, data={"student_id": student_id})
         first_name, last_name, faculty_id = get_student_attr(student)
         login = get_generated_username(last_name, first_name)

@@ -46,7 +46,7 @@ class JSENDErrorOutSchema(JSENDOutSchema):
 class UserDocumentsSchema(BaseOutSchema):
     id: int
     name: str
-    date_created: datetime
+    created_at: datetime
 
 
 class HostelNameSchema(BaseOutSchema):
