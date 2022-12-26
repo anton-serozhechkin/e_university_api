@@ -1,8 +1,8 @@
-from apps.common.schemas import BaseOutSchema, BaseInSchema
+from apps.common.schemas import BaseOutSchema, BaseInSchema, FullNameSchema
 
 import re
 
-from pydantic import BaseModel, validator
+from pydantic import validator
 from typing import Dict, Union
 
 
@@ -11,7 +11,7 @@ class FacultyIn(BaseInSchema):
     name: str
     shortname: str
     main_email: str = None
-    dekan_id: int = None
+    dean_id: int = None
 
     @validator('main_email')
     def validate_email(cls, v):
@@ -28,10 +28,10 @@ class FacultyIn(BaseInSchema):
         message = False
 
         if not v:
-            message = "The email address cannot be empty."
+            message = "The email address cannot be empty"
 
         elif not re.fullmatch(regex, v):
-            message = f"Invalid email address format: {v}."
+            message = f"Invalid email address format: {v}"
 
         if message:
             raise ValueError(message)
@@ -45,7 +45,7 @@ class FacultyOut(BaseOutSchema):
     shortname: str
     main_email: str = None
     university_id: int
-    dekan_full_name: str = None
+    dean_full_name: FullNameSchema = None
 
 
 class SpecialityListOut(BaseOutSchema):
@@ -58,7 +58,3 @@ class SpecialityListOut(BaseOutSchema):
 class CourseListOut(BaseOutSchema):
     course_id: int
     value: int 
-
-   
-
-

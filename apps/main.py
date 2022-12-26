@@ -1,5 +1,6 @@
 from apps.authorization.routers import authorization_router
-from apps.common.exception_handlers import backend_exception_handler, http_exception_handler
+from apps.common.exception_handlers import (backend_exception_handler, http_exception_handler,
+                                            validation_exception_handler)
 from apps.common.exceptions import BackendException
 from apps.educational_institutions.routers import educational_institutions_router
 from apps.hostel.routers import hostel_router
@@ -11,12 +12,16 @@ from tags_metadata import metadata
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.exceptions import RequestValidationError
+from pydantic import ValidationError
 from starlette.exceptions import HTTPException as StarletteHTTPException
+
 
 from utils import get_logger_by_name
 
 
 logger = get_logger_by_name('root')
+
 
 app = FastAPI(openapi_tags=metadata)
 
@@ -33,6 +38,8 @@ app.add_middleware(
 # Add exception handlers
 app.add_exception_handler(BackendException, backend_exception_handler)
 app.add_exception_handler(StarletteHTTPException, http_exception_handler)
+app.add_exception_handler(RequestValidationError, validation_exception_handler)
+app.add_exception_handler(ValidationError, validation_exception_handler)
 
 
 # Endpoints registration

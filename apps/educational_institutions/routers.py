@@ -1,7 +1,7 @@
 from apps.common.dependencies import get_async_session, get_current_user
 from apps.common.schemas import JSENDFailOutSchema, JSENDOutSchema
 from apps.educational_institutions.handlers import edu_institutions_handler
-from apps.educational_institutions.schemas import FacultyIn, FacultyOut,CourseListOut, SpecialityListOut
+from apps.educational_institutions.schemas import FacultyIn, FacultyOut, CourseListOut, SpecialityListOut
 
 from fastapi import APIRouter, Depends, Request
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -32,7 +32,7 @@ async def read_faculties(request: Request,
         - **university_id**: integer, required, university id in table
 
         **Return**: list of all university faculties with info: faculty id in table, name and shortname,
-        email, university id in table, decan full name
+        email, university id in table, dean full name
     """
     return {
         "data": await edu_institutions_handler.read_faculties(
@@ -74,7 +74,7 @@ async def create_faculty(
         - **main_email**: string, faculty main email
 
         **Return**: list of all university faculties with info: faculty id in table, name and shortname,
-        email, university id in table, decan full name
+        email, university id in table, dean full name
     """
     response = await edu_institutions_handler.create_faculty(
         request=request,
@@ -83,8 +83,8 @@ async def create_faculty(
         )
     return {
         "data": response,
-        "message": f"Successfully created faculty with id {response.dict()['faculty_id']}"
-    }   # TODO There is need to add decan to new faculty (change FacultyIn)
+        "message": f"Successfully created faculty with id {response.faculty_id}"
+    }   # TODO There is need to add dean to new faculty (change FacultyIn)
 
 
 @educational_institutions_router.get("/{university_id}/speciality/",

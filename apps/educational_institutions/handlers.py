@@ -22,8 +22,7 @@ class EduInstitutionHandler:
                              request: Request,
                              data: FacultyIn,
                              session: AsyncSession) -> FacultyOut:
-        faculty: Faculty = await faculty_service.create(session=session, obj=data)
-        return FacultyOut.from_orm(obj=faculty)
+        return await faculty_service.create(session=session, obj=data)
 
     async def read_speciality_list(self,
                                    *,

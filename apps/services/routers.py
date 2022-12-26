@@ -1,17 +1,19 @@
-from apps.common.dependencies import get_async_session, get_current_user
+from apps.common.dependencies import check_file_content_type, get_async_session, get_current_user
 from apps.common.schemas import JSENDFailOutSchema, JSENDOutSchema
 from apps.services.handlers import service_handler
-from apps.services.schemas import (UserRequestExistenceOut, UserRequestsListOut, 
-                                    CreateUserRequestOut, CreateUserRequestIn, 
-                                    UserRequestBookingHostelOut, CancelRequestOut, 
-                                    CancelRequestIn, UserRequestReviewOut,
-                                    UserRequestReviewIn, HostelAccomodationViewOut, 
-                                    UserRequestDetailsViewOut)
+from apps.services.schemas import (UserRequestExistenceOut, UserRequestsListOut,
+                                   CreateUserRequestOut, CreateUserRequestIn,
+                                   UserRequestBookingHostelOut, CancelRequestOut,
+                                   CancelRequestIn, UserRequestReviewOut,
+                                   UserRequestReviewIn, HostelAccomodationViewOut,
+                                   UserRequestDetailsViewOut, CountHostelAccommodationCostIn,
+                                   CountHostelAccommodationCostOut)
+from apps.users.schemas import CreateStudentsListOut
 
-from fastapi import APIRouter, Depends, Request
+from fastapi import APIRouter, Depends, Request, UploadFile, status as http_status
+from starlette.responses import StreamingResponse, FileResponse
 from sqlalchemy.ext.asyncio import AsyncSession
-from typing import List
-
+from typing import List, Union
 
 services_router = APIRouter(
     responses={422: {"model": JSENDFailOutSchema, "description": "ValidationError"}}
@@ -197,7 +199,7 @@ async def create_user_request_review(
         - **start_date_accommodation**: starting datetime hostel accommodation
         - **end_date_accommodation**: end datetime hostel accommodation
         - **total_sum**: total sum of hostel accommodation payment
-        - **payment_deadline**: deadline datetime for hostel accommodation payment
+        - **payment_deadline_date**: deadline datetime for hostel accommodation payment
         - **remark**: additional info for request review
         - **hostel_id**: hostel id in the database
         - **bed_place_id**: hostel bed place id
@@ -243,7 +245,7 @@ async def read_hostel_accommodation(
                      response_model=JSENDOutSchema[UserRequestDetailsViewOut],
                      summary="Get user request",
                      responses={200: {"description": "Successful get user request response"}},
-                     tags=["Student dashboard"])   # TODO Return Validation error with empty data
+                     tags=["Student dashboard"])  # TODO Return Validation error with empty data
 async def read_request_details(
         request: Request,
         university_id: int,
@@ -257,4 +259,113 @@ async def read_request_details(
             user_request_id=user_request_id,
             session=session),
         "message": "Got request details"
+    }
+
+
+@services_router.post("/{university_id}/create-students/",
+                      name="create_students_list_from_file",
+                      response_model=JSENDOutSchema[Union[List[CreateStudentsListOut], None]],
+                      summary="Create students list from file",
+                      responses={200: {"description": "Successful create students list from file response"}},
+                      tags=['Admin dashboard'])
+async def create_students_list_from_file(
+        request: Request,
+        university_id: int,
+        file: UploadFile = Depends(check_file_content_type),
+        user = Depends(get_current_user),
+        session: AsyncSession = Depends(get_async_session)):
+    response = await service_handler.create_students_list_from_file(
+        request=request,
+        university_id=university_id,
+        file=file,
+        session=session)
+    return {
+        "data": response,
+        "message": "Created students list from file"
+    }
+
+
+@services_router.get("/{university_id}/user-document/{user_document_id}",
+                     name="read_user_document",
+                     response_class=StreamingResponse,
+                     summary="Read user document",
+                     responses={200: {
+                         "description": "Successful get user document response",
+                         "content": {"text/html": {"example": "bytes"}}
+                     }},
+                     tags=["Admin dashboard"])
+async def read_user_document(
+        request: Request,
+        university_id: int,
+        user_document_id: int,
+        user=Depends(get_current_user),
+        session: AsyncSession = Depends(get_async_session)):
+    return StreamingResponse(
+        content=await service_handler.read_user_document(
+            request=request,
+            university_id=university_id,
+            user_document_id=user_document_id,
+            user=user,
+            session=session),
+        status_code=http_status.HTTP_200_OK,
+        media_type="text/html"
+    )
+
+
+@services_router.get("/{university_id}/download-user-document/{user_document_id}",
+                     name="download_user_document",
+                     response_class=FileResponse,
+                     summary="Download user document",
+                     responses={200: {
+                         "description": "Successful download user document response",
+                         "content": {"text/html": {"example": "\n".join([
+                             "content-disposition: attachment; filename*=utf-8''some_file_name.docx",
+                             "content-length: 1010",
+                             "content-type: application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+                             "date: Wed,14 Dec 2022 15:58:49 GMT",
+                             "etag: 9744b58c8e99ca7c251c717ad9b28bd2",
+                             "last-modified: Wed,23 Nov 2022 17:49:14 GMT",
+                             "server: uvicorn"
+                         ])}}
+                     }},
+                     tags=["Student dashboard"])
+async def download_user_document(
+        request: Request,
+        university_id: int,
+        user_document_id: int,
+        user=Depends(get_current_user),
+        session: AsyncSession = Depends(get_async_session)):
+    file_path, file_name = await service_handler.download_user_document(
+            request=request,
+            university_id=university_id,
+            user_document_id=user_document_id,
+            user=user,
+            session=session)
+    return FileResponse(
+        path=file_path,
+        filename=file_name,
+        status_code=http_status.HTTP_200_OK,
+        media_type="application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+    )
+
+
+@services_router.post("/{university_id}/count-hostel-accommodation-cost/",
+                      name="create_count_hostel_accommodation_cost ",
+                      summary="Create Count Hostel Accommodation Cost",
+                      response_model=JSENDOutSchema[CountHostelAccommodationCostOut],
+                      responses={200: {"description": "Successful create count hostel accommodation cost response"}},
+                      tags=["Admin dashboard"])
+async def count_hostel_accommodation_cost(
+        request: Request,
+        university_id: int,
+        data: CountHostelAccommodationCostIn,
+        user=Depends(get_current_user),
+        session: AsyncSession = Depends(get_async_session)):
+    return {
+        "data": await service_handler.count_hostel_accommodation_cost(
+            request=request,
+            university_id=university_id,
+            data=data,
+            session=session),
+        "message": "Cost of hostel accommodation of student was counted successfully"
     }

@@ -1,3 +1,5 @@
+from pydantic import ValidationError
+
 from apps.common.enums import JSENDStatus
 from apps.common.exceptions import BackendException
 
@@ -7,6 +9,7 @@ from fastapi.exceptions import RequestValidationError
 from starlette.exceptions import HTTPException as StarletteHTTPException
 from settings import Settings
 from sqlalchemy.exc import IntegrityError
+from typing import Union
 
 
 def backend_exception_handler(request: Request, exc: BackendException) -> JSONResponse:
@@ -28,7 +31,7 @@ def http_exception_handler(request: Request, exc: StarletteHTTPException) -> JSO
     )
 
 
-def validation_exception_handler(request: Request, exc: RequestValidationError) -> JSONResponse:
+def validation_exception_handler(request: Request, exc: Union[RequestValidationError, ValidationError]) -> JSONResponse:
     """Get the original 'detail' list of errors."""
     details = exc.errors()
     modified_details = []
