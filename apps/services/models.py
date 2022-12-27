@@ -31,7 +31,10 @@ class Service(Base):
     user_requests = relationship("UserRequest", back_populates="service")
 
     def __repr__(self):
-        return f'{self.__class__.__name__}(service_id="{self.service_id}",service_name="{self.service_name}")'
+        return (
+            f'{self.__class__.__name__}(service_id="{self.service_id}",'
+            f' service_name="{self.service_name}")'
+        )
 
 
 class UserRequest(Base):
@@ -78,7 +81,10 @@ class Status(Base):
     user_requests = relationship("UserRequest", back_populates="status")
 
     def __repr__(self):
-        return f'{self.__class__.__name__}(status_id="{self.status_id}",status_name="{self.status_name}")'
+        return (
+            f'{self.__class__.__name__}(status_id="{self.status_id}",'
+            f' status_name="{self.status_name}")'
+        )
 
 
 class Requisites(Base):

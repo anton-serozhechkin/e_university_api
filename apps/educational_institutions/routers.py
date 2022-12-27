@@ -39,8 +39,8 @@ async def read_faculties(
     Path:
         - university_id: integer, required, university id in table
 
-    Return: list of all university faculties with info: faculty id in table, name and shortname,
-        email, university id in table, dean full name
+    Return: list of all university faculties with info: faculty id in table,
+        name and shortname, email, university id in table, dean full name.
     """
     return {
         "data": await edu_institutions_handler.read_faculties(
@@ -80,8 +80,8 @@ async def create_faculty(
         - shortname: string, short faculty name
         - main_email: string, faculty main email
 
-    Return: list of all university faculties with info: faculty id in table, name and shortname,
-        email, university id in table, dean full name
+    Return: list of all university faculties with info: faculty id in table,
+        name and shortname,email, university id in table, dean full name.
     """
     response = await edu_institutions_handler.create_faculty(
         request=request, data=faculty, session=session

@@ -17,7 +17,10 @@ class Role(Base):
     users = relationship("User", back_populates="roles")
 
     def __str__(self):
-        return f'{self.__class__.__name__}(role_id="{self.role_id}",role_name="{self.role_name}")'
+        return (
+            f'{self.__class__.__name__}(role_id="{self.role_id}",'
+            f' role_name="{self.role_name}")'
+        )
 
 
 class Action(Base):
@@ -31,6 +34,6 @@ class Action(Base):
 
     def __repr__(self):
         return (
-            f'{self.__class__.__name__}(action_id="{self.action_id}",action_name="{self.action_name}",'
-            f' role_id="{self.role_id}")'
+            f'{self.__class__.__name__}(action_id="{self.action_id}",'
+            f' action_name="{self.action_name}",role_id="{self.role_id}")'
         )

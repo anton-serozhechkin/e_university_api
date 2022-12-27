@@ -337,7 +337,10 @@ class ServiceHandler:
         file_date_created = (
             str(kwargs.get("created_at")).replace(":", "-").replace(" ", "_")
         )
-        document_name = f"hostel_settlement_{file_date_created}_{kwargs.get('user_request_id')}.docx"
+        document_name = (
+            f"hostel_settlement_{file_date_created}_"
+            f"{kwargs.get('user_request_id')}.docx"
+        )
         DOCUMENT_PATH = SETTLEMENT_HOSTEL_PATH / str(context.user_id)
         Path(DOCUMENT_PATH).mkdir(exist_ok=True)
         document_path = file_manager.create(
@@ -360,7 +363,8 @@ class ServiceHandler:
     ) -> str:
         student = await student_service.read(session=session, data={"user_id": user_id})
         return (
-            f"{document_name.replace(' ', '_')}_{student.first_name}_{student.last_name}.docx"
+            f"{document_name.replace(' ', '_')}_{student.first_name}_"
+            f"{student.last_name}.docx"
         )
 
     @staticmethod

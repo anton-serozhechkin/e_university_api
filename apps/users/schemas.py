@@ -32,7 +32,9 @@ class RegistrationIn(BaseInSchema):
 
     @validator("email")
     def validate_email(cls, v):
-        """The method is using for email validation. Only letters (a-z), numbers (0-9) and periods (.) are allowed.
+        """The method is using for email validation.
+
+        Only letters (a-z), numbers (0-9) and periods (.) are allowed.
 
         Return: True or not None string
         """
@@ -89,7 +91,9 @@ class CreateUserIn(BaseInSchema):
 
     @validator("email")
     def validate_email(cls, v):
-        """The method is using for email validation. Only letters (a-z), numbers (0-9) and periods (.) are allowed.
+        """The method is using for email validation.
+
+        Only letters (a-z), numbers (0-9) and periods (.) are allowed.
 
         Return: True or not None string
         """

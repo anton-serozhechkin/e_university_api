@@ -380,7 +380,8 @@ async def read_user_document(
                             "content-length: 1010",
                             (
                                 "content-type:"
-                                " application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                                " application/vnd.openxmlformats-officedocument."
+                                "wordprocessingml.document"
                             ),
                             "date: Wed,14 Dec 2022 15:58:49 GMT",
                             "etag: 9744b58c8e99ca7c251c717ad9b28bd2",

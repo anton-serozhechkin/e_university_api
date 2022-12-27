@@ -6,7 +6,7 @@ from apps.common.enums import JSENDStatus
 
 
 class BackendException(Exception):
-    """Used for custom output organization for fails and errors in a view like example below.
+    """Used for custom output organization for fails and errors in a view.
 
     {
     status: some_status
