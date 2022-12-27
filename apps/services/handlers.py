@@ -1,7 +1,7 @@
 from apps.common.file_managers import file_manager
 from apps.services.models import STATUS_MAPPING
 from apps.services.schemas import (CancelRequestIn, CountHostelAccommodationCostIn,
-                                   CreateUserRequestIn, UserRequestReviewIn)
+                                   CreateUserRequestIn, UserRequestReviewIn, CreateCustomHostelAccommodationIn)
 from apps.services.services import (
     bed_place_service, get_specialties_list, hostel_accommodation_service, hostel_service,
     request_existence_service, user_document_service, service_service, user_request_list_service,
@@ -84,6 +84,51 @@ class ServiceHandler:
         result = await user_request_booking_hostel_service.read(
             session=session,
             data={"user_id": user.user_id, "university_id": university_id})
+        prepared_data = {
+            "context": result,
+            "service_id": user_request.service_id,
+            "user_request_id": user_request.user_request_id
+        }
+        await self.__create_user_document(session, **prepared_data)
+        return {
+            "status_id": STATUS_MAPPING.get("Розглядається"),
+            "user_request_id": user_request.user_request_id
+        }
+
+    async def create_custom_hostel_accommodation(
+            self,
+            *,
+            request: Request,
+            university_id: int,
+            user_request: CreateCustomHostelAccommodationIn,
+            user: UserOut,
+            session: AsyncSession
+    ):
+        user_faculty_result = await user_faculty_service.read(data={"user_id": user.user_id},
+                                                              session=session)
+        data = {"date_created": datetime.now(),
+                "comment": user_request.comment,
+                "user_id": user.user_id,
+                "service_id": user_request.service_id,
+                "faculty_id": user_faculty_result.faculty_id,
+                "university_id": university_id,
+                "status_id": STATUS_MAPPING.get("Розглядається")}
+        result = await user_request_booking_hostel_service.read(
+            session=session,
+            data={"user_id": user.user_id,
+                  "university_id": university_id})
+
+        # TODO: Start data for names, as in creating new student
+        result[0].update(last_name=user_request.student_last_name.capitalize(),
+                         first_name=user_request.student_first_name.capitalize(),
+                         middle_name=user_request.student_middle_name.capitalize())
+
+        # TODO: Start data for names, as in creating new student
+        result[5].update(last_name=user_request.rector_last_name.capitalize(),
+                         first_name=user_request.rector_first_name.capitalize(),
+                         middle_name=user_request.rector_middle_name.capitalize())
+
+        user_request = await user_request_service.create(session=session, data=data)
         prepared_data = {
             "context": result,
             "service_id": user_request.service_id,
