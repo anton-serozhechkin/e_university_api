@@ -38,7 +38,10 @@ def get_worksheet_cell_col_row(
             break
         if i > 100:
             raise BackendException(
-                message="Empty second column. Please, check the correctness of the file content.",
+                message=(
+                    "Empty second column. Please, check the correctness of the file"
+                    " content."
+                ),
                 code=http_status.HTTP_406_NOT_ACCEPTABLE,
             )
     for j, elem in enumerate(worksheet.row(row - 1)):
@@ -47,7 +50,10 @@ def get_worksheet_cell_col_row(
             break
         if j > 100:
             raise BackendException(
-                message="Can't find cell with content 'Прізвище'. Please, check the correctness of the file content.",
+                message=(
+                    "Can't find cell with content 'Прізвище'. Please, check the"
+                    " correctness of the file content."
+                ),
                 code=http_status.HTTP_406_NOT_ACCEPTABLE,
             )
     return worksheet, worksheet.cell_value, col, row
@@ -68,7 +74,10 @@ def check_specialty_existence(
 ) -> None:
     if cell(i, col + 6) not in specialties_dict:
         raise BackendException(
-            message=f"Row {i + 1}. There is no such speciality in {cell(i, col + 7)} faculty",
+            message=(
+                f"Row {i + 1}. There is no such speciality in"
+                f" {cell(i, col + 7)} faculty"
+            ),
             code=http_status.HTTP_406_NOT_ACCEPTABLE,
         )
 
@@ -88,7 +97,10 @@ def check_telephone_number_existence(
         )
     if cell(i, col + 3) in telephone_set:
         raise BackendException(
-            message=f"Row {i + 1}. The student with telephone number {cell(i, col + 3)} is already exist",
+            message=(
+                f"Row {i + 1}. The student with telephone number {cell(i, col + 3)} is"
+                " already exist"
+            ),
             code=http_status.HTTP_409_CONFLICT,
         )
 

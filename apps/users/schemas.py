@@ -25,7 +25,6 @@ class RegistrationOut(BaseOutSchema):
 
 
 class RegistrationIn(BaseInSchema):
-
     token: str
     email: str
     password: str
@@ -40,10 +39,13 @@ class RegistrationIn(BaseInSchema):
         specials = "!#$%&'*+-/=?^_`{|?."
         specials = escape(specials)
         regex = compile(
-            "^(?![" + specials + "])"
-            "(?!.*[" + specials + "]{2})"
-            "(?!.*[" + specials + "]$)"
-            "[A-Za-z0-9"
+            "^(?!["
+            + specials
+            + "])(?!.*["
+            + specials
+            + "]{2})(?!.*["
+            + specials
+            + "]$)[A-Za-z0-9"
             + specials
             + "]+(?<!["
             + specials
@@ -79,7 +81,6 @@ class AuthOut(BaseOutSchema):
 
 
 class CreateUserIn(BaseInSchema):
-
     email: str
     password: str
     password_re_check: str
@@ -95,10 +96,13 @@ class CreateUserIn(BaseInSchema):
         specials = "!#$%&'*+-/=?^_`{|?."
         specials = escape(specials)
         regex = compile(
-            "^(?![" + specials + "])"
-            "(?!.*[" + specials + "]{2})"
-            "(?!.*[" + specials + "]$)"
-            "[A-Za-z0-9"
+            "^(?!["
+            + specials
+            + "])(?!.*["
+            + specials
+            + "]{2})(?!.*["
+            + specials
+            + "]$)[A-Za-z0-9"
             + specials
             + "]+(?<!["
             + specials

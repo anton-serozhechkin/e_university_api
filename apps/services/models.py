@@ -61,10 +61,11 @@ class UserRequest(Base):
 
     def __repr__(self):
         return (
-            f'{self.__class__.__name__}(user_request_id="{self.user_request_id}", '
-            f'date_created="{self.date_created}", comment="{self.comment}", user_id="{self.user_id}", '
-            f'service_id="{self.service_id}", faculty_id="{self.faculty_id}", '
-            f'university_id="{self.university_id}", status_id="{self.status_id}")'
+            f'{self.__class__.__name__}(user_request_id="{self.user_request_id}",'
+            f' date_created="{self.date_created}", comment="{self.comment}",'
+            f' user_id="{self.user_id}", service_id="{self.service_id}",'
+            f' faculty_id="{self.faculty_id}", university_id="{self.university_id}",'
+            f' status_id="{self.status_id}")'
         )
 
 
@@ -99,9 +100,10 @@ class Requisites(Base):
 
     def __repr__(self):
         return (
-            f'{self.__class__.__name__}(requisites_id="{self.requisites_id}", iban="{self.iban}", '
-            f'organisation_code="{self.organisation_code}", payment_recognition="{self.payment_recognation}", '
-            f'university_id="{self.university_id}", service_id="{self.service_id}")'
+            f'{self.__class__.__name__}(requisites_id="{self.requisites_id}",'
+            f' iban="{self.iban}", organisation_code="{self.organisation_code}",'
+            f' payment_recognition="{self.payment_recognition}",'
+            f' university_id="{self.university_id}", service_id="{self.service_id}")'
         )
 
 
@@ -138,13 +140,16 @@ class UserRequestReview(Base):
 
     def __repr__(self):
         return (
-            f'{self.__class__.__name__}(user_request_review_id="{self.user_request_review_id}", '
-            f'created_at="{self.created_at}", room_number="{self.room_number}", '
-            f'start_accommodation_date="{self.start_accommodation_date}", '
-            f'end_accommodation_date="{self.end_accommodation_date}", total_sum="{self.total_sum}", '
-            f'payment_deadline_date="{self.payment_deadline_date}", remark="{self.remark}", '
-            f'bed_place_id="{self.bed_place_id}", reviewer="{self.reviewer}", hostel_id="{self.hostel_id}", '
-            f'university_id="{self.university_id}", user_request_id="{self.user_request_id}")'
+            f'{self.__class__.__name__}(user_request_review_id="{self.user_request_review_id}",'
+            f' created_at="{self.created_at}", room_number="{self.room_number}",'
+            f' start_accommodation_date="{self.start_accommodation_date}",'
+            f' end_accommodation_date="{self.end_accommodation_date}",'
+            f' total_sum="{self.total_sum}",'
+            f' payment_deadline_date="{self.payment_deadline_date}",'
+            f' remark="{self.remark}", bed_place_id="{self.bed_place_id}",'
+            f' reviewer="{self.reviewer}", hostel_id="{self.hostel_id}",'
+            f' university_id="{self.university_id}",'
+            f' user_request_id="{self.user_request_id}")'
         )
 
 

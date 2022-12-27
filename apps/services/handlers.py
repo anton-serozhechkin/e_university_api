@@ -359,7 +359,9 @@ class ServiceHandler:
         cls, document_name: str, user_id: int, session: AsyncSession
     ) -> str:
         student = await student_service.read(session=session, data={"user_id": user_id})
-        return f"{document_name.replace(' ', '_')}_{student.first_name}_{student.last_name}.docx"
+        return (
+            f"{document_name.replace(' ', '_')}_{student.first_name}_{student.last_name}.docx"
+        )
 
     @staticmethod
     async def create_students_list_from_file(

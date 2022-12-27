@@ -38,10 +38,11 @@ class Hostel(Base):
 
     def __repr__(self):
         return (
-            f'{self.__class__.__name__}(hostel_id="{self.hostel_id}", number="{self.number}", '
-            f'name="{self.name}", city="{self.city}", street="{self.street}", build="{self.build}", '
-            f'month_price="{self.month_price}", university_id="{self.university_id}", '
-            f'commandant_id="{self.commandant_id}")'
+            f'{self.__class__.__name__}(hostel_id="{self.hostel_id}",'
+            f' number="{self.number}", name="{self.name}", city="{self.city}",'
+            f' street="{self.street}", build="{self.build}",'
+            f' month_price="{self.month_price}", university_id="{self.university_id}",'
+            f' commandant_id="{self.commandant_id}")'
         )
 
 
@@ -58,9 +59,10 @@ class Commandant(Base):
 
     def __repr__(self):
         return (
-            f'{self.__class__.__name__}(commandant_id="{self.commandant_id}", first_name="{self.first_name}", '
-            f'middle_name="{self.middle_name}", last_name="{self.last_name}", '
-            f'telephone_number="{self.telephone_number}")'
+            f'{self.__class__.__name__}(commandant_id="{self.commandant_id}",'
+            f' first_name="{self.first_name}", middle_name="{self.middle_name}",'
+            f' last_name="{self.last_name}",'
+            f' telephone_number="{self.telephone_number}")'
         )
 
 
@@ -73,7 +75,10 @@ class BedPlace(Base):
     user_request_review = relationship("UserRequestReview", back_populates="bed_place")
 
     def __repr__(self):
-        return f'{self.__class__.__name__}(bed_place_id="{self.bed_place_id}", bed_place_name="{self.bed_place_name}")'
+        return (
+            f'{self.__class__.__name__}(bed_place_id="{self.bed_place_id}",'
+            f' bed_place_name="{self.bed_place_name}")'
+        )
 
 
 hostel_list_view = Table(

@@ -33,7 +33,9 @@ def get_student_attr(student):
         )
     if student.user_id:
         raise BackendException(
-            message="A user account already exists. Please check your email for details.",
+            message=(
+                "A user account already exists. Please check your email for details."
+            ),
             code=http_status.HTTP_409_CONFLICT,
         )
     return student.first_name, student.last_name, student.faculty_id
@@ -42,14 +44,17 @@ def get_student_attr(student):
 def get_token_data(token_data):
     if not token_data:
         raise BackendException(
-            message="To register a user, first go to the page for checking the presence of a student in the register.",
+            message=(
+                "To register a user, first go to the page for checking the presence of"
+                " a student in the register."
+            ),
             code=http_status.HTTP_404_NOT_FOUND,
         )
     if token_data.expires_at < datetime.now(utc):
         raise BackendException(
             message=(
-                "Registration time has expired."
-                " Please go to the link to check the availability of students on the register."
+                "Registration time has expired. Please go to the link to check the"
+                " availability of students on the register."
             ),
             code=http_status.HTTP_403_FORBIDDEN,
         )

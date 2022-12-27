@@ -41,7 +41,10 @@ services_router = APIRouter(
     summary="Check user request existence",
     responses={
         200: {
-            "description": "Successful get response with info about existence user request response"
+            "description": (
+                "Successful get response with info about existence user request"
+                " response"
+            )
         }
     },
     tags=["Student dashboard"],
@@ -370,9 +373,15 @@ async def read_user_document(
                 "text/html": {
                     "example": "\n".join(
                         [
-                            "content-disposition: attachment; filename*=utf-8''some_file_name.docx",
+                            (
+                                "content-disposition: attachment;"
+                                " filename*=utf-8''some_file_name.docx"
+                            ),
                             "content-length: 1010",
-                            "content-type: application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+                            (
+                                "content-type:"
+                                " application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                            ),
                             "date: Wed,14 Dec 2022 15:58:49 GMT",
                             "etag: 9744b58c8e99ca7c251c717ad9b28bd2",
                             "last-modified: Wed,23 Nov 2022 17:49:14 GMT",
@@ -403,7 +412,9 @@ async def download_user_document(
         path=file_path,
         filename=file_name,
         status_code=http_status.HTTP_200_OK,
-        media_type="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+        media_type=(
+            "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+        ),
     )
 
 

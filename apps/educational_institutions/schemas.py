@@ -24,10 +24,13 @@ class FacultyIn(BaseInSchema):
         specials = "!#$%&'*+-/=?^_`{|?."
         specials = re.escape(specials)
         regex = re.compile(
-            "^(?![" + specials + "])"
-            "(?!.*[" + specials + "]{2})"
-            "(?!.*[" + specials + "]$)"
-            "[A-Za-z0-9"
+            "^(?!["
+            + specials
+            + "])(?!.*["
+            + specials
+            + "]{2})(?!.*["
+            + specials
+            + "]$)[A-Za-z0-9"
             + specials
             + "]+(?<!["
             + specials

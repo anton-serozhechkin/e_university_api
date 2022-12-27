@@ -31,6 +31,6 @@ class Action(Base):
 
     def __repr__(self):
         return (
-            f'{self.__class__.__name__}(action_id="{self.action_id}",action_name="{self.action_name}", '
-            f'role_id="{self.role_id}")'
+            f'{self.__class__.__name__}(action_id="{self.action_id}",action_name="{self.action_name}",'
+            f' role_id="{self.role_id}")'
         )

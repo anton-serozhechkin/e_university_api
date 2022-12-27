@@ -43,9 +43,10 @@ class User(Base):
 
     def __repr__(self):
         return (
-            f'{self.__class__.__name__}(user_id="{self.user_id}", login="{self.login}", '
-            f'password="{self.password}", last_visit_at="{self.last_visit_at}", email="{self.email}", '
-            f'is_active="{self.is_active}", role_id="{self.role_id}")'
+            f'{self.__class__.__name__}(user_id="{self.user_id}", login="{self.login}",'
+            f' password="{self.password}", last_visit_at="{self.last_visit_at}",'
+            f' email="{self.email}", is_active="{self.is_active}",'
+            f' role_id="{self.role_id}")'
         )
 
 
@@ -61,8 +62,9 @@ class OneTimeToken(Base):
 
     def __repr__(self):
         return (
-            f'{self.__class__.__name__}(token_id="{self.token_id}", token="{self.token}", '
-            f'expires_at="{self.expires_at}", student_id="{self.student_id}")'
+            f'{self.__class__.__name__}(token_id="{self.token_id}",'
+            f' token="{self.token}", expires_at="{self.expires_at}",'
+            f' student_id="{self.student_id}")'
         )
 
 
@@ -92,11 +94,12 @@ class Student(Base):
 
     def __repr__(self):
         return (
-            f'{self.__class__.__name__}(student_id="{self.student_id}", first_name="{self.first_name}", '
-            f'middle_name="{self.middle_name}", last_name="{self.last_name}", '
-            f'telephone_number="{self.telephone_number}", gender="{self.gender}", '
-            f'course_id="{self.course_id}", speciality_id="{self.speciality_id}", '
-            f'user_id="{self.user_id}", faculty_id="{self.faculty_id}")'
+            f'{self.__class__.__name__}(student_id="{self.student_id}",'
+            f' first_name="{self.first_name}", middle_name="{self.middle_name}",'
+            f' last_name="{self.last_name}",'
+            f' telephone_number="{self.telephone_number}", gender="{self.gender}",'
+            f' course_id="{self.course_id}", speciality_id="{self.speciality_id}",'
+            f' user_id="{self.user_id}", faculty_id="{self.faculty_id}")'
         )
 
 
@@ -117,7 +120,10 @@ class UserFaculty(Base):
     )
 
     def __repr__(self):
-        return f'{self.__class__.__name__}(user_id="{self.user_id}", faculty_id="{self.faculty_id}")'
+        return (
+            f'{self.__class__.__name__}(user_id="{self.user_id}",'
+            f' faculty_id="{self.faculty_id}")'
+        )
 
 
 students_list_view = Table(

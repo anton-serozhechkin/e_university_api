@@ -143,7 +143,8 @@ class CountHostelAccommodationCostIn(BaseInSchema):
             "end_accommodation_date"
         ):
             raise ValueError(
-                "Start date of hostel accommodation can't be more or equal than end date of hostel accommodation"
+                "Start date of hostel accommodation can't be more or equal than end"
+                " date of hostel accommodation"
             )
         return values
 

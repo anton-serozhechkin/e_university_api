@@ -52,9 +52,10 @@ class Faculty(Base):
 
     def __repr__(self):
         return (
-            f'{self.__class__.__name__}(faculty_id="{self.faculty_id}", name="{self.name}", '
-            f'shortname="{self.shortname}", main_email="{self.main_email}", dean_id="{self.dean_id}", '
-            f'university_id="{self.university_id}"'
+            f'{self.__class__.__name__}(faculty_id="{self.faculty_id}",'
+            f' name="{self.name}", shortname="{self.shortname}",'
+            f' main_email="{self.main_email}", dean_id="{self.dean_id}",'
+            f' university_id="{self.university_id}"'
         )
 
 
@@ -70,8 +71,8 @@ class Speciality(Base):  # TODO: rename to "Specialty"
 
     def __repr__(self):
         return (
-            f'{self.__class__.__name__}(speciality_id="{self.speciality_id}", code="{self.code}", '
-            f'name="{self.name}", faculty_id="{self.faculty_id}")'
+            f'{self.__class__.__name__}(speciality_id="{self.speciality_id}",'
+            f' code="{self.code}", name="{self.name}", faculty_id="{self.faculty_id}")'
         )
 
 
@@ -87,8 +88,9 @@ class Dean(Base):
 
     def __repr__(self):
         return (
-            f'{self.__class__.__name__}(dean_id="{self.dean_id}", first_name="{self.first_name}", '
-            f'middle_name="{self.middle_name}", last_name="{self.last_name}")'
+            f'{self.__class__.__name__}(dean_id="{self.dean_id}",'
+            f' first_name="{self.first_name}", middle_name="{self.middle_name}",'
+            f' last_name="{self.last_name}")'
         )
 
 
@@ -104,8 +106,9 @@ class Rector(Base):
 
     def __str__(self):
         return (
-            f'{self.__class__.__name__}(rector_id="{self.rector_id}", first_name="{self.first_name}", '
-            f'middle_name="{self.middle_name}", last_name="{self.last_name}")'
+            f'{self.__class__.__name__}(rector_id="{self.rector_id}",'
+            f' first_name="{self.first_name}", middle_name="{self.middle_name}",'
+            f' last_name="{self.last_name}")'
         )
 
 
@@ -116,7 +119,10 @@ class Course(Base):
     value = Column(INTEGER, nullable=False)
 
     def __repr__(self):
-        return f'{self.__class__.__name__}(course_id="{self.course_id}", value="{self.value}")'
+        return (
+            f'{self.__class__.__name__}(course_id="{self.course_id}",'
+            f' value="{self.value}")'
+        )
 
 
 faculty_list_view = Table(
