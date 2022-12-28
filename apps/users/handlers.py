@@ -6,8 +6,6 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from apps.authorization.services import get_hashed_password
 from apps.common.exceptions import BackendException
-from apps.users.schemas import (CreateUserIn, DeleteUserIn, RegistrationIn, CreateStudentIn,
-                                DeleteStudentIn, StudentCheckExistenceIn, CreateUserOut)
 from apps.common.utils import (
     add_random_digits_and_cut_username,
     get_generated_username,
@@ -19,6 +17,7 @@ from apps.services.services import user_faculty_service
 from apps.users.schemas import (
     CreateStudentIn,
     CreateUserIn,
+    CreateUserOut,
     DeleteStudentIn,
     DeleteUserIn,
     RegistrationIn,
