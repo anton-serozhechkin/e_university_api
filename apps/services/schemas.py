@@ -20,7 +20,7 @@ class CreateUserRequestIn(BaseInSchema):
 
 class CreateUserRequestOut(BaseOutSchema):
     user_request_id: int
-    date_created: datetime
+    created_at: datetime
     comment: str
     user_id: int
     service_id: int

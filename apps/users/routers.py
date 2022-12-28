@@ -14,7 +14,6 @@ from apps.users.schemas import (
     DeleteStudentIn,
     DeleteUserIn,
     RegistrationIn,
-    RegistrationOut,
     StudentCheckExistenceIn,
     StudentCheckExistenceOut,
     StudentsListOut,
@@ -162,7 +161,7 @@ async def delete_user(
 @users_router.post(
     "/registration",
     name="registration",
-    response_model=JSENDOutSchema[RegistrationOut],
+    response_model=JSENDOutSchema[CreateUserOut],
     summary="User registration",
     responses={
         200: {"description": "Successful user registration response"},

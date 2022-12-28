@@ -110,10 +110,12 @@ class ServiceHandler:
             "status_id": STATUS_MAPPING.get("Розглядається"),
         }
         user_request = await user_request_service.create(session=session, data=data)
+        print(user_request, 1111)
         result = await user_request_booking_hostel_service.read(
             session=session,
             data={"user_id": user.user_id, "university_id": university_id},
         )
+        print(result, 22222)
         prepared_data = {
             "context": result,
             "service_id": user_request.service_id,
