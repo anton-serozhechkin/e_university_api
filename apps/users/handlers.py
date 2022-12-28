@@ -127,7 +127,7 @@ class UserHandler:
             data={"student_id": student_id},
             obj={"user_id": registered_user.user_id},
         )
-        user_faculty_data = await user_faculty_service.create(
+        await user_faculty_service.create(
             session=session,
             data={"user_id": registered_user.user_id, "faculty_id": faculty_id},
         )
