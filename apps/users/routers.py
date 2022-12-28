@@ -224,8 +224,7 @@ async def create_student(
     auth=Depends(get_current_user),
     session: AsyncSession = Depends(get_async_session),
 ):
-    """
-        **Method for university student record creation.**
+    """**Method for university student record creation.**
 
     **Path**:
         - **university_id**: university id
@@ -246,6 +245,7 @@ async def create_student(
     student = await user_handler.create_student(
         request=request, student=student, session=session
     )
+    print(student, 1111)
     return {
         "data": student,
         "message": f"Created student with id {student.student_id}",

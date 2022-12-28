@@ -87,7 +87,7 @@ class UserHandler:
         return CreateUserOut(
             user_id=created_user.user_id,
             login=created_user.login,
-            last_visit=created_user.last_visit,
+            last_visit=created_user.last_visit_at,
             email=created_user.email,
             is_active=created_user.is_active,
             role_id=created_user.role_id,
@@ -143,7 +143,6 @@ class UserHandler:
     async def create_student(
         self, *, request: Request, student: CreateStudentIn, session: AsyncSession
     ):
-        created_student = await student_service.create(session=session, obj=student)
         return await student_service.create(
             session=session,
             obj=student,

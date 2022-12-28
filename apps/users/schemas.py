@@ -239,7 +239,9 @@ class CreateStudentIn(StudentCheckExistenceIn):
 
 class CreateStudentOut(BaseOutSchema):
     student_id: int
-    full_name: str
+    last_name: str
+    first_name: str
+    middle_name: str = None
     telephone_number: str
     gender: str
     course_id: int
