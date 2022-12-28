@@ -52,7 +52,10 @@ async def check_student(
     - **first_name**: first name of the student
     - **telephone_number**: telephone number, must be 12 digits
 
-    **Return**: student id; token, which is used for registering user; token expires datetime
+    **Return**:
+    - student id
+    - token, which is used for registering user
+    - token expires datetime
     """
     result = await user_handler.check_student(
         request=request, student=student, session=session
@@ -118,14 +121,15 @@ async def create_user(
     - **university_id**: university id for creating user
 
     **Input**:
-        - **email**: user email, only letters (a-z), numbers (0-9) and periods (.) are
-            allowed, required
-        - **password**: password, cannot be empty, required
-        - **password_re_check**: password recheck, required
-        - **role_id**: user role id, required
-        - **faculty_id**: user faculty id, required
+    - **email**: user email, only letters (a-z), numbers (0-9) and periods (.) are
+        allowed, required
+    - **password**: password, cannot be empty, required
+    - **password_re_check**: password recheck, required
+    - **role_id**: user role id, required
+    - **faculty_id**: user faculty id, required
 
-    **Return**: created user id
+    **Return**:
+    - created user id
     """
     user = await user_handler.create_user(
         request=request, user=user, session=session
@@ -189,12 +193,15 @@ async def registration(
     """**Method for user registration, using token based on student's record.**
 
     **Input**:
-        - **token**: token from "Check user existence"
-        - **email**: enter user email; only letters (a-z), numbers (0-9) and
-            periods (.) are allowed
-        - **password**: enter password; password cannot be empty
+    - **token**: token from "Check user existence"
+    - **email**: enter user email; only letters (a-z), numbers (0-9) and
+        periods (.) are allowed
+    - **password**: enter password; password cannot be empty
 
-    **Return**: user id; faculty id; login, which consists of name and random number
+    **Return**:
+    - user id
+    - faculty id
+    - login, which consists of name and random number
     """
     response = await user_handler.registration(
         request=request, user=user, session=session
@@ -227,20 +234,21 @@ async def create_student(
     """**Method for university student record creation.**
 
     **Path**:
-        - **university_id**: university id
+    - **university_id**: university id
 
     **Input**:
-        - **last_name**: student last name, required
-        - **first_name**: student fist name, required
-        - **middle_name**: student middle name
-        - **telephone_number**: student telephone number, must consists of 12 digits,
-            required
-        - **course_id**: student course id, must be between 1 and 6, required
-        - **faculty_id**: faculty id, required
-        - **speciality_id**: speciality id, required
-        - **gender**: student gender, 'Ч' or 'Ж', required
+    - **last_name**: student last name, required
+    - **first_name**: student fist name, required
+    - **middle_name**: student middle name
+    - **telephone_number**: student telephone number, must consists of 12 digits,
+        required
+    - **course_id**: student course id, must be between 1 and 6, required
+    - **faculty_id**: faculty id, required
+    - **speciality_id**: speciality id, required
+    - **gender**: student gender, 'Ч' or 'Ж', required
 
-    **Return**: created student id
+    **Return**:
+    - created student id
     """
     student = await user_handler.create_student(
         request=request, student=student, session=session

@@ -114,7 +114,7 @@ async def create_user_request(
     user=Depends(get_current_user),
     session: AsyncSession = Depends(get_async_session),
 ):
-    """    ** Method for creation user request**
+    """**Method for creation user request**
 
     **Path**:
     - **university_id**: user university id
@@ -123,7 +123,9 @@ async def create_user_request(
     - **service_id**: service id, required
     - **comment**: comment for the creating user request
 
-    **Return**: user request id; request status id
+    **Return**:
+    - user request id
+    - request status id
     """
     response = await service_handler.create_user_request(
         request=request,
@@ -187,7 +189,9 @@ async def cancel_request(
     **Input**:
     - **status_id**: user request status id, required
 
-    **Return**: canceled user request id and status id
+    **Return**:
+    - canceled user request id
+    - status id
     """
     return {
         "data": await service_handler.cancel_request(
@@ -233,7 +237,9 @@ async def create_user_request_review(
     - **hostel_id**: hostel id in the database
     - **bed_place_id**: hostel bed place id
 
-    **Return**: user request status id; user request review id
+    **Return**:
+    - user request status id
+    - user request review id
     """
     return {
         "data": await service_handler.create_user_request_review(
