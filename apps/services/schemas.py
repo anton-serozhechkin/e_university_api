@@ -4,7 +4,7 @@ from datetime import date, datetime
 from typing import Dict, Union, List
 from decimal import Decimal
 
-from pydantic import validator, root_validator
+from pydantic import validator, root_validator, Field
 
 
 class CreateUserRequestIn(BaseInSchema):
@@ -19,12 +19,18 @@ class CreateCustomHostelAccommodationIn(BaseInSchema):
     student_first_name: str
     student_middle_name: str
     student_last_name: str
+    speciality_code: int
     speciality_name: str
     course: int
     faculty_name: str
     educ_level: str
     service_id: int
     comment: str = None
+
+
+class CreateCustomHostelAccommodationOut(BaseOutSchema):
+    user_request_id: int
+    status_id: int
 
 
 class CreateUserRequestOut(BaseOutSchema):
