@@ -92,12 +92,12 @@ class UserRequestReviewIn(BaseInSchema):
 
 class UserRequestReviewOut(BaseOutSchema):
     user_request_review_id: int
-    date_created: datetime
+    created_at: datetime
     room_number: int
-    start_date_accommodation: datetime
-    end_date_accommodation: datetime
+    start_accommodation_date: date
+    end_accommodation_date: date
     total_sum: Decimal
-    payment_deadline: datetime
+    payment_deadline_date: date
     remark: str
     bed_place_id: int
     reviewer: int
