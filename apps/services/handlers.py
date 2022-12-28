@@ -113,20 +113,27 @@ class ServiceHandler:
                 "faculty_id": user_faculty_result.faculty_id,
                 "university_id": university_id,
                 "status_id": STATUS_MAPPING.get("Розглядається")}
-        result = await user_request_booking_hostel_service.read(
+
+        response = await user_request_booking_hostel_service.read(
             session=session,
             data={"user_id": user.user_id,
                   "university_id": university_id})
 
-        # TODO: Start data for names, as in creating new student
-        result[0].update(last_name=user_request.student_last_name.capitalize(),
-                         first_name=user_request.student_first_name.capitalize(),
-                         middle_name=user_request.student_middle_name.capitalize())
+        result = dict(response)
+        result.update(full_name={'last_name': user_request.student_last_name.capitalize(),
+                                      'first_name': user_request.student_first_name.capitalize(),
+                                      'middle_name': user_request.student_middle_name.capitalize()},
+                      rector_full_name={'last_name': user_request.rector_last_name.capitalize(),
+                                            'first_name': user_request.rector_first_name.capitalize(),
+                                            'middle_name': user_request.rector_middle_name.capitalize()},
+                      speciality_name=user_request.speciality_name,
+                      speciality_code=user_request.speciality_code,
+                      course=user_request.course,
+                      faculty_name=user_request.faculty_name,
+                      educ_level=user_request.educ_level)
 
-        # TODO: Start data for names, as in creating new student
-        result[5].update(last_name=user_request.rector_last_name.capitalize(),
-                         first_name=user_request.rector_first_name.capitalize(),
-                         middle_name=user_request.rector_middle_name.capitalize())
+        # TODO: add feature: if educ_level == “B” - >першого (бакалаврського) | else -> другого (магістерського)
+        # TODO: do validation in schema, like begining value
 
         user_request = await user_request_service.create(session=session, data=data)
         prepared_data = {
@@ -322,7 +329,7 @@ class ServiceHandler:
         rendered_template = file_manager.render(TEMPLATES_PATH, HOSTEL_BOOKING_TEMPLATE, context)
         file_date_created = str(kwargs.get('date_created')).replace(":", "-").replace(" ", "_")
         document_name = f"hostel_settlement_{file_date_created}_{kwargs.get('user_request_id')}.docx"
-        DOCUMENT_PATH = SETTLEMENT_HOSTEL_PATH / str(context.user_id)
+        DOCUMENT_PATH = SETTLEMENT_HOSTEL_PATH / str(context.get('user_id'))
         Path(DOCUMENT_PATH).mkdir(exist_ok=True)
         document_path = file_manager.create(DOCUMENT_PATH, document_name, rendered_template)
         return document_path
