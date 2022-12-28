@@ -56,7 +56,7 @@ class FacultyOut(BaseOutSchema):
     shortname: str
     main_email: str = None
     university_id: int
-    dean_full_name: FullNameSchema = None
+    dean_id: int
 
 
 class SpecialityListOut(BaseOutSchema):
