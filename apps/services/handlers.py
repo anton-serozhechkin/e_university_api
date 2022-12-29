@@ -329,7 +329,7 @@ class ServiceHandler:
         rendered_template = file_manager.render(TEMPLATES_PATH, HOSTEL_BOOKING_TEMPLATE, context)
         file_date_created = str(kwargs.get('date_created')).replace(":", "-").replace(" ", "_")
         document_name = f"hostel_settlement_{file_date_created}_{kwargs.get('user_request_id')}.docx"
-        DOCUMENT_PATH = SETTLEMENT_HOSTEL_PATH / str(context.get('user_id'))
+        DOCUMENT_PATH = SETTLEMENT_HOSTEL_PATH / str(context['user_id'])
         Path(DOCUMENT_PATH).mkdir(exist_ok=True)
         document_path = file_manager.create(DOCUMENT_PATH, document_name, rendered_template)
         return document_path
