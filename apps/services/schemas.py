@@ -11,6 +11,9 @@ class CreateUserRequestIn(BaseInSchema):
     service_id: int
     comment: str = None
 
+class CreateUserRequestOut(BaseOutSchema):
+    user_request_id: int
+    status_id: int
 
 class CreateCustomHostelAccommodationIn(BaseInSchema):
     rector_first_name: str
@@ -24,19 +27,7 @@ class CreateCustomHostelAccommodationIn(BaseInSchema):
     course: int
     faculty_name: str
     educ_level: str
-    service_id: int
-    comment: str = None
-
-
-class CreateCustomHostelAccommodationOut(BaseOutSchema):
-    user_request_id: int
-    status_id: int
-
-
-class CreateUserRequestOut(BaseOutSchema):
-    user_request_id: int
-    status_id: int
-
+    comment: str
 
 class UserRequestExistenceOut(BaseOutSchema):
     user_request_id: int = None
