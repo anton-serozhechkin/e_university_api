@@ -191,6 +191,12 @@ async def cancel_request(
 
     **Return**:
     - canceled user request id
+    - created at
+    - comment
+    - user id
+    - service id
+    - faculty id
+    - university id
     - status id
     """
     return {
