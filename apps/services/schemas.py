@@ -1,10 +1,16 @@
-from apps.common.schemas import BaseInSchema, BaseOutSchema, UserDocumentsSchema, HostelNameSchema, FullNameSchema
-
 from datetime import date, datetime
-from typing import Dict, Union, List
 from decimal import Decimal
+from typing import Dict, List, Union
 
-from pydantic import validator, root_validator
+from pydantic import root_validator, validator
+
+from apps.common.schemas import (
+    BaseInSchema,
+    BaseOutSchema,
+    FullNameSchema,
+    HostelNameSchema,
+    UserDocumentsSchema,
+)
 
 
 class CreateUserRequestIn(BaseInSchema):
@@ -52,7 +58,7 @@ class UserRequestsListOut(BaseOutSchema):
 class CancelRequestIn(BaseInSchema):
     status_id: int
 
-    @validator('status_id')
+    @validator("status_id")
     def validate_status_id(cls, v):
         if v != 4:
             raise ValueError("The application can only be canceled")
@@ -76,7 +82,7 @@ class UserRequestReviewIn(BaseInSchema):
     hostel_id: int = None
     bed_place_id: int = None
 
-    @validator('status_id')
+    @validator("status_id")
     def validate_status_id(cls, v):
         if v not in [1, 2]:
             raise ValueError("The application can only be approved or rejected")
@@ -133,9 +139,12 @@ class CountHostelAccommodationCostIn(BaseInSchema):
 
     @root_validator
     def validate_two_dates(cls, values):
-        if values.get('start_accommodation_date') >= values.get('end_accommodation_date'):
+        if values.get("start_accommodation_date") >= values.get(
+            "end_accommodation_date"
+        ):
             raise ValueError(
-                "Start date of hostel accommodation can't be more or equal than end date of hostel accommodation"
+                "Start date of hostel accommodation can't be more or equal than end"
+                " date of hostel accommodation"
             )
         return values
 

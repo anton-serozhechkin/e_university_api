@@ -30,5 +30,5 @@ metadata = [
             "description": "See epic for more info",
             "url": "https://euniversity.atlassian.net/browse/EU-17",
         },
-    }
+    },
 ]
