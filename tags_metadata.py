@@ -1,7 +1,7 @@
 metadata = [
     {
         "name": "Authorization",
-        "description": "Operations with signin, signup of user. Also included checking student existanse and changing password endpoint.",
+        "description": "Operations with signin, signup of user. Also included checking student existense and changing password endpoint.",
         "externalDocs": {
             "description": "See epic for more info",
             "url": "https://euniversity.atlassian.net/browse/EU-12",
@@ -30,5 +30,5 @@ metadata = [
             "description": "See epic for more info",
             "url": "https://euniversity.atlassian.net/browse/EU-17",
         },
-    }
+    },
 ]
