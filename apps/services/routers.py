@@ -7,8 +7,7 @@ from apps.services.schemas import (UserRequestExistenceOut, UserRequestsListOut,
                                    CancelRequestIn, UserRequestReviewOut,
                                    UserRequestReviewIn, HostelAccomodationViewOut,
                                    UserRequestDetailsViewOut, CountHostelAccommodationCostIn,
-                                   CountHostelAccommodationCostOut, CreateCustomHostelAccommodationIn,
-                                   CreateCustomHostelAccommodationOut)
+                                   CountHostelAccommodationCostOut, CreateCustomHostelAccommodationIn)
 from apps.users.schemas import CreateStudentsListOut
 
 from fastapi import APIRouter, Depends, Request, UploadFile, status as http_status
@@ -120,7 +119,7 @@ async def create_user_request(
 
 @services_router.post("/{university_id}/create-custom-hostel-accommodation/",
                       name="create_custom_hostel_accommodation",
-                      response_model=JSENDOutSchema[CreateCustomHostelAccommodationOut],
+                      response_model=JSENDOutSchema[CreateUserRequestOut],
                       summary="Create custom hostel accommodation",
                       responses={200: {"description": "Successful created custom hostel accommodation"}},
                       tags=["Student dashboard"])
