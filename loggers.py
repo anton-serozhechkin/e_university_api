@@ -1,15 +1,13 @@
-
 dict_config = {
     "version": 1,
-    'disable_existing_loggers': False,
-    'formatters': {
-	},
+    "disable_existing_loggers": False,
+    "formatters": {},
     "formatters": {
         "basic": {
-            '()': 'colorlog.ColoredFormatter',
+            "()": "colorlog.ColoredFormatter",
             "format": "{log_color}{levelname} - {asctime} - {name} - {blue}{message}",
             "datefmt": "%Y-%m-%dT%H:%M:%S%z",
-            "style": '{',
+            "style": "{",
         }
     },
     "handlers": {
@@ -17,20 +15,15 @@ dict_config = {
             "formatter": "basic",
             "class": "logging.StreamHandler",
             "stream": "ext://sys.stderr",
-            "level": 'DEBUG',
+            "level": "DEBUG",
         }
     },
     "loggers": {
         "root": {
             "handlers": ["console"],
-            "level": 'DEBUG',
+            "level": "DEBUG",
         },
-        "uvicorn": {
-            "handlers": ["console"],
-            "propagate": False
-        },
-        "gunicorn": {
-            "propagate": False
-            },
+        "uvicorn": {"handlers": ["console"], "propagate": False},
+        "gunicorn": {"propagate": False},
     },
 }
