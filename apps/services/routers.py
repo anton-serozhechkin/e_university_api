@@ -114,7 +114,7 @@ async def create_user_request(
     user=Depends(get_current_user),
     session: AsyncSession = Depends(get_async_session),
 ):
-    """**Method for creation user request**
+    """**Method for creating user request**
 
     **Path**:
     - **university_id**: user university id

@@ -73,7 +73,7 @@ async def create_faculty(
     user=Depends(get_current_user),
     session: AsyncSession = Depends(get_async_session),
 ):
-    """**Method for university faculty creation**
+    """**Method for creating university faculty**
 
     **Auth**:
     - only authenticated user can get courses list

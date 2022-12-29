@@ -115,7 +115,7 @@ async def create_user(
     auth=Depends(get_current_user),
     session: AsyncSession = Depends(get_async_session),
 ):
-    """**Method for create user record.**
+    """**Method for creating user record.**
 
     **Path**:
     - **university_id**: university id for creating user
@@ -231,7 +231,7 @@ async def create_student(
     auth=Depends(get_current_user),
     session: AsyncSession = Depends(get_async_session),
 ):
-    """**Method for university student record creation.**
+    """**Method for university student record creating.**
 
     **Path**:
     - **university_id**: university id
