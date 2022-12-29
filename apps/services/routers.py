@@ -7,7 +7,7 @@ from apps.services.schemas import (UserRequestExistenceOut, UserRequestsListOut,
                                    CancelRequestIn, UserRequestReviewOut,
                                    UserRequestReviewIn, HostelAccomodationViewOut,
                                    UserRequestDetailsViewOut, CountHostelAccommodationCostIn,
-                                   CountHostelAccommodationCostOut, CreateCustomHostelAccommodationIn)
+                                   CountHostelAccommodationCostOut)
 from apps.users.schemas import CreateStudentsListOut
 
 from fastapi import APIRouter, Depends, Request, UploadFile, status as http_status
@@ -114,33 +114,6 @@ async def create_user_request(
     return {
         "data": response,
         "message": f"Created user request with id {response['user_request_id']}"
-    }
-
-
-@services_router.post("/{university_id}/create-custom-hostel-accommodation/",
-                      name="create_custom_hostel_accommodation",
-                      response_model=JSENDOutSchema[CreateUserRequestOut],
-                      summary="Create custom hostel accommodation",
-                      responses={200: {"description": "Successful created custom hostel accommodation"}},
-                      tags=["Student dashboard"])
-async def create_custom_hostel_accommodation(
-        request: Request,
-        university_id: int,
-        user_request: CreateCustomHostelAccommodationIn,
-        user=Depends(get_current_user),
-        session: AsyncSession = Depends(get_async_session)
-):
-    response = await service_handler.create_custom_hostel_accommodation(
-        request=request,
-        university_id=university_id,
-        user_request=user_request,
-        user=user,
-        session=session
-    )
-
-    return {
-        "data": response,
-        "message": "Thanks for your editing. We will consider your application. Wait for the reply"
     }
 
 
@@ -299,7 +272,7 @@ async def create_students_list_from_file(
         request: Request,
         university_id: int,
         file: UploadFile = Depends(check_file_content_type),
-        user=Depends(get_current_user),
+        user = Depends(get_current_user),
         session: AsyncSession = Depends(get_async_session)):
     response = await service_handler.create_students_list_from_file(
         request=request,
@@ -363,11 +336,11 @@ async def download_user_document(
         user=Depends(get_current_user),
         session: AsyncSession = Depends(get_async_session)):
     file_path, file_name = await service_handler.download_user_document(
-        request=request,
-        university_id=university_id,
-        user_document_id=user_document_id,
-        user=user,
-        session=session)
+            request=request,
+            university_id=university_id,
+            user_document_id=user_document_id,
+            user=user,
+            session=session)
     return FileResponse(
         path=file_path,
         filename=file_name,

@@ -56,7 +56,7 @@ INSERT INTO hostel(hostel_id, university_id, number, name, city, street, build, 
 INSERT INTO hostel(hostel_id, university_id, number, name, city, street, build, commandant_id, month_price, instagram) VALUES (6, 1, 6, 'Сінергія', 'Харків',  'вул. Клочківська', '216а', 6, 800.00, 'https://www.instagram.com/sinergia.house.6/?igshid=YmMyMTA2M2Y%3D');
 INSERT INTO hostel(hostel_id, university_id, number, name, city, street, build, commandant_id, month_price, telegram) VALUES (7, 1, 7, 'Академічний', 'Харків',  'вул. Ак. Філіппова', '42', 7, 800.00, 'https://t.me/+Sp1tojwYbLaCvGJG');
 
-INSERT INTO requisites(requisites_id, iban, university_id, organisation_code, service_id, payment_recognation)
+INSERT INTO requisites(requisites_id, iban, university_id, organisation_code, service_id, payment_recognition)
 VALUES (1, 'UA826482364382748327483', 1, 'ЄДРПОУ 753485385', 1, 'Призначення платежу: За проживання в гуртожитку. Назва Гуртожитку. ПІБ студента.');
 
 INSERT INTO service_document(service_document_id, service_id, university_id, documents)
