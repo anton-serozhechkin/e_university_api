@@ -109,7 +109,7 @@ class ServiceHandler:
         data = {"date_created": datetime.now(),
                 "comment": user_request.comment,
                 "user_id": user.user_id,
-                "service_id": user_request.service_id,
+                "service_id": 1,
                 "faculty_id": user_faculty_result.faculty_id,
                 "university_id": university_id,
                 "status_id": STATUS_MAPPING.get("Розглядається")}
@@ -131,9 +131,6 @@ class ServiceHandler:
                       course=user_request.course,
                       faculty_name=user_request.faculty_name,
                       educ_level=user_request.educ_level)
-
-        # TODO: add feature: if educ_level == “B” - >першого (бакалаврського) | else -> другого (магістерського)
-        # TODO: do validation in schema, like begining value
 
         user_request = await user_request_service.create(session=session, data=data)
         prepared_data = {
