@@ -4,7 +4,7 @@ from datetime import date, datetime
 from typing import Dict, Union, List
 from decimal import Decimal
 
-from pydantic import validator, root_validator, Field
+from pydantic import validator, root_validator
 
 
 class CreateUserRequestIn(BaseInSchema):
