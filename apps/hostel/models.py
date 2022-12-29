@@ -16,9 +16,11 @@ class Hostel(Base):
     city = Column(VARCHAR(length=100), nullable=False)
     street = Column(VARCHAR(length=100), nullable=False)
     build = Column(VARCHAR(length=10), nullable=False)
-    month_price = Column(DECIMAL(6, 2))
+    month_price = Column(DECIMAL(6, 2), nullable=False)
     university_id = Column(INTEGER, ForeignKey("university.university_id"), nullable=False)
     commandant_id = Column(INTEGER, ForeignKey("commandant.commandant_id"), nullable=False)
+    instagram = Column(VARCHAR(length=255))
+    telegram = Column(VARCHAR(length=255))
 
     university = relationship('University', back_populates='hostels')
     commandant = relationship('Commandant', back_populates='hostel', lazy="joined")

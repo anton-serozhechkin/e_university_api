@@ -308,7 +308,7 @@ CREATE TABLE IF NOT EXISTS requisites(
     university_id integer NOT NULL,
     organisation_code VARCHAR(50),
     service_id integer NOT NULL,
-    payment_recognation VARCHAR(255),
+    payment_recognition VARCHAR(255),
     CONSTRAINT requisites_pk PRIMARY KEY(requisites_id));
 
 ALTER TABLE requisites ADD CONSTRAINT requisites_university_fk
