@@ -24,14 +24,13 @@ dict_config = {
         "root": {
             "handlers": ["console"],
             "level": 'DEBUG',
-            "propagate": False
         },
         "uvicorn": {
             "handlers": ["console"],
-            "propagate": True
+            "propagate": False
         },
         "gunicorn": {
-            "propagate": True
+            "propagate": False
             },
     },
 }

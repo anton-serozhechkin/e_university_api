@@ -16,7 +16,7 @@ from starlette.exceptions import HTTPException as StarletteHTTPException
 from utils import get_logger_by_name
 
 
-logger = get_logger_by_name('root')
+logger = get_logger_by_name(logger_name='root')
 
 app = FastAPI(openapi_tags=metadata)
 
