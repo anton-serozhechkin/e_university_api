@@ -104,8 +104,7 @@ class ServiceHandler:
             user: UserOut,
             session: AsyncSession
     ):
-        user_faculty_result = await user_faculty_service.read(data={"user_id": user.user_id},
-                                                              session=session)
+        user_faculty_result = await user_faculty_service.read(data={"user_id": user.user_id}, session=session)
         data = {"date_created": datetime.now(),
                 "comment": user_request.comment,
                 "user_id": user.user_id,
@@ -121,11 +120,11 @@ class ServiceHandler:
 
         result = dict(response)
         result.update(full_name={'last_name': user_request.student_last_name.capitalize(),
-                                      'first_name': user_request.student_first_name.capitalize(),
-                                      'middle_name': user_request.student_middle_name.capitalize()},
+                                 'first_name': user_request.student_first_name.capitalize(),
+                                 'middle_name': user_request.student_middle_name.capitalize()},
                       rector_full_name={'last_name': user_request.rector_last_name.capitalize(),
-                                            'first_name': user_request.rector_first_name.capitalize(),
-                                            'middle_name': user_request.rector_middle_name.capitalize()},
+                                        'first_name': user_request.rector_first_name.capitalize(),
+                                        'middle_name': user_request.rector_middle_name.capitalize()},
                       speciality_name=user_request.speciality_name,
                       speciality_code=user_request.speciality_code,
                       course=user_request.course,
