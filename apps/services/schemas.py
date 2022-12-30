@@ -13,6 +13,89 @@ from apps.common.schemas import (
 )
 
 
+speciality = {'51': 'Економіка', '121': 'Інженерія програмного забезпечення', '122': "Комп'ютерні науки", '124': 'Системний аналіз',
+              '125': 'Кібербезпека', '126': 'Інформаційні системи та технології', '186': 'Видавництво та поліграфія',
+              '53': 'Психологія', '81': 'Право, освітня програма', '232': 'Соціальне забезпечення',
+              '281': 'Публічне управління та адміністрування', '73': 'Менеджмент', '75': 'Маркетинг',
+              '22': 'Дизайн', '72': 'Фінанси, банківська справа та страхування', '71': 'Облік і оподаткування',
+              '11': '"Освітні, педагогічні науки"', '52': 'Політологія', '61': 'Журналістика', '291':
+                  'Міжнародні відносини, суспільні комунікації та регіональні студії', '292': 'Міжнародні економічні відносини',
+              '76': '"Підприємництво, торгівля та біржова діяльність"', '241': 'Готельно-ресторанна справа', '242': 'Туризм'}
+
+
+class CreateCustomHostelAccommodationIn(BaseInSchema):
+    rector_first_name: str
+    rector_middle_name: str
+    rector_last_name: str
+    student_first_name: str
+    student_middle_name: str
+    student_last_name: str
+    speciality_code: int
+    speciality_name: str
+    course: int
+    faculty_name: str
+    educ_level: str
+    comment: str
+
+    @root_validator
+    def validate_names(cls, values):
+        names = ['rector_first_name', 'rector_middle_name', 'rector_last_name','student_first_name',
+                 'student_middle_name', 'student_last_name']
+        for name in names:
+            if not isinstance(values.get(name), str):
+                raise ValueError(
+                    f"{name.replace('_', ' ').capitalize()} have to be string type"
+                )
+        return values
+
+    @validator('speciality_name')
+    def validate_speciality_name(cls, value):
+        if value in speciality.values():
+            raise ValueError(
+                f"Wrong {value} number. This speciality doesn't exist"
+            )
+        return value
+
+    @validator('faculty_name')
+    def validate_faculty_name(cls, value):
+        if value in ['Інформаційних технологій', 'Міжнародних відносин і журналістики',
+                     'Міжнародної економіки і підприємництва', 'Фінансів і обліку',
+                     'Менеджмента і маркетингу', 'Економіки і права']:
+            raise ValueError(
+                f"Wrong {value} number. This faculty doesn't exist"
+            )
+        return value
+
+
+    @validator('speciality_code')
+    def validate_speciality_code(cls, value):
+        if value in speciality.keys():
+            raise ValueError(
+                f"Wrong {value} number. This speciality doesn't exist"
+            )
+        return value
+
+    @validator('course')
+    def validate_course(cls, value):
+        if value in [1, 2, 3, 4, 5, 6]:
+            raise ValueError(
+                f"Wrong {value} number. This course doesn't exist"
+            )
+        return value
+
+    @validator('educ_level')
+    def validate_education_level(cls, value):
+        if value not in ['B', 'M']:
+            raise ValueError('Wrong education level value. Should be \'B\' or \'M\'')
+        return value
+
+    @validator('comment')
+    def validate_comment(cls, value):
+        if not isinstance(value, str):
+            raise ValueError('Comment have to be string type')
+        return value
+
+
 class CreateUserRequestIn(BaseInSchema):
     service_id: int
     comment: str = None
