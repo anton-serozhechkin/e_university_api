@@ -25,7 +25,7 @@ from apps.services.schemas import (
     UserRequestExistenceOut,
     UserRequestReviewIn,
     UserRequestReviewOut,
-    UserRequestsListOut,
+    UserRequestsListOut, CreateCustomHostelAccommodationIn,
 )
 from apps.users.schemas import CreateStudentsListOut
 
@@ -136,6 +136,35 @@ async def create_user_request(
     return {
         "data": response,
         "message": f"Created user request with id {response['user_request_id']}",
+    }
+
+
+@services_router.post(
+    "/{university_id}//",
+    name="create_custom_hostel_accommodation",
+    response_model=JSENDOutSchema[CreateUserRequestOut],
+    summary="Сreate custom hostel accommodation",
+    responses={200: {"description": "Successful created custom hostel accommodation"}},
+    tags=["Student dashboard"],
+)
+async def create_custom_hostel_accommodation(
+    request: Request,
+    university_id: int,
+    user_request: CreateCustomHostelAccommodationIn,
+    user=Depends(get_current_user),
+    session: AsyncSession = Depends(get_async_session),
+):
+
+    response = await service_handler.create_custom_hostel_accommodation(
+        request=request,
+        university_id=university_id,
+        user_request=user_request,
+        user=user,
+        session=session,
+    )
+    return {
+        "data": response,
+        "message": "Thanks for your editing. We will consider your application. Wait for the reply"
     }
 
 
