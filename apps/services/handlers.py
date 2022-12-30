@@ -125,6 +125,60 @@ class ServiceHandler:
             "user_request_id": user_request.user_request_id,
         }
 
+    async def create_custom_hostel_accommodation(
+        self,
+        *,
+        request: Request,
+        university_id: int,
+        user_request: CreateUserRequestIn,
+        user: UserOut,
+        session: AsyncSession,
+    ):
+        user_faculty_result = await user_faculty_service.read(
+            data={"user_id": user.user_id}, session=session
+        )
+        data = {
+            "created_at": datetime.now(utc),
+            "comment": user_request.comment,
+            "user_id": user.user_id,
+            "service_id": 1,
+            "faculty_id": user_faculty_result.faculty_id,
+            "university_id": university_id,
+            "status_id": STATUS_MAPPING.get("Розглядається"),
+        }
+
+
+        response = await user_request_booking_hostel_service.read(
+            session=session,
+            data={"user_id": user.user_id, "university_id": university_id},
+        )
+
+        result = dict(response)
+        result.update(full_name={'last_name': user_request.student_last_name.capitalize(),
+                                 'first_name': user_request.student_first_name.capitalize(),
+                                 'middle_name': user_request.student_middle_name.capitalize()},
+                      rector_full_name={'last_name': user_request.rector_last_name.capitalize(),
+                                        'first_name': user_request.rector_first_name.capitalize(),
+                                        'middle_name': user_request.rector_middle_name.capitalize()},
+                      speciality_name=user_request.speciality_name,
+                      speciality_code=user_request.speciality_code,
+                      course=user_request.course,
+                      faculty_name=user_request.faculty_name,
+                      educ_level=user_request.educ_level)
+
+        user_request = await user_request_service.create(session=session, data=data)
+
+        prepared_data = {
+            "context": result,
+            "service_id": user_request.service_id,
+            "user_request_id": user_request.user_request_id,
+        }
+        await self.__create_user_document(session, **prepared_data)
+        return {
+            "status_id": STATUS_MAPPING.get("Розглядається"),
+            "user_request_id": user_request.user_request_id,
+        }
+
     async def read_user_request_booking_hostel(
         self,
         *,
@@ -341,7 +395,7 @@ class ServiceHandler:
             f"hostel_settlement_{file_date_created}_"
             f"{kwargs.get('user_request_id')}.docx"
         )
-        DOCUMENT_PATH = SETTLEMENT_HOSTEL_PATH / str(context.user_id)
+        DOCUMENT_PATH = SETTLEMENT_HOSTEL_PATH / str(context['user_id'])
         Path(DOCUMENT_PATH).mkdir(exist_ok=True)
         document_path = file_manager.create(
             DOCUMENT_PATH, document_name, rendered_template
