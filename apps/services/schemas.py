@@ -42,11 +42,15 @@ class CreateCustomHostelAccommodationIn(BaseInSchema):
         names = ['rector_first_name', 'rector_middle_name', 'rector_last_name', 'student_first_name',
                  'student_middle_name', 'student_last_name']
         for name in names:
-            print(values.get('rector_first_name'))
-            print(type(values.get('rector_first_name')))
-            if not values.get(name):
+            if isinstance(values.get(name), str): # TODO: Upgrade validation system: can't know what value type is (thinks all is str)
                 raise ValueError(f"{name.replace('_', ' ').capitalize()} have to be string type")
         return values
+
+    @validator('educ_level')
+    def validate_education_level(cls, value):
+        if value not in ['B', 'M']:
+            raise ValueError('Wrong education level value. Should be \'B\' or \'M\'')
+        return value
 
     @validator('faculty_name')
     def validate_faculty_name(cls, value):
@@ -56,8 +60,8 @@ class CreateCustomHostelAccommodationIn(BaseInSchema):
             raise ValueError(f'Wrong \'{value}\' number. This faculty doesn\'t exist')
         return value
 
-    @validator('rector_first_name')
-    def validate_rector_first_name(cls, value):
+    @validator('speciality_code')
+    def validate_speciality_code(cls, value):
         if value not in speciality.keys():
             raise ValueError(f'Wrong {value} number. This speciality doesn\'t exist')
         return value
@@ -76,7 +80,7 @@ class CreateCustomHostelAccommodationIn(BaseInSchema):
 
     @validator('comment')
     def validate_comment(cls, value):
-        if type(value) is not str:
+        if type(value) is not str: # TODO: Upgrade validation system: can't know what value type is(thinks all is str)
             raise ValueError("Comment have to be string type")
         return value
 
