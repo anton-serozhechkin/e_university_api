@@ -55,8 +55,8 @@ class CreateCustomHostelAccommodationIn(BaseInSchema):
     @validator('faculty_name')
     def validate_faculty_name(cls, value):
         if value not in ['Інформаційних технологій', 'Міжнародних відносин і журналістики',
-                     'Міжнародної економіки і підприємництва', 'Фінансів і обліку',
-                     'Менеджмента і маркетингу', 'Економіки і права']:
+                         'Міжнародної економіки і підприємництва', 'Фінансів і обліку',
+                         'Менеджмента і маркетингу', 'Економіки і права']:
             raise ValueError(f'Wrong \'{value}\' number. This faculty doesn\'t exist')
         return value
 
