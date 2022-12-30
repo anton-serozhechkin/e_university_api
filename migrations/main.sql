@@ -353,7 +353,7 @@ CREATE VIEW hostel_accommodation_view AS
         re.iban,
         un.university_name,
         re.organisation_code,
-        re.payment_recognation,
+        re.payment_recognition,
         jsonb_build_object('last_name', co.last_name, 'first_name', co.first_name, 'middle_name', co.middle_name) 
             as commandant_full_name,
         co.telephone_number,

@@ -124,6 +124,22 @@ class UserDocument(Base):
                f'name="{self.name}", content="{self.content}", user_request_id="{self.user_request_id}")'
 
 
+class ServiceDocument(Base):
+    __tablename__ = "service_document"
+
+    service_document_id = Column(INTEGER, primary_key=True, nullable=False)
+    service_id = Column(INTEGER, ForeignKey("service.service_id"), nullable=False)
+    university_id = Column(INTEGER, ForeignKey("university.university_id"), nullable=False)
+    documents = Column(JSON, nullable=False)
+
+    university = relationship("University", back_populates='service_document')
+    service = relationship("Service", back_populates='service_document')
+
+    def __repr__(self):
+        return f'{self.__class__.__name__}(service_document_id="{self.user_document_id}", service_id="{self.service_id}",' \
+               f'university_id="{self.university_id}", documents="{self.documents}"'
+
+
 user_request_booking_hostel_view = Table('user_request_booking_hostel_view', metadata_obj,
                                          Column('full_name', JSON),
                                          Column('user_id', INTEGER),
