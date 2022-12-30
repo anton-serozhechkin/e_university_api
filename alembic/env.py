@@ -4,19 +4,11 @@ from logging.config import fileConfig
 from alembic import context
 from sqlalchemy_utils import database_exists, create_database
 
-from apps.authorization.models import Action, Role
-from apps.educational_institutions.models import Course, Dean, Faculty, Rector, University
-from apps.hostel.models import BedPlace, Commandant, Hostel
-from apps.services.models import (
-    Requisites,
-    Service,
-    ServiceDocument,
-    Status,
-    UserDocument,
-    UserRequest,
-    UserRequestReview
-)
-from apps.users.models import OneTimeToken, Student, User, UserFaculty
+from apps.authorization.models import Base as AuthBase
+from apps.educational_institutions.models import Base as EduBase
+from apps.hostel.models import Base as HostelBase
+from apps.services.models import Base as ServiceBase
+from apps.users.models import Base as UserBase
 from apps.common.db import Base, engine
 
 config = context.config

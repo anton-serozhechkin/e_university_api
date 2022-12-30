@@ -19,6 +19,7 @@ class Service(Base):
 
     requisites = relationship("Requisites", back_populates="service")
     user_requests = relationship("UserRequest", back_populates="service")
+    service_document = relationship("ServiceDocument", back_populates="service")
 
     def __repr__(self):
         return f'{self.__class__.__name__}(service_id="{self.service_id}",service_name="{self.service_name}")'
@@ -30,11 +31,31 @@ class UserRequest(Base):
     user_request_id = Column(INTEGER, primary_key=True, nullable=False)
     date_created = Column(DATETIME, nullable=False)
     comment = Column(VARCHAR(length=255))
-    user_id = Column(INTEGER, ForeignKey("user.user_id"), nullable=False)
-    service_id = Column(INTEGER, ForeignKey("service.service_id"), nullable=False)
-    faculty_id = Column(INTEGER, ForeignKey("faculty.faculty_id"), nullable=False)
-    university_id = Column(INTEGER, ForeignKey("university.university_id"), nullable=False)
-    status_id = Column(INTEGER, ForeignKey("status.status_id"), nullable=False)
+    user_id = Column(
+        INTEGER,
+        ForeignKey("user.user_id", ondelete="CASCADE", onupdate="CASCADE"),
+        nullable=False,
+    )
+    service_id = Column(
+        INTEGER,
+        ForeignKey("service.service_id", ondelete="CASCADE", onupdate="CASCADE"),
+        nullable=False,
+    )
+    faculty_id = Column(
+        INTEGER,
+        ForeignKey("faculty.faculty_id", ondelete="CASCADE", onupdate="CASCADE"),
+        nullable=False,
+    )
+    university_id = Column(
+        INTEGER,
+        ForeignKey("university.university_id", ondelete="CASCADE", onupdate="CASCADE"),
+        nullable=False,
+    )
+    status_id = Column(
+        INTEGER,
+        ForeignKey("status.status_id", ondelete="CASCADE", onupdate="CASCADE"),
+        nullable=False,
+    )
 
     user = relationship("User", back_populates="user_requests")
     service = relationship("Service", back_populates="user_requests")
@@ -69,8 +90,16 @@ class Requisites(Base):
     iban = Column(VARCHAR(length=100))
     organisation_code = Column(VARCHAR(length=50))
     payment_recognition = Column(VARCHAR(length=255))
-    university_id = Column(INTEGER, ForeignKey("university.university_id"), nullable=False)
-    service_id = Column(INTEGER, ForeignKey("service.service_id"), nullable=False)
+    university_id = Column(
+        INTEGER,
+        ForeignKey("university.university_id", ondelete="CASCADE", onupdate="CASCADE"),
+        nullable=False,
+    )
+    service_id = Column(
+        INTEGER,
+        ForeignKey("service.service_id", ondelete="CASCADE", onupdate="CASCADE"),
+        nullable=False,
+    )
 
     university = relationship("University", back_populates="requisites")
     service = relationship("Service", back_populates="requisites")
@@ -90,11 +119,28 @@ class UserRequestReview(Base):
     total_sum = Column(DECIMAL(7, 2))
     payment_deadline = Column(DATETIME)
     remark = Column(VARCHAR(length=255))
-    bed_place_id = Column(INTEGER, ForeignKey("bed_place.bed_place_id"))
-    reviewer = Column(INTEGER, ForeignKey("user.user_id"), nullable=False)  # TODO: rename column to reviewer_id
-    hostel_id = Column(INTEGER, ForeignKey("hostel.hostel_id"))
-    university_id = Column(INTEGER, ForeignKey("university.university_id"), nullable=False)
-    user_request_id = Column(INTEGER, ForeignKey("user_request.user_request_id"), nullable=False)
+    bed_place_id = Column(
+        INTEGER,
+        ForeignKey("bed_place.bed_place_id", ondelete="CASCADE", onupdate="CASCADE"),
+    )
+    reviewer = Column(
+        INTEGER,
+        ForeignKey("user.user_id", ondelete="CASCADE", onupdate="CASCADE"),
+        nullable=False,
+    )  # TODO: rename column to reviewer_id
+    hostel_id = Column(
+        INTEGER,
+        ForeignKey("hostel.hostel_id", ondelete="CASCADE", onupdate="CASCADE"),
+    )
+    university_id = Column(
+        INTEGER,
+        ForeignKey("university.university_id", ondelete="CASCADE", onupdate="CASCADE"),
+        nullable=False,
+    )
+    user_request_id = Column(
+        INTEGER,
+        ForeignKey("user_request.user_request_id", ondelete="CASCADE", onupdate="CASCADE"),
+        nullable=False)
 
     bed_place = relationship("BedPlace", back_populates='user_request_review')
     reviewer_user = relationship("User", back_populates='user_request_reviews')  # TODO: rename to reviewer
@@ -115,7 +161,11 @@ class UserDocument(Base):
     date_created = Column(DATETIME, nullable=False)
     name = Column(VARCHAR(length=255), nullable=False)
     content = Column(VARCHAR(length=255), nullable=False)
-    user_request_id = Column(INTEGER, ForeignKey("user_request.user_request_id"), nullable=False)
+    user_request_id = Column(
+        INTEGER,
+        ForeignKey("user_request.user_request_id", ondelete="CASCADE", onupdate="CASCADE"),
+        nullable=False,
+    )
 
     user_request = relationship("UserRequest", back_populates="user_documents")
 
@@ -128,8 +178,16 @@ class ServiceDocument(Base):
     __tablename__ = "service_document"
 
     service_document_id = Column(INTEGER, primary_key=True, nullable=False)
-    service_id = Column(INTEGER, ForeignKey("service.service_id"), nullable=False)
-    university_id = Column(INTEGER, ForeignKey("university.university_id"), nullable=False)
+    service_id = Column(
+        INTEGER,
+        ForeignKey("service.service_id", ondelete="CASCADE", onupdate="CASCADE"),
+        nullable=False,
+    )
+    university_id = Column(
+        INTEGER,
+        ForeignKey("university.university_id", ondelete="CASCADE", onupdate="CASCADE"),
+        nullable=False,
+    )
     documents = Column(JSON, nullable=False)
 
     university = relationship("University", back_populates='service_document')

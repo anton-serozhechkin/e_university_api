@@ -15,7 +15,11 @@ class User(Base):
     last_visit = Column(TIMESTAMP)
     email = Column(VARCHAR(length=100), nullable=False, unique=True)
     is_active = Column(BOOLEAN, default=False)
-    role_id = Column(INTEGER, ForeignKey("role.role_id"), nullable=True)
+    role_id = Column(
+        INTEGER,
+        ForeignKey("role.role_id", ondelete="CASCADE", onupdate="CASCADE"),
+        nullable=True,
+    )
 
     student = relationship("Student", back_populates="user")
     user_request_reviews = relationship("UserRequestReview", back_populates="reviewer_user")
@@ -34,7 +38,11 @@ class OneTimeToken(Base):
     token_id = Column(INTEGER, primary_key=True, nullable=False)
     token = Column(VARCHAR(length=255), nullable=False)
     expires = Column(TIMESTAMP, nullable=False)
-    student_id = Column(INTEGER, ForeignKey("student.student_id"), nullable=False)
+    student_id = Column(
+        INTEGER,
+        ForeignKey("student.student_id", ondelete="CASCADE", onupdate="CASCADE"),
+        nullable=False,
+    )
 
     student = relationship("Student", back_populates="one_time_tokens")
 
@@ -51,10 +59,24 @@ class Student(Base):
     middle_name = Column(VARCHAR(length=50))
     telephone_number = Column(VARCHAR(length=50), nullable=False, unique=True)
     gender = Column(VARCHAR(length=1), nullable=False)
-    course_id = Column(INTEGER, ForeignKey("course.course_id"), nullable=False)
-    speciality_id = Column(INTEGER, ForeignKey("speciality.speciality_id"), nullable=False)
-    user_id = Column(INTEGER, ForeignKey("user.user_id"))
-    faculty_id = Column(INTEGER, ForeignKey("faculty.faculty_id"), nullable=False)
+    course_id = Column(
+        INTEGER, ForeignKey("course.course_id", ondelete="CASCADE", onupdate="CASCADE"),
+        nullable=False,
+    )
+    speciality_id = Column(
+        INTEGER,
+        ForeignKey("speciality.speciality_id", ondelete="CASCADE", onupdate="CASCADE"),
+        nullable=False,
+    )
+    user_id = Column(
+        INTEGER,
+        ForeignKey("user.user_id", ondelete="CASCADE", onupdate="CASCADE"),
+    )
+    faculty_id = Column(
+        INTEGER,
+        ForeignKey("faculty.faculty_id", ondelete="CASCADE", onupdate="CASCADE"),
+        nullable=False,
+    )
 
     course = relationship("Course", sync_backref=False, lazy="joined")
     speciality = relationship("Speciality", sync_backref=False)
@@ -71,8 +93,18 @@ class Student(Base):
 class UserFaculty(Base):
     __tablename__ = "user_faculty"
 
-    user_id = Column(INTEGER, ForeignKey("user.user_id", ondelete="CASCADE", onupdate="CASCADE"), nullable=False, primary_key=True)
-    faculty_id = Column(INTEGER, ForeignKey("faculty.faculty_id", ondelete="CASCADE", onupdate="CASCADE"), nullable=False, primary_key=True)
+    user_id = Column(
+        INTEGER,
+        ForeignKey("user.user_id", ondelete="CASCADE", onupdate="CASCADE"),
+        nullable=False,
+        primary_key=True,
+    )
+    faculty_id = Column(
+        INTEGER,
+        ForeignKey("faculty.faculty_id", ondelete="CASCADE", onupdate="CASCADE"),
+        nullable=False,
+        primary_key=True,
+    )
 
     def __repr__(self):
         return f'{self.__class__.__name__}(user_id="{self.user_id}", faculty_id="{self.faculty_id}")'
