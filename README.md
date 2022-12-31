@@ -72,7 +72,7 @@ optional = false
 ```
 
 
-### Setup database
+### Setup database using sql files
 
 For work with application, you need to setup your database in docker container. To perform this:
 
@@ -99,6 +99,21 @@ For work with application, you need to setup your database in docker container. 
        docker-compose build --no-cache
        docker-compose up
 
+
+### Setup database using alembic migrations
+
+For work with application, you need to setup your database in docker container. To perform this:
+
+1. While postgres docker container is running, enter it (use separate terminal):
+
+      alembic upgrade head
+
+2. The database with the specified in .env name will be created in case there is no such.
+
+3. For creating one more database (for testing purpose) change POSTGRES_DB in .env file (database name)
+   and run the previous command again. You can choose the database to work with by changing POSTGRES_DB.
+
+4. How to work using alembic see README section in alembic dir.
 
 
 ## Project layout
