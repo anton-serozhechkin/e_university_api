@@ -106,7 +106,7 @@ def upgrade() -> None:
         "user",
         sa.Column("user_id", sa.INTEGER(), nullable=False),
         sa.Column("login", sa.VARCHAR(length=50), nullable=False),
-        sa.Column("password", sa.VARCHAR(length=50), nullable=False),
+        sa.Column("password", sa.VARCHAR(length=255), nullable=False),
         sa.Column("last_visit", sa.TIMESTAMP(), nullable=True),
         sa.Column("email", sa.VARCHAR(length=100), nullable=False),
         sa.Column("is_active", sa.BOOLEAN(), nullable=True),
