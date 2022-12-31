@@ -106,7 +106,7 @@ class Requisites(Base):
 
     def __repr__(self):
         return f'{self.__class__.__name__}(requisites_id="{self.requisites_id}",iban="{self.iban}",organisation_code="{self.organisation_code}",' \
-               f'payment_recognition="{self.payment_recognation}",university_id="{self.university_id}",service_id="{self.service_id}")'
+               f'payment_recognition="{self.payment_recognition}",university_id="{self.university_id}",service_id="{self.service_id}")'
 
 
 class UserRequestReview(Base):
@@ -263,7 +263,7 @@ hostel_accommodation_view = Table('hostel_accommodation_view', metadata_obj,
                                   Column('iban', VARCHAR(100)),
                                   Column('university_name', VARCHAR(255)),
                                   Column('organisation_code', VARCHAR(50)),
-                                  Column('payment_recognation', VARCHAR(255)),
+                                  Column('payment_recognition', VARCHAR(255)),
                                   Column('commandant_full_name', JSON),
                                   Column('telephone_number', VARCHAR(50)),
                                   Column('documents', JSON))

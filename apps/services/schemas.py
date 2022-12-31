@@ -104,7 +104,7 @@ class HostelAccomodationViewOut(BaseOutSchema):
     iban: str
     university_name: str
     organisation_code: str
-    payment_recognation: str  # TODO spelling error
+    payment_recognition: str  # TODO spelling error
     commandant_full_name: FullNameSchema
     telephone_number: str
     documents: Dict[str, str]
