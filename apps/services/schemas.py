@@ -21,7 +21,7 @@ class CreateUserRequestIn(BaseInSchema):
 class CreateUserRequestOut(BaseOutSchema):
     user_request_id: int
     created_at: datetime
-    comment: str
+    comment: str = None
     user_id: int
     service_id: int
     faculty_id: int
@@ -93,15 +93,15 @@ class UserRequestReviewIn(BaseInSchema):
 class UserRequestReviewOut(BaseOutSchema):
     user_request_review_id: int
     created_at: datetime
-    room_number: int
-    start_accommodation_date: date
-    end_accommodation_date: date
-    total_sum: Decimal
-    payment_deadline_date: date
-    remark: str
-    bed_place_id: int
+    room_number: int = None
+    start_accommodation_date: date = None
+    end_accommodation_date: date = None
+    total_sum: Decimal = None
+    payment_deadline_date: date = None
+    remark: str = None
+    bed_place_id: int = None
     reviewer: int
-    hostel_id: int
+    hostel_id: int = None
     university_id: int
     user_request_id: int
 

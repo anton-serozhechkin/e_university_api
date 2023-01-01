@@ -121,11 +121,17 @@ async def create_user_request(
 
     **Input**:
     - **service_id**: service id, required
-    - **comment**: comment for the creating user request
+    - **comment**: comment for the creating user request, not required
 
     **Return**:
-    - user request id
-    - request status id
+    - **user_request_id**
+    - **created_at**
+    - **comment**
+    - **user_id**
+    - **service_id**
+    - **faculty_id**
+    - **university_id**
+    - **status_id**
     """
     response = await service_handler.create_user_request(
         request=request,
