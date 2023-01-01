@@ -18,12 +18,6 @@ class UsersListViewOut(BaseOutSchema):
     university_id: int
 
 
-class RegistrationOut(BaseOutSchema):
-    user_id: int
-    faculty_id: int
-    login: str
-
-
 class RegistrationIn(BaseInSchema):
     token: str
     email: str
@@ -134,6 +128,11 @@ class CreateUserIn(BaseInSchema):
 
 class CreateUserOut(BaseOutSchema):
     user_id: int
+    login: str
+    last_visit: datetime = None
+    email: str
+    is_active: bool = None
+    role_id: int
 
 
 class TokenPayload(BaseInSchema):
@@ -189,7 +188,7 @@ class StudentCheckExistenceIn(BaseInSchema):
 
 
 class StudentCheckExistenceOut(BaseOutSchema):
-    student: int
+    student_id: int
     token: str
     expires_at: datetime
 
@@ -238,8 +237,14 @@ class CreateStudentIn(StudentCheckExistenceIn):
         return value
 
 
-class CreateStudentOut(BaseOutSchema):
+class CreateStudentOut(FullNameSchema):
     student_id: int
+    telephone_number: str
+    gender: str
+    course_id: int
+    speciality_id: int
+    user_id: int = None
+    faculty_id: int
 
 
 class CreateStudentsListOut(BaseOutSchema):

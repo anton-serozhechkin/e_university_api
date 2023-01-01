@@ -22,9 +22,9 @@ educational_institutions_router = APIRouter(
     "/{university_id}/faculties/",
     name="read_faculty_list",
     response_model=JSENDOutSchema[List[FacultyOut]],
-    summary="Get faculty list",
+    summary="Get list of faculties",
     responses={
-        200: {"description": "Successful get faculty list of university response"},
+        200: {"description": "Successful get list of university faculties response"},
     },  # TODO after input id of non-existent university it returns success,
     tags=["SuperAdmin dashboard"],
 )
@@ -34,13 +34,19 @@ async def read_faculties(
     user=Depends(get_current_user),
     session: AsyncSession = Depends(get_async_session),
 ):
-    """Get list of university faculties.
+    """**Get list of university faculties**.
 
-    Path:
-        - university_id: integer, required, university id in table
+    **Path**:
+    - **university_id**: integer, required, university id in table
 
-    Return: list of all university faculties with info: faculty id in table,
-        name and shortname, email, university id in table, dean full name.
+    **Return**:
+    - **faculty_id:** id of faculty
+    - **name:** faculty name
+    - **shortname:** faculty short name
+    - **main_email:** main email of faculty
+    - **university_id:** id of faculty's university
+    - **dean_id:** id of faculty's dean
+    - **dean_full_name:** full name of faculty's dean
     """
     return {
         "data": await edu_institutions_handler.read_faculties(
@@ -67,21 +73,32 @@ async def create_faculty(
     user=Depends(get_current_user),
     session: AsyncSession = Depends(get_async_session),
 ):
-    """Create faculty in university.
+    """**Method for creating university faculty**.
 
-    Auth: only authenticated user can get courses list.
+    **Auth**:
+    - only authenticated user can get courses list
 
-    Path:
-        - university_id: path, integer, required, university id in table
+    **Path**:
+    - **university_id**: path, integer, required, university id in table
 
-    Input required
-        - university_id: integer, university id in table
-        - name: string, full faculty name
-        - shortname: string, short faculty name
-        - main_email: string, faculty main email
+    **Input**:
+    - **university_id**: integer, university id in table, required
+    - **name**: string, full faculty name, required
+    - **shortname**: string, short faculty name, required
+    - **main_email**: string, faculty main email, not required
+    - **dean_id**: integer, id of existing faculty's dean, not required
+    - **dean_last_name**: string, last name of faculty's dean, not required
+    - **dean_first_name**: string, first name of faculty's dean, not required
+    - **dean_middle_name**: string, middle name of faculty's dean, not required
 
-    Return: list of all university faculties with info: faculty id in table,
-        name and shortname,email, university id in table, dean full name.
+    **Return** faculty list with:
+    - **faculty_id**: int, id of created faculty
+    - **name**: str, faculty's full name
+    - **shortname**: str, faculty's short name
+    - **main_email**: str, email of faculty
+    - **university_id**: int, id of facultys university
+    - **dean_id**: int, id of created or existing faculty's dean
+    - **dean_full_name**: dict, full name of created or existing faculty's dean
     """
     response = await edu_institutions_handler.create_faculty(
         request=request, data=faculty, session=session

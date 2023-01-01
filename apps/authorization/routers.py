@@ -30,13 +30,16 @@ async def login(
     form_data: OAuth2PasswordRequestForm = Depends(),
     session: AsyncSession = Depends(get_async_session),
 ):
-    """Login user.
+    """**Login user**.
 
-    Input:
-    - username: login, which consists of name and random number; required
-    - password: password to this login name; required
+    **Input:**
+    - **username:** login, which consists of name and random number; required
+    - **password:** password to this login name; required
 
-    Return: access and refresh tokens for authentication, user id
+    **Return:**
+    - **access_token:** token for access to endpoints
+    - **refresh_token:** token for refresh access token
+    - **user_id:** id of logined user
     """
     return await authorization_handler.login(
         request=request, form_data=form_data, session=session

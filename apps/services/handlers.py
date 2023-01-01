@@ -120,10 +120,7 @@ class ServiceHandler:
             "user_request_id": user_request.user_request_id,
         }
         await self.__create_user_document(session, **prepared_data)
-        return {
-            "status_id": STATUS_MAPPING.get("Розглядається"),
-            "user_request_id": user_request.user_request_id,
-        }
+        return user_request
 
     async def read_user_request_booking_hostel(
         self,
@@ -147,15 +144,12 @@ class ServiceHandler:
         session: AsyncSession,
     ):
         CancelRequestIn(status_id=cancel_request.status_id)
-        await user_request_service.update(
+        user_request = await user_request_service.update(
             session=session,
             data={"user_request_id": user_request_id},
             obj=cancel_request,
         )
-        return {
-            "user_request_id": user_request_id,
-            "status_id": cancel_request.status_id,
-        }
+        return user_request
 
     async def create_user_request_review(
         self,
@@ -189,10 +183,7 @@ class ServiceHandler:
             data={"user_request_id": user_request_id},
             obj={"status_id": user_request_review.status_id},
         )
-        return {
-            "status_id": user_request_review.status_id,
-            "user_request_review_id": created_user_request_review.user_request_review_id,
-        }
+        return created_user_request_review
 
     async def read_hostel_accommodation(
         self,

@@ -16,11 +16,14 @@ from apps.common.utils import (
 from apps.services.services import user_faculty_service
 from apps.users.schemas import (
     CreateStudentIn,
+    CreateStudentOut,
     CreateUserIn,
+    CreateUserOut,
     DeleteStudentIn,
     DeleteUserIn,
     RegistrationIn,
     StudentCheckExistenceIn,
+    StudentCheckExistenceOut,
 )
 from apps.users.services import (
     one_time_token_service,
@@ -38,7 +41,7 @@ class UserHandler:
         request: Request,
         student: StudentCheckExistenceIn,
         session: AsyncSession
-    ):  # TODO Refactor this method
+    ) -> StudentCheckExistenceOut:  # TODO Refactor this method
         result = await student_service.read(session=session, obj=student)
         if not result:
             raise BackendException(
@@ -83,7 +86,14 @@ class UserHandler:
                 session=session,
                 data={"user_id": created_user.user_id, "faculty_id": faculty_id},
             )
-        return created_user.user_id
+        return CreateUserOut(
+            user_id=created_user.user_id,
+            login=created_user.login,
+            last_visit=created_user.last_visit_at,
+            email=created_user.email,
+            is_active=created_user.is_active,
+            role_id=created_user.role_id,
+        )
 
     async def del_user(
         self, *, request: Request, delete_user: DeleteUserIn, session: AsyncSession
@@ -119,21 +129,26 @@ class UserHandler:
             data={"student_id": student_id},
             obj={"user_id": registered_user.user_id},
         )
-        user_faculty_data = await user_faculty_service.create(
+        await user_faculty_service.create(
             session=session,
             data={"user_id": registered_user.user_id, "faculty_id": faculty_id},
         )
-        return {
-            "user_id": registered_user.user_id,
-            "faculty_id": user_faculty_data.user_id,
-            "login": login,
-        }
+        return CreateUserOut(
+            user_id=registered_user.user_id,
+            login=registered_user.login,
+            last_visit=registered_user.last_visit_at,
+            email=registered_user.email,
+            is_active=registered_user.is_active,
+            role_id=registered_user.role_id,
+        )
 
     async def create_student(
         self, *, request: Request, student: CreateStudentIn, session: AsyncSession
-    ):
-        created_student = await student_service.create(session=session, obj=student)
-        return {"student_id": created_student.student_id}
+    ) -> CreateStudentOut:
+        return await student_service.create(
+            session=session,
+            obj=student,
+        )
 
     async def read_students_list(
         self,
