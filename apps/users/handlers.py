@@ -23,6 +23,7 @@ from apps.users.schemas import (
     DeleteUserIn,
     RegistrationIn,
     StudentCheckExistenceIn,
+    StudentCheckExistenceOut,
 )
 from apps.users.services import (
     one_time_token_service,
@@ -40,7 +41,7 @@ class UserHandler:
         request: Request,
         student: StudentCheckExistenceIn,
         session: AsyncSession
-    ):  # TODO Refactor this method
+    ) -> StudentCheckExistenceOut:  # TODO Refactor this method
         result = await student_service.read(session=session, obj=student)
         if not result:
             raise BackendException(

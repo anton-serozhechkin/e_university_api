@@ -53,19 +53,15 @@ async def check_student(
     - **telephone_number**: telephone number, must be 12 digits
 
     **Return**:
-    - student id
-    - token, which is used for registering user
-    - token expires datetime
+    - **student_id**: int, id of student
+    - **token**: str, used for user registration
+    - **expires_at**: datetime, token expires datetime
     """
     result = await user_handler.check_student(
         request=request, student=student, session=session
     )
     return {
-        "data": {
-            "token": result.token,
-            "student": result.student_id,
-            "expires_at": result.expires_at,
-        },
+        "data": result,
         "message": f"Get information of student with id {result.student_id}",
     }
 
@@ -129,7 +125,12 @@ async def create_user(
     - **faculty_id**: user faculty id, required
 
     **Return**:
-    - created user id
+    - **user_id**: int, id of created user
+    - **login**: str, username of created user
+    - **last_visit**: datetime, date and time of last successfull user login
+    - **email**: str, user email
+    - **is_active**: bool, flag which indicates is user active
+    - **role_id**: int, id of user role
     """
     user = await user_handler.create_user(
         request=request, user=user, session=session
@@ -199,9 +200,12 @@ async def registration(
     - **password**: enter password; password cannot be empty
 
     **Return**:
-    - user id
-    - faculty id
-    - login, which consists of name and random number
+    - **user_id**: int, id of created user
+    - **login**: str, username of created user
+    - **last_visit**: datetime, date and time of last successfull user login
+    - **email**: str, user email
+    - **is_active**: bool, flag which indicates is user active
+    - **role_id**: int, id of user role
     """
     response = await user_handler.registration(
         request=request, user=user, session=session

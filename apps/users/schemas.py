@@ -188,7 +188,7 @@ class StudentCheckExistenceIn(BaseInSchema):
 
 
 class StudentCheckExistenceOut(BaseOutSchema):
-    student: int
+    student_id: int
     token: str
     expires_at: datetime
 
