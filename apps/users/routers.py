@@ -45,7 +45,7 @@ async def check_student(
     student: StudentCheckExistenceIn,
     session: AsyncSession = Depends(get_async_session),
 ):
-    """**Check student existence in the database.**
+    """**Check student existence in the database**.
 
     **Input**:
     - **last_name**: last name of the student
@@ -111,7 +111,7 @@ async def create_user(
     auth=Depends(get_current_user),
     session: AsyncSession = Depends(get_async_session),
 ):
-    """**Method for creating user record.**
+    """**Method for creating user record**.
 
     **Path**:
     - **university_id**: university id for creating user
@@ -132,9 +132,7 @@ async def create_user(
     - **is_active**: bool, flag which indicates is user active
     - **role_id**: int, id of user role
     """
-    user = await user_handler.create_user(
-        request=request, user=user, session=session
-    )
+    user = await user_handler.create_user(request=request, user=user, session=session)
     return {"data": user, "message": f"Created user with id {user.user_id}"}
 
 
@@ -191,7 +189,7 @@ async def registration(
     user: RegistrationIn,
     session: AsyncSession = Depends(get_async_session),
 ):
-    """**Method for user registration, using token based on student's record.**
+    """**Method for user registration, using token based on student's record**.
 
     **Input**:
     - **token**: token from "Check user existence"
@@ -235,7 +233,7 @@ async def create_student(
     auth=Depends(get_current_user),
     session: AsyncSession = Depends(get_async_session),
 ):
-    """**Method for university student record creating.**
+    """**Method for university student record creating**.
 
     **Path**:
     - **university_id**: university id

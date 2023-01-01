@@ -34,7 +34,7 @@ async def read_faculties(
     user=Depends(get_current_user),
     session: AsyncSession = Depends(get_async_session),
 ):
-    """**Get list of university faculties.**
+    """**Get list of university faculties**.
 
     **Path**:
     - **university_id**: integer, required, university id in table
@@ -43,9 +43,9 @@ async def read_faculties(
     - **faculty_id:** id of faculty
     - **name:** faculty name
     - **shortname:** faculty short name
-    - **main_email:** main email of faculty 
+    - **main_email:** main email of faculty
     - **university_id:** id of faculty's university
-    - **dean_id:** id of faculty's dean 
+    - **dean_id:** id of faculty's dean
     - **dean_full_name:** full name of faculty's dean
     """
     return {
@@ -98,7 +98,7 @@ async def create_faculty(
     - **main_email**: str, email of faculty
     - **university_id**: int, id of facultys university
     - **dean_id**: int, id of created or existing faculty's dean
-    - **dean_full_name**: dict, full name of created or existing faculty's dean 
+    - **dean_full_name**: dict, full name of created or existing faculty's dean
     """
     response = await edu_institutions_handler.create_faculty(
         request=request, data=faculty, session=session

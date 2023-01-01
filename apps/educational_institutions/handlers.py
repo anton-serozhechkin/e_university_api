@@ -32,10 +32,14 @@ class EduInstitutionHandler:
     ) -> FacultyOut:
         if not data.dean_id:
             dean = await self.create_dean(
-                request=request, data={"last_name": data.dean_last_name,
-                          "first_name": data.dean_first_name,
-                          "middle_name": data.dean_middle_name,
-            }, session=session)
+                request=request,
+                data={
+                    "last_name": data.dean_last_name,
+                    "first_name": data.dean_first_name,
+                    "middle_name": data.dean_middle_name,
+                },
+                session=session,
+            )
             data.dean_id = dean.dean_id
             del data.dean_last_name
             del data.dean_first_name

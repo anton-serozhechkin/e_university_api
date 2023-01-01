@@ -55,7 +55,7 @@ async def check_user_request_existence(
     user=Depends(get_current_user),
     session: AsyncSession = Depends(get_async_session),
 ):  # TODO: nothing prevents student from creating multiple requests with the same id
-    """**Method for checking user request existence.**
+    """**Method for checking user request existence**.
 
     **Path**:
     - **university_id**: user university id
@@ -114,7 +114,7 @@ async def create_user_request(
     user=Depends(get_current_user),
     session: AsyncSession = Depends(get_async_session),
 ):
-    """**Method for creating user request**
+    """**Method for creating user request**.
 
     **Path**:
     - **university_id**: user university id
@@ -142,7 +142,7 @@ async def create_user_request(
     )
     return {
         "data": response,
-        "message": f"Created user request with id {response.user_request_id}"
+        "message": f"Created user request with id {response.user_request_id}",
     }
 
 
@@ -232,7 +232,7 @@ async def create_user_request_review(
     user=Depends(get_current_user),
     session: AsyncSession = Depends(get_async_session),
 ):
-    """**Create user request review.**
+    """**Create user request review**.
 
     **Path**:
     - **university_id**: user university id

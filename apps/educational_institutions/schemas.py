@@ -64,7 +64,9 @@ class FacultyOut(BaseOutSchema):
     shortname: str
     main_email: str = None
     dean_id: int
-    dean_full_name: FullNameSchema = None #  TODO after creating new faculty it value of field is equal null
+    dean_full_name: FullNameSchema = (
+        None  # TODO after creating new faculty it value of field is equal null
+    )
 
 
 class SpecialityListOut(BaseOutSchema):
