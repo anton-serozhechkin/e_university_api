@@ -16,6 +16,7 @@ from apps.common.utils import (
 from apps.services.services import user_faculty_service
 from apps.users.schemas import (
     CreateStudentIn,
+    CreateStudentOut,
     CreateUserIn,
     CreateUserOut,
     DeleteStudentIn,
@@ -142,7 +143,7 @@ class UserHandler:
 
     async def create_student(
         self, *, request: Request, student: CreateStudentIn, session: AsyncSession
-    ):
+    ) -> CreateStudentOut:
         return await student_service.create(
             session=session,
             obj=student,

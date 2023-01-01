@@ -239,7 +239,7 @@ async def create_student(
     **Input**:
     - **last_name**: student last name, required
     - **first_name**: student fist name, required
-    - **middle_name**: student middle name
+    - **middle_name**: student middle name, not required
     - **telephone_number**: student telephone number, must consists of 12 digits,
         required
     - **course_id**: student course id, must be between 1 and 6, required
