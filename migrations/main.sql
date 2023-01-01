@@ -30,6 +30,10 @@ CREATE TABLE IF NOT EXISTS dean(
     middle_name varchar(50),
     CONSTRAINT dean_pk PRIMARY KEY (dean_id));
 
+CREATE SEQUENCE IF NOT EXISTS dean_id_seq AS bigint START WITH 1 INCREMENT BY 1;
+
+ALTER TABLE dean ALTER COLUMN dean_id SET DEFAULT nextval('dean_id_seq');
+
 CREATE TABLE IF NOT EXISTS faculty(
     faculty_id integer NOT NULL,
     name varchar(255) NOT NULL,
