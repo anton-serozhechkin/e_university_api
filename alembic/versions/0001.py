@@ -153,7 +153,7 @@ def upgrade() -> None:
     )
     op.create_table(
         "faculty",
-        sa.Column("faculty_id", sa.INTEGER(), nullable=False),
+        sa.Column("faculty_id", sa.INTEGER(), primary_key=True, nullable=False),
         sa.Column("name", sa.VARCHAR(length=255), nullable=False),
         sa.Column("shortname", sa.VARCHAR(length=20), nullable=True),
         sa.Column("main_email", sa.VARCHAR(length=50), nullable=True),
