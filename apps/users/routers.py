@@ -38,7 +38,7 @@ users_router = APIRouter()
         },
         422: {"model": JSENDFailOutSchema, "description": "ValidationError"},
     },
-    tags=["Authorization"],
+    tags=["Users application"],
 )
 async def check_student(
     request: Request,
@@ -77,7 +77,7 @@ async def check_student(
         },
         422: {"model": JSENDFailOutSchema, "description": "ValidationError"},
     },
-    tags=["SuperAdmin dashboard"],
+    tags=["Users application"],
 )
 async def read_users_list(
     request: Request,
@@ -102,7 +102,7 @@ async def read_users_list(
         200: {"description": "Successful create user response"},
         422: {"model": JSENDFailOutSchema, "description": "ValidationError"},
     },
-    tags=["SuperAdmin dashboard"],
+    tags=["Users application"],
 )
 async def create_user(
     request: Request,
@@ -145,7 +145,7 @@ async def create_user(
         200: {"description": "Successful delete user response"},
         422: {"model": JSENDFailOutSchema, "description": "ValidationError"},
     },
-    tags=["SuperAdmin dashboard"],
+    tags=["Users application"],
 )
 async def delete_user(
     request: Request,
@@ -182,7 +182,7 @@ async def delete_user(
         },
         422: {"model": JSENDFailOutSchema, "description": "ValidationError"},
     },
-    tags=["Authorization"],
+    tags=["Users application"],
 )
 async def registration(
     request: Request,
@@ -223,7 +223,7 @@ async def registration(
         200: {"description": "Successful create student of the university response"},
         422: {"model": JSENDFailOutSchema, "description": "ValidationError"},
     },
-    tags=["Admin dashboard"],
+    tags=["Users application"],
 )
 # TODO after input id of the non-existent university it creates student
 async def create_student(
@@ -270,7 +270,7 @@ async def create_student(
         200: {"description": "Successful get all university students list response"},
         422: {"model": JSENDFailOutSchema, "description": "ValidationError"},
     },
-    tags=["Admin dashboard"],
+    tags=["Users application"],
 )
 async def read_students_list(
     request: Request,
@@ -299,7 +299,7 @@ async def read_students_list(
         200: {"description": "Successful delete university student response"},
         422: {"model": JSENDFailOutSchema, "description": "ValidationError"},
     },
-    tags=["SuperAdmin dashboard"],
+    tags=["Users application"],
 )
 async def delete_student(
     request: Request,
@@ -325,7 +325,7 @@ async def delete_student(
     responses={
         200: {"description": "Successful get current user information response"}
     },
-    tags=["Authorization"],
+    tags=["Users application"],
 )
 async def get_me(user: UserIn = Depends(get_current_user)):
     return {"data": user, "message": "Got user information"}
