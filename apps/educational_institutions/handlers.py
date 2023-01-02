@@ -35,18 +35,17 @@ class EduInstitutionHandler:
             session=session, filters={"university_id": university_id}
         )
 
-    @staticmethod
     async def create_faculty(
-        *, request: Request, data: FacultyIn, session: AsyncSession
+        self, *, request: Request, data: FacultyIn, session: AsyncSession
     ) -> FacultyOut:
         if not data.dean_id:
             dean = await self.create_dean(
                 request=request,
-                data={
-                    "last_name": data.dean_last_name,
-                    "first_name": data.dean_first_name,
-                    "middle_name": data.dean_middle_name,
-                },
+                data=FullNameSchema(
+                    last_name=data.dean_last_name,
+                    first_name=data.dean_first_name,
+                    middle_name=data.dean_middle_name,
+            ),
                 session=session,
             )
             data.dean_id = dean.dean_id
