@@ -56,7 +56,7 @@ During development it may be useful to run application outside of docker contain
    or
 
        poetry shell  # activate virtual environment; spawns a subshell
-       uvicorn main:app --port 8778
+       uvicorn apps.main:app --port 8778
 
    Now API must be accessible at <http:/localhost:8778> and docs at <http:/localhost:8778/docs>
 
