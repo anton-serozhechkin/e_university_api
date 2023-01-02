@@ -1,15 +1,16 @@
-from apps.common.schemas import BaseInSchema, BaseOutSchema, FullNameSchema
-
 from datetime import datetime
-from typing import List, Dict, Union
-import re
+from re import compile, escape, fullmatch
+from typing import Dict, List, Union
+
 from pydantic import Field, validator
+
+from apps.common.schemas import BaseInSchema, BaseOutSchema, FullNameSchema
 
 
 class UsersListViewOut(BaseOutSchema):
     user_id: int
     login: str
-    last_visit: datetime = None
+    last_visit_at: datetime = None
     email: str
     is_active: bool = None
     role: List[Dict[str, Union[int, str]]]
@@ -17,51 +18,55 @@ class UsersListViewOut(BaseOutSchema):
     university_id: int
 
 
-class RegistrationOut(BaseOutSchema):
-    user_id: int
-    faculty_id: int
-    login: str
-
-
 class RegistrationIn(BaseInSchema):
-
     token: str
     email: str
     password: str
     password_re_check: str
 
-    @validator('email')
+    @validator("email")
     def validate_email(cls, v: str) -> str:
+        """The method is using for email validation.
+
+        Only letters (a-z), numbers (0-9) and periods (.) are allowed.
+
+        Return: True or not None string
         """
-        The method is using for email validation. Only letters (a-z), numbers (0-9) and periods (.) are allowed
-        :return: True or not None string
-        """
-        specials = '!#$%&\'*+-/=?^_`{|?.'
-        specials = re.escape(specials)
-        regex = re.compile('^(?![' + specials + '])'
-                           '(?!.*[' + specials + ']{2})'
-                           '(?!.*[' + specials + ']$)'
-                           '[A-Za-z0-9' + specials + ']+(?<!['+ specials + '])@[A-Za-z0-9.-]+\.[A-Za-z]{2,4}$')
+        specials = "!#$%&'*+-/=?^_`{|?."
+        specials = escape(specials)
+        regex = compile(
+            "^(?!["
+            + specials
+            + "])(?!.*["
+            + specials
+            + "]{2})(?!.*["
+            + specials
+            + "]$)[A-Za-z0-9"
+            + specials
+            + "]+(?<!["
+            + specials
+            + "])@[A-Za-z0-9.-]+\.[A-Za-z]{2,4}$"
+        )
         message = False
 
         if not v:
             message = "The email address cannot be empty"
 
-        elif not re.fullmatch(regex, v):
+        elif not fullmatch(regex, v):
             message = f"Invalid email address format: {v}"
 
         if message:
             raise ValueError(message)
         return v
 
-    @validator('password_re_check')
-    def validate_password(cls, v: str, values: Dict) -> str:
-        password = values.get('password')
+    @validator("password_re_check")
+    def validate_password(cls, v, values: Dict) -> str:
+        password = values.get("password")
 
         if not password or not v:
-            raise ValueError('Passwords cannot be empty')
+            raise ValueError("Passwords cannot be empty")
         if password != v:
-            raise ValueError('The entered passwords do not match')
+            raise ValueError("The entered passwords do not match")
         return v
 
 
@@ -72,47 +77,62 @@ class AuthOut(BaseOutSchema):
 
 
 class CreateUserIn(BaseInSchema):
-
     email: str
     password: str
     password_re_check: str
     role_id: int
     faculty_id: List[int]
 
-    @validator('email')
+    @validator("email")
     def validate_email(cls, v: str) -> str:
+        """The method is using for email validation.
+
+        Only letters (a-z), numbers (0-9) and periods (.) are allowed.
+
+        Return: True or not None string
         """
-        The method is using for email validation. Only letters (a-z), numbers (0-9) and periods (.) are allowed
-        :return: True or not None string
-        """
-        specials = '!#$%&\'*+-/=?^_`{|?.'
-        specials = re.escape(specials)
-        regex = re.compile('^(?![' + specials + '])'
-                           '(?!.*[' + specials + ']{2})'
-                           '(?!.*[' + specials + ']$)'
-                           '[A-Za-z0-9' + specials + ']+(?<!['+ specials + '])@[A-Za-z0-9.-]+\.[A-Za-z]{2,4}$')
+        specials = "!#$%&'*+-/=?^_`{|?."
+        specials = escape(specials)
+        regex = compile(
+            "^(?!["
+            + specials
+            + "])(?!.*["
+            + specials
+            + "]{2})(?!.*["
+            + specials
+            + "]$)[A-Za-z0-9"
+            + specials
+            + "]+(?<!["
+            + specials
+            + "])@[A-Za-z0-9.-]+\.[A-Za-z]{2,4}$"
+        )
         message = False
         if not v:
             message = "The email address cannot be empty"
-        elif not re.fullmatch(regex, v):
+        elif not fullmatch(regex, v):
             message = f"Invalid email address format: {v}"
         if message:
             raise ValueError(message)
         return v
 
-    @validator('password_re_check')
-    def validate_password(cls, v: str, values: Dict) -> str:
-        password = values.get('password')
+    @validator("password_re_check")
+    def validate_password(cls, v, values: Dict) -> str:
+        password = values.get("password")
 
         if not password or not v:
-            raise ValueError('Passwords cannot be empty')
+            raise ValueError("Passwords cannot be empty")
         if password != v:
-            raise ValueError('The entered passwords do not match')
+            raise ValueError("The entered passwords do not match")
         return v
 
 
 class CreateUserOut(BaseOutSchema):
     user_id: int
+    login: str
+    last_visit: datetime = None
+    email: str
+    is_active: bool = None
+    role_id: int
 
 
 class TokenPayload(BaseInSchema):
@@ -123,7 +143,7 @@ class TokenPayload(BaseInSchema):
 class UserOut(BaseOutSchema):
     user_id: int
     login: str
-    last_visit: datetime = None
+    last_visit_at: datetime = None
     email: str
     is_active: bool = None
     role: List[Dict[str, Union[int, str]]]
@@ -144,7 +164,7 @@ class StudentCheckExistenceIn(BaseInSchema):
     first_name: str = Field(default="Petro", max_length=50)
     telephone_number: str = Field(default="380979889988", max_length=12, min_length=12)
 
-    @validator('last_name')
+    @validator("last_name")
     def validate_last_name(cls, value: str) -> str:
         if not value:
             raise ValueError("The student's surname is mandatory")
@@ -152,7 +172,7 @@ class StudentCheckExistenceIn(BaseInSchema):
             raise ValueError("The last name first letter must be uppercase")
         return value
 
-    @validator('first_name')
+    @validator("first_name")
     def validate_first_name(cls, value: str) -> str:
         if not value:
             raise ValueError("The student's name is mandatory")
@@ -160,17 +180,17 @@ class StudentCheckExistenceIn(BaseInSchema):
             raise ValueError("The name first letter must be uppercase")
         return value
 
-    @validator('telephone_number')
+    @validator("telephone_number")
     def validate_telephone_number(cls, value: str) -> str:
         if not value.isdigit():
-            raise ValueError('The phone number must consist of digits')
+            raise ValueError("The phone number must consist of digits")
         return value
 
 
 class StudentCheckExistenceOut(BaseOutSchema):
-    student: int
+    student_id: int
     token: str
-    expires: datetime
+    expires_at: datetime
 
 
 class CreateStudentIn(StudentCheckExistenceIn):
@@ -180,45 +200,51 @@ class CreateStudentIn(StudentCheckExistenceIn):
     speciality_id: int
     gender: str
 
-    @validator('middle_name')
+    @validator("middle_name")
     def validate_middle_name(cls, value: str) -> str:
         if value:
             if not value.istitle():
                 raise ValueError("The middle name first letter must be uppercase")
             return value
 
-    @validator('course_id')
+    @validator("course_id")
     def validate_course_id(cls, value: int) -> int:
         if not value:
-            raise ValueError('The course cannot be empty')
+            raise ValueError("The course cannot be empty")
         elif value not in range(1, 7):
-            raise ValueError('The course must be between 1 and 6')
+            raise ValueError("The course must be between 1 and 6")
         return value
 
-    @validator('speciality_id')
+    @validator("speciality_id")
     def validate_speciality_id(cls, value: int) -> int:
         if not value:
-            raise ValueError('The specialty cannot be empty')
+            raise ValueError("The specialty cannot be empty")
         return value
 
-    @validator('faculty_id')
+    @validator("faculty_id")
     def validate_faculty_id(cls, value: int) -> int:
         if not value:
-            raise ValueError('The faculty cannot be empty')
+            raise ValueError("The faculty cannot be empty")
         return value
 
-    @validator('gender')
+    @validator("gender")
     def validate_gender(cls, value: str) -> str:
-        exists_genders = ['Ч', 'Ж']
+        exists_genders = ["Ч", "Ж"]
         if not value:
-            raise ValueError('The student gender cannot be empty')
+            raise ValueError("The student gender cannot be empty")
         if value.upper() not in exists_genders:
-            raise ValueError('Choose your gender from the list provided')
+            raise ValueError("Choose your gender from the list provided")
         return value
 
 
-class CreateStudentOut(BaseOutSchema):
+class CreateStudentOut(FullNameSchema):
     student_id: int
+    telephone_number: str
+    gender: str
+    course_id: int
+    speciality_id: int
+    user_id: int = None
+    faculty_id: int
 
 
 class CreateStudentsListOut(BaseOutSchema):
