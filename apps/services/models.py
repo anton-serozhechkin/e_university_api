@@ -176,7 +176,7 @@ class UserDocument(Base):
     def __repr__(self):
         return (
             f'{self.__class__.__name__}(user_document_id="{self.user_document_id}", '
-            f'date_created="{self.date_created}", name="{self.name}", '
+            f'created_at="{self.created_at}", name="{self.name}", '
             f'content="{self.content}", user_request_id="{self.user_request_id}")'
         )
 

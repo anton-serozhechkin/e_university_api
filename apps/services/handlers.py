@@ -114,7 +114,7 @@ class ServiceHandler:
             data={"user_id": user.user_id}, session=session
         )
         data = {
-            "date_created": datetime.now(utc),
+            "created_at": datetime.now(utc),
             "comment": user_request.comment,
             "user_id": user.user_id,
             "service_id": user_request.service_id,
@@ -332,7 +332,7 @@ class ServiceHandler:
 
     @classmethod
     async def __create_user_document_content_hostel_settlement_service(
-        cls, **kwargs: Any[str, int, datetime]
+        cls, **kwargs
     ) -> str:
         context = kwargs.get("context")
         rendered_template = file_manager.render(
