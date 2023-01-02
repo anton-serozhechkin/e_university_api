@@ -46,7 +46,7 @@ services_router = APIRouter(
             )
         }
     },
-    tags=["Student dashboard"],
+    tags=["Services application"],
 )
 async def check_user_request_existence(
     request: Request,
@@ -83,7 +83,7 @@ async def check_user_request_existence(
     responses={
         200: {"description": "Successful get university user request list response"}
     },
-    tags=["Student dashboard"],
+    tags=["Services application"],
 )
 async def read_user_request_list(
     request: Request,
@@ -105,7 +105,7 @@ async def read_user_request_list(
     response_model=JSENDOutSchema[CreateUserRequestOut],
     summary="Create user request",
     responses={200: {"description": "Successful create user request response"}},
-    tags=["Student dashboard"],
+    tags=["Services application"],
 )
 async def create_user_request(
     request: Request,
@@ -154,7 +154,7 @@ async def create_user_request(
     responses={
         200: {"description": "Successful get user request booking hostel response"}
     },
-    tags=["Student dashboard"],
+    tags=["Services application"],
 )
 async def read_user_request_booking_hostel(
     request: Request,
@@ -176,7 +176,7 @@ async def read_user_request_booking_hostel(
     response_model=JSENDOutSchema[CreateUserRequestOut],
     summary="Cancel user request",
     responses={200: {"description": "Successful cancel user request response"}},
-    tags=["Student dashboard"],
+    tags=["Services application"],
 )
 async def cancel_request(
     request: Request,
@@ -222,7 +222,7 @@ async def cancel_request(
     response_model=JSENDOutSchema[UserRequestReviewOut],
     summary="Create user request review",
     responses={200: {"description": "Successful create user request review response"}},
-    tags=["Admin dashboard"],
+    tags=["Services application"],
 )
 async def create_user_request_review(
     request: Request,
@@ -276,7 +276,7 @@ async def create_user_request_review(
             "description": "Successful get user request hostel accommodation response"
         }
     },
-    tags=["Student dashboard"],
+    tags=["Services application"],
 )
 async def read_hostel_accommodation(
     request: Request,
@@ -302,7 +302,7 @@ async def read_hostel_accommodation(
     response_model=JSENDOutSchema[UserRequestDetailsViewOut],
     summary="Get user request",
     responses={200: {"description": "Successful get user request response"}},
-    tags=["Student dashboard"],
+    tags=["Services application"],
 )  # TODO Return Validation error with empty data
 async def read_request_details(
     request: Request,
@@ -330,7 +330,7 @@ async def read_request_details(
     responses={
         200: {"description": "Successful create students list from file response"}
     },
-    tags=["Admin dashboard"],
+    tags=["Services application"],
 )
 async def create_students_list_from_file(
     request: Request,
@@ -356,7 +356,7 @@ async def create_students_list_from_file(
             "content": {"text/html": {"example": "bytes"}},
         }
     },
-    tags=["Admin dashboard"],
+    tags=["Services application"],
 )
 async def read_user_document(
     request: Request,
@@ -410,7 +410,7 @@ async def read_user_document(
             },
         }
     },
-    tags=["Student dashboard"],
+    tags=["Services application"],
 )
 async def download_user_document(
     request: Request,
@@ -446,7 +446,7 @@ async def download_user_document(
             "description": "Successful create count hostel accommodation cost response"
         }
     },
-    tags=["Admin dashboard"],
+    tags=["Services application"],
 )
 async def count_hostel_accommodation_cost(
     request: Request,
