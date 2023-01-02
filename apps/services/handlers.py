@@ -5,19 +5,23 @@ from pathlib import Path
 from fastapi import File, Request, UploadFile
 from pytz import utc
 from sqlalchemy.ext.asyncio import AsyncSession
-from typing import Dict, List, Optional, Union
+from typing import Any, List, Optional, Tuple, Union
 
 from apps.common.file_managers import file_manager
-from apps.services.models import STATUS_MAPPING
+from apps.services.models import STATUS_MAPPING, UserDocument
 from apps.services.schemas import (
     CancelRequestIn,
     CountHostelAccommodationCostIn,
+    CountHostelAccommodationCostOut,
     CreateUserRequestIn,
+    CreateUserRequestOut,
     HostelAccomodationViewOut,
     UserRequestBookingHostelOut,
     UserRequestDetailsViewOut,
+    UserRequestExistenceOut,
     UserRequestsListOut,
     UserRequestReviewIn,
+    UserRequestReviewOut,
 )
 from apps.services.services import (
     bed_place_service,
@@ -44,7 +48,7 @@ from apps.services.utils import (
     create_telephone_set,
     get_worksheet_cell_col_row,
 )
-from apps.users.schemas import CreateStudentIn, UserOut
+from apps.users.schemas import CreateStudentIn, CreateStudentsListOut, UserOut
 from apps.users.services import student_service
 from settings import (
     HOSTEL_BOOKING_TEMPLATE,
@@ -63,7 +67,7 @@ class ServiceHandler:
             service_id: int,
             user: UserOut,
             session: AsyncSession,
-    ) -> Dict[str, Union[bool, int, None]]:
+    ) -> UserRequestExistenceOut:
         user_request_result = await request_existence_service.read(
             session=session,
             data={
@@ -73,12 +77,16 @@ class ServiceHandler:
             },
         )
         if user_request_result:
-            return {
-                "user_request_id": user_request_result.user_request_id,
-                "status": user_request_result.status,
-                "user_request_exist": True,
-            }
-        return {"user_request_id": None, "status": None, "user_request_exist": False}
+            return UserRequestExistenceOut(
+                user_request_id=user_request_result.user_request_id,
+                status=user_request_result.status,
+                user_request_exist=True,
+            )
+        return UserRequestExistenceOut(
+            user_request_id=None,
+            status=None,
+            user_request_exist=False,
+        )
 
     @staticmethod
     async def read_user_request_list(
@@ -101,7 +109,7 @@ class ServiceHandler:
             user_request: CreateUserRequestIn,
             user: UserOut,
             session: AsyncSession,
-    ) -> Dict[str, int]:
+    ) -> CreateUserRequestOut:
         user_faculty_result = await user_faculty_service.read(
             data={"user_id": user.user_id}, session=session
         )
@@ -147,7 +155,7 @@ class ServiceHandler:
         user_request_id: int,
         cancel_request: CancelRequestIn,
         session: AsyncSession,
-    ) -> Dict[str, int]:
+    ) -> CreateUserRequestOut:
         CancelRequestIn(status_id=cancel_request.status_id)
         user_request = await user_request_service.update(
             session=session,
@@ -165,7 +173,7 @@ class ServiceHandler:
         user_request_review: UserRequestReviewIn,
         user: UserOut,
         session: AsyncSession,
-    ) -> Dict[str, int]:
+    ) -> UserRequestReviewOut:
         created_user_request_review = await user_request_review_service.create(
             session=session,
             data={
@@ -241,7 +249,7 @@ class ServiceHandler:
         user_document_id: int,
         user: UserOut,
         session: AsyncSession,
-    ):
+    ) -> Tuple[str, str]:
         user_document = await user_document_service.read(
             session=session, data={"user_document_id": user_document_id}
         )
@@ -259,7 +267,7 @@ class ServiceHandler:
         university_id: int,
         data: CountHostelAccommodationCostIn,
         session: AsyncSession,
-    ) -> Dict[str, Decimal]:
+    ) -> CountHostelAccommodationCostOut:
         hostel = await hostel_service.read(
             session=session, data={"hostel_id": data.hostel_id}
         )
@@ -278,7 +286,7 @@ class ServiceHandler:
         response = self.calculate_total_hostel_accommodation_cost(
             month_price, months_count
         )
-        return {"total_hostel_accommodation_cost": response}
+        return CountHostelAccommodationCostOut(total_hostel_accommodation_cost=response)
 
     @classmethod
     def calculate_difference_between_dates_in_months(
@@ -324,7 +332,7 @@ class ServiceHandler:
 
     @classmethod
     async def __create_user_document_content_hostel_settlement_service(
-        cls, **kwargs
+        cls, **kwargs: Any[str, int, datetime]
     ) -> str:
         context = kwargs.get("context")
         rendered_template = file_manager.render(
@@ -370,7 +378,7 @@ class ServiceHandler:
         university_id: int,
         file: UploadFile = File(...),
         session: AsyncSession,
-    ):
+    ) -> Union[List[CreateStudentsListOut], None]:
         specialties, students = await get_specialties_list(university_id), []
 
         faculty_dict = create_faculty_dict(specialties)
