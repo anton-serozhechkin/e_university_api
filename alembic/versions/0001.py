@@ -58,6 +58,18 @@ def upgrade() -> None:
         "role",
         sa.Column("role_id", sa.INTEGER(), nullable=False),
         sa.Column("role_name", sa.VARCHAR(length=50), nullable=True),
+        sa.Column(
+            "created_at",
+            sa.TIMESTAMP(timezone=True),
+            server_default=sa.text("CURRENT_TIMESTAMP"),
+            nullable=False,
+        ),
+        sa.Column(
+            "updated_at",
+            sa.TIMESTAMP(timezone=True),
+            server_default=sa.text("CURRENT_TIMESTAMP"),
+            nullable=False,
+        ),
         sa.PrimaryKeyConstraint("role_id", name=op.f("role_pk")),
     )
     op.create_table(
@@ -107,10 +119,27 @@ def upgrade() -> None:
         sa.Column("user_id", sa.INTEGER(), nullable=False),
         sa.Column("login", sa.VARCHAR(length=50), nullable=False),
         sa.Column("password", sa.VARCHAR(length=255), nullable=False),
-        sa.Column("last_visit", sa.TIMESTAMP(), nullable=True),
+        sa.Column(
+            "last_visit_at",
+            sa.TIMESTAMP(timezone=True),
+            server_default=sa.text("CURRENT_TIMESTAMP"),
+            nullable=True,
+        ),
         sa.Column("email", sa.VARCHAR(length=100), nullable=False),
         sa.Column("is_active", sa.BOOLEAN(), nullable=True),
         sa.Column("role_id", sa.INTEGER(), nullable=True),
+        sa.Column(
+            "created_at",
+            sa.TIMESTAMP(timezone=True),
+            server_default=sa.text("CURRENT_TIMESTAMP"),
+            nullable=False,
+        ),
+        sa.Column(
+            "updated_at",
+            sa.TIMESTAMP(timezone=True),
+            server_default=sa.text("CURRENT_TIMESTAMP"),
+            nullable=False,
+        ),
         sa.ForeignKeyConstraint(
             ("role_id",),
             ["role.role_id"],
@@ -183,6 +212,18 @@ def upgrade() -> None:
         sa.Column("payment_recognition", sa.VARCHAR(length=255), nullable=True),
         sa.Column("university_id", sa.INTEGER(), nullable=False),
         sa.Column("service_id", sa.INTEGER(), nullable=False),
+        sa.Column(
+            "created_at",
+            sa.TIMESTAMP(timezone=True),
+            server_default=sa.text("CURRENT_TIMESTAMP"),
+            nullable=False,
+        ),
+        sa.Column(
+            "updated_at",
+            sa.TIMESTAMP(timezone=True),
+            server_default=sa.text("CURRENT_TIMESTAMP"),
+            nullable=False,
+        ),
         sa.ForeignKeyConstraint(
             ("service_id",),
             ["service.service_id"],
@@ -237,13 +278,24 @@ def upgrade() -> None:
     op.create_table(
         "user_request",
         sa.Column("user_request_id", sa.INTEGER(), nullable=False),
-        sa.Column("date_created", sa.TIMESTAMP(), nullable=False),
         sa.Column("comment", sa.VARCHAR(length=255), nullable=True),
         sa.Column("user_id", sa.INTEGER(), nullable=False),
         sa.Column("service_id", sa.INTEGER(), nullable=False),
         sa.Column("faculty_id", sa.INTEGER(), nullable=False),
         sa.Column("university_id", sa.INTEGER(), nullable=False),
         sa.Column("status_id", sa.INTEGER(), nullable=False),
+        sa.Column(
+            "created_at",
+            sa.TIMESTAMP(timezone=True),
+            server_default=sa.text("CURRENT_TIMESTAMP"),
+            nullable=False,
+        ),
+        sa.Column(
+            "updated_at",
+            sa.TIMESTAMP(timezone=True),
+            server_default=sa.text("CURRENT_TIMESTAMP"),
+            nullable=False,
+        ),
         sa.ForeignKeyConstraint(
             ("faculty_id",),
             ["faculty.faculty_id"],
@@ -293,6 +345,18 @@ def upgrade() -> None:
         sa.Column("speciality_id", sa.INTEGER(), nullable=False),
         sa.Column("user_id", sa.INTEGER(), nullable=True),
         sa.Column("faculty_id", sa.INTEGER(), nullable=False),
+        sa.Column(
+            "created_at",
+            sa.TIMESTAMP(timezone=True),
+            server_default=sa.text("CURRENT_TIMESTAMP"),
+            nullable=False,
+        ),
+        sa.Column(
+            "updated_at",
+            sa.TIMESTAMP(timezone=True),
+            server_default=sa.text("CURRENT_TIMESTAMP"),
+            nullable=False,
+        ),
         sa.ForeignKeyConstraint(
             ("course_id",),
             ["course.course_id"],
@@ -327,10 +391,21 @@ def upgrade() -> None:
     op.create_table(
         "user_document",
         sa.Column("user_document_id", sa.INTEGER(), nullable=False),
-        sa.Column("date_created", sa.TIMESTAMP(), nullable=False),
         sa.Column("name", sa.VARCHAR(length=255), nullable=False),
         sa.Column("content", sa.VARCHAR(length=255), nullable=False),
         sa.Column("user_request_id", sa.INTEGER(), nullable=False),
+        sa.Column(
+            "created_at",
+            sa.TIMESTAMP(timezone=True),
+            server_default=sa.text("CURRENT_TIMESTAMP"),
+            nullable=False,
+        ),
+        sa.Column(
+            "updated_at",
+            sa.TIMESTAMP(timezone=True),
+            server_default=sa.text("CURRENT_TIMESTAMP"),
+            nullable=False,
+        ),
         sa.ForeignKeyConstraint(
             ("user_request_id",),
             ["user_request.user_request_id"],
@@ -343,18 +418,19 @@ def upgrade() -> None:
     op.create_table(
         "user_request_review",
         sa.Column("user_request_review_id", sa.INTEGER(), nullable=False),
-        sa.Column("date_created", sa.TIMESTAMP(), nullable=False),
         sa.Column("room_number", sa.INTEGER(), nullable=True),
-        sa.Column("start_date_accommodation", sa.TIMESTAMP(), nullable=True),
-        sa.Column("end_date_accommodation", sa.TIMESTAMP(), nullable=True),
+        sa.Column("start_accommodation_date", sa.DATE(), nullable=True),
+        sa.Column("end_accommodation_date", sa.DATE(), nullable=True),
         sa.Column("total_sum", sa.DECIMAL(precision=7, scale=2), nullable=True),
-        sa.Column("payment_deadline", sa.TIMESTAMP(), nullable=True),
+        sa.Column("payment_deadline_date", sa.DATE(), nullable=True),
         sa.Column("remark", sa.VARCHAR(length=255), nullable=True),
         sa.Column("bed_place_id", sa.INTEGER(), nullable=True),
         sa.Column("reviewer", sa.INTEGER(), nullable=False),
         sa.Column("hostel_id", sa.INTEGER(), nullable=True),
         sa.Column("university_id", sa.INTEGER(), nullable=False),
         sa.Column("user_request_id", sa.INTEGER(), nullable=False),
+        sa.Column("created_at", sa.TIMESTAMP(timezone=True), server_default=sa.text("CURRENT_TIMESTAMP"), nullable=False),
+        sa.Column("updated_at", sa.TIMESTAMP(timezone=True), server_default=sa.text("CURRENT_TIMESTAMP"), nullable=False),
         sa.ForeignKeyConstraint(
             ("bed_place_id",),
             ["bed_place.bed_place_id"],
@@ -396,7 +472,7 @@ def upgrade() -> None:
         "one_time_token",
         sa.Column("token_id", sa.INTEGER(), nullable=False),
         sa.Column("token", sa.VARCHAR(length=255), nullable=False),
-        sa.Column("expires", sa.TIMESTAMP(), nullable=False),
+        sa.Column("expires_at", sa.TIMESTAMP(timezone=True), server_default=sa.text("CURRENT_TIMESTAMP"), nullable=False),
         sa.Column("student_id", sa.INTEGER(), nullable=False),
         sa.ForeignKeyConstraint(
             ("student_id",),
@@ -413,6 +489,8 @@ def upgrade() -> None:
         sa.Column("service_id", sa.INTEGER(), nullable=False),
         sa.Column("university_id", sa.INTEGER(), nullable=False),
         sa.Column("documents", sa.JSON(), nullable=False),
+        sa.Column("created_at", sa.TIMESTAMP(timezone=True), server_default=sa.text("CURRENT_TIMESTAMP"), nullable=False),
+        sa.Column("updated_at", sa.TIMESTAMP(timezone=True), server_default=sa.text("CURRENT_TIMESTAMP"), nullable=False),
         sa.ForeignKeyConstraint(
             ("university_id",),
             ["university.university_id"],

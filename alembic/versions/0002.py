@@ -24,8 +24,8 @@ def upgrade() -> None:
         urr.university_id,
         urr.user_request_id,
         urr.room_number,
-        urr.start_date_accommodation,
-        urr.end_date_accommodation,
+        urr.start_accommodation_date,
+        urr.end_accommodation_date,
         ht.month_price,
         jsonb_build_object('name', ht.name, 'number', ht.number)
             as hostel_name,
@@ -104,7 +104,7 @@ def upgrade() -> None:
     SELECT
         ur.user_request_id,
         ur.university_id,
-        ur.date_created,
+        ur.created_at,
         sr.service_name,
         st.status_name,
         ur.status_id,
@@ -113,7 +113,7 @@ def upgrade() -> None:
         urr.room_number,
         bd.bed_place_name,
         urr.remark,
-        jsonb_agg(jsonb_build_object('id', ud.user_document_id, 'name', ud.name,'date_created', ud.date_created)) as documents
+        jsonb_agg(jsonb_build_object('id', ud.user_document_id, 'name', ud.name,'created_at', ud.created_at)) as documents
     FROM
         user_request ur
     LEFT JOIN user_request_review urr ON
@@ -131,7 +131,7 @@ def upgrade() -> None:
 	GROUP BY
 		ur.user_request_id,
         ur.university_id,
-        ur.date_created,
+        ur.created_at,
         sr.service_name,
         st.status_name,
         ur.status_id,
@@ -175,7 +175,7 @@ def upgrade() -> None:
         ur.user_request_id,
         sr.service_name,
         jsonb_build_object('status_id', ur.status_id, 'status_name', st.status_name) as status,
-        ur.date_created
+        ur.created_at
     FROM
         user_request ur
     LEFT JOIN status st ON
@@ -218,7 +218,7 @@ def upgrade() -> None:
     SELECT
         u.user_id,
         u.login,
-        u.last_visit,
+        u.last_visit_at,
         u.email,
         u.is_active,
         COALESCE(json_agg(json_build_object('role', u.role_id, 'role_name', r.role_name)) FILTER (WHERE r.role_name IS NOT NULL), NULL) as role,
@@ -236,7 +236,7 @@ def upgrade() -> None:
     GROUP BY
         u.user_id,
         u.login,
-        u.last_visit,
+        u.last_visit_at,
         u.email,
         u.is_active,
         un.university_id
@@ -245,7 +245,8 @@ def upgrade() -> None:
         u.user_id,
         u.is_active;
     """)
-    op.execute(sqltext="""CREATE VIEW user_request_exist_view AS
+    op.execute(sqltext="""
+    CREATE VIEW user_request_exist_view AS
     SELECT
         ur.user_request_id,
         ur.user_id,
