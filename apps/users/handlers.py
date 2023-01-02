@@ -1,4 +1,4 @@
-from typing import Dict, List, Optional, Union
+from typing import List, Optional
 
 from fastapi import Request
 from fastapi import status as http_status
@@ -106,7 +106,7 @@ class UserHandler:
     @staticmethod
     async def registration(
         *, request: Request, user: RegistrationIn, session: AsyncSession
-    ) -> Dict[str, Union[int, str]]:
+    ) -> CreateUserOut:
         token_data = await one_time_token_service.read(
             session=session, data={"token": user.token}
         )
@@ -171,7 +171,7 @@ class UserHandler:
     @staticmethod
     async def delete_student(
         *, request: Request, del_student: DeleteStudentIn, session: AsyncSession
-    ):
+    ) -> None:
         await student_service.delete(session=session, obj=del_student)
         # TODO: in response key data has empty dict value, not like it's described
 
