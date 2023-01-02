@@ -75,18 +75,18 @@ class AwareDateTime(TypeDecorator):
     impl = DATETIME
 
     @property
-    def python_type(self):
+    def python_type(self) -> type(datetime):
         return type(datetime)
 
-    def process_bind_param(self, value, dialect):
+    def process_bind_param(self, value: datetime, dialect) -> datetime:
         if value is not None:
             if not value.tzinfo:
                 raise TypeError("tzinfo is required")
             value = value.astimezone(utc).replace(tzinfo=None)
         return value
 
-    def process_literal_param(self, value, dialect):
+    def process_literal_param(self, value: datetime, dialect) -> datetime:
         pass
 
-    def process_result_value(self, value, dialect):
+    def process_result_value(self, value: datetime, dialect) -> datetime:
         return value.replace(tzinfo=utc)

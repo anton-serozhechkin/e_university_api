@@ -11,3 +11,5 @@ __pycache__/
 
 pgadmin_data
 /apps/storage/services/settlement_hostel/
+
+alembic

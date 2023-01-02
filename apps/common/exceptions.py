@@ -23,7 +23,7 @@ class BackendException(Exception):
         data: typing.Union[None, int, str, list, dict] = None,
         message: str,
         code: int = http_status.HTTP_400_BAD_REQUEST,
-    ):
+    ) -> None:
         self.status = status
         self.data = data
         self.message = message

@@ -18,7 +18,7 @@ DeleteSchemaType = TypeVar("DeleteSchemaType", bound=BaseModel)
 
 
 class AsyncCRUDBase:
-    def __init__(self, *, model: Type[ModelType]):
+    def __init__(self, *, model: Type[ModelType]) -> None:
         self.model = model
 
     async def create(
