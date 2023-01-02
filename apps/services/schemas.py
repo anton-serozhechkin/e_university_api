@@ -38,18 +38,18 @@ class CreateCustomHostelAccommodationIn(BaseInSchema):
     comment: str
 
     @root_validator
-    def validate_names(cls, values):
+    def validate_rector_and_student_names(cls, values):
         names = ['rector_first_name', 'rector_middle_name', 'rector_last_name', 'student_first_name',
                  'student_middle_name', 'student_last_name']
         for name in names:
-            if not isinstance(values.get(name), str): # TODO: Upgrade validation system: can't know what value type is (thinks all is str)
-                raise ValueError(f"{name.replace('_', ' ').capitalize()} have to be string type")
+            if not values.get(name).istitle():
+                raise ValueError(f"{name.replace('_', ' ').capitalize()} first letter must be uppercase")
         return values
 
     @validator('educ_level')
     def validate_education_level(cls, value):
         if value not in ['B', 'M']:
-            raise ValueError('Wrong education level value. Should be \'B\' or \'M\'')
+            raise ValueError('Wrong education level value. Should be \'B\' or \'M\', uppercase also')
         return value
 
     @validator('faculty_name')
@@ -63,27 +63,27 @@ class CreateCustomHostelAccommodationIn(BaseInSchema):
     @validator('speciality_code')
     def validate_speciality_code(cls, value):
         if value not in speciality.keys():
-            raise ValueError(f'Wrong {value} number. This speciality doesn\'t exist')
+            raise ValueError(f'Wrong \'{value}\'number. This speciality doesn\'t exist')
         return value
 
     @validator('speciality_name')
     def validate_speciality_name(cls, value):
         if value not in speciality.values():
-            raise ValueError(f'Wrong {value} number. This speciality doesn\'t exist')
+            raise ValueError(f'Wrong \'{value}\' name. This speciality doesn\'t exist')
         return value
 
     @validator('course')
     def validate_course(cls, value):
         if value not in [1, 2, 3, 4, 5, 6]:
-            raise ValueError(f"Wrong {value} number. This course doesn't exist")
+            raise ValueError(f"Wrong \'{value}\' number. This course doesn't exist")
         return value
 
-    @validator('comment')
-    def validate_comment(cls, value):
-        if type(value) is not str: # TODO: Upgrade validation system: can't know what value type is(thinks all is str)
-            raise ValueError("Comment have to be string type")
-        return value
-
+    @root_validator
+    def validate_speciality_name_and_speciality_code_correspondence(cls, values):
+        if not speciality[values.get('speciality_code')] == values.get('speciality_name'):
+                raise ValueError(f"Speciality code \'{values.get('speciality_code')}\' doesn't correspondence with exists "
+                                 f"\'{values.get('speciality_name')}\' speciality name")
+        return values
 
 class CreateUserRequestIn(BaseInSchema):
     service_id: int
