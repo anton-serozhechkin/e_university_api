@@ -126,6 +126,16 @@ class UserRequestsListOut(BaseOutSchema):
     status: Dict[str, Union[int, str]]
     created_at: datetime
 
+class CreateUserRequestOut(BaseOutSchema):
+    user_request_id: int
+    created_at: datetime
+    comment: str = None
+    user_id: int
+    service_id: int
+    faculty_id: int
+    university_id: int
+    status_id: int
+
 
 class CancelRequestIn(BaseInSchema):
     status_id: int
