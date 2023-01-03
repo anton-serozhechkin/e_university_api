@@ -60,7 +60,7 @@ class RegistrationIn(BaseInSchema):
         return v
 
     @validator("password_re_check")
-    def validate_password(cls, v, values: Dict) -> str:
+    def validate_password(cls, v: str, values: Dict) -> str:
         password = values.get("password")
 
         if not password or not v:
@@ -116,7 +116,7 @@ class CreateUserIn(BaseInSchema):
         return v
 
     @validator("password_re_check")
-    def validate_password(cls, v, values: Dict) -> str:
+    def validate_password(cls, v: str, values: Dict) -> str:
         password = values.get("password")
 
         if not password or not v:
