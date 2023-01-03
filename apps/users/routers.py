@@ -14,7 +14,6 @@ from apps.users.schemas import (
     DeleteStudentIn,
     DeleteUserIn,
     RegistrationIn,
-    RegistrationOut,
     StudentCheckExistenceIn,
     StudentCheckExistenceOut,
     StudentsListOut,
@@ -39,32 +38,30 @@ users_router = APIRouter()
         },
         422: {"model": JSENDFailOutSchema, "description": "ValidationError"},
     },
-    tags=["Authorization"],
+    tags=["Users application"],
 )
 async def check_student(
     request: Request,
     student: StudentCheckExistenceIn,
     session: AsyncSession = Depends(get_async_session),
 ):
-    """Check student existence in the database.
+    """**Check student existence in the database**.
 
-    Input:
-        - last_name: last name of the student
-        - first_name: first name of the student
-        - telephone_number: telephone number, must be 12 digits
+    **Input**:
+    - **last_name**: last name of the student
+    - **first_name**: first name of the student
+    - **telephone_number**: telephone number, must be 12 digits
 
-    Return: student id; token, which is used for registering user;
-        token expires datetime;
+    **Return**:
+    - **student_id**: int, id of student
+    - **token**: str, used for user registration
+    - **expires_at**: datetime, token expires datetime
     """
     result = await user_handler.check_student(
         request=request, student=student, session=session
     )
     return {
-        "data": {
-            "token": result.token,
-            "student": result.student_id,
-            "expires_at": result.expires_at,
-        },
+        "data": result,
         "message": f"Get information of student with id {result.student_id}",
     }
 
@@ -80,7 +77,7 @@ async def check_student(
         },
         422: {"model": JSENDFailOutSchema, "description": "ValidationError"},
     },
-    tags=["SuperAdmin dashboard"],
+    tags=["Users application"],
 )
 async def read_users_list(
     request: Request,
@@ -105,7 +102,7 @@ async def read_users_list(
         200: {"description": "Successful create user response"},
         422: {"model": JSENDFailOutSchema, "description": "ValidationError"},
     },
-    tags=["SuperAdmin dashboard"],
+    tags=["Users application"],
 )
 async def create_user(
     request: Request,
@@ -114,25 +111,29 @@ async def create_user(
     auth=Depends(get_current_user),
     session: AsyncSession = Depends(get_async_session),
 ):
-    """Method for create user record.
+    """**Method for creating user record**.
 
-    Path:
-        - university_id: university id for creating user
+    **Path**:
+    - **university_id**: university id for creating user
 
-    Input:
-        - email: user email, only letters (a-z), numbers (0-9) and periods (.) are
-            allowed, required
-        - password: password, cannot be empty, required
-        - password_re_check: password recheck, required
-        - role_id: user role id, required
-        - faculty_id: user faculty id, required
+    **Input**:
+    - **email**: user email, only letters (a-z), numbers (0-9) and periods (.) are
+        allowed, required
+    - **password**: password, cannot be empty, required
+    - **password_re_check**: password recheck, required
+    - **role_id**: user role id, required
+    - **faculty_id**: user faculty id, required
 
-    Return: created user id
+    **Return**:
+    - **user_id**: int, id of created user
+    - **login**: str, username of created user
+    - **last_visit**: datetime, date and time of last successfull user login
+    - **email**: str, user email
+    - **is_active**: bool, flag which indicates is user active
+    - **role_id**: int, id of user role
     """
-    user_id = await user_handler.create_user(
-        request=request, user=user, session=session
-    )
-    return {"data": {"user_id": user_id}, "message": f"Created user with id {user_id}"}
+    user = await user_handler.create_user(request=request, user=user, session=session)
+    return {"data": user, "message": f"Created user with id {user.user_id}"}
 
 
 @users_router.delete(
@@ -144,7 +145,7 @@ async def create_user(
         200: {"description": "Successful delete user response"},
         422: {"model": JSENDFailOutSchema, "description": "ValidationError"},
     },
-    tags=["SuperAdmin dashboard"],
+    tags=["Users application"],
 )
 async def delete_user(
     request: Request,
@@ -163,7 +164,7 @@ async def delete_user(
 @users_router.post(
     "/registration",
     name="registration",
-    response_model=JSENDOutSchema[RegistrationOut],
+    response_model=JSENDOutSchema[CreateUserOut],
     summary="User registration",
     responses={
         200: {"description": "Successful user registration response"},
@@ -181,29 +182,35 @@ async def delete_user(
         },
         422: {"model": JSENDFailOutSchema, "description": "ValidationError"},
     },
-    tags=["Authorization"],
+    tags=["Users application"],
 )
 async def registration(
     request: Request,
     user: RegistrationIn,
     session: AsyncSession = Depends(get_async_session),
 ):
-    """Method for user registration, using token based on student's record.
+    """**Method for user registration, using token based on student's record**.
 
-    Input:
-        - token**: token from "Check user existence"
-        - email: enter user email; only letters (a-z), numbers (0-9) and
-            periods (.) are allowed
-        - password: enter password; password cannot be empty
+    **Input**:
+    - **token**: token from "Check user existence"
+    - **email**: enter user email; only letters (a-z), numbers (0-9) and
+        periods (.) are allowed
+    - **password**: enter password; password cannot be empty
 
-    Return: user id; faculty id; login, which consists of name and random number
+    **Return**:
+    - **user_id**: int, id of created user
+    - **login**: str, username of created user
+    - **last_visit**: datetime, date and time of last successfull user login
+    - **email**: str, user email
+    - **is_active**: bool, flag which indicates is user active
+    - **role_id**: int, id of user role
     """
     response = await user_handler.registration(
         request=request, user=user, session=session
     )
     return {
         "data": response,
-        "message": f"User with id {response['user_id']} was registered successfully",
+        "message": f"User with id {response.user_id} was registered successfully",
     }
 
 
@@ -216,7 +223,7 @@ async def registration(
         200: {"description": "Successful create student of the university response"},
         422: {"model": JSENDFailOutSchema, "description": "ValidationError"},
     },
-    tags=["Admin dashboard"],
+    tags=["Users application"],
 )
 # TODO after input id of the non-existent university it creates student
 async def create_student(
@@ -226,30 +233,31 @@ async def create_student(
     auth=Depends(get_current_user),
     session: AsyncSession = Depends(get_async_session),
 ):
-    """Method for create university student record.
+    """**Method for university student record creating**.
 
-    Path:
-        - university_id: university id
+    **Path**:
+    - **university_id**: university id
 
-    Input:
-        - last_name: student last name, required
-        - first_name: student fist name, required
-        - middle_name: student middle name
-        - telephone_number: student telephone number, must consists of 12 digits,
-            required
-        - course_id: student course id, must be between 1 and 6, required
-        - faculty_id: faculty id, required
-        - speciality_id: speciality id, required
-        - gender: student gender, 'Ч' or 'Ж', required
+    **Input**:
+    - **last_name**: student last name, required
+    - **first_name**: student fist name, required
+    - **middle_name**: student middle name, not required
+    - **telephone_number**: student telephone number, must consists of 12 digits,
+        required
+    - **course_id**: student course id, must be between 1 and 6, required
+    - **faculty_id**: faculty id, required
+    - **speciality_id**: speciality id, required
+    - **gender**: student gender, 'Ч' or 'Ж', required
 
-    Return: created student id
+    **Return**:
+    - created student id
     """
     student = await user_handler.create_student(
         request=request, student=student, session=session
     )
     return {
         "data": student,
-        "message": f"Created student with id {student.get('student_id')}",
+        "message": f"Created student with id {student.student_id}",
     }
 
 
@@ -262,7 +270,7 @@ async def create_student(
         200: {"description": "Successful get all university students list response"},
         422: {"model": JSENDFailOutSchema, "description": "ValidationError"},
     },
-    tags=["Admin dashboard"],
+    tags=["Users application"],
 )
 async def read_students_list(
     request: Request,
@@ -291,7 +299,7 @@ async def read_students_list(
         200: {"description": "Successful delete university student response"},
         422: {"model": JSENDFailOutSchema, "description": "ValidationError"},
     },
-    tags=["SuperAdmin dashboard"],
+    tags=["Users application"],
 )
 async def delete_student(
     request: Request,
@@ -317,7 +325,7 @@ async def delete_student(
     responses={
         200: {"description": "Successful get current user information response"}
     },
-    tags=["Authorization"],
+    tags=["Users application"],
 )
 async def get_me(user: UserIn = Depends(get_current_user)):
     return {"data": user, "message": "Got user information"}

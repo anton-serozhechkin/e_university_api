@@ -65,7 +65,7 @@ class UserRequest(Base):
     def __repr__(self):
         return (
             f'{self.__class__.__name__}(user_request_id="{self.user_request_id}",'
-            f' date_created="{self.date_created}", comment="{self.comment}",'
+            f' created_at="{self.created_at}", comment="{self.comment}",'
             f' user_id="{self.user_id}", service_id="{self.service_id}",'
             f' faculty_id="{self.faculty_id}", university_id="{self.university_id}",'
             f' status_id="{self.status_id}")'

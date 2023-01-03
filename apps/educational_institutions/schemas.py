@@ -6,12 +6,19 @@ from pydantic import validator
 from apps.common.schemas import BaseInSchema, BaseOutSchema, FullNameSchema
 
 
+class DeanOut(FullNameSchema):
+    dean_id: int
+
+
 class FacultyIn(BaseInSchema):
     university_id: int
     name: str
     shortname: str
     main_email: str = None
     dean_id: int = None
+    dean_last_name: str = None
+    dean_first_name: str = None
+    dean_middle_name: str = None
 
     @validator("main_email")
     def validate_email(cls, v):
@@ -51,12 +58,15 @@ class FacultyIn(BaseInSchema):
 
 
 class FacultyOut(BaseOutSchema):
+    university_id: int
     faculty_id: int
     name: str
     shortname: str
     main_email: str = None
-    university_id: int
-    dean_full_name: FullNameSchema = None
+    dean_id: int
+    dean_full_name: FullNameSchema = (
+        None  # TODO after creating new faculty it value of field is equal null
+    )
 
 
 class SpecialityListOut(BaseOutSchema):
