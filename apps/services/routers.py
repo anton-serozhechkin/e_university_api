@@ -115,6 +115,28 @@ async def create_request_for_hostel_accommodation(
     user=Depends(get_current_user),
     session: AsyncSession = Depends(get_async_session),
 ):
+    """Method for create request for hostel accommodation.
+
+    Path:
+    - university_id: user university id
+
+    Input:
+    - **rector_first_name**: rector first name
+    - **rector_middle_name**: rector middle name
+    - **rector_last_name**: rector last name
+    - **student_first_name**: student first name
+    - **student_middle_name**: student middle name
+    - **student_last_name**: student last name
+    - **speciality_code**: speciality code
+    - **speciality_name**: speciality name
+    - **course**: course number
+    - **faculty_name**: faculty name
+    - **educ_level**: educational level('B' or 'M')
+    - **comment**: comment for the creating user request
+
+
+    Return: user request id; request status id
+    """
 
     response = await service_handler.create_request_for_hostel_accommodation(
         request=request,
