@@ -14,11 +14,8 @@ from apps.common.schemas import JSENDFailOutSchema, JSENDOutSchema
 from apps.services.handlers import service_handler
 from apps.services.schemas import (
     CancelRequestIn,
-    CancelRequestOut,
     CountHostelAccommodationCostIn,
     CountHostelAccommodationCostOut,
-    CreateUserRequestIn,
-    CreateUserRequestOut,
     HostelAccomodationViewOut,
     UserRequestBookingHostelOut,
     UserRequestDetailsViewOut,
@@ -26,6 +23,9 @@ from apps.services.schemas import (
     UserRequestReviewIn,
     UserRequestReviewOut,
     UserRequestsListOut,
+    RequestForHostelAccommodationIn,
+    RequestForHostelAccommodationOut,
+    CreateUserRequestOut,
 )
 from apps.users.schemas import CreateStudentsListOut
 
@@ -101,41 +101,47 @@ async def read_user_request_list(
 
 
 @services_router.post(
-    "/{university_id}/user-request/",
-    name="create_user_request",
-    response_model=JSENDOutSchema[CreateUserRequestOut],
-    summary="Create user request",
-    responses={200: {"description": "Successful create user request response"}},
+    "/{university_id}/create_request_for_hostel_accommodation/",
+    name="create_request_for_hostel_accommodation",
+    response_model=JSENDOutSchema[RequestForHostelAccommodationOut],
+    summary="Create request for hostel accommodation",
+    responses={200: {"description": "Successfully create request for hostel accommodation"}},
     tags=["Student dashboard"],
 )
-async def create_user_request(
+async def create_request_for_hostel_accommodation(
     request: Request,
     university_id: int,
-    user_request: CreateUserRequestIn,
+    user_request: RequestForHostelAccommodationIn,
     user=Depends(get_current_user),
     session: AsyncSession = Depends(get_async_session),
 ):
-    """Method for create user request.
+    """Method for create request for hostel accommodation.
 
     Path:
     - university_id: user university id
 
     Input:
-    - service_id: service id, required
-    - comment: comment for the creating user request
+    - **rector_first_name**: rector first name
+    - **rector_middle_name**: rector middle name
+    - **rector_last_name**: rector last name
+    - **student_first_name**: student first name
+    - **student_middle_name**: student middle name
+    - **student_last_name**: student last name
+    - **speciality_code**: speciality code
+    - **speciality_name**: speciality name
+    - **course**: course number
+    - **faculty_name**: faculty name
+    - **educ_level**: educational level('B' or 'M')
+    - **comment**: comment for the creating user request
 
     Return: user request id; request status id
     """
-    response = await service_handler.create_user_request(
-        request=request,
-        university_id=university_id,
-        user_request=user_request,
-        user=user,
-        session=session,
-    )
     return {
-        "data": response,
-        "message": f"Created user request with id {response['user_request_id']}",
+        "data": await service_handler.create_request_for_hostel_accommodation(
+            request=request, university_id=university_id, user_request=user_request,  user=user,
+            session=session,
+        ),
+        "message": "Create user request for hostel accommodation"
     }
 
 
@@ -166,7 +172,7 @@ async def read_user_request_booking_hostel(
 @services_router.put(
     "/{university_id}/user-request/{user_request_id}",
     name="update_cancel_user_request",
-    response_model=JSENDOutSchema[CancelRequestOut],
+    response_model=JSENDOutSchema[CreateUserRequestOut],
     summary="Cancel user request",
     responses={200: {"description": "Successful cancel user request response"}},
     tags=["Student dashboard"],
