@@ -125,7 +125,7 @@ class ServiceHandler:
             "user_request_id": user_request.user_request_id,
         }
 
-    async def request_for_hostel_accommodation(
+    async def create_request_for_hostel_accommodation(
         self,
         *,
         request: Request,

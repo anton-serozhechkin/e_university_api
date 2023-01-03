@@ -141,13 +141,13 @@ async def create_user_request(
 
 @services_router.post(
     "/{university_id}//",
-    name="request_for_hostel_accommodation",
+    name="create_request_for_hostel_accommodation",
     response_model=JSENDOutSchema[CreateUserRequestOut],
-    summary="Request for hostel accommodation",
-    responses={200: {"description": "Successfully requested hostel accommodation"}},
+    summary="Create request for hostel accommodation",
+    responses={200: {"description": "Successfully create request for hostel accommodation"}},
     tags=["Student dashboard"],
 )
-async def request_for_hostel_accommodation(
+async def create_request_for_hostel_accommodation(
     request: Request,
     university_id: int,
     user_request: RequestForHostelAccommodationIn,
@@ -155,7 +155,7 @@ async def request_for_hostel_accommodation(
     session: AsyncSession = Depends(get_async_session),
 ):
 
-    response = await service_handler.request_for_hostel_accommodation(
+    response = await service_handler.create_request_for_hostel_accommodation(
         request=request,
         university_id=university_id,
         user_request=user_request,
@@ -164,7 +164,7 @@ async def request_for_hostel_accommodation(
     )
     return {
         "data": response,
-        "message": "Got user request for hostel accommodation"
+        "message": "Create user request for hostel accommodation"
     }
 
 
