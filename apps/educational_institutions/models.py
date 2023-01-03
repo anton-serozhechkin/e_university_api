@@ -13,7 +13,9 @@ class University(Base):
     university_name = Column(VARCHAR(length=255), nullable=False)
     short_university_name = Column(VARCHAR(length=50), nullable=False)
     logo = Column(VARCHAR(length=255))
-    rector_id = Column(INTEGER, ForeignKey("rector.rector_id", ondelete="CASCADE", onupdate="CASCADE"))
+    rector_id = Column(
+        INTEGER, ForeignKey("rector.rector_id", ondelete="CASCADE", onupdate="CASCADE")
+    )
 
     rector = relationship("Rector", back_populates="university")
     faculties = relationship("Faculty", back_populates="university")

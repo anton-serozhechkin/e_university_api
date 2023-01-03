@@ -77,7 +77,9 @@ class UserRequest(Base):
     university = relationship("University", back_populates="user_requests")
     status = relationship("Status", back_populates="user_requests")
     user_documents = relationship("UserDocument", back_populates="user_request")
-    user_request_review = relationship("UserRequestReview", back_populates='user_request')
+    user_request_review = relationship(
+        "UserRequestReview", back_populates='user_request'
+    )
 
     def __repr__(self):
         return (
@@ -167,7 +169,9 @@ class UserRequestReview(Base):
     )
     user_request_id = Column(
         INTEGER,
-        ForeignKey("user_request.user_request_id", ondelete="CASCADE", onupdate="CASCADE"),
+        ForeignKey(
+            "user_request.user_request_id", ondelete="CASCADE", onupdate="CASCADE"
+        ),
         nullable=False)
 
     bed_place = relationship("BedPlace", back_populates="user_request_review")
@@ -180,7 +184,8 @@ class UserRequestReview(Base):
 
     def __repr__(self):
         return (
-            f'{self.__class__.__name__}(user_request_review_id="{self.user_request_review_id}",'
+            f'{self.__class__.__name__}(user_request_review_id='
+            f'"{self.user_request_review_id}",'
             f' created_at="{self.created_at}", room_number="{self.room_number}",'
             f' start_accommodation_date="{self.start_accommodation_date}",'
             f' end_accommodation_date="{self.end_accommodation_date}",'
@@ -201,7 +206,9 @@ class UserDocument(Base):
     content = Column(VARCHAR(length=255), nullable=False)
     user_request_id = Column(
         INTEGER,
-        ForeignKey("user_request.user_request_id", ondelete="CASCADE", onupdate="CASCADE"),
+        ForeignKey(
+            "user_request.user_request_id", ondelete="CASCADE", onupdate="CASCADE"
+        ),
         nullable=False,
     )
     created_at = Column(AwareDateTime, default=func.now(), nullable=False)
@@ -237,7 +244,8 @@ class ServiceDocument(Base):
     service = relationship("Service", back_populates='service_document')
 
     def __repr__(self):
-        return f'{self.__class__.__name__}(service_document_id="{self.user_document_id}", service_id="{self.service_id}",' \
+        return f'{self.__class__.__name__}(service_document_id=' \
+               f'"{self.user_document_id}", service_id="{self.service_id}",' \
                f'university_id="{self.university_id}", documents="{self.documents}"'
 
 

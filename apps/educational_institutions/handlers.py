@@ -16,19 +16,19 @@ from apps.educational_institutions.services import (
 
 class EduInstitutionHandler:
     async def create_dean(
-            self, *, request: Request, data: FullNameSchema, session: AsyncSession
+        self, *, request: Request, data: FullNameSchema, session: AsyncSession
     ) -> DeanOut:
         return await dean_service.create(session=session, obj=data)
 
     async def read_faculties(
-            self, *, request: Request, university_id: int, session: AsyncSession
+        self, *, request: Request, university_id: int, session: AsyncSession
     ) -> List[FacultyOut]:
         return await faculty_list_service.list(
             session=session, filters={"university_id": university_id}
         )
 
     async def create_faculty(
-            self, *, request: Request, data: FacultyIn, session: AsyncSession
+        self, *, request: Request, data: FacultyIn, session: AsyncSession
     ) -> FacultyOut:
         if not data.dean_id:
             dean = await self.create_dean(
@@ -47,7 +47,7 @@ class EduInstitutionHandler:
         return await faculty_service.create(session=session, obj=data)
 
     async def read_speciality_list(
-            self, *, request: Request, university_id: int, session: AsyncSession
+        self, *, request: Request, university_id: int, session: AsyncSession
     ):
         return await speciality_list_service.list(
             session=session, filters={"university_id": university_id}
