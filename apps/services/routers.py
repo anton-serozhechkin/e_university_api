@@ -25,7 +25,7 @@ from apps.services.schemas import (
     UserRequestExistenceOut,
     UserRequestReviewIn,
     UserRequestReviewOut,
-    UserRequestsListOut, RequestForHostelAccommodationIn,
+    UserRequestsListOut, RequestForHostelAccommodationIn, RequestForHostelAccommodationOut,
 )
 from apps.users.schemas import CreateStudentsListOut
 
@@ -103,7 +103,7 @@ async def read_user_request_list(
 @services_router.post(
     "/{university_id}/create_request_for_hostel_accommodation/",
     name="create_request_for_hostel_accommodation",
-    response_model=JSENDOutSchema[CreateUserRequestOut],
+    response_model=JSENDOutSchema[RequestForHostelAccommodationOut],
     summary="Create request for hostel accommodation",
     responses={200: {"description": "Successfully create request for hostel accommodation"}},
     tags=["Student dashboard"],
