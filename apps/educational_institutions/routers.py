@@ -27,7 +27,7 @@ educational_institutions_router = APIRouter(
     responses={
         200: {"description": "Successful get list of university faculties response"},
     },  # TODO after input id of non-existent university it returns success,
-    tags=["SuperAdmin dashboard"],
+    tags=["Educational Institutions application"],
 )
 async def read_faculties(
     request: Request,
@@ -65,7 +65,7 @@ async def read_faculties(
     responses={
         200: {"description": "Successful create faculty in university response"}
     },
-    tags=["SuperAdmin dashboard"],
+    tags=["Educational Institutions application"],
 )
 async def create_faculty(
     request: Request,
@@ -120,7 +120,7 @@ async def create_faculty(
             "description": "Successful get all speciality list of university response"
         }
     },
-    tags=["Admin dashboard"],
+    tags=["Educational Institutions application"],
 )
 async def read_speciality_list(
     request: Request,
@@ -142,7 +142,7 @@ async def read_speciality_list(
     response_model=JSENDOutSchema[List[CourseListOut]],
     summary="Get courses list",
     responses={200: {"description": "Successful get all courses list response"}},
-    tags=["Admin dashboard"],
+    tags=["Educational Institutions application"],
 )
 async def read_courses_list(
     request: Request,
