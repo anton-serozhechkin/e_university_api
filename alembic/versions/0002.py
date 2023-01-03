@@ -1,15 +1,12 @@
-"""0002
+"""0002.
 
 Revision ID: 0002
 Revises: 0001
 Create Date: 2022-12-30 08:24:18.460916+00:00
 
 """
-import sqlalchemy as sa
-
 from alembic import op
 
-# revision identifiers, used by Alembic.
 revision = "0002"
 down_revision = "0001"
 branch_labels = None
@@ -37,7 +34,8 @@ def upgrade() -> None:
         un.university_name,
         re.organisation_code,
         re.payment_recognition,
-        jsonb_build_object('last_name', co.last_name, 'first_name', co.first_name, 'middle_name', co.middle_name) 
+        jsonb_build_object('last_name', co.last_name, 'first_name',
+         co.first_name, 'middle_name', co.middle_name)
             as commandant_full_name,
         co.telephone_number,
         sd.documents
@@ -79,11 +77,12 @@ def upgrade() -> None:
     CREATE VIEW students_list_view AS
     SELECT
         st.student_id,
-        json_build_object('last_name', st.last_name, 'first_name', st.first_name, 'middle_name', st.middle_name)
+        json_build_object('last_name', st.last_name, 'first_name',
+         st.first_name, 'middle_name', st.middle_name)
             as student_full_name,
         st.telephone_number,
         st.user_id,
-	    f.university_id,
+        f.university_id,
         st.faculty_id,
         st.speciality_id,
         st.course_id,
@@ -113,31 +112,32 @@ def upgrade() -> None:
         urr.room_number,
         bd.bed_place_name,
         urr.remark,
-        jsonb_agg(jsonb_build_object('id', ud.user_document_id, 'name', ud.name,'created_at', ud.created_at)) as documents
+        jsonb_agg(jsonb_build_object('id', ud.user_document_id,
+         'name', ud.name,'created_at', ud.created_at)) as documents
     FROM
         user_request ur
     LEFT JOIN user_request_review urr ON
         ur.user_request_id = urr.user_request_id
     LEFT JOIN status st ON
         ur.status_id = st.status_id
-	LEFT JOIN service sr ON
-		ur.service_id = sr.service_id
-	LEFT JOIN hostel ht ON
-		ht.hostel_id = urr.hostel_id
-	LEFT JOIN bed_place bd ON
-		bd.bed_place_id = urr.bed_place_id
+    LEFT JOIN service sr ON
+        ur.service_id = sr.service_id
+    LEFT JOIN hostel ht ON
+        ht.hostel_id = urr.hostel_id
+    LEFT JOIN bed_place bd ON
+        bd.bed_place_id = urr.bed_place_id
     LEFT JOIN user_document ud ON
-		ud.user_request_id = ur.user_request_id
-	GROUP BY
-		ur.user_request_id,
+        ud.user_request_id = ur.user_request_id
+    GROUP BY
+        ur.user_request_id,
         ur.university_id,
         ur.created_at,
         sr.service_name,
         st.status_name,
         ur.status_id,
         ur.comment,
-		ht.name,
-		ht.number,
+        ht.name,
+        ht.number,
         urr.room_number,
         bd.bed_place_name,
         urr.remark
@@ -156,7 +156,8 @@ def upgrade() -> None:
         ht.street,
         ht.build,
         ht.commandant_id,
-        json_build_object('last_name', co.last_name, 'first_name', co.first_name, 'middle_name', co.middle_name)
+        json_build_object('last_name', co.last_name, 'first_name',
+         co.first_name, 'middle_name', co.middle_name)
             as commandant_full_name
     FROM
         hostel ht
@@ -174,7 +175,8 @@ def upgrade() -> None:
         ur.user_id,
         ur.user_request_id,
         sr.service_name,
-        jsonb_build_object('status_id', ur.status_id, 'status_name', st.status_name) as status,
+        jsonb_build_object('status_id', ur.status_id, 'status_name', st.status_name)
+         as status,
         ur.created_at
     FROM
         user_request ur
@@ -202,7 +204,8 @@ def upgrade() -> None:
         f.shortname,
         f.main_email,
         f.dean_id,
-        json_build_object('last_name', d.last_name, 'first_name', d.first_name, 'middle_name', d.middle_name)
+        json_build_object('last_name', d.last_name, 'first_name',
+         d.first_name, 'middle_name', d.middle_name)
             as dean_full_name
     FROM
         faculty f
@@ -221,8 +224,16 @@ def upgrade() -> None:
         u.last_visit_at,
         u.email,
         u.is_active,
-        COALESCE(json_agg(json_build_object('role', u.role_id, 'role_name', r.role_name)) FILTER (WHERE r.role_name IS NOT NULL), NULL) as role,
-        COALESCE(json_agg(json_build_object('faculty', f.faculty_id, 'faculty_name', f.name)) FILTER (WHERE f.name IS NOT NULL), NULL) as faculties,
+        COALESCE(
+        json_agg(json_build_object('role', u.role_id, 'role_name', r.role_name)
+        ) FILTER (
+        WHERE r.role_name IS NOT NULL
+        ), NULL) as role,
+        COALESCE(
+        json_agg(json_build_object('faculty', f.faculty_id, 'faculty_name', f.name)
+        ) FILTER (
+        WHERE f.name IS NOT NULL
+        ), NULL) as faculties,
         un.university_id
     FROM "user" u
     LEFT JOIN "role" r ON
@@ -253,7 +264,8 @@ def upgrade() -> None:
         ur.faculty_id,
         ur.university_id,
         ur.service_id,
-        jsonb_build_object('status_id', ur.status_id, 'status_name', st.status_name) as status
+        jsonb_build_object('status_id', ur.status_id, 'status_name', st.status_name)
+         as status
     FROM
         user_request ur
     LEFT JOIN status st ON
@@ -275,13 +287,15 @@ def upgrade() -> None:
     op.execute(sqltext="""
     CREATE VIEW user_request_booking_hostel_view AS
     SELECT
-        json_build_object('last_name', s.last_name, 'first_name', s.first_name, 'middle_name', s.middle_name)
+        json_build_object('last_name', s.last_name, 'first_name',
+         s.first_name, 'middle_name', s.middle_name)
             as full_name,
         s.user_id,
         f.name as faculty_name,
         u.university_id,
         u.short_university_name,
-        json_build_object('last_name', r.last_name, 'first_name', r.first_name, 'middle_name', r.middle_name)
+        json_build_object('last_name', r.last_name, 'first_name',
+         r.first_name, 'middle_name', r.middle_name)
             as rector_full_name,
         sp.code as speciality_code,
         sp.name as speciality_name,
@@ -294,7 +308,8 @@ def upgrade() -> None:
         CASE WHEN date_part('month', now()) >= 7 THEN date_part('year', now())::integer
             ELSE date_part('year', now() - INTERVAL '1 YEAR')::integer
         END AS start_year,
-        CASE WHEN date_part('month', now()) >= 7 THEN date_part('year', now() + INTERVAL '1 YEAR')::integer
+        CASE WHEN date_part('month', now()) >= 7 THEN
+         date_part('year', now() + INTERVAL '1 YEAR')::integer
             ELSE date_part('year', now())::integer
         END AS finish_year,
         CASE WHEN LOWER(s.gender) = 'ч' THEN 'M'

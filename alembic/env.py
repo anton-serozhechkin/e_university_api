@@ -45,7 +45,9 @@ def run_migrations_offline() -> None:
         literal_binds=True,
         compare_type=True,
         transactional_ddl=False,
-        output_buffer=open(SQL_VERSIONS_DIR / f"{context.get_head_revision()}.sql", "w"),
+        output_buffer=open(
+            SQL_VERSIONS_DIR / f"{context.get_head_revision()}.sql", "w"
+        ),
         dialect_opts={"paramstyle": "named"},
     )
 

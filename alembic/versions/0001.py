@@ -1,7 +1,7 @@
-"""0001
+"""0001.
 
 Revision ID: 0001
-Revises: 
+Revises:
 Create Date: 2022-12-29 17:58:25.740737+00:00
 
 """
@@ -30,7 +30,9 @@ def upgrade() -> None:
         sa.Column("middle_name", sa.VARCHAR(length=50), nullable=True),
         sa.Column("telephone_number", sa.VARCHAR(length=50), nullable=False),
         sa.PrimaryKeyConstraint("commandant_id", name=op.f("commandant_pk")),
-        sa.UniqueConstraint("telephone_number", name=op.f("commandant_telephone_number_key")),
+        sa.UniqueConstraint(
+            "telephone_number", name=op.f("commandant_telephone_number_key")
+        ),
     )
     op.create_table(
         "course",
@@ -386,7 +388,9 @@ def upgrade() -> None:
             ondelete="CASCADE",
         ),
         sa.PrimaryKeyConstraint("student_id", name=op.f("student_pk")),
-        sa.UniqueConstraint("telephone_number", name=op.f("student_telephone_number_key")),
+        sa.UniqueConstraint(
+            "telephone_number", name=op.f("student_telephone_number_key")
+        ),
     )
     op.create_table(
         "user_document",
@@ -429,8 +433,18 @@ def upgrade() -> None:
         sa.Column("hostel_id", sa.INTEGER(), nullable=True),
         sa.Column("university_id", sa.INTEGER(), nullable=False),
         sa.Column("user_request_id", sa.INTEGER(), nullable=False),
-        sa.Column("created_at", sa.TIMESTAMP(timezone=True), server_default=sa.text("CURRENT_TIMESTAMP"), nullable=False),
-        sa.Column("updated_at", sa.TIMESTAMP(timezone=True), server_default=sa.text("CURRENT_TIMESTAMP"), nullable=False),
+        sa.Column(
+            "created_at",
+            sa.TIMESTAMP(timezone=True),
+            server_default=sa.text("CURRENT_TIMESTAMP"),
+            nullable=False,
+        ),
+        sa.Column(
+            "updated_at",
+            sa.TIMESTAMP(timezone=True),
+            server_default=sa.text("CURRENT_TIMESTAMP"),
+            nullable=False,
+        ),
         sa.ForeignKeyConstraint(
             ("bed_place_id",),
             ["bed_place.bed_place_id"],
@@ -466,13 +480,20 @@ def upgrade() -> None:
             onupdate="CASCADE",
             ondelete="CASCADE",
         ),
-        sa.PrimaryKeyConstraint("user_request_review_id", name=op.f("user_request_review_pk")),
+        sa.PrimaryKeyConstraint(
+            "user_request_review_id", name=op.f("user_request_review_pk")
+        ),
     )
     op.create_table(
         "one_time_token",
         sa.Column("token_id", sa.INTEGER(), nullable=False),
         sa.Column("token", sa.VARCHAR(length=255), nullable=False),
-        sa.Column("expires_at", sa.TIMESTAMP(timezone=True), server_default=sa.text("CURRENT_TIMESTAMP"), nullable=False),
+        sa.Column(
+            "expires_at",
+            sa.TIMESTAMP(timezone=True),
+            server_default=sa.text("CURRENT_TIMESTAMP"),
+            nullable=False,
+        ),
         sa.Column("student_id", sa.INTEGER(), nullable=False),
         sa.ForeignKeyConstraint(
             ("student_id",),
@@ -489,8 +510,18 @@ def upgrade() -> None:
         sa.Column("service_id", sa.INTEGER(), nullable=False),
         sa.Column("university_id", sa.INTEGER(), nullable=False),
         sa.Column("documents", sa.JSON(), nullable=False),
-        sa.Column("created_at", sa.TIMESTAMP(timezone=True), server_default=sa.text("CURRENT_TIMESTAMP"), nullable=False),
-        sa.Column("updated_at", sa.TIMESTAMP(timezone=True), server_default=sa.text("CURRENT_TIMESTAMP"), nullable=False),
+        sa.Column(
+            "created_at",
+            sa.TIMESTAMP(timezone=True),
+            server_default=sa.text("CURRENT_TIMESTAMP"),
+            nullable=False,
+        ),
+        sa.Column(
+            "updated_at",
+            sa.TIMESTAMP(timezone=True),
+            server_default=sa.text("CURRENT_TIMESTAMP"),
+            nullable=False,
+        ),
         sa.ForeignKeyConstraint(
             ("university_id",),
             ["university.university_id"],
@@ -505,7 +536,9 @@ def upgrade() -> None:
             onupdate="CASCADE",
             ondelete="CASCADE",
         ),
-        sa.PrimaryKeyConstraint("service_document_id", name=op.f("service_document_pk")),
+        sa.PrimaryKeyConstraint(
+            "service_document_id", name=op.f("service_document_pk")
+        ),
     )
 
 
