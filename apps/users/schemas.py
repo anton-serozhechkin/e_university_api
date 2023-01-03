@@ -1,6 +1,6 @@
 from datetime import datetime
 from re import compile, escape, fullmatch
-from typing import Dict, List, Union
+from typing import Dict, List, Optional, Union
 
 from pydantic import Field, validator
 
@@ -201,7 +201,7 @@ class CreateStudentIn(StudentCheckExistenceIn):
     gender: str
 
     @validator("middle_name")
-    def validate_middle_name(cls, value: str) -> str:
+    def validate_middle_name(cls, value: str) -> Optional[str]:
         if value:
             if not value.istitle():
                 raise ValueError("The middle name first letter must be uppercase")
