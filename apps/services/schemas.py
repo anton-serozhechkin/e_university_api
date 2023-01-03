@@ -150,7 +150,7 @@ class CountHostelAccommodationCostIn(BaseInSchema):
     bed_place_id: int
 
     @root_validator
-    def validate_two_dates(cls, values: str) -> str:
+    def validate_two_dates(cls, values: Dict) -> Dict:
         if values.get("start_accommodation_date") >= values.get(
             "end_accommodation_date"
         ):
