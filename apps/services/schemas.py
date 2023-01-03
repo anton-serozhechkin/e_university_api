@@ -85,15 +85,6 @@ class RequestForHostelAccommodationIn(BaseInSchema):
                                  f"\'{values.get('speciality_name')}\' speciality name")
         return values
 
-class CreateUserRequestIn(BaseInSchema):
-    service_id: int
-    comment: str = None
-
-
-class CreateUserRequestOut(BaseOutSchema):
-    user_request_id: int
-    status_id: int
-
 
 class UserRequestExistenceOut(BaseOutSchema):
     user_request_id: int = None

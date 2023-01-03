@@ -88,42 +88,6 @@ class ServiceHandler:
             filters={"university_id": university_id, "user_id": user.user_id},
         )
 
-    async def create_user_request(
-        self,
-        *,
-        request: Request,
-        university_id: int,
-        user_request: CreateUserRequestIn,
-        user: UserOut,
-        session: AsyncSession,
-    ):
-        user_faculty_result = await user_faculty_service.read(
-            data={"user_id": user.user_id}, session=session
-        )
-        data = {
-            "created_at": datetime.now(utc),
-            "comment": user_request.comment,
-            "user_id": user.user_id,
-            "service_id": user_request.service_id,
-            "faculty_id": user_faculty_result.faculty_id,
-            "university_id": university_id,
-            "status_id": STATUS_MAPPING.get("Розглядається"),
-        }
-        user_request = await user_request_service.create(session=session, data=data)
-        result = await user_request_booking_hostel_service.read(
-            session=session,
-            data={"user_id": user.user_id, "university_id": university_id},
-        )
-        prepared_data = {
-            "context": result,
-            "service_id": user_request.service_id,
-            "user_request_id": user_request.user_request_id,
-        }
-        await self.__create_user_document(session, **prepared_data)
-        return {
-            "status_id": STATUS_MAPPING.get("Розглядається"),
-            "user_request_id": user_request.user_request_id,
-        }
 
     async def create_request_for_hostel_accommodation(
         self,

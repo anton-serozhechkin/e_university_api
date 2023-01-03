@@ -101,45 +101,6 @@ async def read_user_request_list(
 
 
 @services_router.post(
-    "/{university_id}/user-request/",
-    name="create_user_request",
-    response_model=JSENDOutSchema[CreateUserRequestOut],
-    summary="Create user request",
-    responses={200: {"description": "Successful create user request response"}},
-    tags=["Student dashboard"],
-)
-async def create_user_request(
-    request: Request,
-    university_id: int,
-    user_request: CreateUserRequestIn,
-    user=Depends(get_current_user),
-    session: AsyncSession = Depends(get_async_session),
-):
-    """Method for create user request.
-
-    Path:
-    - university_id: user university id
-
-    Input:
-    - service_id: service id, required
-    - comment: comment for the creating user request
-
-    Return: user request id; request status id
-    """
-    response = await service_handler.create_user_request(
-        request=request,
-        university_id=university_id,
-        user_request=user_request,
-        user=user,
-        session=session,
-    )
-    return {
-        "data": response,
-        "message": f"Created user request with id {response['user_request_id']}",
-    }
-
-
-@services_router.post(
     "/{university_id}/create_request_for_hostel_accommodation/",
     name="create_request_for_hostel_accommodation",
     response_model=JSENDOutSchema[CreateUserRequestOut],
