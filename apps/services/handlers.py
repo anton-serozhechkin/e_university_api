@@ -12,7 +12,7 @@ from apps.services.schemas import (
     CancelRequestIn,
     CountHostelAccommodationCostIn,
     CreateUserRequestIn,
-    UserRequestReviewIn, CreateCustomHostelAccommodationIn,
+    UserRequestReviewIn, RequestForHostelAccommodationIn,
 )
 from apps.services.services import (
     bed_place_service,
@@ -125,12 +125,12 @@ class ServiceHandler:
             "user_request_id": user_request.user_request_id,
         }
 
-    async def create_custom_hostel_accommodation(
+    async def request_for_hostel_accommodation(
         self,
         *,
         request: Request,
         university_id: int,
-        user_request: CreateCustomHostelAccommodationIn,
+        user_request: RequestForHostelAccommodationIn,
         user: UserOut,
         session: AsyncSession,
     ):

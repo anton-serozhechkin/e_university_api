@@ -23,7 +23,7 @@ speciality = {51: 'Економіка', 121: 'Інженерія програм�
               76: '"Підприємництво, торгівля та біржова діяльність"', 241: 'Готельно-ресторанна справа', 242: 'Туризм'}
 
 
-class CreateCustomHostelAccommodationIn(BaseInSchema):
+class RequestForHostelAccommodationIn(BaseInSchema):
     rector_first_name: str
     rector_middle_name: str
     rector_last_name: str

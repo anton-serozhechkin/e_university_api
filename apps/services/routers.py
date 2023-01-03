@@ -25,7 +25,7 @@ from apps.services.schemas import (
     UserRequestExistenceOut,
     UserRequestReviewIn,
     UserRequestReviewOut,
-    UserRequestsListOut, CreateCustomHostelAccommodationIn,
+    UserRequestsListOut, RequestForHostelAccommodationIn,
 )
 from apps.users.schemas import CreateStudentsListOut
 
@@ -141,21 +141,21 @@ async def create_user_request(
 
 @services_router.post(
     "/{university_id}//",
-    name="create_custom_hostel_accommodation",
+    name="request_for_hostel_accommodation",
     response_model=JSENDOutSchema[CreateUserRequestOut],
-    summary="Сreate custom hostel accommodation",
-    responses={200: {"description": "Successful created custom hostel accommodation"}},
+    summary="Request for hostel accommodation",
+    responses={200: {"description": "Successfully requested hostel accommodation"}},
     tags=["Student dashboard"],
 )
-async def create_custom_hostel_accommodation(
+async def request_for_hostel_accommodation(
     request: Request,
     university_id: int,
-    user_request: CreateCustomHostelAccommodationIn,
+    user_request: RequestForHostelAccommodationIn,
     user=Depends(get_current_user),
     session: AsyncSession = Depends(get_async_session),
 ):
 
-    response = await service_handler.create_custom_hostel_accommodation(
+    response = await service_handler.request_for_hostel_accommodation(
         request=request,
         university_id=university_id,
         user_request=user_request,
@@ -164,7 +164,7 @@ async def create_custom_hostel_accommodation(
     )
     return {
         "data": response,
-        "message": "Thanks for your editing. We will consider your application. Wait for the reply"
+        "message": "Got user request for hostel accommodation"
     }
 
 
