@@ -140,7 +140,7 @@ async def create_user_request(
 
 
 @services_router.post(
-    "/{university_id}//",
+    "/{university_id}/create_request_for_hostel_accommodation/",
     name="create_request_for_hostel_accommodation",
     response_model=JSENDOutSchema[CreateUserRequestOut],
     summary="Create request for hostel accommodation",
