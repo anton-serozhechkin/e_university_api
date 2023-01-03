@@ -38,7 +38,7 @@ class RequestForHostelAccommodationIn(BaseInSchema):
     comment: str
 
     @root_validator
-    def validate_rector_and_student_names(cls, values):
+    def validate_rector_and_student_names(cls, values: str) -> str:
         names = ['rector_first_name', 'rector_middle_name', 'rector_last_name', 'student_first_name',
                  'student_middle_name', 'student_last_name']
         for name in names:
@@ -47,13 +47,13 @@ class RequestForHostelAccommodationIn(BaseInSchema):
         return values
 
     @validator('educ_level')
-    def validate_education_level(cls, value):
+    def validate_education_level(cls, value: str) -> str:
         if value not in ['B', 'M']:
             raise ValueError('Wrong education level value. Should be \'B\' or \'M\', uppercase also')
         return value
 
     @validator('faculty_name')
-    def validate_faculty_name(cls, value):
+    def validate_faculty_name(cls, value: str) -> str:
         if value not in ['Інформаційних технологій', 'Міжнародних відносин і журналістики',
                          'Міжнародної економіки і підприємництва', 'Фінансів і обліку',
                          'Менеджмента і маркетингу', 'Економіки і права']:
@@ -61,25 +61,25 @@ class RequestForHostelAccommodationIn(BaseInSchema):
         return value
 
     @validator('speciality_code')
-    def validate_speciality_code(cls, value):
+    def validate_speciality_code(cls, value: int) -> int:
         if value not in speciality.keys():
             raise ValueError(f'Wrong \'{value}\'number. This speciality doesn\'t exist')
         return value
 
     @validator('speciality_name')
-    def validate_speciality_name(cls, value):
+    def validate_speciality_name(cls, value: str) -> str:
         if value not in speciality.values():
             raise ValueError(f'Wrong \'{value}\' name. This speciality doesn\'t exist')
         return value
 
     @validator('course')
-    def validate_course(cls, value):
+    def validate_course(cls, value: int) -> int:
         if value not in [1, 2, 3, 4, 5, 6]:
             raise ValueError(f"Wrong \'{value}\' number. This course doesn't exist")
         return value
 
     @root_validator
-    def validate_speciality_name_and_speciality_code_correspondence(cls, values):
+    def validate_speciality_name_and_speciality_code_correspondence(cls, values: str) -> str:
         if not speciality[values.get('speciality_code')] == values.get('speciality_name'):
                 raise ValueError(f"Speciality code \'{values.get('speciality_code')}\' doesn't correspondence with exists "
                                  f"\'{values.get('speciality_name')}\' speciality name")
