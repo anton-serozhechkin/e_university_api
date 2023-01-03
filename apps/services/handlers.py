@@ -11,8 +11,8 @@ from apps.services.models import STATUS_MAPPING
 from apps.services.schemas import (
     CancelRequestIn,
     CountHostelAccommodationCostIn,
-    CreateUserRequestIn,
-    UserRequestReviewIn, RequestForHostelAccommodationIn,
+    UserRequestReviewIn,
+    RequestForHostelAccommodationIn,
 )
 from apps.services.services import (
     bed_place_service,

@@ -17,8 +17,6 @@ from apps.services.schemas import (
     CancelRequestOut,
     CountHostelAccommodationCostIn,
     CountHostelAccommodationCostOut,
-    CreateUserRequestIn,
-    CreateUserRequestOut,
     HostelAccomodationViewOut,
     UserRequestBookingHostelOut,
     UserRequestDetailsViewOut,
@@ -137,7 +135,6 @@ async def create_request_for_hostel_accommodation(
 
     Return: user request id; request status id
     """
-
     response = await service_handler.create_request_for_hostel_accommodation(
         request=request,
         university_id=university_id,
