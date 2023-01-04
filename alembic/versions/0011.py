@@ -310,18 +310,6 @@ def upgrade() -> None:
     INSERT INTO speciality(faculty_id, code, name)
     VALUES (3, 241, 'Готельно-ресторанна справа');
     INSERT INTO speciality(faculty_id, code, name) VALUES (3, 242, 'Туризм');
-
-    INSERT INTO student(
-    last_name,
-    first_name,
-    middle_name,
-    telephone_number,
-    gender,
-    course_id,
-    speciality_id,
-    faculty_id
-    )
-    VALUES ('Alex', 'Alex', 'Alex', '380971111111', 'Ч', 1, 1, 1);
     """
     )
 
