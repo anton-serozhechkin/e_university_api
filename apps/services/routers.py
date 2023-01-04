@@ -16,7 +16,8 @@ from apps.services.schemas import (
     CancelRequestIn,
     CountHostelAccommodationCostIn,
     CountHostelAccommodationCostOut,
-    CreateUserRequestIn,
+    RequestForHostelAccommodationOut,
+    RequestForHostelAccommodationIn,
     CreateUserRequestOut,
     HostelAccomodationViewOut,
     UserRequestBookingHostelOut,
@@ -100,40 +101,51 @@ async def read_user_request_list(
 
 
 @services_router.post(
-    "/{university_id}/user-request/",
-    name="create_user_request",
-    response_model=JSENDOutSchema[CreateUserRequestOut],
-    summary="Create user request",
-    responses={200: {"description": "Successful create user request response"}},
+    "/{university_id}/hostel-accommodation/",
+    name="create_request_for_hostel_accommodation",
+    response_model=JSENDOutSchema[RequestForHostelAccommodationOut],
+    summary="Create request for hostel accommodation",
+    responses={
+        200: {"description": "Successful create request for hostel accommodation"}
+    },
     tags=["Services application"],
 )
-async def create_user_request(
+async def create_request_for_hostel_accommodation(
     request: Request,
     university_id: int,
-    user_request: CreateUserRequestIn,
+    user_request: RequestForHostelAccommodationIn,
     user=Depends(get_current_user),
     session: AsyncSession = Depends(get_async_session),
 ):
-    """**Method for creating user request**.
+    """**Method for create request for hostel accommodation.**
+    **Path:**
+    - university_id: user university id
 
-    **Path**:
-    - **university_id**: user university id
+    **Input:**
+    - **rector_first_name**: rector first name, required
+    - **rector_middle_name**: rector middle name
+    - **rector_last_name**: rector last name, required
+    - **student_first_name**: student first name, required
+    - **student_middle_name**: student middle name
+    - **student_last_name**: student last name, required
+    - **speciality_code**: speciality code, required
+    - **speciality_name**: speciality name, required
+    - **course**: course number, required
+    - **faculty_name**: faculty name, required
+    - **educ_level**: educational level('B' or 'M'), required
+    - **comment**: comment for the creating user request
 
-    **Input**:
-    - **service_id**: service id, required
-    - **comment**: comment for the creating user request, not required
-
-    **Return**:
-    - **user_request_id**
-    - **created_at**
-    - **comment**
-    - **user_id**
-    - **service_id**
-    - **faculty_id**
-    - **university_id**
-    - **status_id**
+    **Return:**
+    - user_request_id
+    - created_at
+    - comment
+    - user_id
+    - service_id
+    - faculty_id
+    - university_id
+    - status_id
     """
-    response = await service_handler.create_user_request(
+    response = await service_handler.create_request_for_hostel_accommodation(
         request=request,
         university_id=university_id,
         user_request=user_request,
@@ -142,7 +154,8 @@ async def create_user_request(
     )
     return {
         "data": response,
-        "message": f"Created user request with id {response.user_request_id}",
+        "message": f"Create user request for hostel accommodation with id"
+        f"{response.user_request_id}",
     }
 
 
