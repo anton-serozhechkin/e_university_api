@@ -93,7 +93,6 @@ class RequestForHostelAccommodationIn(BaseInSchema):
             raise ValueError(f"Wrong '{value}' number. This faculty doesn't exist")
         return value
 
-
     # TODO: create way to get speciality code from db
     @validator("speciality_code")
     def validate_speciality_code(cls, value: int) -> int:
