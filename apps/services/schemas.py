@@ -12,10 +12,132 @@ from apps.common.schemas import (
     UserDocumentsSchema,
 )
 
+# TODO: create way to get specialities from db
+speciality = {
+    51: "Економіка",
+    121: "Інженерія програмного забезпечення",
+    122: "Комп'ютерні науки",
+    124: "Системний аналіз",
+    125: "Кібербезпека",
+    126: "Інформаційні системи та технології",
+    186: "Видавництво та поліграфія",
+    53: "Психологія",
+    81: "Право, освітня програма",
+    232: "Соціальне забезпечення",
+    281: "Публічне управління та адміністрування",
+    73: "Менеджмент",
+    75: "Маркетинг",
+    22: "Дизайн",
+    72: "Фінанси, банківська справа та страхування",
+    71: "Облік і оподаткування",
+    11: '"Освітні, педагогічні науки"',
+    52: "Політологія",
+    61: "Журналістика",
+    291: "Міжнародні відносини, суспільні комунікації та регіональні студії",
+    292: "Міжнародні економічні відносини",
+    76: '"Підприємництво, торгівля та біржова діяльність"',
+    241: "Готельно-ресторанна справа",
+    242: "Туризм",
+}
 
-class CreateUserRequestIn(BaseInSchema):
-    service_id: int
+
+# TODO: check recording empty values in doc
+class RequestForHostelAccommodationIn(BaseInSchema):
+    rector_first_name: str
+    rector_middle_name: str = None
+    rector_last_name: str
+    student_first_name: str
+    student_middle_name: str = None
+    student_last_name: str
+    speciality_code: int
+    speciality_name: str
+    course: int
+    faculty_name: str
+    educ_level: str
     comment: str = None
+
+    @root_validator
+    def validate_rector_and_student_names(cls, values: str) -> str:
+        names = [
+            "rector_first_name",
+            "rector_middle_name",
+            "rector_last_name",
+            "student_first_name",
+            "student_middle_name",
+            "student_last_name",
+        ]
+        for name in names:
+            if not values.get(name).istitle():
+                raise ValueError(
+                    f"{name.replace('_', ' ').capitalize()} first letter must be uppercase"
+                )
+        return values
+
+    @validator("educ_level")
+    def validate_education_level(cls, value: str) -> str:
+        if value.upper() not in ["B", "M"]:
+            raise ValueError("Wrong education level value. Should be 'B' or 'M'")
+        return value
+
+    # TODO: create way to get faculty names from db
+    @validator("faculty_name")
+    def validate_faculty_name(cls, value: str) -> str:
+        if value not in [
+            "Інформаційних технологій",
+            "Міжнародних відносин і журналістики",
+            "Міжнародної економіки і підприємництва",
+            "Фінансів і обліку",
+            "Менеджмента і маркетингу",
+            "Економіки і права",
+        ]:
+            raise ValueError(f"Wrong '{value}' number. This faculty doesn't exist")
+        return value
+
+
+    # TODO: create way to get speciality code from db
+    @validator("speciality_code")
+    def validate_speciality_code(cls, value: int) -> int:
+        if value not in speciality.keys():
+            raise ValueError(f"Wrong '{value}'number. This speciality doesn't exist")
+        return value
+
+    # TODO: create way to get speciality name from db
+    @validator("speciality_name")
+    def validate_speciality_name(cls, value: str) -> str:
+        if value not in speciality.values():
+            raise ValueError(f"Wrong '{value}' name. This speciality doesn't exist")
+        return value
+
+    @validator("course")
+    def validate_course(cls, value: int) -> int:
+        if value not in [1, 2, 3, 4, 5, 6]:
+            raise ValueError(f"Wrong '{value}' number. This course doesn't exist")
+        return value
+
+    @root_validator
+    def validate_speciality_name_and_speciality_code_correspondence(
+        cls, values: str
+    ) -> str:
+        if not speciality[values.get("speciality_code")] == values.get(
+            "speciality_name"
+        ):
+            raise ValueError(
+                f"Speciality code '{values.get('speciality_code')}' "
+                f"doesn't correspondence with exists "
+                f"'{values.get('speciality_name')}' speciality name"
+            )
+        return values
+
+
+class RequestForHostelAccommodationOut(BaseOutSchema):
+    user_request_id: int
+    created_at: datetime
+    comment: str = None
+    user_id: int
+    service_id: int
+    faculty_id: int
+    university_id: int
+    status_id: int
 
 
 class CreateUserRequestOut(BaseOutSchema):
