@@ -5,11 +5,11 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from apps.common.schemas import FullNameSchema
 from apps.educational_institutions.schemas import (
-    CourseListOut,
+    CourseOut,
     DeanOut,
     FacultyIn,
     FacultyOut,
-    SpecialityListOut,
+    SpecialityOut,
 )
 from apps.educational_institutions.services import (
     course_list_service,
@@ -57,7 +57,7 @@ class EduInstitutionHandler:
     @staticmethod
     async def read_speciality_list(
         *, request: Request, university_id: int, session: AsyncSession
-    ) -> List[SpecialityListOut]:
+    ) -> List[SpecialityOut]:
         return await speciality_list_service.list(
             session=session, filters={"university_id": university_id}
         )
@@ -65,7 +65,7 @@ class EduInstitutionHandler:
     @staticmethod
     async def read_courses_list(
             *, request: Request, session: AsyncSession,
-    ) -> List[CourseListOut]:
+    ) -> List[CourseOut]:
         return await course_list_service.list(session=session)
 
 

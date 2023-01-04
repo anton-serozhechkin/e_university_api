@@ -7,10 +7,10 @@ from apps.common.dependencies import get_async_session, get_current_user
 from apps.common.schemas import JSENDFailOutSchema, JSENDOutSchema
 from apps.educational_institutions.handlers import edu_institutions_handler
 from apps.educational_institutions.schemas import (
-    CourseListOut,
+    CourseOut,
     FacultyIn,
     FacultyOut,
-    SpecialityListOut,
+    SpecialityOut,
 )
 from apps.users.schemas import UserOut
 
@@ -113,7 +113,7 @@ async def create_faculty(
 @educational_institutions_router.get(
     "/{university_id}/speciality/",
     name="read_speciality_list",
-    response_model=JSENDOutSchema[List[SpecialityListOut]],
+    response_model=JSENDOutSchema[List[SpecialityOut]],
     summary="Get speciality list",
     responses={
         200: {
@@ -139,7 +139,7 @@ async def read_speciality_list(
 @educational_institutions_router.get(
     "/courses/",
     name="read_courses_list",
-    response_model=JSENDOutSchema[List[CourseListOut]],
+    response_model=JSENDOutSchema[List[CourseOut]],
     summary="Get courses list",
     responses={200: {"description": "Successful get all courses list response"}},
     tags=["Educational Institutions application"],
