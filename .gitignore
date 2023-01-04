@@ -1,12 +1,3 @@
-# environment variables for local run
-.env
-
-# local docker compose file for personal use
-docker-compose.yml
-
 __pycache__/
 *.pyc
-
 .DS_Store
-
-pgadmin_data

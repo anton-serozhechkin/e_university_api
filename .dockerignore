@@ -1,1 +1,7 @@
+<<<<<<< HEAD
 local/
+=======
+db_data/
+pgadmin_data/
+tests/
+>>>>>>> origin/infrastructure__docker

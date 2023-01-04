@@ -230,7 +230,6 @@ async def create_student(
     request: Request,
     university_id: int,
     student: CreateStudentIn,
-    auth=Depends(get_current_user),
     session: AsyncSession = Depends(get_async_session),
 ):
     """**Method for university student record creating**.

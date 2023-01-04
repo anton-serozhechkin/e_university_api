@@ -13,14 +13,32 @@ from apps.common.schemas import (
 )
 
 
-speciality = {51: 'Економіка', 121: 'Інженерія програмного забезпечення', 122: "Комп'ютерні науки", 124: 'Системний аналіз',
-              125: 'Кібербезпека', 126: 'Інформаційні системи та технології', 186: 'Видавництво та поліграфія',
-              53: 'Психологія', 81: 'Право, освітня програма', 232: 'Соціальне забезпечення',
-              281: 'Публічне управління та адміністрування', 73: 'Менеджмент', 75: 'Маркетинг',
-              22: 'Дизайн', 72: 'Фінанси, банківська справа та страхування', 71: 'Облік і оподаткування',
-              11: '"Освітні, педагогічні науки"', 52: 'Політологія', 61: 'Журналістика',
-              291:'Міжнародні відносини, суспільні комунікації та регіональні студії', 292: 'Міжнародні економічні відносини',
-              76: '"Підприємництво, торгівля та біржова діяльність"', 241: 'Готельно-ресторанна справа', 242: 'Туризм'}
+speciality = {
+    51: "Економіка",
+    121: "Інженерія програмного забезпечення",
+    122: "Комп'ютерні науки",
+    124: "Системний аналіз",
+    125: "Кібербезпека",
+    126: "Інформаційні системи та технології",
+    186: "Видавництво та поліграфія",
+    53: "Психологія",
+    81: "Право, освітня програма",
+    232: "Соціальне забезпечення",
+    281: "Публічне управління та адміністрування",
+    73: "Менеджмент",
+    75: "Маркетинг",
+    22: "Дизайн",
+    72: "Фінанси, банківська справа та страхування",
+    71: "Облік і оподаткування",
+    11: '"Освітні, педагогічні науки"',
+    52: "Політологія",
+    61: "Журналістика",
+    291: "Міжнародні відносини, суспільні комунікації та регіональні студії",
+    292: "Міжнародні економічні відносини",
+    76: '"Підприємництво, торгівля та біржова діяльність"',
+    241: "Готельно-ресторанна справа",
+    242: "Туризм",
+}
 
 
 class RequestForHostelAccommodationIn(BaseInSchema):
@@ -39,51 +57,71 @@ class RequestForHostelAccommodationIn(BaseInSchema):
 
     @root_validator
     def validate_rector_and_student_names(cls, values: str) -> str:
-        names = ['rector_first_name', 'rector_middle_name', 'rector_last_name', 'student_first_name',
-                 'student_middle_name', 'student_last_name']
+        names = [
+            "rector_first_name",
+            "rector_middle_name",
+            "rector_last_name",
+            "student_first_name",
+            "student_middle_name",
+            "student_last_name",
+        ]
         for name in names:
             if not values.get(name).istitle():
-                raise ValueError(f"{name.replace('_', ' ').capitalize()} first letter must be uppercase")
+                raise ValueError(
+                    f"{name.replace('_', ' ').capitalize()} first letter must be uppercase"
+                )
         return values
 
-    @validator('educ_level')
+    @validator("educ_level")
     def validate_education_level(cls, value: str) -> str:
-        if value not in ['B', 'M']:
-            raise ValueError('Wrong education level value. Should be \'B\' or \'M\', uppercase also')
+        if value.upper() not in ["B", "M"]:
+            raise ValueError("Wrong education level value. Should be 'B' or 'M'")
         return value
 
-    @validator('faculty_name')
+    @validator("faculty_name")
     def validate_faculty_name(cls, value: str) -> str:
-        if value not in ['Інформаційних технологій', 'Міжнародних відносин і журналістики',
-                         'Міжнародної економіки і підприємництва', 'Фінансів і обліку',
-                         'Менеджмента і маркетингу', 'Економіки і права']:
-            raise ValueError(f'Wrong \'{value}\' number. This faculty doesn\'t exist')
+        if value not in [
+            "Інформаційних технологій",
+            "Міжнародних відносин і журналістики",
+            "Міжнародної економіки і підприємництва",
+            "Фінансів і обліку",
+            "Менеджмента і маркетингу",
+            "Економіки і права",
+        ]:
+            raise ValueError(f"Wrong '{value}' number. This faculty doesn't exist")
         return value
 
-    @validator('speciality_code')
+    @validator("speciality_code")
     def validate_speciality_code(cls, value: int) -> int:
         if value not in speciality.keys():
-            raise ValueError(f'Wrong \'{value}\'number. This speciality doesn\'t exist')
+            raise ValueError(f"Wrong '{value}'number. This speciality doesn't exist")
         return value
 
-    @validator('speciality_name')
+    @validator("speciality_name")
     def validate_speciality_name(cls, value: str) -> str:
         if value not in speciality.values():
-            raise ValueError(f'Wrong \'{value}\' name. This speciality doesn\'t exist')
+            raise ValueError(f"Wrong '{value}' name. This speciality doesn't exist")
         return value
 
-    @validator('course')
+    @validator("course")
     def validate_course(cls, value: int) -> int:
         if value not in [1, 2, 3, 4, 5, 6]:
-            raise ValueError(f"Wrong \'{value}\' number. This course doesn't exist")
+            raise ValueError(f"Wrong '{value}' number. This course doesn't exist")
         return value
 
     @root_validator
-    def validate_speciality_name_and_speciality_code_correspondence(cls, values: str) -> str:
-        if not speciality[values.get('speciality_code')] == values.get('speciality_name'):
-                raise ValueError(f"Speciality code \'{values.get('speciality_code')}\' doesn't correspondence with exists "
-                                 f"\'{values.get('speciality_name')}\' speciality name")
+    def validate_speciality_name_and_speciality_code_correspondence(
+        cls, values: str
+    ) -> str:
+        if not speciality[values.get("speciality_code")] == values.get(
+            "speciality_name"
+        ):
+            raise ValueError(
+                f"Speciality code '{values.get('speciality_code')}' doesn't correspondence with exists "
+                f"'{values.get('speciality_name')}' speciality name"
+            )
         return values
+
 
 class RequestForHostelAccommodationOut(BaseOutSchema):
     user_request_id: int
@@ -94,6 +132,7 @@ class RequestForHostelAccommodationOut(BaseOutSchema):
     faculty_id: int
     university_id: int
     status_id: int
+
 
 class UserRequestExistenceOut(BaseOutSchema):
     user_request_id: int = None
@@ -125,6 +164,7 @@ class UserRequestsListOut(BaseOutSchema):
     service_name: str
     status: Dict[str, Union[int, str]]
     created_at: datetime
+
 
 class CreateUserRequestOut(BaseOutSchema):
     user_request_id: int

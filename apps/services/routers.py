@@ -101,11 +101,13 @@ async def read_user_request_list(
 
 
 @services_router.post(
-    "/{university_id}/create_request_for_hostel_accommodation/",
+    "/{university_id}/create-request-for-hostel-accommodation/",
     name="create_request_for_hostel_accommodation",
     response_model=JSENDOutSchema[RequestForHostelAccommodationOut],
     summary="Create request for hostel accommodation",
-    responses={200: {"description": "Successfully create request for hostel accommodation"}},
+    responses={
+        200: {"description": "Successfully create request for hostel accommodation"}
+    },
     tags=["Student dashboard"],
 )
 async def create_request_for_hostel_accommodation(
@@ -136,12 +138,16 @@ async def create_request_for_hostel_accommodation(
 
     Return: user request id; request status id
     """
+    # TODO: add all columns
     return {
         "data": await service_handler.create_request_for_hostel_accommodation(
-            request=request, university_id=university_id, user_request=user_request,  user=user,
+            request=request,
+            university_id=university_id,
+            user_request=user_request,
+            user=user,
             session=session,
         ),
-        "message": "Create user request for hostel accommodation"
+        "message": "Create user request for hostel accommodation",
     }
 
 
