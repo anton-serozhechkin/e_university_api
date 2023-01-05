@@ -195,7 +195,7 @@ CREATE TABLE IF NOT EXISTS user_request(
     faculty_id integer NOT NULL,
     university_id integer NOT NULL,
     user_id integer NOT NULL,
-    service_id integer NOT NULL,
+    service_id integer NOT NULL UNIQUE,
     status_id integer NOT NULL,
     comment VARCHAR(255),
     created_at timestamp with time zone default (now() at time zone 'utc'),
@@ -228,7 +228,7 @@ MATCH FULL ON DELETE CASCADE ON UPDATE CASCADE;
 
 CREATE TABLE IF NOT EXISTS user_document(
     user_document_id integer NOT NULL,
-    name varchar(255) NOT NULL,
+    name varchar(255) NOT NULL UNIQUE,
     content varchar(255) NOT NULL,
     user_request_id integer NOT NULL,
     created_at timestamp with time zone default (now() at time zone 'utc'),
