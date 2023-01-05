@@ -25,7 +25,7 @@ from apps.services.schemas import (
     UserRequestReviewIn,
     UserRequestReviewOut,
     UserRequestsListOut,
-    ReturnUserDocumentOut,
+    GetUserDocumentListOut,
 )
 from apps.users.schemas import CreateStudentsListOut
 
@@ -300,7 +300,7 @@ async def read_hostel_accommodation(
 @services_router.get(
     "/{university_id}/user-document/",
     name="get_user_document_list",
-    response_model=JSENDOutSchema[List[ReturnUserDocumentOut]],
+    response_model=JSENDOutSchema[List[GetUserDocumentListOut]],
     summary="Read user document list",
     responses={200: {"description": "Successful get user documents list"}},
     tags=["Services application"],

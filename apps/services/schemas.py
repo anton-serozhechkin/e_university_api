@@ -52,7 +52,7 @@ class UserRequestBookingHostelOut(BaseOutSchema):
     gender: str
 
 
-class ReturnUserDocumentOut(BaseOutSchema):
+class GetUserDocumentListOut(BaseOutSchema):
     university_id: int
     created_at: datetime
     updated_at: datetime
