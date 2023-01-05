@@ -52,6 +52,14 @@ class UserRequestBookingHostelOut(BaseOutSchema):
     gender: str
 
 
+class ReturnUserDocumentOut(BaseOutSchema):
+    university_id: int
+    created_at: datetime
+    updated_at: datetime
+    name: str
+    user_document_id: int
+
+
 class UserRequestsListOut(BaseOutSchema):
     university_id: int
     user_id: int
@@ -141,14 +149,6 @@ class UserRequestDetailsViewOut(BaseOutSchema):
     bed_place_name: str = None
     remark: str = None
     documents: List[UserDocumentsSchema]
-
-
-class ReturnUserDocumentOut(BaseOutSchema):
-    university_id: int
-    user_id: int
-    user_document_id: int
-    name: str
-    date_created: datetime
 
 
 class CountHostelAccommodationCostIn(BaseInSchema):
