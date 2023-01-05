@@ -44,7 +44,7 @@ class UserRequest(Base):
     comment = Column(VARCHAR(length=255))
     user_id = Column(INTEGER, ForeignKey("user.user_id"), nullable=False)
     service_id = Column(
-        INTEGER, ForeignKey("service.service_id"), nullable=False, unique=True
+        INTEGER, ForeignKey("service.service_id"), nullable=False
     )
     faculty_id = Column(INTEGER, ForeignKey("faculty.faculty_id"), nullable=False)
     university_id = Column(
@@ -165,7 +165,7 @@ class UserDocument(Base):
     __tablename__ = "user_document"
 
     user_document_id = Column(INTEGER, primary_key=True, nullable=False)
-    name = Column(VARCHAR(length=255), nullable=False, unique=True)
+    name = Column(VARCHAR(length=255), nullable=False)
     content = Column(VARCHAR(length=255), nullable=False)
     user_request_id = Column(
         INTEGER, ForeignKey("user_request.user_request_id"), nullable=False
