@@ -25,6 +25,7 @@ from apps.services.schemas import (
     UserRequestReviewIn,
     UserRequestReviewOut,
     UserRequestsListOut,
+    ReturnUserDocumentOut,
 )
 from apps.users.schemas import CreateStudentsListOut
 
@@ -293,6 +294,29 @@ async def read_hostel_accommodation(
             session=session,
         ),
         "message": "Get hostel accommodation",
+    }
+
+
+@services_router.get(
+    "/{university_id}/user-document/",
+    name="get_user_document_list",
+    response_model=JSENDOutSchema[List[ReturnUserDocumentOut]],
+    summary="Read user document list",
+    responses={200: {"description": "Successful get user documents list"}},
+    tags=["Services application"],
+)
+async def get_user_document_list(
+    request: Request,
+    university_id: int,
+    user=Depends(get_current_user),
+    session: AsyncSession = Depends(get_async_session),
+):
+
+    return {
+        "data": await service_handler.get_user_document_list(
+            request=request, university_id=university_id, user=user, session=session
+        ),
+        "message": "Get user documents list",
     }
 
 
