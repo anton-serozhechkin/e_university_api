@@ -1,14 +1,20 @@
 import logging
 from functools import lru_cache
 from pathlib import Path
-from typing import Union, List
+from typing import List, Union
 
-from pydantic import BaseSettings, Field, validator, Extra, PostgresDsn
-
+from pydantic import BaseSettings, Extra, Field, PostgresDsn, validator
 from sqlalchemy.engine.url import URL
 
-__all__ = ['BASE_DIR', 'Settings', 'TEMPLATES_PATH', 'STORAGE_PATH', 'SETTLEMENT_HOSTEL_PATH',
-           "SERVICES_PATH", 'HOSTEL_BOOKING_TEMPLATE']
+__all__ = [
+    "BASE_DIR",
+    "Settings",
+    "TEMPLATES_PATH",
+    "STORAGE_PATH",
+    "SETTLEMENT_HOSTEL_PATH",
+    "SERVICES_PATH",
+    "HOSTEL_BOOKING_TEMPLATE",
+]
 
 BASE_DIR = Path(__file__).resolve().parent
 
@@ -66,8 +72,8 @@ class MainSettings(BaseSettings):
     TOKEN_LIFE_TIME: int = Field(default=3600)
 
     # JWT SETTINGS
-    JWT_SECRET_KEY: str = Field('JWT_SECRET_KEY')
-    JWT_REFRESH_SECRET_KEY: str = Field('JWT_REFRESH_SECRET_KEY')
+    JWT_SECRET_KEY: str = Field("JWT_SECRET_KEY")
+    JWT_REFRESH_SECRET_KEY: str = Field("JWT_REFRESH_SECRET_KEY")
     JWT_ACCESS_TOKEN_EXPIRE_SECONDS: int = Field(default=3660)  # 1 hour
     JWT_REFRESH_TOKEN_EXPIRE_SECONDS: int = Field(default=(60 * 60 * 24 * 7))  # 7 days
     JWT_ALGORITHM: str = Field(default="HS256")
@@ -89,13 +95,17 @@ class MainSettings(BaseSettings):
         env_nested_delimiter = "__"
 
     @validator("POSTGRES_DSN", always=True)
-    def validate_database_url(cls, value: Union[str, int], values: dict) -> Union[URL, str]:
+    def validate_database_url(
+        cls, value: Union[str, int], values: dict
+    ) -> Union[URL, str]:
         if value is None:
             return _build_db_dsn(values=values)
         return value
 
     @validator("POSTGRES_DSN_ASYNC", always=True)
-    def validate_database_url_async(cls, value: Union[str, int], values: dict) -> Union[URL, str]:
+    def validate_database_url_async(
+        cls, value: Union[str, int], values: dict
+    ) -> Union[URL, str]:
         if value is None:
             return _build_db_dsn(values=values, async_dsn=True)
         return value
