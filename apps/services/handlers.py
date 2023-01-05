@@ -28,6 +28,7 @@ from apps.services.services import (
     user_request_list_service,
     user_request_review_service,
     user_request_service,
+    get_user_document_list_service,
 )
 from apps.services.utils import (
     check_faculty_existence,
@@ -50,6 +51,20 @@ from settings import (
 
 
 class ServiceHandler:
+    async def get_user_document_list(
+        self,
+        *,
+        request: Request,
+        university_id: int,
+        user: UserOut,
+        session: AsyncSession,
+    ):
+
+        return await get_user_document_list_service.list(
+            session=session,
+            filters={"university_id": university_id, "user_id": user.user_id},
+        )
+
     async def read_user_request_existence(
         self,
         *,
