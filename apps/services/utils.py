@@ -26,6 +26,13 @@ def create_speciality_dict(specialties: List) -> Dict[int, str]:
     return speciality_dict
 
 
+def create_faculty_list(faculties: List) -> List:
+    faculty_list = []
+    for faculty in faculties:
+        faculty_list.append(faculty.name)
+    return faculty_list
+
+
 async def create_telephone_set(
     session: AsyncSession, filters: Dict[str, int]
 ) -> Set[str]:

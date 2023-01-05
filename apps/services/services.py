@@ -28,6 +28,13 @@ async def get_specialties_list(university_id: int) -> List:
     )
     return await database.fetch_all(query)
 
+async def get_faculty_list(university_id: int) -> List:
+    query = (
+        select(Faculty)
+        .where(Faculty.university_id == university_id)
+    )
+    return await database.fetch_all(query)
+
 
 bed_place_service = AsyncCRUDBase(model=BedPlace)
 hostel_service = AsyncCRUDBase(model=Hostel)
