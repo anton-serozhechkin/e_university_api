@@ -53,7 +53,7 @@ async def check_user_request_existence(
     university_id: int,
     service_id: int,
     user: UserOut = Depends(get_current_user),
-    session: AsyncSession = Depends(get_async_session)
+    session: AsyncSession = Depends(get_async_session),
 ):  # TODO: nothing prevents student from creating multiple requests with the same id
     """**Method for checking user request existence**.
 
@@ -89,7 +89,7 @@ async def read_user_request_list(
     request: Request,
     university_id: int,
     user: UserOut = Depends(get_current_user),
-    session: AsyncSession = Depends(get_async_session)
+    session: AsyncSession = Depends(get_async_session),
 ):
     return {
         "data": await service_handler.read_user_request_list(
@@ -112,7 +112,7 @@ async def create_user_request(
     university_id: int,
     user_request: CreateUserRequestIn,
     user: UserOut = Depends(get_current_user),
-    session: AsyncSession = Depends(get_async_session)
+    session: AsyncSession = Depends(get_async_session),
 ):
     """**Method for creating user request**.
 

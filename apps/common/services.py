@@ -142,7 +142,9 @@ class AsyncCRUDBase:
         *,
         session: AsyncSession,
         filters: Optional[Dict] = None  # TODO: Add dynamic filtering system
-    ) -> List[Union[ReadSchemaType]]:  # TODO: fix warning 'Union requires two or more type argumentsPylance'
+    ) -> List[
+        Union[ReadSchemaType]
+    ]:  # TODO: fix warning 'Union requires two or more type argumentsPylance'
         select_statement = select(self.model)
         if filters:
             select_statement = select_statement.filter_by(**filters)

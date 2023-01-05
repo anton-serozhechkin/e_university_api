@@ -75,7 +75,11 @@ class AwareDateTime(TypeDecorator):
     impl = DATETIME
 
     @property
-    def python_type(self) -> type(datetime):  # TODO : fix 'type() call should not be used in type annotation Use Type[T] instead'
+    def python_type(
+        self,
+    ) -> type(
+        datetime
+    ):  # TODO : fix 'type() call should not be used in type annotation Use Type[T] instead'
         return type(datetime)
 
     def process_bind_param(self, value: datetime, dialect) -> datetime:

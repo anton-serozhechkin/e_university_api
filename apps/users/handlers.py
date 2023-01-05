@@ -39,10 +39,7 @@ from apps.users.services import (
 class UserHandler:
     @staticmethod
     async def check_student(
-        *,
-        request: Request,
-        student: StudentCheckExistenceIn,
-        session: AsyncSession
+        *, request: Request, student: StudentCheckExistenceIn, session: AsyncSession
     ) -> StudentCheckExistenceOut:  # TODO Refactor this method
         result = await student_service.read(session=session, obj=student)
         if not result:
@@ -66,7 +63,9 @@ class UserHandler:
     async def read_users_list(
         *, request: Request, university_id: int, session: AsyncSession
     ) -> List[UsersListViewOut]:
-        return await user_list_service.list(session=session, filters={"university_id": university_id})
+        return await user_list_service.list(
+            session=session, filters={"university_id": university_id}
+        )
 
     @staticmethod
     async def create_user(
@@ -162,7 +161,9 @@ class UserHandler:
         university_id: int,
         faculty_id: Optional[int] = None,
         session: AsyncSession
-    ) -> List[StudentsListOut]:  # TODO after input id of the non-existent university it returns the students
+    ) -> List[
+        StudentsListOut
+    ]:  # TODO after input id of the non-existent university it returns the students
         filters = {"university_id": university_id}
         if faculty_id:
             filters["faculty_id"] = faculty_id

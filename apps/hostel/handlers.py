@@ -21,7 +21,9 @@ class HostelHandler:
 
     @staticmethod
     async def read_available_bed_places(
-        *, request: Request, session: AsyncSession,
+        *,
+        request: Request,
+        session: AsyncSession,
     ) -> List[BedPlaceOut]:
         return await bed_place_service.list(session=session)
 

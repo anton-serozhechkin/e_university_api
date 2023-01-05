@@ -23,7 +23,9 @@ class AuthorizationHandler:
         form_data: OAuth2PasswordRequestForm = Depends(),
         session: AsyncSession,
     ) -> AuthOut:
-        user = await user_service.read(session=session, data={"login": form_data.username})
+        user = await user_service.read(
+            session=session, data={"login": form_data.username}
+        )
         verify_user(user)
         verify_password(user, form_data.password)
         return AuthOut(
@@ -34,7 +36,9 @@ class AuthorizationHandler:
 
     @staticmethod
     async def available_roles(
-        *, request: Request, session: AsyncSession,
+        *,
+        request: Request,
+        session: AsyncSession,
     ) -> List[AvailableRolesOut]:
         return await role_service.list(session=session)
 

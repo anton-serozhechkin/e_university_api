@@ -45,7 +45,7 @@ class EduInstitutionHandler:
                     last_name=data.dean_last_name,
                     first_name=data.dean_first_name,
                     middle_name=data.dean_middle_name,
-            ),
+                ),
                 session=session,
             )
             data.dean_id = dean.dean_id
@@ -64,7 +64,9 @@ class EduInstitutionHandler:
 
     @staticmethod
     async def read_courses_list(
-            *, request: Request, session: AsyncSession,
+        *,
+        request: Request,
+        session: AsyncSession,
     ) -> List[CourseOut]:
         return await course_list_service.list(session=session)
 

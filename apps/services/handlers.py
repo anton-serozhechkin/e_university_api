@@ -5,7 +5,7 @@ from pathlib import Path
 from fastapi import File, Request, UploadFile
 from pytz import utc
 from sqlalchemy.ext.asyncio import AsyncSession
-from typing import Any, List, Optional, Tuple, Union
+from typing import List, Optional, Tuple, Union
 
 from apps.common.file_managers import file_manager
 from apps.services.models import STATUS_MAPPING, UserDocument
@@ -61,12 +61,12 @@ from settings import (
 class ServiceHandler:
     @staticmethod
     async def read_user_request_existence(
-            *,
-            request: Request,
-            university_id: int,
-            service_id: int,
-            user: UserOut,
-            session: AsyncSession,
+        *,
+        request: Request,
+        university_id: int,
+        service_id: int,
+        user: UserOut,
+        session: AsyncSession,
     ) -> UserRequestExistenceOut:
         user_request_result = await request_existence_service.read(
             session=session,
@@ -90,11 +90,11 @@ class ServiceHandler:
 
     @staticmethod
     async def read_user_request_list(
-            *,
-            request: Request,
-            university_id: int,
-            user: UserOut,
-            session: AsyncSession,
+        *,
+        request: Request,
+        university_id: int,
+        user: UserOut,
+        session: AsyncSession,
     ) -> List[UserRequestsListOut]:
         return await user_request_list_service.list(
             session=session,
@@ -102,13 +102,13 @@ class ServiceHandler:
         )
 
     async def create_user_request(
-            self,
-            *,
-            request: Request,
-            university_id: int,
-            user_request: CreateUserRequestIn,
-            user: UserOut,
-            session: AsyncSession,
+        self,
+        *,
+        request: Request,
+        university_id: int,
+        user_request: CreateUserRequestIn,
+        user: UserOut,
+        session: AsyncSession,
     ) -> CreateUserRequestOut:
         user_faculty_result = await user_faculty_service.read(
             data={"user_id": user.user_id}, session=session
@@ -309,7 +309,9 @@ class ServiceHandler:
         return month_price * month_difference
 
     @classmethod
-    async def __create_user_document(cls, session: AsyncSession, **kwargs) -> UserDocument:
+    async def __create_user_document(
+        cls, session: AsyncSession, **kwargs
+    ) -> UserDocument:
         service_id = kwargs.get("service_id")
         name = await cls.__generate_user_document_name(service_id, session)
         created_at = datetime.strptime(
