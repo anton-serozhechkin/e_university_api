@@ -80,14 +80,14 @@ class ServiceHandler:
         result = dict(user_request_booking_hostel)
         result.update(
             full_name={
-                "last_name": user_request.student_last_name.capitalize(),
-                "first_name": user_request.student_first_name.capitalize(),
-                "middle_name": user_request.student_middle_name.capitalize(),
+                "last_name": user_request.student_last_name,
+                "first_name": user_request.student_first_name,
+                "middle_name": user_request.student_middle_name,
             },
             rector_full_name={
-                "last_name": user_request.rector_last_name.capitalize(),
-                "first_name": user_request.rector_first_name.capitalize(),
-                "middle_name": user_request.rector_middle_name.capitalize(),
+                "last_name": user_request.rector_last_name,
+                "first_name": user_request.rector_first_name,
+                "middle_name": user_request.rector_middle_name,
             },
             speciality_name=user_request.speciality_name,
             speciality_code=user_request.speciality_code,
