@@ -38,6 +38,7 @@ from apps.services.utils import (
     create_faculty_dict,
     create_telephone_set,
     get_worksheet_cell_col_row,
+    update_booking_hostel_data,
 )
 from apps.users.schemas import CreateStudentIn, UserOut
 from apps.users.services import student_service
@@ -76,35 +77,19 @@ class ServiceHandler:
             data={"user_id": user.user_id, "university_id": university_id},
         )
 
-        # TODO: create method to divide this feature from handler logic
-        result = dict(user_request_booking_hostel)
-        result.update(
-            full_name={
-                "last_name": user_request.student_last_name,
-                "first_name": user_request.student_first_name,
-                "middle_name": user_request.student_middle_name,
-            },
-            rector_full_name={
-                "last_name": user_request.rector_last_name,
-                "first_name": user_request.rector_first_name,
-                "middle_name": user_request.rector_middle_name,
-            },
-            speciality_name=user_request.speciality_name,
-            speciality_code=user_request.speciality_code,
-            course=user_request.course,
-            faculty_name=user_request.faculty_name,
-            educ_level=user_request.educ_level,
+        user_request_service_response = await user_request_service.create(
+            session=session, data=data
         )
 
-        user_request = await user_request_service.create(session=session, data=data)
-
         prepared_data = {
-            "context": result,
-            "service_id": user_request.service_id,
-            "user_request_id": user_request.user_request_id,
+            "context": update_booking_hostel_data(
+                user_request, user_request_booking_hostel
+            ),
+            "service_id": user_request_service_response.service_id,
+            "user_request_id": user_request_service_response.user_request_id,
         }
         await self.__create_user_document(session, **prepared_data)
-        return user_request
+        return user_request_service_response
 
     async def read_user_request_existence(
         self,

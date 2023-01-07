@@ -1,7 +1,9 @@
 import os.path
 from collections import defaultdict
-from typing import Any, Callable, DefaultDict, Dict, List, Set, Tuple
+from dataclasses import dataclass
+from typing import Any, Callable, DefaultDict, Dict, List, Set, Tuple, Union
 
+from sqlalchemy.engine.row import Row
 import xlrd
 from fastapi import UploadFile
 from fastapi import status as http_status
@@ -133,3 +135,25 @@ def check_file_existing(path: str) -> None:
             message=f"File with path {path} was removed or deleted",
             code=http_status.HTTP_409_CONFLICT,
         )
+
+
+def update_booking_hostel_data(
+    user_request_data: dataclass, user_booking_hostel_data: Row
+) -> Dict[str, Union[int, str]]:
+
+    updated_data = dict(user_booking_hostel_data)
+
+    updated_data.update(user_request_data.dict())
+    updated_data.update(
+        full_name={
+            "last_name": user_request_data.dict()["student_last_name"],
+            "first_name": user_request_data.dict()["student_first_name"],
+            "middle_name": user_request_data.dict()["student_middle_name"],
+        },
+        rector_full_name={
+            "last_name": user_request_data.dict()["rector_last_name"],
+            "first_name": user_request_data.dict()["rector_first_name"],
+            "middle_name": user_request_data.dict()["rector_middle_name"],
+        },
+    )
+    return updated_data
