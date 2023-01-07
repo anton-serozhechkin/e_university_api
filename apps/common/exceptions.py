@@ -1,4 +1,4 @@
-import typing
+from typing import Any, Dict, Union
 
 from fastapi import status as http_status
 
@@ -20,10 +20,10 @@ class BackendException(Exception):
         self,
         *,
         status: JSENDStatus = JSENDStatus.FAIL,
-        data: typing.Union[None, int, str, list, dict] = None,
+        data: Union[None, int, str, list, dict] = None,
         message: str,
         code: int = http_status.HTTP_400_BAD_REQUEST,
-    ):
+    ) -> None:
         self.status = status
         self.data = data
         self.message = message
@@ -40,7 +40,7 @@ class BackendException(Exception):
         """String representation for BackendException."""
         return self.__repr__()
 
-    def dict(self) -> typing.Dict[str, typing.Any]:
+    def dict(self) -> Dict[str, Any]:
         """Converts BackendException to python dict."""
         return {
             "status": self.status.value,

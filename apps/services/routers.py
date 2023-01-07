@@ -1,4 +1,4 @@
-from typing import List, Union
+from typing import List, Optional, Union
 
 from fastapi import APIRouter, Depends, Request, UploadFile
 from fastapi import status as http_status
@@ -26,7 +26,7 @@ from apps.services.schemas import (
     UserRequestReviewOut,
     UserRequestsListOut,
 )
-from apps.users.schemas import CreateStudentsListOut
+from apps.users.schemas import CreateStudentsListOut, UserOut
 
 services_router = APIRouter(
     responses={422: {"model": JSENDFailOutSchema, "description": "ValidationError"}}
@@ -52,7 +52,7 @@ async def check_user_request_existence(
     request: Request,
     university_id: int,
     service_id: int,
-    user=Depends(get_current_user),
+    user: UserOut = Depends(get_current_user),
     session: AsyncSession = Depends(get_async_session),
 ):  # TODO: nothing prevents student from creating multiple requests with the same id
     """**Method for checking user request existence**.
@@ -88,7 +88,7 @@ async def check_user_request_existence(
 async def read_user_request_list(
     request: Request,
     university_id: int,
-    user=Depends(get_current_user),
+    user: UserOut = Depends(get_current_user),
     session: AsyncSession = Depends(get_async_session),
 ):
     return {
@@ -111,7 +111,7 @@ async def create_user_request(
     request: Request,
     university_id: int,
     user_request: CreateUserRequestIn,
-    user=Depends(get_current_user),
+    user: UserOut = Depends(get_current_user),
     session: AsyncSession = Depends(get_async_session),
 ):
     """**Method for creating user request**.
@@ -159,7 +159,7 @@ async def create_user_request(
 async def read_user_request_booking_hostel(
     request: Request,
     university_id: int,
-    user=Depends(get_current_user),
+    user: UserOut = Depends(get_current_user),
     session: AsyncSession = Depends(get_async_session),
 ):
     return {
@@ -178,12 +178,12 @@ async def read_user_request_booking_hostel(
     responses={200: {"description": "Successful cancel user request response"}},
     tags=["Services application"],
 )
-async def cancel_request(
+async def cancel_student_request(
     request: Request,
     university_id: int,
     user_request_id: int,
     cancel_request: CancelRequestIn,
-    user=Depends(get_current_user),
+    user: UserOut = Depends(get_current_user),
     session: AsyncSession = Depends(get_async_session),
 ):
     """**Method for cancel user request**.
@@ -229,7 +229,7 @@ async def create_user_request_review(
     university_id: int,
     user_request_id: int,
     user_request_review: UserRequestReviewIn,
-    user=Depends(get_current_user),
+    user: UserOut = Depends(get_current_user),
     session: AsyncSession = Depends(get_async_session),
 ):
     """**Create user request review**.
@@ -269,7 +269,7 @@ async def create_user_request_review(
 @services_router.get(
     "/{university_id}/hostel-accommodation/{user_request_id}",
     name="read_hostel_accommodation",
-    response_model=JSENDOutSchema[HostelAccomodationViewOut],
+    response_model=JSENDOutSchema[Optional[HostelAccomodationViewOut]],
     summary="Get hostel accommodation",
     responses={
         200: {
@@ -282,7 +282,7 @@ async def read_hostel_accommodation(
     request: Request,
     university_id: int,
     user_request_id: int,
-    user=Depends(get_current_user),
+    user: UserOut = Depends(get_current_user),
     session: AsyncSession = Depends(get_async_session),
 ):
     return {
@@ -308,7 +308,7 @@ async def read_request_details(
     request: Request,
     university_id: int,
     user_request_id: int,
-    user=Depends(get_current_user),
+    user: UserOut = Depends(get_current_user),
     session: AsyncSession = Depends(get_async_session),
 ):
     return {
@@ -336,7 +336,7 @@ async def create_students_list_from_file(
     request: Request,
     university_id: int,
     file: UploadFile = Depends(check_file_content_type),
-    user=Depends(get_current_user),
+    user: UserOut = Depends(get_current_user),
     session: AsyncSession = Depends(get_async_session),
 ):
     response = await service_handler.create_students_list_from_file(
@@ -362,7 +362,7 @@ async def read_user_document(
     request: Request,
     university_id: int,
     user_document_id: int,
-    user=Depends(get_current_user),
+    user: UserOut = Depends(get_current_user),
     session: AsyncSession = Depends(get_async_session),
 ):
     return StreamingResponse(
@@ -416,7 +416,7 @@ async def download_user_document(
     request: Request,
     university_id: int,
     user_document_id: int,
-    user=Depends(get_current_user),
+    user: UserOut = Depends(get_current_user),
     session: AsyncSession = Depends(get_async_session),
 ):
     file_path, file_name = await service_handler.download_user_document(
@@ -452,7 +452,7 @@ async def count_hostel_accommodation_cost(
     request: Request,
     university_id: int,
     data: CountHostelAccommodationCostIn,
-    user=Depends(get_current_user),
+    user: UserOut = Depends(get_current_user),
     session: AsyncSession = Depends(get_async_session),
 ):
     return {

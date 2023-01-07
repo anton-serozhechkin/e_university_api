@@ -41,7 +41,7 @@ class User(Base):
     user_requests = relationship("UserRequest", back_populates="user")
     roles = relationship("Role", back_populates="users")
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return (
             f'{self.__class__.__name__}(user_id="{self.user_id}", login="{self.login}",'
             f' password="{self.password}", last_visit_at="{self.last_visit_at}",'
@@ -60,7 +60,7 @@ class OneTimeToken(Base):
 
     student = relationship("Student", back_populates="one_time_tokens")
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return (
             f'{self.__class__.__name__}(token_id="{self.token_id}",'
             f' token="{self.token}", expires_at="{self.expires_at}",'
@@ -92,7 +92,7 @@ class Student(Base):
     faculty = relationship("Faculty", back_populates="students")
     one_time_tokens = relationship("OneTimeToken", back_populates="student")
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return (
             f'{self.__class__.__name__}(student_id="{self.student_id}",'
             f' first_name="{self.first_name}", middle_name="{self.middle_name}",'
@@ -119,7 +119,7 @@ class UserFaculty(Base):
         primary_key=True,
     )
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return (
             f'{self.__class__.__name__}(user_id="{self.user_id}",'
             f' faculty_id="{self.faculty_id}")'
