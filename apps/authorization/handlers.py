@@ -1,8 +1,10 @@
+from typing import List
+
 from fastapi import Depends, Request
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.ext.asyncio import AsyncSession
-from typing import List
 
+from apps.authorization.schemas import AvailableRolesOut
 from apps.authorization.services import (
     create_access_token,
     create_refresh_token,
@@ -10,7 +12,6 @@ from apps.authorization.services import (
     verify_password,
     verify_user,
 )
-from apps.authorization.schemas import AvailableRolesOut
 from apps.users.schemas import AuthOut
 from apps.users.services import user_service
 
