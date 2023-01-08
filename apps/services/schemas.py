@@ -60,10 +60,8 @@ class RequestForHostelAccommodationIn(BaseInSchema):
     def validate_rector_and_student_names(cls, values: str) -> str:
         names = [
             "rector_first_name",
-            "rector_middle_name",
             "rector_last_name",
             "student_first_name",
-            "student_middle_name",
             "student_last_name",
         ]
         for name in names:
@@ -72,6 +70,26 @@ class RequestForHostelAccommodationIn(BaseInSchema):
                     f"{name.replace('_', ' ').capitalize()} first letter must be uppercase"
                 )
         return values
+
+    @validator("student_middle_name")
+    def validate_student_middle_name(cls, value: str) -> str:
+        if value:
+            if not value.istitle():
+                raise ValueError(
+                    f"Middle name must be uppercase"
+                )
+            return value
+        return value
+
+    @validator("rector_middle_name")
+    def validate_rector_middle_name(cls, value: str) -> str:
+        if value:
+            if not value.istitle():
+                raise ValueError(
+                    f"Middle name must be uppercase"
+                )
+            return value
+        return value
 
     @validator("educ_level")
     def validate_education_level(cls, value: str) -> str:
