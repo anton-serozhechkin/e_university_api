@@ -25,7 +25,7 @@ from apps.services.schemas import (
     UserRequestReviewIn,
     UserRequestReviewOut,
     UserRequestsListOut,
-    GetUserDocumentListOut,
+    UserDocumenstListOut,
 )
 from apps.users.schemas import CreateStudentsListOut, UserOut
 
@@ -293,19 +293,19 @@ async def read_hostel_accommodation(
             user_request_id=user_request_id,
             session=session,
         ),
-        "message": "Get hostel accommodation",
+        "message": "Got hostel accommodation",
     }
 
 
 @services_router.get(
-    "/{university_id}/user-document/",
-    name="get_user_document_list",
-    response_model=JSENDOutSchema[List[GetUserDocumentListOut]],
-    summary="Read user document list",
+    "/{university_id}/user-documents/",
+    name="read_user_documents_list",
+    response_model=JSENDOutSchema[List[UserDocumenstListOut]],
+    summary="Read user documents list",
     responses={200: {"description": "Successful get user documents list"}},
     tags=["Services application"],
 )
-async def get_user_document_list(
+async def read_user_documents_list(
     request: Request,
     university_id: int,
     user=Depends(get_current_user),
@@ -313,10 +313,10 @@ async def get_user_document_list(
 ):
 
     return {
-        "data": await service_handler.get_user_document_list(
+        "data": await service_handler.read_user_documents_list(
             request=request, university_id=university_id, user=user, session=session
         ),
-        "message": "Get user documents list",
+        "message": "Got user documents list",
     }
 
 

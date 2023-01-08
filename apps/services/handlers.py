@@ -30,6 +30,7 @@ from apps.services.services import (
     hostel_service,
     request_existence_service,
     service_service,
+    user_documents_list_service,
     user_document_service,
     user_faculty_service,
     user_request_booking_hostel_service,
@@ -37,7 +38,6 @@ from apps.services.services import (
     user_request_list_service,
     user_request_review_service,
     user_request_service,
-    get_user_document_list_service,
 )
 from apps.services.utils import (
     check_faculty_existence,
@@ -61,7 +61,7 @@ from settings import (
 
 class ServiceHandler:
     @staticmethod
-    async def get_user_document_list(
+    async def read_user_documents_list(
         *,
         request: Request,
         university_id: int,
@@ -69,7 +69,7 @@ class ServiceHandler:
         session: AsyncSession,
     ):
 
-        return await get_user_document_list_service.list(
+        return await user_documents_list_service.list(
             session=session,
             filters={"university_id": university_id, "user_id": user.user_id},
         )
