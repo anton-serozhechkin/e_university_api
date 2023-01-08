@@ -19,13 +19,13 @@ from apps.services.schemas import (
     CreateUserRequestIn,
     CreateUserRequestOut,
     HostelAccomodationViewOut,
+    UserDocumenstListOut,
     UserRequestBookingHostelOut,
     UserRequestDetailsViewOut,
     UserRequestExistenceOut,
     UserRequestReviewIn,
     UserRequestReviewOut,
     UserRequestsListOut,
-    UserDocumenstListOut,
 )
 from apps.users.schemas import CreateStudentsListOut, UserOut
 
@@ -317,11 +317,11 @@ async def read_user_documents_list(
     - **university_id**: user university id
 
     **Return**:
-    - **university_id**: university id of user document 
+    - **university_id**: university id of user document
+    - **user_document_id**: id of user document
+    - **name**: document name
     - **created_at**: user document was created at
     - **updated_at**: user document was updated at
-    - **name**: document name
-    - **user_document_id**: id of user document
     """
     return {
         "data": await service_handler.read_user_documents_list(
@@ -329,6 +329,39 @@ async def read_user_documents_list(
         ),
         "message": "Got user documents list",
     }
+
+
+@services_router.get(
+    "/{university_id}/user-documents/{user_document_id}",
+    name="read_user_document",
+    response_class=StreamingResponse,
+    summary="Read user document",
+    responses={
+        200: {
+            "description": "Successful get user document response",
+            "content": {"text/html": {"example": "bytes"}},
+        }
+    },
+    tags=["Services application"],
+)
+async def read_user_document(
+    request: Request,
+    university_id: int,
+    user_document_id: int,
+    user: UserOut = Depends(get_current_user),
+    session: AsyncSession = Depends(get_async_session),
+):
+    return StreamingResponse(
+        content=await service_handler.read_user_document(
+            request=request,
+            university_id=university_id,
+            user_document_id=user_document_id,
+            user=user,
+            session=session,
+        ),
+        status_code=http_status.HTTP_200_OK,
+        media_type="text/html",
+    )
 
 
 @services_router.get(
@@ -378,39 +411,6 @@ async def create_students_list_from_file(
         request=request, university_id=university_id, file=file, session=session
     )
     return {"data": response, "message": "Created students list from file"}
-
-
-@services_router.get(
-    "/{university_id}/user-document/{user_document_id}",
-    name="read_user_document",
-    response_class=StreamingResponse,
-    summary="Read user document",
-    responses={
-        200: {
-            "description": "Successful get user document response",
-            "content": {"text/html": {"example": "bytes"}},
-        }
-    },
-    tags=["Services application"],
-)
-async def read_user_document(
-    request: Request,
-    university_id: int,
-    user_document_id: int,
-    user: UserOut = Depends(get_current_user),
-    session: AsyncSession = Depends(get_async_session),
-):
-    return StreamingResponse(
-        content=await service_handler.read_user_document(
-            request=request,
-            university_id=university_id,
-            user_document_id=user_document_id,
-            user=user,
-            session=session,
-        ),
-        status_code=http_status.HTTP_200_OK,
-        media_type="text/html",
-    )
 
 
 @services_router.get(

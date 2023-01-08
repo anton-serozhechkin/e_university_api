@@ -656,26 +656,25 @@ DROP VIEW IF EXISTS user_documents_list_view;
 CREATE VIEW user_documents_list_view AS
     SELECT
         ur.university_id,
-        ud.created_at,
-        ud.updated_at,
-        ud.name,
         ud.user_document_id,
-        ur.user_id
+        ur.user_id,
+        ud.name,
+        ud.created_at,
+        ud.updated_at
     FROM
         user_request ur
-	LEFT JOIN user_document ud ON
-		ur.service_id = ud.user_document_id
-    LEFT JOIN status st ON
-        ur.status_id = st.status_id
+    LEFT JOIN user_document ud ON
+        ud.user_request_id = ur.user_request_id
     WHERE
         ur.status_id in (1, 3)
-	GROUP BY
+    GROUP BY
         ur.university_id,
-        ud.created_at,
-        ud.updated_at,
-        ud.name,
         ud.user_document_id,
-        ur.user_id
+        ur.user_id,
+        ud.name,
+        ud.created_at,
+        ud.updated_at
     ORDER BY
-        ur.university_id;
-
+        ur.university_id,
+        ud.user_document_id,
+        ur.user_id;
