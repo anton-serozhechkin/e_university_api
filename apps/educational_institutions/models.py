@@ -23,7 +23,7 @@ class University(Base):
     )
     user_requests = relationship("UserRequest", back_populates="university")
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return (
             f'{self.__class__.__name__}(university_id="{self.university_id}", '
             f'university_name="{self.university_name}", logo="{self.logo}", '
@@ -50,7 +50,7 @@ class Faculty(Base):
     users = relationship("User", secondary="user_faculty", back_populates="faculties")
     user_requests = relationship("UserRequest", back_populates="faculty")
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return (
             f'{self.__class__.__name__}(faculty_id="{self.faculty_id}",'
             f' name="{self.name}", shortname="{self.shortname}",'
@@ -69,7 +69,7 @@ class Speciality(Base):  # TODO: rename to "Specialty"
 
     faculties = relationship("Faculty", back_populates="speciality")
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return (
             f'{self.__class__.__name__}(speciality_id="{self.speciality_id}",'
             f' code="{self.code}", name="{self.name}", faculty_id="{self.faculty_id}")'
@@ -86,7 +86,7 @@ class Dean(Base):
 
     faculty = relationship("Faculty", back_populates="dean")
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return (
             f'{self.__class__.__name__}(dean_id="{self.dean_id}",'
             f' first_name="{self.first_name}", middle_name="{self.middle_name}",'
@@ -104,7 +104,7 @@ class Rector(Base):
 
     university = relationship("University", back_populates="rector")
 
-    def __str__(self):
+    def __str__(self) -> str:
         return (
             f'{self.__class__.__name__}(rector_id="{self.rector_id}",'
             f' first_name="{self.first_name}", middle_name="{self.middle_name}",'
@@ -118,7 +118,7 @@ class Course(Base):
     course_id = Column(INTEGER, primary_key=True, nullable=False)
     value = Column(INTEGER, nullable=False)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return (
             f'{self.__class__.__name__}(course_id="{self.course_id}",'
             f' value="{self.value}")'

@@ -8,8 +8,8 @@ from apps.hostel.services import bed_place_service, hostel_service
 
 
 class HostelHandler:
+    @staticmethod
     async def read_hostels_list(
-        self,
         *,
         request: Request,
         university_id: int,
@@ -19,8 +19,11 @@ class HostelHandler:
             session=session, filters={"university_id": university_id}
         )
 
+    @staticmethod
     async def read_available_bed_places(
-        self, *, request: Request, session: AsyncSession
+        *,
+        request: Request,
+        session: AsyncSession,
     ) -> List[BedPlaceOut]:
         return await bed_place_service.list(session=session)
 

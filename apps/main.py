@@ -47,10 +47,10 @@ app.include_router(authorization_router)
 
 
 @app.on_event("startup")
-async def startup():
+async def startup() -> None:
     await database.connect()
 
 
 @app.on_event("shutdown")
-async def shutdown():
+async def shutdown() -> None:
     await database.disconnect()

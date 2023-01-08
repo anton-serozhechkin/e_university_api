@@ -59,7 +59,7 @@ def validation_exception_handler(
     )
 
 
-def integrity_error_handler(error: IntegrityError):
+def integrity_error_handler(error: IntegrityError) -> None:
     if "duplicate" in error.args[0]:
         raise BackendException(
             message=str(error.orig.args[0].split("\n")[-1])

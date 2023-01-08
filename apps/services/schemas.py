@@ -73,7 +73,7 @@ class CancelRequestIn(BaseInSchema):
     status_id: int
 
     @validator("status_id")
-    def validate_status_id(cls, v):
+    def validate_status_id(cls, v: int) -> int:
         if v != 4:
             raise ValueError("The application can only be canceled")
         return v
@@ -92,7 +92,7 @@ class UserRequestReviewIn(BaseInSchema):
     bed_place_id: int = None
 
     @validator("status_id")
-    def validate_status_id(cls, v):
+    def validate_status_id(cls, v: int) -> int:
         if v not in [1, 2]:
             raise ValueError("The application can only be approved or rejected")
         return v
@@ -158,7 +158,7 @@ class CountHostelAccommodationCostIn(BaseInSchema):
     bed_place_id: int
 
     @root_validator
-    def validate_two_dates(cls, values):
+    def validate_two_dates(cls, values: Dict) -> Dict:
         if values.get("start_accommodation_date") >= values.get(
             "end_accommodation_date"
         ):
