@@ -4,7 +4,13 @@ from fastapi import Request
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from apps.common.schemas import FullNameSchema
-from apps.educational_institutions.schemas import DeanOut, FacultyIn, FacultyOut
+from apps.educational_institutions.schemas import (
+    CourseOut,
+    DeanOut,
+    FacultyIn,
+    FacultyOut,
+    SpecialityOut,
+)
 from apps.educational_institutions.services import (
     course_list_service,
     dean_service,
@@ -15,13 +21,15 @@ from apps.educational_institutions.services import (
 
 
 class EduInstitutionHandler:
+    @staticmethod
     async def create_dean(
-        self, *, request: Request, data: FullNameSchema, session: AsyncSession
+        *, request: Request, data: FullNameSchema, session: AsyncSession
     ) -> DeanOut:
         return await dean_service.create(session=session, obj=data)
 
+    @staticmethod
     async def read_faculties(
-        self, *, request: Request, university_id: int, session: AsyncSession
+        *, request: Request, university_id: int, session: AsyncSession
     ) -> List[FacultyOut]:
         return await faculty_list_service.list(
             session=session, filters={"university_id": university_id}
@@ -46,14 +54,20 @@ class EduInstitutionHandler:
         del data.dean_middle_name
         return await faculty_service.create(session=session, obj=data)
 
+    @staticmethod
     async def read_speciality_list(
-        self, *, request: Request, university_id: int, session: AsyncSession
-    ):
+        *, request: Request, university_id: int, session: AsyncSession
+    ) -> List[SpecialityOut]:
         return await speciality_list_service.list(
             session=session, filters={"university_id": university_id}
         )
 
-    async def read_courses_list(self, *, request: Request, session: AsyncSession):
+    @staticmethod
+    async def read_courses_list(
+        *,
+        request: Request,
+        session: AsyncSession,
+    ) -> List[CourseOut]:
         return await course_list_service.list(session=session)
 
 

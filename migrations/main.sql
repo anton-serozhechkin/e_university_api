@@ -650,3 +650,24 @@ CREATE VIEW user_request_booking_hostel_view AS
     ORDER BY
         u.university_id,
         s.user_id;
+
+
+DROP VIEW IF EXISTS user_documents_list_view;
+CREATE VIEW user_documents_list_view AS
+    SELECT
+        ur.university_id,
+        ud.user_document_id,
+        ur.user_id,
+        ud.name,
+        ud.created_at,
+        ud.updated_at
+    FROM
+        user_document ud
+    LEFT JOIN user_request ur ON
+        ur.user_request_id = ud.user_request_id
+    WHERE
+        ur.status_id in (1, 3)
+    ORDER BY
+        ur.university_id,
+        ud.user_document_id,
+        ur.user_id;

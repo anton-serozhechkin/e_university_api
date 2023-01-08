@@ -8,7 +8,7 @@ from apps.authorization.handlers import authorization_handler
 from apps.authorization.schemas import AvailableRolesOut
 from apps.common.dependencies import get_async_session, get_current_user
 from apps.common.schemas import JSENDFailOutSchema, JSENDOutSchema
-from apps.users.schemas import AuthOut
+from apps.users.schemas import AuthOut, UserOut
 
 authorization_router = APIRouter()
 
@@ -56,7 +56,7 @@ async def login(
 )
 async def available_roles(
     request: Request,
-    user=Depends(get_current_user),
+    user: UserOut = Depends(get_current_user),
     session: AsyncSession = Depends(get_async_session),
 ):
     return {

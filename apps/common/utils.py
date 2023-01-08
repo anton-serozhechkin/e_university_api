@@ -2,6 +2,7 @@ from datetime import datetime, timedelta
 from hashlib import sha1
 from os import urandom
 from random import randint
+from typing import Optional, Tuple
 
 from fastapi import status as http_status
 from fastapi.security import OAuth2PasswordBearer
@@ -10,6 +11,7 @@ from sqlalchemy import DATETIME, TypeDecorator
 from translitua import translit
 
 from apps.common.exceptions import BackendException
+from apps.common.services import ModelType
 from settings import Settings
 
 reusable_oauth = OAuth2PasswordBearer(tokenUrl="/login", scheme_name="JWT")
@@ -26,7 +28,7 @@ def add_random_digits_and_cut_username(data: str) -> str:
     return f"{(data[:4])}-{randint(100, 999)}".lower()
 
 
-def get_student_attr(student):
+def get_student_attr(student: Optional[ModelType]) -> Tuple[str, str, int]:
     if not student:
         raise BackendException(
             message="Student is not found.", code=http_status.HTTP_404_NOT_FOUND
@@ -41,7 +43,7 @@ def get_student_attr(student):
     return student.first_name, student.last_name, student.faculty_id
 
 
-def get_token_data(token_data):
+def get_token_data(token_data: Optional[ModelType]) -> Tuple[datetime, int]:
     if not token_data:
         raise BackendException(
             message=(
@@ -61,7 +63,7 @@ def get_token_data(token_data):
     return token_data.expires_at, token_data.student_id
 
 
-def get_token_and_expires_at():
+def get_token_and_expires_at() -> Tuple[str, datetime]:
     token = sha1(urandom(128)).hexdigest()
     expires_at = datetime.now(utc) + timedelta(seconds=Settings.TOKEN_LIFE_TIME)
     return token, expires_at
@@ -73,18 +75,22 @@ class AwareDateTime(TypeDecorator):
     impl = DATETIME
 
     @property
-    def python_type(self):
+    def python_type(
+        self,
+    ) -> type(
+        datetime
+    ):  # TODO : fix 'type() call should not be used in type annotation Use Type[T] instead'
         return type(datetime)
 
-    def process_bind_param(self, value, dialect):
+    def process_bind_param(self, value: datetime, dialect) -> datetime:
         if value is not None:
             if not value.tzinfo:
                 raise TypeError("tzinfo is required")
             value = value.astimezone(utc).replace(tzinfo=None)
         return value
 
-    def process_literal_param(self, value, dialect):
+    def process_literal_param(self, value: datetime, dialect) -> datetime:
         pass
 
-    def process_result_value(self, value, dialect):
+    def process_result_value(self, value: datetime, dialect) -> datetime:
         return value.replace(tzinfo=utc)

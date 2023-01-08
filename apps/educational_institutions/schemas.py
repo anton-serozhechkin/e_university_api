@@ -21,7 +21,7 @@ class FacultyIn(BaseInSchema):
     dean_middle_name: str = None
 
     @validator("main_email")
-    def validate_email(cls, v):
+    def validate_email(cls, v: str) -> str:
         """The method is using for email validation.
 
         Only letters (a-z), numbers (0-9) and periods (.) are allowed
@@ -69,13 +69,13 @@ class FacultyOut(BaseOutSchema):
     )
 
 
-class SpecialityListOut(BaseOutSchema):
+class SpecialityOut(BaseOutSchema):
     faculty_id: int
     speciality_id: int
     university_id: int
     speciality_info: Dict[str, Union[int, str]]
 
 
-class CourseListOut(BaseOutSchema):
+class CourseOut(BaseOutSchema):
     course_id: int
     value: int
