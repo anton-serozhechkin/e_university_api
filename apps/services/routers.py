@@ -300,7 +300,7 @@ async def read_hostel_accommodation(
 @services_router.get(
     "/{university_id}/user-documents/",
     name="read_user_documents_list",
-    response_model=JSENDOutSchema[List[UserDocumenstListOut]],
+    response_model=JSENDOutSchema[Optional[List[UserDocumenstListOut]]],
     summary="Read user documents list",
     responses={200: {"description": "Successful get user documents list"}},
     tags=["Services application"],

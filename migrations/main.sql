@@ -662,18 +662,11 @@ CREATE VIEW user_documents_list_view AS
         ud.created_at,
         ud.updated_at
     FROM
-        user_request ur
-    LEFT JOIN user_document ud ON
-        ud.user_request_id = ur.user_request_id
+        user_document ud
+    LEFT JOIN user_request ur ON
+        ur.user_request_id = ud.user_request_id
     WHERE
         ur.status_id in (1, 3)
-    GROUP BY
-        ur.university_id,
-        ud.user_document_id,
-        ur.user_id,
-        ud.name,
-        ud.created_at,
-        ud.updated_at
     ORDER BY
         ur.university_id,
         ud.user_document_id,
