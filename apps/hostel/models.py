@@ -36,7 +36,7 @@ class Hostel(Base):
     commandant = relationship("Commandant", back_populates="hostel", lazy="joined")
     user_request_reviews = relationship("UserRequestReview", back_populates="hostel")
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return (
             f'{self.__class__.__name__}(hostel_id="{self.hostel_id}",'
             f' number="{self.number}", name="{self.name}", city="{self.city}",'
@@ -57,7 +57,7 @@ class Commandant(Base):
 
     hostel = relationship("Hostel", back_populates="commandant")
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return (
             f'{self.__class__.__name__}(commandant_id="{self.commandant_id}",'
             f' first_name="{self.first_name}", middle_name="{self.middle_name}",'
@@ -74,7 +74,7 @@ class BedPlace(Base):
 
     user_request_review = relationship("UserRequestReview", back_populates="bed_place")
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return (
             f'{self.__class__.__name__}(bed_place_id="{self.bed_place_id}",'
             f' bed_place_name="{self.bed_place_name}")'

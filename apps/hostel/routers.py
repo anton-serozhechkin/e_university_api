@@ -7,6 +7,7 @@ from apps.common.dependencies import get_async_session, get_current_user
 from apps.common.schemas import JSENDFailOutSchema, JSENDOutSchema
 from apps.hostel.handlers import hostel_handler
 from apps.hostel.schemas import BedPlaceOut, HostelListOut
+from apps.users.schemas import UserOut
 
 hostel_router = APIRouter(
     responses={422: {"model": JSENDFailOutSchema, "description": "ValidationError"}}
@@ -27,7 +28,7 @@ hostel_router = APIRouter(
 async def read_hostels_list(
     request: Request,
     university_id: int,
-    user=Depends(get_current_user),
+    user: UserOut = Depends(get_current_user),
     session: AsyncSession = Depends(get_async_session),
 ):
     return {
@@ -51,7 +52,7 @@ async def read_hostels_list(
 async def available_bed_places(
     request: Request,
     session: AsyncSession = Depends(get_async_session),
-    user=Depends(get_current_user),
+    user: UserOut = Depends(get_current_user),
 ):
     return {
         "data": await hostel_handler.read_available_bed_places(

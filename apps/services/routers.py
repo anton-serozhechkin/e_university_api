@@ -1,4 +1,4 @@
-from typing import List, Union
+from typing import List, Optional, Union
 
 from fastapi import APIRouter, Depends, Request, UploadFile
 from fastapi import status as http_status
@@ -16,10 +16,10 @@ from apps.services.schemas import (
     CancelRequestIn,
     CountHostelAccommodationCostIn,
     CountHostelAccommodationCostOut,
-    RequestForHostelAccommodationOut,
-    RequestForHostelAccommodationIn,
+    CreateUserRequestIn,
     CreateUserRequestOut,
     HostelAccomodationViewOut,
+    UserDocumenstListOut,
     UserRequestBookingHostelOut,
     UserRequestDetailsViewOut,
     UserRequestExistenceOut,
@@ -27,7 +27,7 @@ from apps.services.schemas import (
     UserRequestReviewOut,
     UserRequestsListOut,
 )
-from apps.users.schemas import CreateStudentsListOut
+from apps.users.schemas import CreateStudentsListOut, UserOut
 
 services_router = APIRouter(
     responses={422: {"model": JSENDFailOutSchema, "description": "ValidationError"}}
@@ -113,8 +113,8 @@ async def read_user_request_list(
 async def create_request_for_hostel_accommodation(
     request: Request,
     university_id: int,
-    user_request: RequestForHostelAccommodationIn,
-    user=Depends(get_current_user),
+    user_request: CreateUserRequestIn,
+    user: UserOut = Depends(get_current_user),
     session: AsyncSession = Depends(get_async_session),
 ):
     """**Method for create request for hostel accommodation.**
@@ -172,7 +172,7 @@ async def create_request_for_hostel_accommodation(
 async def read_user_request_booking_hostel(
     request: Request,
     university_id: int,
-    user=Depends(get_current_user),
+    user: UserOut = Depends(get_current_user),
     session: AsyncSession = Depends(get_async_session),
 ):
     return {
@@ -191,12 +191,12 @@ async def read_user_request_booking_hostel(
     responses={200: {"description": "Successful cancel user request response"}},
     tags=["Services application"],
 )
-async def cancel_request(
+async def cancel_student_request(
     request: Request,
     university_id: int,
     user_request_id: int,
     cancel_request: CancelRequestIn,
-    user=Depends(get_current_user),
+    user: UserOut = Depends(get_current_user),
     session: AsyncSession = Depends(get_async_session),
 ):
     """**Method for cancel user request**.
@@ -295,7 +295,7 @@ async def read_hostel_accommodation(
     request: Request,
     university_id: int,
     user_request_id: int,
-    user=Depends(get_current_user),
+    user: UserOut = Depends(get_current_user),
     session: AsyncSession = Depends(get_async_session),
 ):
     return {
@@ -305,8 +305,75 @@ async def read_hostel_accommodation(
             user_request_id=user_request_id,
             session=session,
         ),
-        "message": "Get hostel accommodation",
+        "message": "Got hostel accommodation",
     }
+
+
+@services_router.get(
+    "/{university_id}/user-documents/",
+    name="read_user_documents_list",
+    response_model=JSENDOutSchema[Optional[List[UserDocumenstListOut]]],
+    summary="Read user documents list",
+    responses={200: {"description": "Successful get user documents list"}},
+    tags=["Services application"],
+)
+async def read_user_documents_list(
+    request: Request,
+    university_id: int,
+    user=Depends(get_current_user),
+    session: AsyncSession = Depends(get_async_session),
+):
+    """**Read list of user documents**.
+
+    **Path**:
+    - **university_id**: user university id
+
+    **Return**:
+    - **university_id**: university id of user document
+    - **user_document_id**: id of user document
+    - **name**: document name
+    - **created_at**: user document was created at
+    - **updated_at**: user document was updated at
+    """
+    return {
+        "data": await service_handler.read_user_documents_list(
+            request=request, university_id=university_id, user=user, session=session
+        ),
+        "message": "Got user documents list",
+    }
+
+
+@services_router.get(
+    "/{university_id}/user-documents/{user_document_id}",
+    name="read_user_document",
+    response_class=StreamingResponse,
+    summary="Read user document",
+    responses={
+        200: {
+            "description": "Successful get user document response",
+            "content": {"text/html": {"example": "bytes"}},
+        }
+    },
+    tags=["Services application"],
+)
+async def read_user_document(
+    request: Request,
+    university_id: int,
+    user_document_id: int,
+    user: UserOut = Depends(get_current_user),
+    session: AsyncSession = Depends(get_async_session),
+):
+    return StreamingResponse(
+        content=await service_handler.read_user_document(
+            request=request,
+            university_id=university_id,
+            user_document_id=user_document_id,
+            user=user,
+            session=session,
+        ),
+        status_code=http_status.HTTP_200_OK,
+        media_type="text/html",
+    )
 
 
 @services_router.get(
@@ -321,7 +388,7 @@ async def read_request_details(
     request: Request,
     university_id: int,
     user_request_id: int,
-    user=Depends(get_current_user),
+    user: UserOut = Depends(get_current_user),
     session: AsyncSession = Depends(get_async_session),
 ):
     return {
@@ -349,7 +416,7 @@ async def create_students_list_from_file(
     request: Request,
     university_id: int,
     file: UploadFile = Depends(check_file_content_type),
-    user=Depends(get_current_user),
+    user: UserOut = Depends(get_current_user),
     session: AsyncSession = Depends(get_async_session),
 ):
     response = await service_handler.create_students_list_from_file(
@@ -429,7 +496,7 @@ async def download_user_document(
     request: Request,
     university_id: int,
     user_document_id: int,
-    user=Depends(get_current_user),
+    user: UserOut = Depends(get_current_user),
     session: AsyncSession = Depends(get_async_session),
 ):
     file_path, file_name = await service_handler.download_user_document(
@@ -465,7 +532,7 @@ async def count_hostel_accommodation_cost(
     request: Request,
     university_id: int,
     data: CountHostelAccommodationCostIn,
-    user=Depends(get_current_user),
+    user: UserOut = Depends(get_current_user),
     session: AsyncSession = Depends(get_async_session),
 ):
     return {

@@ -1,7 +1,10 @@
+from typing import List
+
 from fastapi import Depends, Request
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from apps.authorization.schemas import AvailableRolesOut
 from apps.authorization.services import (
     create_access_token,
     create_refresh_token,
@@ -9,29 +12,35 @@ from apps.authorization.services import (
     verify_password,
     verify_user,
 )
+from apps.users.schemas import AuthOut
 from apps.users.services import user_service
 
 
 class AuthorizationHandler:
+    @staticmethod
     async def login(
-        self,
         *,
         request: Request,
         form_data: OAuth2PasswordRequestForm = Depends(),
-        session: AsyncSession
-    ):
+        session: AsyncSession,
+    ) -> AuthOut:
         user = await user_service.read(
             session=session, data={"login": form_data.username}
         )
         verify_user(user)
         verify_password(user, form_data.password)
-        return {
-            "access_token": create_access_token(user.email),
-            "refresh_token": create_refresh_token(user.email),
-            "user_id": user.user_id,
-        }
+        return AuthOut(
+            access_token=create_access_token(user.email),
+            refresh_token=create_refresh_token(user.email),
+            user_id=user.user_id,
+        )
 
-    async def available_roles(self, *, request: Request, session: AsyncSession):
+    @staticmethod
+    async def available_roles(
+        *,
+        request: Request,
+        session: AsyncSession,
+    ) -> List[AvailableRolesOut]:
         return await role_service.list(session=session)
 
 

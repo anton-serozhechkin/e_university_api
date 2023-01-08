@@ -30,7 +30,7 @@ class Service(Base):
     requisites = relationship("Requisites", back_populates="service")
     user_requests = relationship("UserRequest", back_populates="service")
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return (
             f'{self.__class__.__name__}(service_id="{self.service_id}",'
             f' service_name="{self.service_name}")'
@@ -62,7 +62,7 @@ class UserRequest(Base):
         "UserRequestReview", back_populates="user_request"
     )
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return (
             f'{self.__class__.__name__}(user_request_id="{self.user_request_id}",'
             f' created_at="{self.created_at}", comment="{self.comment}",'
@@ -80,7 +80,7 @@ class Status(Base):
 
     user_requests = relationship("UserRequest", back_populates="status")
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return (
             f'{self.__class__.__name__}(status_id="{self.status_id}",'
             f' status_name="{self.status_name}")'
@@ -104,7 +104,7 @@ class Requisites(Base):
     university = relationship("University", back_populates="requisites")
     service = relationship("Service", back_populates="requisites")
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return (
             f'{self.__class__.__name__}(requisites_id="{self.requisites_id}",'
             f' iban="{self.iban}", organisation_code="{self.organisation_code}",'
@@ -144,7 +144,7 @@ class UserRequestReview(Base):
     university = relationship("University", back_populates="user_request_reviews")
     user_request = relationship("UserRequest", back_populates="user_request_review")
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return (
             f"{self.__class__.__name__}"
             f'(user_request_review_id="{self.user_request_review_id}",'
@@ -174,10 +174,10 @@ class UserDocument(Base):
 
     user_request = relationship("UserRequest", back_populates="user_documents")
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return (
             f'{self.__class__.__name__}(user_document_id="{self.user_document_id}", '
-            f'date_created="{self.date_created}", name="{self.name}", '
+            f'created_at="{self.created_at}", name="{self.name}", '
             f'content="{self.content}", user_request_id="{self.user_request_id}")'
         )
 
@@ -265,4 +265,16 @@ hostel_accommodation_view = Table(
     Column("commandant_full_name", JSON),
     Column("telephone_number", VARCHAR(50)),
     Column("documents", JSON),
+)
+
+
+user_documents_list_view = Table(
+    "user_documents_list_view",
+    metadata_obj,
+    Column("university_id", INTEGER),
+    Column("user_document_id", INTEGER),
+    Column("user_id", INTEGER),
+    Column("name", VARCHAR(255)),
+    Column("created_at", DATETIME),
+    Column("updated_at", DATETIME),
 )
