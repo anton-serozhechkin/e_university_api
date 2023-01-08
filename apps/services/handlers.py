@@ -16,6 +16,7 @@ from apps.services.schemas import (
     CreateUserRequestIn,
     CreateUserRequestOut,
     HostelAccomodationViewOut,
+    UserDocumenstListOut,
     UserRequestBookingHostelOut,
     UserRequestDetailsViewOut,
     UserRequestExistenceOut,
@@ -67,8 +68,7 @@ class ServiceHandler:
         university_id: int,
         user: UserOut,
         session: AsyncSession,
-    ):
-
+    ) -> List[UserDocumenstListOut]:
         return await user_documents_list_service.list(
             session=session,
             filters={"university_id": university_id, "user_id": user.user_id},

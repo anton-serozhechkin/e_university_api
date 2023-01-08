@@ -311,7 +311,18 @@ async def read_user_documents_list(
     user=Depends(get_current_user),
     session: AsyncSession = Depends(get_async_session),
 ):
+    """**Read list of user documents**.
 
+    **Path**:
+    - **university_id**: user university id
+
+    **Return**:
+    - **university_id**: university id of user document 
+    - **created_at**: user document was created at
+    - **updated_at**: user document was updated at
+    - **name**: document name
+    - **user_document_id**: id of user document
+    """
     return {
         "data": await service_handler.read_user_documents_list(
             request=request, university_id=university_id, user=user, session=session
