@@ -265,3 +265,15 @@ hostel_accommodation_view = Table(
     Column("telephone_number", VARCHAR(50)),
     Column("documents", JSON),
 )
+
+
+user_documents_list_view = Table(
+    "user_documents_list_view",
+    metadata_obj,
+    Column("university_id", INTEGER),
+    Column("user_document_id", INTEGER),
+    Column("user_id", INTEGER),
+    Column("name", VARCHAR(255)),
+    Column("created_at", DATETIME),
+    Column("updated_at", DATETIME),
+)

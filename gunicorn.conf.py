@@ -1,5 +1,3 @@
-import uvicorn
-
 from settings import Settings
 
 # Debugging

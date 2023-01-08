@@ -16,6 +16,7 @@ from apps.services.schemas import (
     CreateUserRequestIn,
     CreateUserRequestOut,
     HostelAccomodationViewOut,
+    UserDocumenstListOut,
     UserRequestBookingHostelOut,
     UserRequestDetailsViewOut,
     UserRequestExistenceOut,
@@ -31,6 +32,7 @@ from apps.services.services import (
     request_existence_service,
     service_service,
     user_document_service,
+    user_documents_list_service,
     user_faculty_service,
     user_request_booking_hostel_service,
     user_request_detail_service,
@@ -59,6 +61,19 @@ from settings import (
 
 
 class ServiceHandler:
+    @staticmethod
+    async def read_user_documents_list(
+        *,
+        request: Request,
+        university_id: int,
+        user: UserOut,
+        session: AsyncSession,
+    ) -> Optional[List[UserDocumenstListOut]]:
+        return await user_documents_list_service.list(
+            session=session,
+            filters={"university_id": university_id, "user_id": user.user_id},
+        )
+
     @staticmethod
     async def read_user_request_existence(
         *,
