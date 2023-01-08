@@ -267,8 +267,8 @@ hostel_accommodation_view = Table(
 )
 
 
-user_document_list_view = Table(
-    "user_document_list_view",
+user_documents_list_view = Table(
+    "user_documents_list_view",
     metadata_obj,
     Column("university_id", INTEGER),
     Column("created_at", DATETIME),

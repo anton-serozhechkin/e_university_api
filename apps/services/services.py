@@ -16,7 +16,7 @@ from apps.services.models import (
     user_request_details_view,
     user_request_exist_view,
     user_request_list_view,
-    user_document_list_view,
+    user_documents_list_view,
 )
 from apps.users.models import UserFaculty
 
@@ -41,7 +41,7 @@ user_request_booking_hostel_service = AsyncCRUDBase(
     model=user_request_booking_hostel_view
 )
 user_request_review_service = AsyncCRUDBase(model=UserRequestReview)
-user_documents_list_service = AsyncCRUDBase(model=user_document_list_view)
+user_documents_list_service = AsyncCRUDBase(model=user_documents_list_view)
 hostel_accommodation_service = AsyncCRUDBase(model=hostel_accommodation_view)
 user_request_detail_service = AsyncCRUDBase(model=user_request_details_view)
 user_document_service = AsyncCRUDBase(model=UserDocument)
