@@ -20,6 +20,12 @@ class CreateUserRequestIn(BaseInSchema):
 
 class CreateUserRequestOut(BaseOutSchema):
     user_request_id: int
+    created_at: datetime
+    comment: str = None
+    user_id: int
+    service_id: int
+    faculty_id: int
+    university_id: int
     status_id: int
 
 
@@ -46,6 +52,14 @@ class UserRequestBookingHostelOut(BaseOutSchema):
     gender: str
 
 
+class UserDocumenstListOut(BaseOutSchema):
+    university_id: int
+    user_document_id: int
+    name: str
+    created_at: datetime
+    updated_at: datetime
+
+
 class UserRequestsListOut(BaseOutSchema):
     university_id: int
     user_id: int
@@ -59,15 +73,10 @@ class CancelRequestIn(BaseInSchema):
     status_id: int
 
     @validator("status_id")
-    def validate_status_id(cls, v):
+    def validate_status_id(cls, v: int) -> int:
         if v != 4:
             raise ValueError("The application can only be canceled")
         return v
-
-
-class CancelRequestOut(BaseOutSchema):
-    user_request_id: int
-    status_id: int
 
 
 class UserRequestReviewIn(BaseInSchema):
@@ -83,15 +92,26 @@ class UserRequestReviewIn(BaseInSchema):
     bed_place_id: int = None
 
     @validator("status_id")
-    def validate_status_id(cls, v):
+    def validate_status_id(cls, v: int) -> int:
         if v not in [1, 2]:
             raise ValueError("The application can only be approved or rejected")
         return v
 
 
 class UserRequestReviewOut(BaseOutSchema):
-    status_id: int
     user_request_review_id: int
+    created_at: datetime
+    room_number: int = None
+    start_accommodation_date: date = None
+    end_accommodation_date: date = None
+    total_sum: Decimal = None
+    payment_deadline_date: date = None
+    remark: str = None
+    bed_place_id: int = None
+    reviewer: int
+    hostel_id: int = None
+    university_id: int
+    user_request_id: int
 
 
 class HostelAccomodationViewOut(BaseOutSchema):
@@ -138,7 +158,7 @@ class CountHostelAccommodationCostIn(BaseInSchema):
     bed_place_id: int
 
     @root_validator
-    def validate_two_dates(cls, values):
+    def validate_two_dates(cls, values: Dict) -> Dict:
         if values.get("start_accommodation_date") >= values.get(
             "end_accommodation_date"
         ):

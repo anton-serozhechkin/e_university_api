@@ -6,15 +6,22 @@ from pydantic import validator
 from apps.common.schemas import BaseInSchema, BaseOutSchema, FullNameSchema
 
 
+class DeanOut(FullNameSchema):
+    dean_id: int
+
+
 class FacultyIn(BaseInSchema):
     university_id: int
     name: str
     shortname: str
     main_email: str = None
     dean_id: int = None
+    dean_last_name: str = None
+    dean_first_name: str = None
+    dean_middle_name: str = None
 
     @validator("main_email")
-    def validate_email(cls, v):
+    def validate_email(cls, v: str) -> str:
         """The method is using for email validation.
 
         Only letters (a-z), numbers (0-9) and periods (.) are allowed
@@ -51,21 +58,24 @@ class FacultyIn(BaseInSchema):
 
 
 class FacultyOut(BaseOutSchema):
+    university_id: int
     faculty_id: int
     name: str
     shortname: str
     main_email: str = None
-    university_id: int
-    dean_full_name: FullNameSchema = None
+    dean_id: int
+    dean_full_name: FullNameSchema = (
+        None  # TODO after creating new faculty it value of field is equal null
+    )
 
 
-class SpecialityListOut(BaseOutSchema):
+class SpecialityOut(BaseOutSchema):
     faculty_id: int
     speciality_id: int
     university_id: int
     speciality_info: Dict[str, Union[int, str]]
 
 
-class CourseListOut(BaseOutSchema):
+class CourseOut(BaseOutSchema):
     course_id: int
     value: int

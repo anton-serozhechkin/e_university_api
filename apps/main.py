@@ -18,14 +18,6 @@ from apps.services.routers import services_router
 from apps.users.routers import users_router
 from settings import Settings
 from tags_metadata import metadata
-
-from fastapi import FastAPI
-from fastapi.middleware.cors import CORSMiddleware
-from fastapi.exceptions import RequestValidationError
-from pydantic import ValidationError
-from starlette.exceptions import HTTPException as StarletteHTTPException
-
-
 from utils import get_logger_by_name
 
 
@@ -60,7 +52,7 @@ app.include_router(authorization_router)
 
 
 @app.on_event("startup")
-async def start_logging():
+async def start_logging() -> None:
     from logging.config import dictConfig
     from loggers import dict_config
 
@@ -68,12 +60,12 @@ async def start_logging():
 
 
 @app.on_event("startup")
-async def startup():
+async def startup() -> None:
     await database.connect()
     logger.info("Database startup.")
 
 
 @app.on_event("shutdown")
-async def shutdown():
+async def shutdown() -> None:
     await database.disconnect()
     logger.info("Database shutdown.")

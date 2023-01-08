@@ -8,7 +8,7 @@ from apps.authorization.handlers import authorization_handler
 from apps.authorization.schemas import AvailableRolesOut
 from apps.common.dependencies import get_async_session, get_current_user
 from apps.common.schemas import JSENDFailOutSchema, JSENDOutSchema
-from apps.users.schemas import AuthOut
+from apps.users.schemas import AuthOut, UserOut
 
 authorization_router = APIRouter()
 
@@ -23,20 +23,23 @@ authorization_router = APIRouter()
         422: {"model": JSENDFailOutSchema, "description": "ValidationError"},
         401: {"model": JSENDFailOutSchema, "description": "Not authorized response"},
     },
-    tags=["Authorization"],
+    tags=["Authorization application"],
 )
 async def login(
     request: Request,
     form_data: OAuth2PasswordRequestForm = Depends(),
     session: AsyncSession = Depends(get_async_session),
 ):
-    """Login user.
+    """**Login user**.
 
-    Input:
-    - username: login, which consists of name and random number; required
-    - password: password to this login name; required
+    **Input:**
+    - **username:** login, which consists of name and random number; required
+    - **password:** password to this login name; required
 
-    Return: access and refresh tokens for authentication, user id
+    **Return:**
+    - **access_token:** token for access to endpoints
+    - **refresh_token:** token for refresh access token
+    - **user_id:** id of logined user
     """
     return await authorization_handler.login(
         request=request, form_data=form_data, session=session
@@ -49,11 +52,11 @@ async def login(
     response_model=JSENDOutSchema[List[AvailableRolesOut]],
     summary="Get available roles",
     responses={200: {"description": "Successful get list of available roles response"}},
-    tags=["SuperAdmin dashboard"],
+    tags=["Authorization application"],
 )
 async def available_roles(
     request: Request,
-    user=Depends(get_current_user),
+    user: UserOut = Depends(get_current_user),
     session: AsyncSession = Depends(get_async_session),
 ):
     return {

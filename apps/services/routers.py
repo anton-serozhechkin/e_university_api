@@ -1,4 +1,4 @@
-from typing import List, Union
+from typing import List, Optional, Union
 
 from fastapi import APIRouter, Depends, Request, UploadFile
 from fastapi import status as http_status
@@ -14,12 +14,12 @@ from apps.common.schemas import JSENDFailOutSchema, JSENDOutSchema
 from apps.services.handlers import service_handler
 from apps.services.schemas import (
     CancelRequestIn,
-    CancelRequestOut,
     CountHostelAccommodationCostIn,
     CountHostelAccommodationCostOut,
     CreateUserRequestIn,
     CreateUserRequestOut,
     HostelAccomodationViewOut,
+    UserDocumenstListOut,
     UserRequestBookingHostelOut,
     UserRequestDetailsViewOut,
     UserRequestExistenceOut,
@@ -27,7 +27,7 @@ from apps.services.schemas import (
     UserRequestReviewOut,
     UserRequestsListOut,
 )
-from apps.users.schemas import CreateStudentsListOut
+from apps.users.schemas import CreateStudentsListOut, UserOut
 
 services_router = APIRouter(
     responses={422: {"model": JSENDFailOutSchema, "description": "ValidationError"}}
@@ -47,22 +47,22 @@ services_router = APIRouter(
             )
         }
     },
-    tags=["Student dashboard"],
+    tags=["Services application"],
 )
 async def check_user_request_existence(
     request: Request,
     university_id: int,
     service_id: int,
-    user=Depends(get_current_user),
+    user: UserOut = Depends(get_current_user),
     session: AsyncSession = Depends(get_async_session),
 ):  # TODO: nothing prevents student from creating multiple requests with the same id
-    """Method for checking user request existence.
+    """**Method for checking user request existence**.
 
-    Path:
-    - university_id: user university id
-    - service_id: id of the service requested by the student
+    **Path**:
+    - **university_id**: user university id
+    - **service_id**: id of the service requested by the student
 
-    Return: user request id; user request status; user request existence
+    **Return**: user request id; user request status; user request existence
     """
     return {
         "data": await service_handler.read_user_request_existence(
@@ -84,12 +84,12 @@ async def check_user_request_existence(
     responses={
         200: {"description": "Successful get university user request list response"}
     },
-    tags=["Student dashboard"],
+    tags=["Services application"],
 )
 async def read_user_request_list(
     request: Request,
     university_id: int,
-    user=Depends(get_current_user),
+    user: UserOut = Depends(get_current_user),
     session: AsyncSession = Depends(get_async_session),
 ):
     return {
@@ -106,25 +106,33 @@ async def read_user_request_list(
     response_model=JSENDOutSchema[CreateUserRequestOut],
     summary="Create user request",
     responses={200: {"description": "Successful create user request response"}},
-    tags=["Student dashboard"],
+    tags=["Services application"],
 )
 async def create_user_request(
     request: Request,
     university_id: int,
     user_request: CreateUserRequestIn,
-    user=Depends(get_current_user),
+    user: UserOut = Depends(get_current_user),
     session: AsyncSession = Depends(get_async_session),
 ):
-    """Method for create user request.
+    """**Method for creating user request**.
 
-    Path:
-    - university_id: user university id
+    **Path**:
+    - **university_id**: user university id
 
-    Input:
-    - service_id: service id, required
-    - comment: comment for the creating user request
+    **Input**:
+    - **service_id**: service id, required
+    - **comment**: comment for the creating user request, not required
 
-    Return: user request id; request status id
+    **Return**:
+    - **user_request_id**
+    - **created_at**
+    - **comment**
+    - **user_id**
+    - **service_id**
+    - **faculty_id**
+    - **university_id**
+    - **status_id**
     """
     response = await service_handler.create_user_request(
         request=request,
@@ -135,7 +143,7 @@ async def create_user_request(
     )
     return {
         "data": response,
-        "message": f"Created user request with id {response['user_request_id']}",
+        "message": f"Created user request with id {response.user_request_id}",
     }
 
 
@@ -147,12 +155,12 @@ async def create_user_request(
     responses={
         200: {"description": "Successful get user request booking hostel response"}
     },
-    tags=["Student dashboard"],
+    tags=["Services application"],
 )
 async def read_user_request_booking_hostel(
     request: Request,
     university_id: int,
-    user=Depends(get_current_user),
+    user: UserOut = Depends(get_current_user),
     session: AsyncSession = Depends(get_async_session),
 ):
     return {
@@ -166,29 +174,37 @@ async def read_user_request_booking_hostel(
 @services_router.put(
     "/{university_id}/user-request/{user_request_id}",
     name="update_cancel_user_request",
-    response_model=JSENDOutSchema[CancelRequestOut],
+    response_model=JSENDOutSchema[CreateUserRequestOut],
     summary="Cancel user request",
     responses={200: {"description": "Successful cancel user request response"}},
-    tags=["Student dashboard"],
+    tags=["Services application"],
 )
-async def cancel_request(
+async def cancel_student_request(
     request: Request,
     university_id: int,
     user_request_id: int,
     cancel_request: CancelRequestIn,
-    user=Depends(get_current_user),
+    user: UserOut = Depends(get_current_user),
     session: AsyncSession = Depends(get_async_session),
 ):
-    """Method for cancel user request.
+    """**Method for cancel user request**.
 
-    Path:
-    - university_id: user university id
-    - user_request_id: user request id
+    **Path**:
+    - **university_id**: user university id
+    - **user_request_id**: user request id
 
-    Input:
-    - status_id: user request status id, required
+    **Input**:
+    - **status_id**: user request status id, required
 
-    Return: canceled user request id and status id
+    **Return**:
+    - canceled user request id
+    - created at
+    - comment
+    - user id
+    - service id
+    - faculty id
+    - university id
+    - status id
     """
     return {
         "data": await service_handler.cancel_request(
@@ -207,17 +223,17 @@ async def cancel_request(
     response_model=JSENDOutSchema[UserRequestReviewOut],
     summary="Create user request review",
     responses={200: {"description": "Successful create user request review response"}},
-    tags=["Admin dashboard"],
+    tags=["Services application"],
 )
 async def create_user_request_review(
     request: Request,
     university_id: int,
     user_request_id: int,
     user_request_review: UserRequestReviewIn,
-    user=Depends(get_current_user),
+    user: UserOut = Depends(get_current_user),
     session: AsyncSession = Depends(get_async_session),
 ):
-    """Create user request review.
+    """**Create user request review**.
 
     **Path**:
     - **university_id**: user university id
@@ -234,7 +250,9 @@ async def create_user_request_review(
     - **hostel_id**: hostel id in the database
     - **bed_place_id**: hostel bed place id
 
-    **Return**: user request status id; user request review id
+    **Return**:
+    - user request status id
+    - user request review id
     """
     return {
         "data": await service_handler.create_user_request_review(
@@ -252,20 +270,20 @@ async def create_user_request_review(
 @services_router.get(
     "/{university_id}/hostel-accommodation/{user_request_id}",
     name="read_hostel_accommodation",
-    response_model=JSENDOutSchema[HostelAccomodationViewOut],
+    response_model=JSENDOutSchema[Optional[HostelAccomodationViewOut]],
     summary="Get hostel accommodation",
     responses={
         200: {
             "description": "Successful get user request hostel accommodation response"
         }
     },
-    tags=["Student dashboard"],
+    tags=["Services application"],
 )
 async def read_hostel_accommodation(
     request: Request,
     university_id: int,
     user_request_id: int,
-    user=Depends(get_current_user),
+    user: UserOut = Depends(get_current_user),
     session: AsyncSession = Depends(get_async_session),
 ):
     return {
@@ -275,8 +293,75 @@ async def read_hostel_accommodation(
             user_request_id=user_request_id,
             session=session,
         ),
-        "message": "Get hostel accommodation",
+        "message": "Got hostel accommodation",
     }
+
+
+@services_router.get(
+    "/{university_id}/user-documents/",
+    name="read_user_documents_list",
+    response_model=JSENDOutSchema[Optional[List[UserDocumenstListOut]]],
+    summary="Read user documents list",
+    responses={200: {"description": "Successful get user documents list"}},
+    tags=["Services application"],
+)
+async def read_user_documents_list(
+    request: Request,
+    university_id: int,
+    user=Depends(get_current_user),
+    session: AsyncSession = Depends(get_async_session),
+):
+    """**Read list of user documents**.
+
+    **Path**:
+    - **university_id**: user university id
+
+    **Return**:
+    - **university_id**: university id of user document
+    - **user_document_id**: id of user document
+    - **name**: document name
+    - **created_at**: user document was created at
+    - **updated_at**: user document was updated at
+    """
+    return {
+        "data": await service_handler.read_user_documents_list(
+            request=request, university_id=university_id, user=user, session=session
+        ),
+        "message": "Got user documents list",
+    }
+
+
+@services_router.get(
+    "/{university_id}/user-documents/{user_document_id}",
+    name="read_user_document",
+    response_class=StreamingResponse,
+    summary="Read user document",
+    responses={
+        200: {
+            "description": "Successful get user document response",
+            "content": {"text/html": {"example": "bytes"}},
+        }
+    },
+    tags=["Services application"],
+)
+async def read_user_document(
+    request: Request,
+    university_id: int,
+    user_document_id: int,
+    user: UserOut = Depends(get_current_user),
+    session: AsyncSession = Depends(get_async_session),
+):
+    return StreamingResponse(
+        content=await service_handler.read_user_document(
+            request=request,
+            university_id=university_id,
+            user_document_id=user_document_id,
+            user=user,
+            session=session,
+        ),
+        status_code=http_status.HTTP_200_OK,
+        media_type="text/html",
+    )
 
 
 @services_router.get(
@@ -285,13 +370,13 @@ async def read_hostel_accommodation(
     response_model=JSENDOutSchema[UserRequestDetailsViewOut],
     summary="Get user request",
     responses={200: {"description": "Successful get user request response"}},
-    tags=["Student dashboard"],
+    tags=["Services application"],
 )  # TODO Return Validation error with empty data
 async def read_request_details(
     request: Request,
     university_id: int,
     user_request_id: int,
-    user=Depends(get_current_user),
+    user: UserOut = Depends(get_current_user),
     session: AsyncSession = Depends(get_async_session),
 ):
     return {
@@ -313,52 +398,19 @@ async def read_request_details(
     responses={
         200: {"description": "Successful create students list from file response"}
     },
-    tags=["Admin dashboard"],
+    tags=["Services application"],
 )
 async def create_students_list_from_file(
     request: Request,
     university_id: int,
     file: UploadFile = Depends(check_file_content_type),
-    user=Depends(get_current_user),
+    user: UserOut = Depends(get_current_user),
     session: AsyncSession = Depends(get_async_session),
 ):
     response = await service_handler.create_students_list_from_file(
         request=request, university_id=university_id, file=file, session=session
     )
     return {"data": response, "message": "Created students list from file"}
-
-
-@services_router.get(
-    "/{university_id}/user-document/{user_document_id}",
-    name="read_user_document",
-    response_class=StreamingResponse,
-    summary="Read user document",
-    responses={
-        200: {
-            "description": "Successful get user document response",
-            "content": {"text/html": {"example": "bytes"}},
-        }
-    },
-    tags=["Admin dashboard"],
-)
-async def read_user_document(
-    request: Request,
-    university_id: int,
-    user_document_id: int,
-    user=Depends(get_current_user),
-    session: AsyncSession = Depends(get_async_session),
-):
-    return StreamingResponse(
-        content=await service_handler.read_user_document(
-            request=request,
-            university_id=university_id,
-            user_document_id=user_document_id,
-            user=user,
-            session=session,
-        ),
-        status_code=http_status.HTTP_200_OK,
-        media_type="text/html",
-    )
 
 
 @services_router.get(
@@ -393,13 +445,13 @@ async def read_user_document(
             },
         }
     },
-    tags=["Student dashboard"],
+    tags=["Services application"],
 )
 async def download_user_document(
     request: Request,
     university_id: int,
     user_document_id: int,
-    user=Depends(get_current_user),
+    user: UserOut = Depends(get_current_user),
     session: AsyncSession = Depends(get_async_session),
 ):
     file_path, file_name = await service_handler.download_user_document(
@@ -429,13 +481,13 @@ async def download_user_document(
             "description": "Successful create count hostel accommodation cost response"
         }
     },
-    tags=["Admin dashboard"],
+    tags=["Services application"],
 )
 async def count_hostel_accommodation_cost(
     request: Request,
     university_id: int,
     data: CountHostelAccommodationCostIn,
-    user=Depends(get_current_user),
+    user: UserOut = Depends(get_current_user),
     session: AsyncSession = Depends(get_async_session),
 ):
     return {

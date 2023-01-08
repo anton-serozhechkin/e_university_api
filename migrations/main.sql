@@ -30,6 +30,10 @@ CREATE TABLE IF NOT EXISTS dean(
     middle_name varchar(50),
     CONSTRAINT dean_pk PRIMARY KEY (dean_id));
 
+CREATE SEQUENCE IF NOT EXISTS dean_id_seq AS bigint START WITH 1 INCREMENT BY 1;
+
+ALTER TABLE dean ALTER COLUMN dean_id SET DEFAULT nextval('dean_id_seq');
+
 CREATE TABLE IF NOT EXISTS faculty(
     faculty_id integer NOT NULL,
     name varchar(255) NOT NULL,
@@ -646,3 +650,24 @@ CREATE VIEW user_request_booking_hostel_view AS
     ORDER BY
         u.university_id,
         s.user_id;
+
+
+DROP VIEW IF EXISTS user_documents_list_view;
+CREATE VIEW user_documents_list_view AS
+    SELECT
+        ur.university_id,
+        ud.user_document_id,
+        ur.user_id,
+        ud.name,
+        ud.created_at,
+        ud.updated_at
+    FROM
+        user_document ud
+    LEFT JOIN user_request ur ON
+        ur.user_request_id = ud.user_request_id
+    WHERE
+        ur.status_id in (1, 3)
+    ORDER BY
+        ur.university_id,
+        ud.user_document_id,
+        ur.user_id;

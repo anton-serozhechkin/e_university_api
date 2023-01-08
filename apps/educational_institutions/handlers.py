@@ -3,9 +3,17 @@ from typing import List
 from fastapi import Request
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from apps.educational_institutions.schemas import FacultyIn, FacultyOut
+from apps.common.schemas import FullNameSchema
+from apps.educational_institutions.schemas import (
+    CourseOut,
+    DeanOut,
+    FacultyIn,
+    FacultyOut,
+    SpecialityOut,
+)
 from apps.educational_institutions.services import (
     course_list_service,
+    dean_service,
     faculty_list_service,
     faculty_service,
     speciality_list_service,
@@ -13,8 +21,15 @@ from apps.educational_institutions.services import (
 
 
 class EduInstitutionHandler:
+    @staticmethod
+    async def create_dean(
+        *, request: Request, data: FullNameSchema, session: AsyncSession
+    ) -> DeanOut:
+        return await dean_service.create(session=session, obj=data)
+
+    @staticmethod
     async def read_faculties(
-        self, *, request: Request, university_id: int, session: AsyncSession
+        *, request: Request, university_id: int, session: AsyncSession
     ) -> List[FacultyOut]:
         return await faculty_list_service.list(
             session=session, filters={"university_id": university_id}
@@ -23,16 +38,36 @@ class EduInstitutionHandler:
     async def create_faculty(
         self, *, request: Request, data: FacultyIn, session: AsyncSession
     ) -> FacultyOut:
+        if not data.dean_id:
+            dean = await self.create_dean(
+                request=request,
+                data=FullNameSchema(
+                    last_name=data.dean_last_name,
+                    first_name=data.dean_first_name,
+                    middle_name=data.dean_middle_name,
+                ),
+                session=session,
+            )
+            data.dean_id = dean.dean_id
+        del data.dean_last_name
+        del data.dean_first_name
+        del data.dean_middle_name
         return await faculty_service.create(session=session, obj=data)
 
+    @staticmethod
     async def read_speciality_list(
-        self, *, request: Request, university_id: int, session: AsyncSession
-    ):
+        *, request: Request, university_id: int, session: AsyncSession
+    ) -> List[SpecialityOut]:
         return await speciality_list_service.list(
             session=session, filters={"university_id": university_id}
         )
 
-    async def read_courses_list(self, *, request: Request, session: AsyncSession):
+    @staticmethod
+    async def read_courses_list(
+        *,
+        request: Request,
+        session: AsyncSession,
+    ) -> List[CourseOut]:
         return await course_list_service.list(session=session)
 
 
