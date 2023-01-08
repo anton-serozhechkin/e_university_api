@@ -137,14 +137,14 @@ def check_file_existing(path: str) -> None:
         )
 
 
-def update_booking_hostel_data(
+def update_user_booking_hostel_data_by_user_request(
     user_request_data: dataclass, user_booking_hostel_data: Row
 ) -> Dict[str, Union[int, str]]:
 
-    updated_data = dict(user_booking_hostel_data)
+    updated_user_booking_hostel_data = dict(user_booking_hostel_data)
 
-    updated_data.update(user_request_data.dict())
-    updated_data.update(
+    updated_user_booking_hostel_data.update(user_request_data.dict())
+    updated_user_booking_hostel_data.update(
         full_name={
             "last_name": user_request_data.dict()["student_last_name"],
             "first_name": user_request_data.dict()["student_first_name"],
@@ -156,4 +156,4 @@ def update_booking_hostel_data(
             "middle_name": user_request_data.dict()["rector_middle_name"],
         },
     )
-    return updated_data
+    return updated_user_booking_hostel_data

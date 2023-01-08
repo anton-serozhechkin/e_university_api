@@ -38,7 +38,7 @@ from apps.services.utils import (
     create_faculty_dict,
     create_telephone_set,
     get_worksheet_cell_col_row,
-    update_booking_hostel_data,
+    update_user_booking_hostel_data_by_user_request,
 )
 from apps.users.schemas import CreateStudentIn, UserOut
 from apps.users.services import student_service
@@ -82,7 +82,7 @@ class ServiceHandler:
         )
 
         prepared_data = {
-            "context": update_booking_hostel_data(
+            "context": update_user_booking_hostel_data_by_user_request(
                 user_request, user_request_booking_hostel
             ),
             "service_id": user_request_service_response.service_id,
