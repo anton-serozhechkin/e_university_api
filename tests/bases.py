@@ -1,8 +1,10 @@
 import datetime
+
+import factories as factories
 from pytz import utc
 from typing import Any, Dict, List, Type
 
-from pydantic-factories import AsyncPersistenceProtocol, ModelFactory, PostGenerated
+from pydantic_factories import AsyncPersistenceProtocol, ModelFactory, PostGenerated
 
 from apps.common.db import Base, async_session_factory
 from apps.common.services import AsyncCRUDBase, ModelType, CreateSchemaType

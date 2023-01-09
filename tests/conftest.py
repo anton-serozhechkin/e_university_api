@@ -26,8 +26,14 @@ def mock_db_url(monkeypatch_session: MonkeyPatch) -> None:
     """Change all PostgreSQL URLs and environments to use `test` database"""
     db_url: URL = Settings.POSTGRES_DSN
     async_db_url: URL = Settings.POSTGRES_DSN_ASYNC
-    monkeypatch_session.setattr(target=Settings, name="POSTGRES_DSN", value=db_url.set(database="test"))
-    monkeypatch_session.setattr(target=Settings, name="POSTGRES_DST_ASYNC", value=async_db_url.set(database="test"))
+    monkeypatch_session.setattr(
+        target=Settings, name="POSTGRES_DSN", value=db_url.set(database="test")
+    )
+    monkeypatch_session.setattr(
+        target=Settings,
+        name="POSTGRES_DST_ASYNC",
+        value=async_db_url.set(database="test"),
+    )
     monkeypatch_session.setenv(name="POSTGRES_DB", value="test")
     monkeypatch_session.setattr(target=Settings, name="POSTGRES_DB", value="test")
 
@@ -78,13 +84,19 @@ def no_http_requests(monkeypatch_session: MonkeyPatch) -> None:
         raise RuntimeError(f"Found request: {args}, {kwargs}")
 
     # Disable library `urllib3`
-    monkeypatch_session.setattr(target="urllib3.connectionpool.HTTPConnectionPool.urlopen", name=raise_mock)
+    monkeypatch_session.setattr(
+        target="urllib3.connectionpool.HTTPConnectionPool.urlopen", name=raise_mock
+    )
     # Disable library `urllib`
     monkeypatch_session.setattr(target="urllib.request.urlopen", name=raise_mock)
     # Disable BackgroundTasks
-    monkeypatch_session.setattr(target="fastapi.BackgroundTasks.add_task", name=raise_mock)
+    monkeypatch_session.setattr(
+        target="fastapi.BackgroundTasks.add_task", name=raise_mock
+    )
     # Disable library `requests`
-    monkeypatch_session.setattr(target="requests.sessions.Session.request", name=raise_mock)
+    monkeypatch_session.setattr(
+        target="requests.sessions.Session.request", name=raise_mock
+    )
 
 
 @pytest.fixture(scope="session", autouse=True)
@@ -115,13 +127,16 @@ async def mock_session_factories(
 
 @pytest.fixture(scope="function")
 async def app_fixture(
-        db_session: AsyncSession, sync_db_session: Session, event_loop: asyncio.AbstractEventLoop
+    db_session: AsyncSession,
+    sync_db_session: Session,
+    event_loop: asyncio.AbstractEventLoop,
 ) -> fastapi.FastAPI:
     """Overrides dependencies for FastAPI and returns FastAPI instance (app).
 
     Yields:
         app (fastapi.FastAPI): Instance of FastAPI ASGI application.
     """
+
     async def override_get_async_session() -> AsyncSession:
         """Replace get_async_session dependency with AsyncSession from `db_session` fixture"""
         return db_session
@@ -131,13 +146,16 @@ async def app_fixture(
         return sync_db_session
 
     from apps.main import app
+
     app.dependency_overrides[get_async_session] = override_get_async_session
     app.dependency_overrides[get_session] = override_get_session
     yield app
 
 
 @pytest.fixture(scope="function")
-async def async_client(app_fixture: fastapi.FastAPI, event_loop: asyncio.AbstractEventLoop) -> httpx.AsyncClient:
+async def async_client(
+    app_fixture: fastapi.FastAPI, event_loop: asyncio.AbstractEventLoop
+) -> httpx.AsyncClient:
     """Prepare async HTTP client with FastAPI app context.
 
     Yields:
@@ -160,7 +178,9 @@ def alembic_engine(sync_db_engine: Engine) -> Engine:
 
 
 @pytest.fixture(scope="session")
-def alembic_runner(alembic_config: Config, alembic_engine: Engine) -> typing.Generator[runner, None, None]:
+def alembic_runner(
+    alembic_config: Config, alembic_engine: Engine
+) -> typing.Generator[runner, None, None]:
     config = Config.from_raw_config(alembic_config)
     with runner(config=config, engine=alembic_engine) as alembic_runner:
         yield alembic_runner
@@ -168,7 +188,7 @@ def alembic_runner(alembic_config: Config, alembic_engine: Engine) -> typing.Gen
 
 @pytest.fixture(scope="session", autouse=True)
 def apply_migrations(
-        create_database: None, alembic_runner: runner, alembic_engine: Engine
+    create_database: None, alembic_runner: runner, alembic_engine: Engine
 ) -> typing.Generator[None, None, None]:
     """Applies all migrations from base to head."""
     alembic_runner.migrate_up_to(revision="head")
@@ -197,7 +217,9 @@ async def async_db_engine(event_loop: asyncio.AbstractEventLoop) -> AsyncEngine:
     Yields:
         async_engine (AsyncEngine): SQLAlchemy AsyncEngine instance.
     """
-    async_engine = create_async_engine(url=Settings.POSTGRES_DSN_ASYNC, echo=Settings.POSTGRES_ECHO)
+    async_engine = create_async_engine(
+        url=Settings.POSTGRES_DSN_ASYNC, echo=Settings.POSTGRES_ECHO
+    )
     try:
         yield async_engine
     finally:
@@ -211,7 +233,9 @@ def sync_session_factory(sync_db_engine: Engine) -> sessionmaker:
 
 
 @pytest.fixture(scope="function")
-def sync_db_session(sync_session_factory: sessionmaker) -> typing.Generator[Session, None, None]:
+def sync_db_session(
+    sync_session_factory: sessionmaker,
+) -> typing.Generator[Session, None, None]:
     """Create sync session for database and rollback it after test."""
     with sync_session_factory() as session:
         yield session
@@ -221,11 +245,15 @@ def sync_db_session(sync_session_factory: sessionmaker) -> typing.Generator[Sess
 @pytest.fixture(scope="function")
 async def session_factory(async_db_engine: AsyncEngine) -> sessionmaker:
     """Create async session factory."""
-    yield sessionmaker(bind=async_db_engine, expire_on_commit=False, class_=AsyncSession)
+    yield sessionmaker(
+        bind=async_db_engine, expire_on_commit=False, class_=AsyncSession
+    )
 
 
 @pytest.fixture(scope="function")
-async def db_session(session_factory: sessionmaker) -> typing.AsyncGenerator[AsyncSession, None]:
+async def db_session(
+    session_factory: sessionmaker,
+) -> typing.AsyncGenerator[AsyncSession, None]:
     """Create async session for database and rollback it after test."""
     async with session_factory() as async_session:
         yield async_session
