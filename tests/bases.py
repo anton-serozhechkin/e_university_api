@@ -1,5 +1,4 @@
 import datetime
-import typing
 from pytz import utc
 from typing import Any, Dict, List, Type
 

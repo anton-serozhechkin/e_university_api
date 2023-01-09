@@ -63,7 +63,7 @@ def monkeypatch_session() -> MonkeyPatch:
 
 @pytest.fixture(scope="session", autouse=True)
 def no_http_requests(monkeypatch_session: MonkeyPatch) -> None:
-    """Disable HTTP requests for 3-rd party libraris.
+    """Disable HTTP requests for 3-rd party libraries.
 
     Notes:
         This isn't working with 'httpx', because it uses in tests to call Back-end API endpoints.
