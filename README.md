@@ -37,7 +37,7 @@ During development it may be useful to run application outside of docker contain
 
 1. Install Python 3.8 (refer `pyproject.toml` for python verion used on the project) and [Poetry](https://python-poetry.org/)
 
-2. Create virtual environment and install project dependencies:
+2. Create virtual environment and install/update project dependencies:
 
        poetry install
 

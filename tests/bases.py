@@ -1,13 +1,12 @@
 import datetime
-
-import factories as factories
-from pytz import utc
 from typing import Any, Dict, List, Type
 
+import factories as factories
 from pydantic_factories import AsyncPersistenceProtocol, ModelFactory, PostGenerated
+from pytz import utc
 
 from apps.common.db import Base, async_session_factory
-from apps.common.services import AsyncCRUDBase, ModelType, CreateSchemaType
+from apps.common.services import AsyncCRUDBase, CreateSchemaType, ModelType
 
 
 class AsyncPersistenceHandler(AsyncPersistenceProtocol):
