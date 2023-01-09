@@ -6,7 +6,7 @@ from docxtpl import DocxTemplate
 
 class FileManagerInterface(metaclass=abc.ABCMeta):
     @classmethod
-    def __subclasshook__(cls, subclass):
+    def __subclasshook__(cls, subclass) -> bool:
         return (
             hasattr(subclass, "create")
             and callable(subclass.create)
@@ -24,7 +24,7 @@ class FileManagerInterface(metaclass=abc.ABCMeta):
         raise NotImplementedError
 
     @abc.abstractmethod
-    def get(self, full_file_path: str):
+    def get(self, full_file_path: str) -> bytes:
         raise NotImplementedError
 
     @abc.abstractmethod

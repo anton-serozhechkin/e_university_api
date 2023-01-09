@@ -10,5 +10,8 @@ __pycache__/
 .DS_Store
 
 pgadmin_data
+/apps/storage/services/settlement_hostel/
+
+alembic
 
 .coverage

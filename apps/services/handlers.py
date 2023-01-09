@@ -1,18 +1,28 @@
 from datetime import date, datetime
 from decimal import Decimal
 from pathlib import Path
+from typing import List, Optional, Tuple, Union
 
 from fastapi import File, Request, UploadFile
 from pytz import utc
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from apps.common.file_managers import file_manager
-from apps.services.models import STATUS_MAPPING
+from apps.services.models import STATUS_MAPPING, UserDocument
 from apps.services.schemas import (
     CancelRequestIn,
     CountHostelAccommodationCostIn,
+    CountHostelAccommodationCostOut,
     CreateUserRequestIn,
+    CreateUserRequestOut,
+    HostelAccomodationViewOut,
+    UserDocumenstListOut,
+    UserRequestBookingHostelOut,
+    UserRequestDetailsViewOut,
+    UserRequestExistenceOut,
     UserRequestReviewIn,
+    UserRequestReviewOut,
+    UserRequestsListOut,
 )
 from apps.services.services import (
     bed_place_service,
@@ -22,6 +32,7 @@ from apps.services.services import (
     request_existence_service,
     service_service,
     user_document_service,
+    user_documents_list_service,
     user_faculty_service,
     user_request_booking_hostel_service,
     user_request_detail_service,
@@ -39,7 +50,7 @@ from apps.services.utils import (
     create_telephone_set,
     get_worksheet_cell_col_row,
 )
-from apps.users.schemas import CreateStudentIn, UserOut
+from apps.users.schemas import CreateStudentIn, CreateStudentsListOut, UserOut
 from apps.users.services import student_service
 from settings import (
     HOSTEL_BOOKING_TEMPLATE,
@@ -50,15 +61,28 @@ from settings import (
 
 
 class ServiceHandler:
+    @staticmethod
+    async def read_user_documents_list(
+        *,
+        request: Request,
+        university_id: int,
+        user: UserOut,
+        session: AsyncSession,
+    ) -> Optional[List[UserDocumenstListOut]]:
+        return await user_documents_list_service.list(
+            session=session,
+            filters={"university_id": university_id, "user_id": user.user_id},
+        )
+
+    @staticmethod
     async def read_user_request_existence(
-        self,
         *,
         request: Request,
         university_id: int,
         service_id: int,
         user: UserOut,
         session: AsyncSession,
-    ):
+    ) -> UserRequestExistenceOut:
         user_request_result = await request_existence_service.read(
             session=session,
             data={
@@ -68,21 +92,25 @@ class ServiceHandler:
             },
         )
         if user_request_result:
-            return {
-                "user_request_id": user_request_result.user_request_id,
-                "status": user_request_result.status,
-                "user_request_exist": True,
-            }
-        return {"user_request_id": None, "status": None, "user_request_exist": False}
+            return UserRequestExistenceOut(
+                user_request_id=user_request_result.user_request_id,
+                status=user_request_result.status,
+                user_request_exist=True,
+            )
+        return UserRequestExistenceOut(
+            user_request_id=None,
+            status=None,
+            user_request_exist=False,
+        )
 
+    @staticmethod
     async def read_user_request_list(
-        self,
         *,
         request: Request,
         university_id: int,
         user: UserOut,
         session: AsyncSession,
-    ):
+    ) -> List[UserRequestsListOut]:
         return await user_request_list_service.list(
             session=session,
             filters={"university_id": university_id, "user_id": user.user_id},
@@ -96,7 +124,7 @@ class ServiceHandler:
         user_request: CreateUserRequestIn,
         user: UserOut,
         session: AsyncSession,
-    ):
+    ) -> CreateUserRequestOut:
         user_faculty_result = await user_faculty_service.read(
             data={"user_id": user.user_id}, session=session
         )
@@ -122,27 +150,27 @@ class ServiceHandler:
         await self.__create_user_document(session, **prepared_data)
         return user_request
 
+    @staticmethod
     async def read_user_request_booking_hostel(
-        self,
         *,
         request: Request,
         university_id: int,
         user: UserOut,
         session: AsyncSession,
-    ):
+    ) -> UserRequestBookingHostelOut:
         return await user_request_booking_hostel_service.read(
             session=session,
             data={"user_id": user.user_id, "university_id": university_id},
         )
 
+    @staticmethod
     async def cancel_request(
-        self,
         *,
         request: Request,
         user_request_id: int,
         cancel_request: CancelRequestIn,
         session: AsyncSession,
-    ):
+    ) -> CreateUserRequestOut:
         CancelRequestIn(status_id=cancel_request.status_id)
         user_request = await user_request_service.update(
             session=session,
@@ -151,8 +179,8 @@ class ServiceHandler:
         )
         return user_request
 
+    @staticmethod
     async def create_user_request_review(
-        self,
         *,
         request: Request,
         university_id: int,
@@ -160,7 +188,7 @@ class ServiceHandler:
         user_request_review: UserRequestReviewIn,
         user: UserOut,
         session: AsyncSession,
-    ):
+    ) -> UserRequestReviewOut:
         created_user_request_review = await user_request_review_service.create(
             session=session,
             data={
@@ -186,14 +214,14 @@ class ServiceHandler:
         )
         return created_user_request_review
 
+    @staticmethod
     async def read_hostel_accommodation(
-        self,
         *,
         request: Request,
         university_id: int,
         user_request_id: int,
         session: AsyncSession,
-    ):
+    ) -> Optional[HostelAccomodationViewOut]:
         response = await hostel_accommodation_service.read(
             session=session,
             data={"university_id": university_id, "user_request_id": user_request_id},
@@ -202,28 +230,28 @@ class ServiceHandler:
         # (it's happened only if user request doesn't have review)
         return response
 
+    @staticmethod
     async def read_request_details(
-        self,
         *,
         request: Request,
         university_id: int,
         user_request_id: int,
         session: AsyncSession,
-    ):
+    ) -> UserRequestDetailsViewOut:
         return await user_request_detail_service.read(
             session=session,
             data={"university_id": university_id, "user_request_id": user_request_id},
         )
 
+    @staticmethod
     async def read_user_document(
-        self,
         *,
         request: Request,
         university_id: int,
         user_document_id: int,
         user: UserOut,
         session: AsyncSession,
-    ):
+    ) -> str:
         user_document = await user_document_service.read(
             session=session, data={"user_document_id": user_document_id}
         )
@@ -237,7 +265,7 @@ class ServiceHandler:
         user_document_id: int,
         user: UserOut,
         session: AsyncSession,
-    ):
+    ) -> Tuple[str, str]:
         user_document = await user_document_service.read(
             session=session, data={"user_document_id": user_document_id}
         )
@@ -255,7 +283,7 @@ class ServiceHandler:
         university_id: int,
         data: CountHostelAccommodationCostIn,
         session: AsyncSession,
-    ):
+    ) -> CountHostelAccommodationCostOut:
         hostel = await hostel_service.read(
             session=session, data={"hostel_id": data.hostel_id}
         )
@@ -274,7 +302,7 @@ class ServiceHandler:
         response = self.calculate_total_hostel_accommodation_cost(
             month_price, months_count
         )
-        return {"total_hostel_accommodation_cost": response}
+        return CountHostelAccommodationCostOut(total_hostel_accommodation_cost=response)
 
     @classmethod
     def calculate_difference_between_dates_in_months(
@@ -297,7 +325,9 @@ class ServiceHandler:
         return month_price * month_difference
 
     @classmethod
-    async def __create_user_document(cls, session, **kwargs):
+    async def __create_user_document(
+        cls, session: AsyncSession, **kwargs
+    ) -> UserDocument:
         service_id = kwargs.get("service_id")
         name = await cls.__generate_user_document_name(service_id, session)
         created_at = datetime.strptime(
@@ -366,7 +396,7 @@ class ServiceHandler:
         university_id: int,
         file: UploadFile = File(...),
         session: AsyncSession,
-    ):
+    ) -> Union[List[CreateStudentsListOut], None]:
         specialties, students = await get_specialties_list(university_id), []
 
         faculty_dict = create_faculty_dict(specialties)
