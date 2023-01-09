@@ -1,3 +1,4 @@
+import logging
 from logging import Logger, config, getLogger
 
 LOGGING_CONFIG = {
@@ -5,7 +6,6 @@ LOGGING_CONFIG = {
     "disable_existing_loggers": False,
     "formatters": {
         "basic": {
-            "()": "colorlog.ColoredFormatter",
             "format": "{log_color}{levelname} - {asctime} - {name} - {blue}{message}",
             "datefmt": "%Y-%m-%dT%H:%M:%S%z",
             "style": "{",
