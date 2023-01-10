@@ -1,10 +1,11 @@
-import pytest
 from typing import List
+
+import pytest
 
 from apps.hostel.models import BedPlace, Commandant, Hostel
 from tests.apps.hostel.factories import (
-    BedPlaceFactory,
     BedPlaceCreateSchema,
+    BedPlaceFactory,
     CommandantCreateSchema,
     CommandantFactory,
 )
@@ -58,31 +59,3 @@ class TestCommandant:
             f' telephone_number="{obj.telephone_number}")'
         )
         assert expected_result == result
-
-
-# class TestHostel:
-#     @pytest.mark.asyncio
-#     async def test_factory(self) -> None:
-#         hostel_schema: HostelCreateSchema = HostelFactory.build()
-#         hostel: Hostel = await HostelFactory.create_async()
-#         hostels: List[Hostel] = await HostelFactory.create_batch_async(
-#             size=7
-#         )
-#
-#         assert isinstance(hostel_schema, HostelCreateSchema)
-#         assert isinstance(hostel, Hostel)
-#         for build in hostels:
-#             assert isinstance(build, Hostel)
-#
-#     @pytest.mark.asyncio
-#     async def test__repr__(self) -> None:
-#         obj: Hostel = await HostelFactory.create_async()
-#         result = obj.__repr__()
-#         expected_result = (
-#             f'{obj.__class__.__name__}(hostel_id="{obj.hostel_id}",'
-#             f' number="{obj.number}", name="{obj.name}", city="{obj.city}",'
-#             f' street="{obj.street}", build="{obj.build}",'
-#             f' month_price="{obj.month_price}", university_id="{obj.university_id}",'
-#             f' commandant_id="{obj.commandant_id}")'
-#         )
-#         assert expected_result == result

@@ -9,7 +9,7 @@ from apps.common.services import AsyncCRUDBase, CreateSchemaType, ModelType
 
 
 class AsyncPersistenceHandler(AsyncPersistenceProtocol):
-    def __init__(self, model: Type[Base]):
+    def __init__(self, model: Type[Base]) -> None:
         self._model = model
         self._service = AsyncCRUDBase(model=self._model)
 

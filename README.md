@@ -100,6 +100,34 @@ For work with application, you need to setup your database in docker container. 
        docker-compose up
 
 
+### Checking code formats
+
+Before creating a pull request you need to use formatters and check the code.
+
+1. Use flake8 to check the code, enter the command:
+
+      flake8
+
+   every error line in report must be corrected in code
+
+2. Use black, enter command:
+
+      black <dirname or filename>
+
+3. Use isort, enter command:
+
+      isort <dirname or filename>
+
+
+### Performing tests
+
+For testing application there is need to use pytest and it's plugings.
+There is need to always check amount of test cases and their covering.
+
+1. To perform created test cases, use command:
+
+      pytest --cov
+
 
 ## Project layout
 

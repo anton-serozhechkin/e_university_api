@@ -9,6 +9,7 @@ import psycopg2
 import pytest
 from _pytest.monkeypatch import MonkeyPatch
 from psycopg2.extensions import ISOLATION_LEVEL_AUTOCOMMIT
+from pydantic import PostgresDsn
 from pytest_alembic import Config, runner
 from sqlalchemy import create_engine
 from sqlalchemy.engine import URL, Engine
@@ -18,7 +19,6 @@ from sqlalchemy.orm import Session, sessionmaker
 from apps.common.db import async_session_factory as AsyncSessionFactory  # noqa
 from apps.common.db import session_factory as SessionFactory  # noqa
 from apps.common.dependencies import get_async_session, get_session
-from pydantic import PostgresDsn
 from settings import Settings
 
 
