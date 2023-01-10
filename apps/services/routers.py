@@ -16,7 +16,6 @@ from apps.services.schemas import (
     CancelRequestIn,
     CountHostelAccommodationCostIn,
     CountHostelAccommodationCostOut,
-    CreateUserRequestIn,
     CreateUserRequestOut,
     HostelAccomodationViewOut,
     UserDocumenstListOut,
@@ -26,6 +25,8 @@ from apps.services.schemas import (
     UserRequestReviewIn,
     UserRequestReviewOut,
     UserRequestsListOut,
+    RequestForHostelAccommodationOut,
+    RequestForHostelAccommodationIn,
 )
 from apps.users.schemas import CreateStudentsListOut, UserOut
 
@@ -113,7 +114,7 @@ async def read_user_request_list(
 async def create_request_for_hostel_accommodation(
     request: Request,
     university_id: int,
-    user_request: CreateUserRequestIn,
+    user_request: RequestForHostelAccommodationIn,
     user: UserOut = Depends(get_current_user),
     session: AsyncSession = Depends(get_async_session),
 ):
