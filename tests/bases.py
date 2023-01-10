@@ -1,7 +1,6 @@
 import datetime
 from typing import Any, Dict, List, Type
 
-import factories as factories
 from pydantic_factories import AsyncPersistenceProtocol, ModelFactory, PostGenerated
 from pytz import utc
 

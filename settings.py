@@ -6,6 +6,7 @@ from typing import List, Union
 from pydantic import BaseSettings, Extra, Field, PostgresDsn, validator
 from sqlalchemy.engine.url import URL
 
+
 __all__ = [
     "BASE_DIR",
     "Settings",
@@ -31,21 +32,21 @@ def _build_db_dsn(values: dict, async_dsn: bool = False) -> URL:
     if async_dsn:
         driver_name += "+asyncpg"
     # TODO: Uncomment when "databases" dependency will be removed.
-    # return URL.create(
-    #     drivername=driver_name,
-    #     username=values["POSTGRES_USER"],
-    #     password=values["POSTGRES_PASSWORD"],
-    #     host=values["POSTGRES_HOST"],
-    #     port=values["POSTGRES_PORT"],
-    #     database=values["POSTGRES_DB"]
-    # )
+    return URL.create(
+        drivername=driver_name,
+        username=values["POSTGRES_USER"],
+        password=values["POSTGRES_PASSWORD"],
+        host=values["POSTGRES_HOST"],
+        port=values["POSTGRES_PORT"],
+        database=values["POSTGRES_DB"]
+    )
     # TODO: Remove when "databases" dependency will be removed.
-    username = values["POSTGRES_USER"]
-    password = values["POSTGRES_PASSWORD"]
-    host = values["POSTGRES_HOST"]
-    port = values["POSTGRES_PORT"]
-    database = values["POSTGRES_DB"]
-    return f"{driver_name}://{username}:{password}@{host}:{port}/{database}"
+    # username = values["POSTGRES_USER"]
+    # password = values["POSTGRES_PASSWORD"]
+    # host = values["POSTGRES_HOST"]
+    # port = values["POSTGRES_PORT"]
+    # database = values["POSTGRES_DB"]
+    # return f"{driver_name}://{username}:{password}@{host}:{port}/{database}"
 
 
 class MainSettings(BaseSettings):

@@ -6,7 +6,7 @@ from sqlalchemy.orm import Session, sessionmaker
 
 from settings import Settings
 
-database = databases.Database(Settings.POSTGRES_DSN)
+database = databases.Database(str(Settings.POSTGRES_DSN))
 
 
 POSTGRES_INDEXES_NAMING_CONVENTION = {

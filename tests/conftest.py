@@ -18,20 +18,21 @@ from sqlalchemy.orm import Session, sessionmaker
 from apps.common.db import async_session_factory as AsyncSessionFactory  # noqa
 from apps.common.db import session_factory as SessionFactory  # noqa
 from apps.common.dependencies import get_async_session, get_session
+from pydantic import PostgresDsn
 from settings import Settings
 
 
 @pytest.fixture(scope="session", autouse=True)
 def mock_db_url(monkeypatch_session: MonkeyPatch) -> None:
     """Change all PostgreSQL URLs and environments to use `test` database"""
-    db_url: URL = Settings.POSTGRES_DSN
-    async_db_url: URL = Settings.POSTGRES_DSN_ASYNC
+    db_url: PostgresDsn = Settings.POSTGRES_DSN
+    async_db_url: PostgresDsn = Settings.POSTGRES_DSN_ASYNC
     monkeypatch_session.setattr(
         target=Settings, name="POSTGRES_DSN", value=db_url.set(database="test")
     )
     monkeypatch_session.setattr(
         target=Settings,
-        name="POSTGRES_DST_ASYNC",
+        name="POSTGRES_DSN_ASYNC",
         value=async_db_url.set(database="test"),
     )
     monkeypatch_session.setenv(name="POSTGRES_DB", value="test")
