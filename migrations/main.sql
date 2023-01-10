@@ -11,6 +11,7 @@ CREATE TABLE IF NOT EXISTS university (
     university_id integer NOT NULL,
     university_name varchar(255) NOT NULL,
     short_university_name varchar(50) NOT NULL,
+    city varchar(255) NOT NULL,
     logo varchar(255),
     rector_id INTEGER NOT NULL,
     CONSTRAINT university_pk PRIMARY KEY (university_id));

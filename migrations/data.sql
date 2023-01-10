@@ -1,8 +1,8 @@
 INSERT INTO rector(rector_id, last_name, first_name, middle_name) VALUES (1, 'Пономаренко', 'Володимир', 'Степанович');
 
-INSERT INTO university(university_name, short_university_name, rector_id)
+INSERT INTO university(university_name, short_university_name, city, rector_id)
 VALUES ('Харківський національний економічний університет імені Семена Кузнеця',
-        'ХНЕУ ім. С. Кузнеця', 1);
+        'ХНЕУ ім. С. Кузнеця', 'Харків', 1);
 
 INSERT INTO role(role_name) VALUES ('Студент');
 INSERT INTO role(role_name) VALUES ('Адміністратор');
