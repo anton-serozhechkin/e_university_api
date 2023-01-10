@@ -1,8 +1,8 @@
 from apps.common.schemas import BaseInSchema
 from apps.hostel.models import BedPlace, Commandant, Hostel
-from apps.hostel.schemas import BedPlaceOut, HostelListOut
 from tests.bases import AsyncPersistenceHandler, BaseFactory
 
+from decimal import Decimal
 from pydantic import Field, validator
 from typing import Optional
 
@@ -37,35 +37,6 @@ class CommandantCreateSchema(BaseInSchema):
         example="380971111111",
     )
 
-    # @validator("last_name")
-    # def validate_last_name(cls, value: str) -> str:
-    #     if not value:
-    #         raise ValueError("The student's surname is mandatory")
-    #     if not value.istitle():
-    #         raise ValueError("The last name first letter must be uppercase")
-    #     return value
-    #
-    # @validator("first_name")
-    # def validate_first_name(cls, value: str) -> str:
-    #     if not value:
-    #         raise ValueError("The student's name is mandatory")
-    #     if not value.istitle():
-    #         raise ValueError("The name first letter must be uppercase")
-    #     return value
-    #
-    # @validator("middle_name")
-    # def validate_middle_name(cls, value: str) -> Optional[str]:
-    #     if value:
-    #         if not value.istitle():
-    #             raise ValueError("The middle name first letter must be uppercase")
-    #         return value
-    #
-    # @validator("telephone_number")
-    # def validate_telephone_number(cls, value: str) -> str:
-    #     if not value.isdigit():
-    #         raise ValueError("The phone number must consist of digits")
-    #     return value
-
 
 class CommandantFactory(BaseFactory):
     """CommandantFactory based on Faker and Pydantic"""
@@ -74,3 +45,27 @@ class CommandantFactory(BaseFactory):
     __async_persistence__ = AsyncPersistenceHandler(model=Commandant)
 
 
+# class HostelCreateSchema(BaseInSchema):
+#     hostel_id: int
+#     number: int
+#     name: str = Field(
+#         default="Сінергія", title="Name", max_length=100, example="Сінергія"
+#     )
+#     city: str = Field(default="Харків", title="City", max_length=100, example="Харків")
+#     street: str = Field(
+#         default="вул. Клочківська",
+#         title="Street",
+#         max_length=100,
+#         example="вул. Клочківська",
+#     )
+#     build: str = Field(default="216а", title="Build", max_length=10, example="216а")
+#     month_price: Decimal = Field(default=0, title="Month price", max_digits=8, decimal_places=6)
+#     university_id: int
+#     commandant_id: int
+#
+#
+# class HostelFactory(BaseFactory):
+#     """HostelFactory based on Faker and Pydantic"""
+#
+#     __model__ = HostelCreateSchema
+#     __async_persistence__ = AsyncPersistenceHandler(model=Hostel)
