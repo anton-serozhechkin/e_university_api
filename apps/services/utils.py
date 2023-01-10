@@ -24,7 +24,7 @@ def create_faculty_dict(specialties: List) -> DefaultDict[str, Dict[str, int]]:
 def create_speciality_dict(specialties: List) -> Dict[int, str]:
     speciality_dict = {}
     for specialty in specialties:
-        speciality_dict[specialty.speciality_id] = specialty.name_1
+        speciality_dict[specialty.code] = specialty.name_1
     return speciality_dict
 
 
