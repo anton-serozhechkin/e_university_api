@@ -27,8 +27,8 @@ class University(Base):
     def __repr__(self) -> str:
         return (
             f'{self.__class__.__name__}(university_id="{self.university_id}", '
-            f'university_name="{self.university_name}", logo="{self.logo}", '
-            f'rector_id="{self.rector_id}")'
+            f'university_name="{self.university_name}", city="{self.city}", '
+            f'logo="{self.logo}", rector_id="{self.rector_id}")'
         )
 
 
