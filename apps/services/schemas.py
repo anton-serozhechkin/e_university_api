@@ -12,36 +12,7 @@ from apps.common.schemas import (
     UserDocumentsSchema,
 )
 
-# TODO: create way to get specialities from db
-speciality = {
-    51: "Економіка",
-    121: "Інженерія програмного забезпечення",
-    122: "Комп'ютерні науки",
-    124: "Системний аналіз",
-    125: "Кібербезпека",
-    126: "Інформаційні системи та технології",
-    186: "Видавництво та поліграфія",
-    53: "Психологія",
-    81: "Право, освітня програма",
-    232: "Соціальне забезпечення",
-    281: "Публічне управління та адміністрування",
-    73: "Менеджмент",
-    75: "Маркетинг",
-    22: "Дизайн",
-    72: "Фінанси, банківська справа та страхування",
-    71: "Облік і оподаткування",
-    11: '"Освітні, педагогічні науки"',
-    52: "Політологія",
-    61: "Журналістика",
-    291: "Міжнародні відносини, суспільні комунікації та регіональні студії",
-    292: "Міжнародні економічні відносини",
-    76: '"Підприємництво, торгівля та біржова діяльність"',
-    241: "Готельно-ресторанна справа",
-    242: "Туризм",
-}
 
-
-# TODO: check recording empty values in doc
 class RequestForHostelAccommodationIn(BaseInSchema):
     rector_first_name: str
     rector_middle_name: str = None
@@ -75,9 +46,7 @@ class RequestForHostelAccommodationIn(BaseInSchema):
     def validate_student_middle_name(cls, value: str) -> str:
         if value:
             if not value.istitle():
-                raise ValueError(
-                    f"Middle name must be uppercase"
-                )
+                raise ValueError(f"Middle name must be uppercase")
             return value
         return value
 
@@ -85,9 +54,7 @@ class RequestForHostelAccommodationIn(BaseInSchema):
     def validate_rector_middle_name(cls, value: str) -> str:
         if value:
             if not value.istitle():
-                raise ValueError(
-                    f"Middle name must be uppercase"
-                )
+                raise ValueError(f"Middle name must be uppercase")
             return value
         return value
 
@@ -97,53 +64,11 @@ class RequestForHostelAccommodationIn(BaseInSchema):
             raise ValueError("Wrong education level value. Should be 'B' or 'M'")
         return value
 
-    # TODO: create way to get faculty names from db
-    @validator("faculty_name")
-    def validate_faculty_name(cls, value: str) -> str:
-        if value not in [
-            "Інформаційних технологій",
-            "Міжнародних відносин і журналістики",
-            "Міжнародної економіки і підприємництва",
-            "Фінансів і обліку",
-            "Менеджмента і маркетингу",
-            "Економіки і права",
-        ]:
-            raise ValueError(f"Wrong '{value}' number. This faculty doesn't exist")
-        return value
-
-    # TODO: create way to get speciality code from db
-    @validator("speciality_code")
-    def validate_speciality_code(cls, value: int) -> int:
-        if value not in speciality.keys():
-            raise ValueError(f"Wrong '{value}'number. This speciality doesn't exist")
-        return value
-
-    # TODO: create way to get speciality name from db
-    @validator("speciality_name")
-    def validate_speciality_name(cls, value: str) -> str:
-        if value not in speciality.values():
-            raise ValueError(f"Wrong '{value}' name. This speciality doesn't exist")
-        return value
-
     @validator("course")
     def validate_course(cls, value: int) -> int:
         if value not in [1, 2, 3, 4, 5, 6]:
             raise ValueError(f"Wrong '{value}' number. This course doesn't exist")
         return value
-
-    @root_validator
-    def validate_speciality_name_and_speciality_code_correspondence(
-        cls, values: str
-    ) -> str:
-        if not speciality[values.get("speciality_code")] == values.get(
-            "speciality_name"
-        ):
-            raise ValueError(
-                f"Speciality code '{values.get('speciality_code')}' "
-                f"doesn't correspondence with exists "
-                f"'{values.get('speciality_name')}' speciality name"
-            )
-        return values
 
 
 class RequestForHostelAccommodationOut(BaseOutSchema):
