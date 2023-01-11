@@ -105,6 +105,7 @@ def upgrade() -> None:
         sa.Column("university_id", sa.INTEGER(), nullable=False),
         sa.Column("university_name", sa.VARCHAR(length=255), nullable=False),
         sa.Column("short_university_name", sa.VARCHAR(length=50), nullable=False),
+        sa.Column("city", sa.VARCHAR(length=255), nullable=False),
         sa.Column("logo", sa.VARCHAR(length=255), nullable=True),
         sa.Column("rector_id", sa.INTEGER(), nullable=True),
         sa.ForeignKeyConstraint(

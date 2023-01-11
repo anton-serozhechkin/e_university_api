@@ -23,11 +23,12 @@ def upgrade() -> None:
     op.execute(
         sqltext="""
         INSERT INTO university(
-        university_id, university_name, short_university_name, rector_id
+        university_id, university_name, short_university_name, city, rector_id
         ) VALUES (
         1,
         'Харківський національний економічний університет імені Семена Кузнеця',
         'ХНЕУ ім. С. Кузнеця',
+        'Харків',
          1
          );
         """
