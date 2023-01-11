@@ -484,15 +484,17 @@ class ServiceHandler:
 
         check_user_request_status(warrant_view.status_id)
 
-        prepared_data = {"context": warrant_view}
-        await self.__create_user_warrant(session, **prepared_data)
-
-
-        user_document = await user_document_service.read(
-            session=session, data={"user_document_id": user_document_id}
+        user_document_list = await user_document_service.list(
+                session=session, filters={
+                    "user_request_id": warrant_view.user_request_id,
+                    "name": "Ордер на поселення в гуртожиток",
+                },
         )
-        check_for_empty_value(user_document, "user_document_id")
-        check_file_existing(user_document.content)
+        if user_document_list:
+            user_document = user_document_list[0]
+        else:
+            prepared_data = {"context": warrant_view}
+            user_document = await self.__create_user_warrant(session, **prepared_data)
         file_name = await self.__generate_user_document_name_for_download(
             user_document.name, user.user_id, session
         )
