@@ -499,13 +499,13 @@ async def count_hostel_accommodation_cost(
 
 
 @services_router.get(
-    "/{university_id}/download-warranty-document/{user_request_review_id}",
-    name="download_warranty_document",
+    "/{university_id}/download-warrant-document/{user_request_review_id}",
+    name="download_warrant_document",
     response_class=FileResponse,
-    summary="Download warranty document",
+    summary="Download warrant document",
     responses={
         200: {
-            "description": "Successful download warranty document response",
+            "description": "Successful download warrant document response",
             "content": {
                 "text/html": {
                     "example": "\n".join(
@@ -532,7 +532,7 @@ async def count_hostel_accommodation_cost(
     },
     tags=["Services application"],
 )
-async def download_warranty_document(
+async def download_warrant_document(
     request: Request,
     university_id: int,
     user_request_review_id: int,
@@ -540,7 +540,7 @@ async def download_warranty_document(
     session: AsyncSession = Depends(get_async_session),
 ):
     # for changing
-    file_path, file_name = await service_handler.download_warranty_document(
+    file_path, file_name = await service_handler.download_warrant_document(
         request=request,
         university_id=university_id,
         user_request_review_id=user_request_review_id,

@@ -46,6 +46,7 @@ from apps.services.utils import (
     check_for_empty_value,
     check_specialty_existence,
     check_telephone_number_existence,
+    check_user_request_status,
     create_faculty_dict,
     create_telephone_set,
     get_worksheet_cell_col_row,
@@ -424,7 +425,7 @@ class ServiceHandler:
             students.append(student)
         return await student_service.create_many(session=session, objs=students)
 
-    async def download_warranty_document(
+    async def download_warrant_document(
         self,
         *,
         request: Request,
@@ -439,7 +440,9 @@ class ServiceHandler:
         user_request = await user_request_service.read(
             session=session, data={"user_request_id": user_request_review.user_request_id}
         )
+
         check_user_request_status(user_request.status_id)
+
         prepared_data = {
             "context": result,
             "service_id": user_request.service_id,
