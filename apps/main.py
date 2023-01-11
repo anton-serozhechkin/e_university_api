@@ -16,8 +16,12 @@ from apps.educational_institutions.routers import educational_institutions_route
 from apps.hostel.routers import hostel_router
 from apps.services.routers import services_router
 from apps.users.routers import users_router
+from loggers import get_logger, setup_logging
 from settings import Settings
 from tags_metadata import metadata
+
+logger = get_logger(name=__name__)
+
 
 app = FastAPI(openapi_tags=metadata)
 
@@ -47,10 +51,18 @@ app.include_router(authorization_router)
 
 
 @app.on_event("startup")
+def enable_logging() -> None:
+    setup_logging()
+    logger.debug(msg="Logging configuration completed.")
+
+
+@app.on_event("startup")
 async def startup() -> None:
     await database.connect()
+    logger.info("Database startup.")
 
 
 @app.on_event("shutdown")
 async def shutdown() -> None:
     await database.disconnect()
+    logger.info("Database shutdown.")
