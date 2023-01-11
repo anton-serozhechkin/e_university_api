@@ -14,6 +14,7 @@ __all__ = [
     "SETTLEMENT_HOSTEL_PATH",
     "SERVICES_PATH",
     "HOSTEL_BOOKING_TEMPLATE",
+    "HOSTEL_WARRANT_TEMPLATE",
 ]
 
 BASE_DIR = Path(__file__).resolve().parent
@@ -24,6 +25,7 @@ SERVICES_PATH = BASE_DIR / "apps" / "services"
 SETTLEMENT_HOSTEL_PATH = STORAGE_PATH / "services" / "settlement_hostel"
 
 HOSTEL_BOOKING_TEMPLATE = "hostel_booking_template.docx"
+HOSTEL_WARRANT_TEMPLATE = "hostel_warrant_template.docx"
 
 
 def _build_db_dsn(values: dict, async_dsn: bool = False) -> URL:

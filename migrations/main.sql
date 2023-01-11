@@ -679,7 +679,6 @@ CREATE VIEW user_request_hostel_warrant_view AS
     urr.user_request_review_id,
     urr.room_number as room_number,
     urr.created_at as created_at,
-    urr.service_id as service_id,
     h.number as hostel_number,
     h.street as hostel_street,
     h.build as hostel_build,
@@ -688,6 +687,7 @@ CREATE VIEW user_request_hostel_warrant_view AS
     u.logo as university_logo,
     u.city as university_city,
     ur.status_id as status_id,
+    ur.user_id as user_id,
     json_build_object('last_name', s.last_name, 'first_name', s.first_name, 'middle_name', s.middle_name)
             as student_full_name,
     s.gender as student_gender,
