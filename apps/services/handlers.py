@@ -424,5 +424,39 @@ class ServiceHandler:
             students.append(student)
         return await student_service.create_many(session=session, objs=students)
 
+    async def download_warranty_document(
+        self,
+        *,
+        request: Request,
+        university_id: int,
+        user_request_review_id: int,
+        user: UserOut,
+        session: AsyncSession,
+    ) -> Tuple[str, str]:
+        user_request_review = await user_request_review_service.read(
+            session=session, data={"user_request_review_id": user_request_review_id}
+        )
+        user_request = await user_request_service.read(
+            session=session, data={"user_request_id": user_request_review.user_request_id}
+        )
+        check_user_request_status(user_request.status_id)
+        prepared_data = {
+            "context": result,
+            "service_id": user_request.service_id,
+            "user_request_id": user_request.user_request_id,
+        }
+        await self.__create_user_document(session, **prepared_data)
+
+
+        user_document = await user_document_service.read(
+            session=session, data={"user_document_id": user_document_id}
+        )
+        check_for_empty_value(user_document, "user_document_id")
+        check_file_existing(user_document.content)
+        file_name = await self.__generate_user_document_name_for_download(
+            user_document.name, user.user_id, session
+        )
+        return user_document.content, file_name
+
 
 service_handler = ServiceHandler()
