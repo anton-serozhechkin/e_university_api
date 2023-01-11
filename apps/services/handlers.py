@@ -67,7 +67,7 @@ from settings import (
 
 class ServiceHandler:
     @classmethod
-    async def validate_faculty_name_existing(
+    async def validate_faculty_name(
         cls, faculty_name: str, university_id: int
     ) -> bool:
         faculties = await get_faculty_list(university_id)
@@ -76,7 +76,7 @@ class ServiceHandler:
         return True
 
     @classmethod
-    async def validate_speciality_code_existing(
+    async def validate_speciality_code(
         cls, speciality_code: int, university_id: int
     ) -> bool:
         specialities = await get_specialties_list(university_id)
@@ -87,7 +87,7 @@ class ServiceHandler:
         return True
 
     @classmethod
-    async def validate_speciality_name_existing(
+    async def validate_speciality_name(
         cls, speciality_name: str, university_id: int
     ) -> bool:
         specialities = await get_specialties_list(university_id)
@@ -122,11 +122,11 @@ class ServiceHandler:
         university_id: int,
     ) -> bool:
         if (
-            await cls.validate_faculty_name_existing(faculty_name, university_id)
-            and await cls.validate_speciality_name_existing(
+            await cls.validate_faculty_name(faculty_name, university_id)
+            and await cls.validate_speciality_name(
                 speciality_name, university_id
             )
-            and await cls.validate_speciality_code_existing(
+            and await cls.validate_speciality_code(
                 speciality_code, university_id
             )
             and await cls.validate_speciality_name_and_speciality_code_correspondence(
