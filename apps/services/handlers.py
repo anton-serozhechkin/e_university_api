@@ -122,7 +122,7 @@ class ServiceHandler:
         university_id: int,
     ) -> bool:
         if (
-            await cls.validate_faculty_name(faculty_name, university_id)
+            await cls.validate_faculty_name_exist_existing(faculty_name, university_id)
             and await cls.validate_speciality_name_existing(
                 speciality_name, university_id
             )
@@ -149,36 +149,43 @@ class ServiceHandler:
         user: UserOut,
         session: AsyncSession,
     ) -> RequestForHostelAccommodationOut:
-        user_faculty = await user_faculty_service.read(
-            data={"user_id": user.user_id}, session=session
-        )
-        data = {
-            "created_at": datetime.now(utc),
-            "comment": user_request.comment,
-            "user_id": user.user_id,
-            "service_id": 1,
-            "faculty_id": user_faculty.faculty_id,
-            "university_id": university_id,
-            "status_id": STATUS_MAPPING.get("Розглядається"),
-        }
-        user_request_booking_hostel = (
-            await user_request_booking_hostel_service.read(
-                session=session,
-                data={"user_id": user.user_id, "university_id": university_id},
+
+        if await cls.get_speciality_and_faculty_validation_result(
+            user_request.faculty_name,
+            user_request.speciality_name,
+            user_request.speciality_code,
+            university_id,
+        ):
+            user_faculty = await user_faculty_service.read(
+                data={"user_id": user.user_id}, session=session
             )
-        )
-        user_request_service_response = await user_request_service.create(
-            session=session, data=data
-        )
-        prepared_data = {
-            "context": update_user_booking_hostel_data_by_user_request(
-                user_request, user_request_booking_hostel
-            ),
-            "service_id": user_request_service_response.service_id,
-            "user_request_id": user_request_service_response.user_request_id,
-        }
-        await cls.__create_user_document(session, **prepared_data)
-        return user_request_service_response
+            data = {
+                "created_at": datetime.now(utc),
+                "comment": user_request.comment,
+                "user_id": user.user_id,
+                "service_id": 1,
+                "faculty_id": user_faculty.faculty_id,
+                "university_id": university_id,
+                "status_id": STATUS_MAPPING.get("Розглядається"),
+            }
+            user_request_booking_hostel = (
+                await user_request_booking_hostel_service.read(
+                    session=session,
+                    data={"user_id": user.user_id, "university_id": university_id},
+                )
+            )
+            user_request_service_response = await user_request_service.create(
+                session=session, data=data
+            )
+            prepared_data = {
+                "context": update_user_booking_hostel_data_by_user_request(
+                    user_request, user_request_booking_hostel
+                ),
+                "service_id": user_request_service_response.service_id,
+                "user_request_id": user_request_service_response.user_request_id,
+            }
+            await cls.__create_user_document(session, **prepared_data)
+            return user_request_service_response
 
     @staticmethod
     async def read_user_documents_list(
