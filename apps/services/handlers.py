@@ -93,7 +93,7 @@ class ServiceHandler:
         specialities = await get_specialties_list(university_id)
         if not speciality_name in create_speciality_dict(specialities).values():
             raise ValueError(
-                f"Wrong '{speciality_name}' code. This speciality doesn't exist"
+                f"Wrong '{speciality_name}' speciality name. This speciality doesn't exist"
             )
         return True
 
