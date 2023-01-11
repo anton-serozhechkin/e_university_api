@@ -67,7 +67,7 @@ from settings import (
 
 class ServiceHandler:
     @classmethod
-    async def validate_faculty_name_exist_existing(
+    async def validate_faculty_name_existing(
         cls, faculty_name: str, university_id: int
     ) -> bool:
         faculties = await get_faculty_list(university_id)
@@ -122,7 +122,7 @@ class ServiceHandler:
         university_id: int,
     ) -> bool:
         if (
-            await cls.validate_faculty_name_exist_existing(faculty_name, university_id)
+            await cls.validate_faculty_name_existing(faculty_name, university_id)
             and await cls.validate_speciality_name_existing(
                 speciality_name, university_id
             )
