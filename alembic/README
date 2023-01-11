@@ -4,35 +4,35 @@ Generic single-database configuration.
 
 ### Basic usage
 
-1. To perform the up-to-date migration enter in separate terminal
+1. To perform the up-to-date migration enter in separate terminal:
 
-    alembic upgrade head
+       alembic upgrade head
 
-2. To perform the certain migration enter
+2. To perform the certain migration enter:
 
-    alembic upgrade <migration name>
+       alembic upgrade <migration name>
 
-3. To cancel migration to the certain level
+3. To cancel migration to the certain level:
 
-    alembic downgrade <migration name>
+       alembic downgrade <migration name>
 
-4. To cancel migration at all
+4. To cancel migration at all:
 
-    alembic downgrade base
+       alembic downgrade base
 
 ### Create migrations
 
-1. To create new migration
+1. To create new migration:
 
-    alembic revision -m "<migration_file_name>" --rev-id "<migration_name>"
+       alembic revision -m "<migration_file_name>" --rev-id "<migration_name>"
 
 2. Migration names should have correspondent order number - 0001, 0002, 0003, .... Migrations with
     number 0011 is for inserting information into the database for testing and can be deleted in the future.
 
-3. To create new migration using automatic generation
+3. To create new migration using automatic generation:
 
-    alembic revision --autogenerate -m "<migration_file_name>" --rev-id "<migration_name>"
+       alembic revision --autogenerate -m "<migration_file_name>" --rev-id "<migration_name>"
 
-4. To create migration sql file
+4. To create migration sql file:
 
-    alembic upgrade head --sql
+       alembic upgrade head --sql

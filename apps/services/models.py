@@ -78,7 +78,7 @@ class UserRequest(Base):
     status = relationship("Status", back_populates="user_requests")
     user_documents = relationship("UserDocument", back_populates="user_request")
     user_request_review = relationship(
-        "UserRequestReview", back_populates='user_request'
+        "UserRequestReview", back_populates="user_request"
     )
 
     def __repr__(self) -> str:
@@ -172,7 +172,8 @@ class UserRequestReview(Base):
         ForeignKey(
             "user_request.user_request_id", ondelete="CASCADE", onupdate="CASCADE"
         ),
-        nullable=False)
+        nullable=False,
+    )
 
     bed_place = relationship("BedPlace", back_populates="user_request_review")
     reviewer_user = relationship(
@@ -240,13 +241,15 @@ class ServiceDocument(Base):
     )
     documents = Column(JSON, nullable=False)
 
-    university = relationship("University", back_populates='service_document')
-    service = relationship("Service", back_populates='service_document')
+    university = relationship("University", back_populates="service_document")
+    service = relationship("Service", back_populates="service_document")
 
     def __repr__(self):
-        return f'{self.__class__.__name__}(service_document_id=' \
-               f'"{self.user_document_id}", service_id="{self.service_id}",' \
-               f'university_id="{self.university_id}", documents="{self.documents}"'
+        return (
+            f'{self.__class__.__name__}(service_document_id='
+            f'"{self.service_document_id}", service_id="{self.service_id}",'
+            f'university_id="{self.university_id}", documents="{self.documents}"'
+        )
 
 
 user_request_booking_hostel_view = Table(

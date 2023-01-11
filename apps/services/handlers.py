@@ -198,8 +198,7 @@ class ServiceHandler:
                 "reviewer": user.user_id,
                 "hostel_id": user_request_review.hostel_id,
                 "room_number": user_request_review.room_number,
-                "start_accommodation_date":
-                    user_request_review.start_accommodation_date,
+                "start_accommodation_date": user_request_review.start_accommodation_date,
                 "end_accommodation_date": user_request_review.end_accommodation_date,
                 "total_sum": user_request_review.total_sum,
                 "payment_deadline_date": user_request_review.payment_deadline_date,

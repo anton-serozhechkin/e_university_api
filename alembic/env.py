@@ -1,15 +1,15 @@
 import pathlib
-
 from logging.config import fileConfig
+
 from alembic import context
-from sqlalchemy_utils import database_exists, create_database
+from sqlalchemy_utils import create_database, database_exists
 
 from apps.authorization.models import Base as AuthBase
+from apps.common.db import Base, engine
 from apps.educational_institutions.models import Base as EduBase
 from apps.hostel.models import Base as HostelBase
 from apps.services.models import Base as ServiceBase
 from apps.users.models import Base as UserBase
-from apps.common.db import Base, engine
 
 config = context.config
 
