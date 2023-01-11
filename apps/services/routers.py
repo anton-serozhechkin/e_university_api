@@ -496,3 +496,62 @@ async def count_hostel_accommodation_cost(
         ),
         "message": "Cost of hostel accommodation of student was counted successfully",
     }
+
+
+@services_router.get(
+    "/{university_id}/download-warranty-document/{user_request_review_id}",
+    name="download_warranty_document",
+    response_class=FileResponse,
+    summary="Download warranty document",
+    responses={
+        200: {
+            "description": "Successful download warranty document response",
+            "content": {
+                "text/html": {
+                    "example": "\n".join(
+                        [
+                            (
+                                "content-disposition: attachment;"
+                                " filename*=utf-8''some_file_name.docx"
+                            ),
+                            "content-length: 1010",
+                            (
+                                "content-type:"
+                                " application/vnd.openxmlformats-officedocument."
+                                "wordprocessingml.document"
+                            ),
+                            "date: Wed,14 Dec 2022 15:58:49 GMT",
+                            "etag: 9744b58c8e99ca7c251c717ad9b28bd2",
+                            "last-modified: Wed,23 Nov 2022 17:49:14 GMT",
+                            "server: uvicorn",
+                        ]
+                    )
+                }
+            },
+        }
+    },
+    tags=["Services application"],
+)
+async def download_warranty_document(
+    request: Request,
+    university_id: int,
+    user_request_review_id: int,
+    user: UserOut = Depends(get_current_user),
+    session: AsyncSession = Depends(get_async_session),
+):
+    # for changing
+    file_path, file_name = await service_handler.download_warranty_document(
+        request=request,
+        university_id=university_id,
+        user_request_review_id=user_request_review_id,
+        user=user,
+        session=session,
+    )
+    return FileResponse(
+        path=file_path,
+        filename=file_name,
+        status_code=http_status.HTTP_200_OK,
+        media_type=(
+            "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+        ),
+    )
