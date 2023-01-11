@@ -291,7 +291,7 @@ user_request_hostel_warrant_view = Table(
     Column("hostel_build", VARCHAR(10)),
     Column("bed_place_name", VARCHAR(50)),
     Column("university_name", VARCHAR(255)),
-    Column("university_logo", VARCHAR(255)),
+    Column("short_university_name", VARCHAR(50)),
     Column("university_city", VARCHAR(255)),
     Column("status_id", INTEGER),
     Column("user_id", INTEGER),

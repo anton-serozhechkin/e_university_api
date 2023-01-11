@@ -685,7 +685,7 @@ CREATE VIEW user_request_hostel_warrant_view AS
     h.build as hostel_build,
     bp.bed_place_name as bed_place_name,
     u.university_name as university_name,
-    u.logo as university_logo,
+    u.short_university_name as short_university_name,
     u.city as university_city,
     ur.status_id as status_id,
     ur.user_id as user_id,
@@ -705,10 +705,8 @@ CREATE VIEW user_request_hostel_warrant_view AS
         urr.university_id = u.university_id
     LEFT JOIN user_request ur ON
         urr.user_request_id = ur.user_request_id
-    LEFT JOIN user us ON
-        ur.user_id = us.user_id
     LEFT JOIN student s ON
-        us.student = s.user_id
+        ur.user_id = s.user_id
     LEFT JOIN faculty f ON
         ur.faculty_id = f.faculty_id
     LEFT JOIN dean d ON
