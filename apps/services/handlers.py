@@ -395,11 +395,6 @@ class ServiceHandler:
     async def __create_user_warrant(
         cls, session: AsyncSession, **kwargs
     ) -> UserDocument:
-        created_at = datetime.strptime(
-            datetime.now(utc).strftime(Settings.DATETIME_FORMAT),
-            Settings.DATETIME_FORMAT,
-        )
-        kwargs["created_at"] = created_at
         content = await cls.__create_user_warrant_content(**kwargs)
         user_document_record = await user_document_service.create(
             session=session,

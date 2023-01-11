@@ -285,6 +285,7 @@ user_request_hostel_warrant_view = Table(
     Column("user_request_review_id", INTEGER),
     Column("room_number", INTEGER),
     Column("user_request_id", INTEGER),
+    Column("created_at", DATETIME),
     Column("hostel_number", INTEGER),
     Column("hostel_street", VARCHAR(100)),
     Column("hostel_build", VARCHAR(10)),
