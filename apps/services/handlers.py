@@ -114,7 +114,7 @@ class ServiceHandler:
         return True
 
     @classmethod
-    async def get_speciality_and_faculty_validation_result(
+    async def check_speciality_and_faculty_validation_result(
         cls,
         faculty_name: str,
         speciality_name: str,
@@ -150,7 +150,7 @@ class ServiceHandler:
         session: AsyncSession,
     ) -> RequestForHostelAccommodationOut:
 
-        if await cls.get_speciality_and_faculty_validation_result(
+        if await cls.check_speciality_and_faculty_validation_result(
             user_request.faculty_name,
             user_request.speciality_name,
             user_request.speciality_code,
