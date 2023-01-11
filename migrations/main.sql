@@ -678,7 +678,7 @@ CREATE VIEW user_request_hostel_warrant_view AS
     SELECT
     urr.user_request_review_id,
     urr.room_number as room_number,
-    urr.created_at as created_at,
+    urr.user_request_id as user_request_id,
     h.number as hostel_number,
     h.street as hostel_street,
     h.build as hostel_build,

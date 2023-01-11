@@ -36,6 +36,7 @@ from apps.services.services import (
     user_faculty_service,
     user_request_booking_hostel_service,
     user_request_detail_service,
+    user_request_hostel_warrant_view,
     user_request_list_service,
     user_request_review_service,
     user_request_service,
@@ -55,6 +56,7 @@ from apps.users.schemas import CreateStudentIn, CreateStudentsListOut, UserOut
 from apps.users.services import student_service
 from settings import (
     HOSTEL_BOOKING_TEMPLATE,
+    HOSTEL_WARRANT_TEMPLATE,
     SETTLEMENT_HOSTEL_PATH,
     TEMPLATES_PATH,
     Settings,
@@ -389,6 +391,48 @@ class ServiceHandler:
             f"{student.last_name}.docx"
         )
 
+    @classmethod
+    async def __create_user_warrant(
+        cls, session: AsyncSession, **kwargs
+    ) -> UserDocument:
+        created_at = datetime.strptime(
+            datetime.now(utc).strftime(Settings.DATETIME_FORMAT),
+            Settings.DATETIME_FORMAT,
+        )
+        kwargs["created_at"] = created_at
+        content = await cls.__create_user_warrant_content(**kwargs)
+        user_document_record = await user_document_service.create(
+            session=session,
+            data={
+                "name": "Ордер на поселення в гуртожиток",
+                "content": content,
+                "user_request_id": kwargs.get("user_request_id"),
+            },
+        )
+        return user_document_record
+
+    @classmethod
+    async def __create_user_warrant_content(
+        cls, **kwargs
+    ) -> str:
+        context = kwargs.get("context")
+        rendered_template = file_manager.render(
+            TEMPLATES_PATH, HOSTEL_WARRANT_TEMPLATE, context
+        )
+        file_date_created = (
+            str(kwargs.get("created_at")).replace(":", "-").replace(" ", "_")
+        )
+        document_name = (
+            f"hostel_warrant_{file_date_created}_"
+            f"{kwargs.get('user_request_id')}.docx"
+        )
+        DOCUMENT_PATH = SETTLEMENT_HOSTEL_PATH / str(context.user_id)
+        Path(DOCUMENT_PATH).mkdir(exist_ok=True)
+        document_path = file_manager.create(
+            DOCUMENT_PATH, document_name, rendered_template
+        )
+        return document_path
+
     @staticmethod
     async def create_students_list_from_file(
         *,
@@ -434,21 +478,14 @@ class ServiceHandler:
         user: UserOut,
         session: AsyncSession,
     ) -> Tuple[str, str]:
-        user_request_review = await user_request_review_service.read(
+        warrant_view = await user_request_hostel_warrant_view.read(
             session=session, data={"user_request_review_id": user_request_review_id}
         )
-        user_request = await user_request_service.read(
-            session=session, data={"user_request_id": user_request_review.user_request_id}
-        )
 
-        check_user_request_status(user_request.status_id)
+        check_user_request_status(warrant_view.status_id)
 
-        prepared_data = {
-            "context": result,
-            "service_id": user_request.service_id,
-            "user_request_id": user_request.user_request_id,
-        }
-        await self.__create_user_document(session, **prepared_data)
+        prepared_data = {"context": warrant_view}
+        await self.__create_user_warrant(session, **prepared_data)
 
 
         user_document = await user_document_service.read(
