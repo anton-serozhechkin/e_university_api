@@ -6,7 +6,6 @@ from typing import List, Union
 from pydantic import BaseSettings, Extra, Field, PostgresDsn, validator
 from sqlalchemy.engine.url import URL
 
-
 __all__ = [
     "BASE_DIR",
     "Settings",
@@ -38,7 +37,7 @@ def _build_db_dsn(values: dict, async_dsn: bool = False) -> URL:
         password=values["POSTGRES_PASSWORD"],
         host=values["POSTGRES_HOST"],
         port=values["POSTGRES_PORT"],
-        database=values["POSTGRES_DB"]
+        database=values["POSTGRES_DB"],
     )
     # TODO: Remove when "databases" dependency will be removed.
     # username = values["POSTGRES_USER"]
