@@ -1,6 +1,6 @@
 from datetime import date, datetime
 from decimal import Decimal
-from typing import Dict, List, Union
+from typing import Dict, List, Union, Optional
 
 from pydantic import root_validator, validator
 
@@ -43,18 +43,18 @@ class RequestForHostelAccommodationIn(BaseInSchema):
         return values
 
     @validator("student_middle_name")
-    def validate_student_middle_name(cls, value: str) -> str:
+    def validate_student_middle_name(cls, value: str) -> Optional[str]:
         if value:
             if not value.istitle():
-                raise ValueError(f"Middle name must be uppercase")
+                raise ValueError("Middle name must be uppercase")
             return value
         return value
 
     @validator("rector_middle_name")
-    def validate_rector_middle_name(cls, value: str) -> str:
+    def validate_rector_middle_name(cls, value: str) -> Optional[str]:
         if value:
             if not value.istitle():
-                raise ValueError(f"Middle name must be uppercase")
+                raise ValueError("Middle name must be uppercase")
             return value
         return value
 
