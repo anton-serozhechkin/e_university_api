@@ -277,3 +277,25 @@ user_documents_list_view = Table(
     Column("created_at", DATETIME),
     Column("updated_at", DATETIME),
 )
+
+
+user_request_hostel_warrant_view = Table(
+    "user_request_hostel_warrant_view",
+    metadata_obj,
+    Column("user_request_review_id", INTEGER),
+    Column("room_number", INTEGER),
+    Column("created_at", DATETIME),
+    Column("service_id", INTEGER),
+    Column("hostel_number", INTEGER),
+    Column("hostel_street", VARCHAR(100)),
+    Column("hostel_build", VARCHAR(10)),
+    Column("bed_place_name", VARCHAR(50)),
+    Column("university_name", VARCHAR(255)),
+    Column("university_logo", VARCHAR(255)),
+    Column("university_city", VARCHAR(255)),
+    Column("status_id", INTEGER),
+    Column("student_full_name", JSON),
+    Column("student_gender", VARCHAR(1)),
+    Column("faculty_shortname", VARCHAR(20)),
+    Column("dean_full_name", JSON)
+)

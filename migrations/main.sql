@@ -682,7 +682,7 @@ CREATE VIEW user_request_hostel_warrant_view AS
     urr.service_id as service_id,
     h.number as hostel_number,
     h.street as hostel_street,
-    h.build as hostel_street,
+    h.build as hostel_build,
     bp.bed_place_name as bed_place_name,
     u.university_name as university_name,
     u.logo as university_logo,
