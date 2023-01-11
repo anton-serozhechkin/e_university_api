@@ -119,3 +119,12 @@ def check_file_existing(path: str) -> None:
             message=f"File with path {path} was removed or deleted",
             code=http_status.HTTP_409_CONFLICT,
         )
+
+
+def check_user_request_status(status_id: int) -> None:
+    if status_id != 1:
+        raise BackendException(
+            message=f"The warranty document can be created"
+                    f" only for the approved request",
+            code=http_status.HTTP_406_NOT_ACCEPTABLE,
+        )
