@@ -11,7 +11,7 @@ class University(Base):
 
     university_id = Column(INTEGER, primary_key=True, nullable=False)
     university_name = Column(VARCHAR(length=255), nullable=False)
-    short_university_name = Column(VARCHAR(length=50), nullable=False)
+    city = Column(VARCHAR(length=255), nullable=False)
     logo = Column(VARCHAR(length=255))
     rector_id = Column(
         INTEGER, ForeignKey("rector.rector_id", ondelete="CASCADE", onupdate="CASCADE")
@@ -30,8 +30,8 @@ class University(Base):
     def __repr__(self) -> str:
         return (
             f'{self.__class__.__name__}(university_id="{self.university_id}", '
-            f'university_name="{self.university_name}", logo="{self.logo}", '
-            f'rector_id="{self.rector_id}")'
+            f'university_name="{self.university_name}", city="{self.city}", '
+            f'logo="{self.logo}", rector_id="{self.rector_id}")'
         )
 
 
