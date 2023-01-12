@@ -542,9 +542,7 @@ async def download_warrant_document(
     # for changing
     file_path, file_name = await service_handler.download_warrant_document(
         request=request,
-        university_id=university_id,
         user_request_review_id=user_request_review_id,
-        user=user,
         session=session,
     )
     return FileResponse(

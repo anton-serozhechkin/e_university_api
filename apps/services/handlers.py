@@ -36,7 +36,7 @@ from apps.services.services import (
     user_faculty_service,
     user_request_booking_hostel_service,
     user_request_detail_service,
-    user_request_hostel_warrant_view,
+    user_request_hostel_warrant_view_service,
     user_request_list_service,
     user_request_review_service,
     user_request_service,
@@ -393,33 +393,36 @@ class ServiceHandler:
 
     @classmethod
     async def __create_user_warrant(
-        cls, session: AsyncSession, **kwargs
+        cls, session: AsyncSession, data
     ) -> UserDocument:
-        content = await cls.__create_user_warrant_content(**kwargs)
+        content = await cls.__create_user_warrant_content(data)
         user_document_record = await user_document_service.create(
             session=session,
             data={
                 "name": "Ордер на поселення в гуртожиток",
                 "content": content,
-                "user_request_id": kwargs.get("user_request_id"),
+                "user_request_id": data.user_request_id,
             },
         )
         return user_document_record
 
     @classmethod
     async def __create_user_warrant_content(
-        cls, **kwargs
+        cls, context
     ) -> str:
-        context = kwargs.get("context")
         rendered_template = file_manager.render(
             TEMPLATES_PATH, HOSTEL_WARRANT_TEMPLATE, context
         )
+        created_at = datetime.strptime(
+            context.created_at.strftime(Settings.DATETIME_FORMAT),
+            Settings.DATETIME_FORMAT,
+        )
         file_date_created = (
-            str(kwargs.get("created_at")).replace(":", "-").replace(" ", "_")
+            str(created_at).replace(":", "-").replace(" ", "_")
         )
         document_name = (
             f"hostel_warrant_{file_date_created}_"
-            f"{kwargs.get('user_request_id')}.docx"
+            f"{context.user_request_id}.docx"
         )
         DOCUMENT_PATH = SETTLEMENT_HOSTEL_PATH / str(context.user_id)
         Path(DOCUMENT_PATH).mkdir(exist_ok=True)
@@ -468,30 +471,25 @@ class ServiceHandler:
         self,
         *,
         request: Request,
-        university_id: int,
         user_request_review_id: int,
-        user: UserOut,
         session: AsyncSession,
     ) -> Tuple[str, str]:
-        warrant_view = await user_request_hostel_warrant_view.read(
+        warrant_view_data = await user_request_hostel_warrant_view_service.read(
             session=session, data={"user_request_review_id": user_request_review_id}
         )
-
-        check_user_request_status(warrant_view.status_id)
-
+        check_user_request_status(warrant_view_data.status_id)
         user_document_list = await user_document_service.list(
                 session=session, filters={
-                    "user_request_id": warrant_view.user_request_id,
+                    "user_request_id": warrant_view_data.user_request_id,
                     "name": "Ордер на поселення в гуртожиток",
                 },
         )
         if user_document_list:
             user_document = user_document_list[0]
         else:
-            prepared_data = {"context": warrant_view}
-            user_document = await self.__create_user_warrant(session, **prepared_data)
+            user_document = await self.__create_user_warrant(session, warrant_view_data)
         file_name = await self.__generate_user_document_name_for_download(
-            user_document.name, user.user_id, session
+            user_document.name, warrant_view_data.user_id, session
         )
         return user_document.content, file_name
 
