@@ -3,6 +3,7 @@ from typing import List
 from fastapi import Request
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from apps.common.send_email import send_email_async
 from apps.hostel.schemas import BedPlaceOut, HostelListOut
 from apps.hostel.services import bed_place_service, hostel_service
 
@@ -15,6 +16,8 @@ class HostelHandler:
         university_id: int,
         session: AsyncSession,
     ) -> HostelListOut:
+        await send_email_async(subject='Hello World', email_to='someemail@gmail.com',
+                               body="Simple background task")
         return await hostel_service.list(
             session=session, filters={"university_id": university_id}
         )
