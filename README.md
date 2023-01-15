@@ -99,6 +99,21 @@ For work with application, you need to setup your database in docker container. 
        docker-compose build --no-cache
        docker-compose up
 
+### Sending mail configurations
+
+1. For sending messages use send_email_async in apps/common/send_email.py
+
+2. Due to possibility of using different smtp services it can be chosen any of that available.
+
+3. As an example it can be mailtrap.io. Create an account and in 'Email Testing' section
+   choose "Add project" and "Add inbox" buttons. After creating 'Inbox' click it and in
+   'Integrations' field choose Python/Django env settings, fill with that values corresponding
+   places in .env file.
+
+4. Calling send_email_async with appropriate arguments will send test message to the mailtrap 
+   service in testing mode, without forwarding it due to the specified email in message.
+
+5. Final configuration can be done later before project deploying.
 
 
 ## Project layout

@@ -1,5 +1,6 @@
-from fastapi_mail import FastMail, MessageSchema, ConnectionConfig
+from fastapi_mail import FastMail, MessageSchema, ConnectionConfig, MessageType
 from settings import Settings
+from typing import List
 
 
 conf = ConnectionConfig(
@@ -16,13 +17,24 @@ conf = ConnectionConfig(
 )
 
 
-async def send_email_async(subject: str, email_to: str, body: str):
+async def send_email_async(
+        subject: str,
+        email_to: List[str],
+        body: dict,
+        template_name: str = 'email.html',
+) -> None:
     message = MessageSchema(
         subject=subject,
-        recipients=[email_to],
-        body=body,
-        subtype='html',
+        recipients=email_to,
+        template_body=body,
+        subtype=MessageType.html,
     )
 
     fm = FastMail(conf)
-    await fm.send_message(message, template_name='email.html')
+    try:
+        await fm.send_message(message, template_name=template_name)
+    except Exception:
+        # create message with smtp server access problems
+        print("There is a problem with smtp server access")
+        pass
+
