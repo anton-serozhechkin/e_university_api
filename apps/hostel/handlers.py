@@ -16,8 +16,6 @@ class HostelHandler:
         university_id: int,
         session: AsyncSession,
     ) -> HostelListOut:
-        await send_email_async(subject='Hello World', email_to='someemail@gmail.com',
-                               body="Simple background task")
         return await hostel_service.list(
             session=session, filters={"university_id": university_id}
         )
