@@ -95,8 +95,8 @@ class MainSettings(BaseSettings):
     MAIL_PORT: int = Field(default=2525)
     MAIL_SERVER: str = Field(default="smtp.mailtrap.io")
     MAIL_FROM_NAME: str = Field(default="admin")
-    MAIL_STARTTLS: bool = Field(default=True)
-    MAIL_SSL_TLS: bool = Field(default=False)
+    MAIL_TLS: bool = Field(default=True)
+    MAIL_SSL: bool = Field(default=False)
     USE_CREDENTIALS: bool = Field(default=True)
     TEMPLATE_FOLDER: str = Field(default="./apps/templates/email")
 
