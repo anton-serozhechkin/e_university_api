@@ -7,7 +7,8 @@ from fastapi import File, Request, UploadFile
 from pytz import utc
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from apps.common.send_email import send_email_async
+from apps.common.email_sender_manager import email_manager
+from apps.common.schemas import MessageSchema
 from apps.common.file_managers import file_manager
 from apps.services.models import STATUS_MAPPING, UserDocument
 from apps.services.schemas import (
@@ -214,13 +215,17 @@ class ServiceHandler:
         else:
             message = "Ваш запит на поселення в гуртожиток скасовано"
         student = await student_service.read(session=session, data={"user_id": user.user_id})
-        await send_email_async(
-            subject="Запит на поселення в гуртожиток",
-            email_to=[user.email],
-            body={
-                "person": student,
-                "message": message,
-            }
+        await email_manager.send_email_async(
+            message=MessageSchema(
+                subject="Запит на поселення в гуртожиток",
+                template_body={
+                    "person": student,
+                    "message": message,
+                },
+                recipients=[user.email],
+                subtype="html",
+            ),
+            template_name="email.html",
         )
         await user_request_service.update(
             session=session,
