@@ -3,6 +3,7 @@ from typing import List
 from fastapi import Request
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from apps.common.send_email import send_email_async
 from apps.hostel.schemas import BedPlaceOut, HostelListOut
 from apps.hostel.services import bed_place_service, hostel_service
 
