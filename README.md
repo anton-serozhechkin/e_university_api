@@ -101,7 +101,7 @@ For work with application, you need to setup your database in docker container. 
 
 ### Sending mail configurations
 
-1. For sending messages use send_email_async in apps/common/send_email.py
+1. For sending messages use email_manager.
 
 2. Due to possibility of using different smtp services it can be chosen any of that available.
 
