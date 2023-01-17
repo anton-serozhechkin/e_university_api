@@ -473,7 +473,7 @@ async def download_user_document(
 
 @services_router.post(
     "/{university_id}/count-hostel-accommodation-cost/",
-    name="create_count_hostel_accommodation_cost ",
+    name="create_count_hostel_accommodation_cost",
     summary="Create Count Hostel Accommodation Cost",
     response_model=JSENDOutSchema[CountHostelAccommodationCostOut],
     responses={
@@ -499,13 +499,13 @@ async def count_hostel_accommodation_cost(
 
 
 @services_router.get(
-    "/{university_id}/download-warrant-document/{user_request_review_id}",
-    name="download_warrant_document",
+    "/{university_id}/download-warrant-document/{user_request_review_id}/",
+    name="download_warrant_document_for_hostel_accommodation",
     response_class=FileResponse,
-    summary="Download warrant document",
+    summary="Download warrant document for hostel accommodation",
     responses={
         200: {
-            "description": "Successful download warrant document response",
+            "description": "Successful download warrant document for hostel accommodation response",
             "content": {
                 "text/html": {
                     "example": "\n".join(
@@ -528,7 +528,7 @@ async def count_hostel_accommodation_cost(
                     )
                 }
             },
-        }
+        },
     },
     tags=["Services application"],
 )
@@ -539,7 +539,15 @@ async def download_warrant_document(
     user: UserOut = Depends(get_current_user),
     session: AsyncSession = Depends(get_async_session),
 ):
-    # for changing
+    """**Download generated warrant document for student hostel accommodation**.
+
+    **Path**:
+    - **university_id**: user university id
+    - **user_request_review_id**: id of user request review
+
+    **Return**:
+    - **generated file**: warrant file to download
+    """
     file_path, file_name = await service_handler.download_warrant_document(
         request=request,
         user_request_review_id=user_request_review_id,

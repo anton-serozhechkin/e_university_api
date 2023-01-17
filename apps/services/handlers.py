@@ -20,6 +20,7 @@ from apps.services.schemas import (
     UserRequestBookingHostelOut,
     UserRequestDetailsViewOut,
     UserRequestExistenceOut,
+    UserRequestHostelAccommodationWarrantViewOut,
     UserRequestReviewIn,
     UserRequestReviewOut,
     UserRequestsListOut,
@@ -36,7 +37,7 @@ from apps.services.services import (
     user_faculty_service,
     user_request_booking_hostel_service,
     user_request_detail_service,
-    user_request_hostel_warrant_view_service,
+    user_request_hostel_accommodation_warrant_view_service,
     user_request_list_service,
     user_request_review_service,
     user_request_service,
@@ -59,6 +60,7 @@ from settings import (
     HOSTEL_WARRANT_TEMPLATE,
     SETTLEMENT_HOSTEL_PATH,
     TEMPLATES_PATH,
+    WARRANT_HOSTEL_ACCOMMODATION_PATH,
     Settings,
 )
 
@@ -365,10 +367,10 @@ class ServiceHandler:
             f"hostel_settlement_{file_date_created}_"
             f"{kwargs.get('user_request_id')}.docx"
         )
-        DOCUMENT_PATH = SETTLEMENT_HOSTEL_PATH / str(context.user_id)
-        Path(DOCUMENT_PATH).mkdir(exist_ok=True)
+        document_path = SETTLEMENT_HOSTEL_PATH / str(context.user_id)
+        Path(document_path).mkdir(exist_ok=True)
         document_path = file_manager.create(
-            DOCUMENT_PATH, document_name, rendered_template
+            document_path, document_name, rendered_template
         )
         return document_path
 
@@ -380,56 +382,6 @@ class ServiceHandler:
             session=session, data={"service_id": service_id}
         )
         return f"Заява на {service.service_name.lower()}"
-
-    @classmethod
-    async def __generate_user_document_name_for_download(
-        cls, document_name: str, user_id: int, session: AsyncSession
-    ) -> str:
-        student = await student_service.read(session=session, data={"user_id": user_id})
-        return (
-            f"{document_name.replace(' ', '_')}_{student.first_name}_"
-            f"{student.last_name}.docx"
-        )
-
-    @classmethod
-    async def __create_user_warrant(
-        cls, session: AsyncSession, data
-    ) -> UserDocument:
-        content = await cls.__create_user_warrant_content(data)
-        user_document_record = await user_document_service.create(
-            session=session,
-            data={
-                "name": "Ордер на поселення в гуртожиток",
-                "content": content,
-                "user_request_id": data.user_request_id,
-            },
-        )
-        return user_document_record
-
-    @classmethod
-    async def __create_user_warrant_content(
-        cls, context
-    ) -> str:
-        rendered_template = file_manager.render(
-            TEMPLATES_PATH, HOSTEL_WARRANT_TEMPLATE, context
-        )
-        created_at = datetime.strptime(
-            context.created_at.strftime(Settings.DATETIME_FORMAT),
-            Settings.DATETIME_FORMAT,
-        )
-        file_date_created = (
-            str(created_at).replace(":", "-").replace(" ", "_")
-        )
-        document_name = (
-            f"hostel_warrant_{file_date_created}_"
-            f"{context.user_request_id}.docx"
-        )
-        DOCUMENT_PATH = SETTLEMENT_HOSTEL_PATH / str(context.user_id)
-        Path(DOCUMENT_PATH).mkdir(exist_ok=True)
-        document_path = file_manager.create(
-            DOCUMENT_PATH, document_name, rendered_template
-        )
-        return document_path
 
     @staticmethod
     async def create_students_list_from_file(
@@ -467,31 +419,59 @@ class ServiceHandler:
             students.append(student)
         return await student_service.create_many(session=session, objs=students)
 
+    @classmethod
     async def download_warrant_document(
-        self,
+        cls,
         *,
         request: Request,
         user_request_review_id: int,
         session: AsyncSession,
     ) -> Tuple[str, str]:
-        warrant_view_data = await user_request_hostel_warrant_view_service.read(
-            session=session, data={"user_request_review_id": user_request_review_id}
+        warrant_view_data: UserRequestHostelAccommodationWarrantViewOut = (
+            await user_request_hostel_accommodation_warrant_view_service.read(
+                session=session, data={"user_request_review_id": user_request_review_id}
+            )
         )
         check_user_request_status(warrant_view_data.status_id)
-        user_document_list = await user_document_service.list(
-                session=session, filters={
-                    "user_request_id": warrant_view_data.user_request_id,
-                    "name": "Ордер на поселення в гуртожиток",
-                },
+        warrant_file_path = await cls.__create_user_warrant_content(warrant_view_data)
+        file_name = await cls.__generate_user_document_name_for_download(
+            "Ордер на поселення в гуртожиток", warrant_view_data.user_id, session
         )
-        if user_document_list:
-            user_document = user_document_list[0]
-        else:
-            user_document = await self.__create_user_warrant(session, warrant_view_data)
-        file_name = await self.__generate_user_document_name_for_download(
-            user_document.name, warrant_view_data.user_id, session
+        return warrant_file_path, file_name
+
+    @classmethod
+    async def __create_user_warrant_content(
+        cls, context: UserRequestHostelAccommodationWarrantViewOut
+    ) -> str:
+        rendered_template = file_manager.render(
+            TEMPLATES_PATH, HOSTEL_WARRANT_TEMPLATE, context
         )
-        return user_document.content, file_name
+        created_at = datetime.strptime(
+            context.created_at.strftime(Settings.DATETIME_FORMAT),
+            Settings.DATETIME_FORMAT,
+        )
+        file_date_created = str(created_at).replace(":", "-").replace(" ", "_")
+        document_name = (
+            f"hostel_warrant_{file_date_created}_{context.user_request_id}.docx"
+        )
+
+        Path(WARRANT_HOSTEL_ACCOMMODATION_PATH).mkdir(exist_ok=True)
+
+        document_path = file_manager.create(
+            WARRANT_HOSTEL_ACCOMMODATION_PATH, document_name, rendered_template
+        )
+
+        return document_path
+
+    @classmethod
+    async def __generate_user_document_name_for_download(
+        cls, document_name: str, user_id: int, session: AsyncSession
+    ) -> str:
+        student = await student_service.read(session=session, data={"user_id": user_id})
+        return (
+            f"{document_name.replace(' ', '_')}_{student.first_name}_"
+            f"{student.last_name}.docx"
+        )
 
 
 service_handler = ServiceHandler()

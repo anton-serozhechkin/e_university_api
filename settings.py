@@ -15,6 +15,7 @@ __all__ = [
     "SERVICES_PATH",
     "HOSTEL_BOOKING_TEMPLATE",
     "HOSTEL_WARRANT_TEMPLATE",
+    "WARRANT_HOSTEL_ACCOMMODATION_PATH",
 ]
 
 BASE_DIR = Path(__file__).resolve().parent
@@ -23,6 +24,7 @@ TEMPLATES_PATH = BASE_DIR / "apps" / "templates"
 STORAGE_PATH = BASE_DIR / "apps" / "storage"
 SERVICES_PATH = BASE_DIR / "apps" / "services"
 SETTLEMENT_HOSTEL_PATH = STORAGE_PATH / "services" / "settlement_hostel"
+WARRANT_HOSTEL_ACCOMMODATION_PATH = SETTLEMENT_HOSTEL_PATH / "warrants"
 
 HOSTEL_BOOKING_TEMPLATE = "hostel_booking_template.docx"
 HOSTEL_WARRANT_TEMPLATE = "hostel_warrant_template.docx"

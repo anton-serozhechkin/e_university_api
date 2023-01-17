@@ -298,5 +298,5 @@ user_request_hostel_accommodation_warrant_view = Table(
     Column("student_full_name", JSON),
     Column("student_gender", VARCHAR(1)),
     Column("faculty_shortname", VARCHAR(20)),
-    Column("dean_full_name", JSON)
+    Column("dean_full_name", JSON),
 )
