@@ -1,8 +1,16 @@
 import abc
 
-from fastapi_mail import FastMail, MessageSchema, ConnectionConfig
+from apps.common.schemas import MessageSchema
+from fastapi_mail import FastMail, ConnectionConfig
+from apps.common.exceptions import (
+    WrongFile,
+    ConnectionErrors,
+    PydanticClassRequired,
+    TemplateFolderDoesNotExist,
+    ApiError,
+    DBProvaiderError,
+)
 from settings import Settings
-from typing import List
 
 
 class EmailManagerInterface(metaclass=abc.ABCMeta):
@@ -16,12 +24,8 @@ class EmailManagerInterface(metaclass=abc.ABCMeta):
     @abc.abstractmethod
     def send_email_async(
         self,
-        subject: str,
-        email_to: List[str],
-        attachments: str,
-        body: dict,
+        message: MessageSchema,
         template_name: str,
-        subtype: str,
     ) -> None:
         raise NotImplementedError
 
@@ -33,7 +37,7 @@ class EmailManagerInterface(metaclass=abc.ABCMeta):
 
 class EmailManager(EmailManagerInterface):
     @property
-    def configuration(self):
+    def configuration(self) -> ConnectionConfig:
         return ConnectionConfig(
             MAIL_USERNAME=Settings.MAIL_USERNAME,
             MAIL_PASSWORD=Settings.MAIL_PASSWORD,
@@ -47,27 +51,22 @@ class EmailManager(EmailManagerInterface):
             TEMPLATE_FOLDER=Settings.TEMPLATE_FOLDER,
         )
 
-    def send_email_async(
+    async def send_email_async(
         self,
-        subject: str,
-        email_to: List[str],
-        attachments: str,
-        body: dict,
+        message: MessageSchema,
         template_name: str,
-        subtype: str,
     ) -> None:
-        message = MessageSchema(
-            subject=subject,
-            recipients=email_to,
-            attachments=attachments,
-            template_body=body,
-            subtype=subtype,
-        )
-
         fm = FastMail(self.configuration)
         try:
             await fm.send_message(message, template_name=template_name)
-        except Exception:
+        except (
+            ConnectionErrors,
+            WrongFile,
+            PydanticClassRequired,
+            TemplateFolderDoesNotExist,
+            ApiError,
+            DBProvaiderError,
+        ):
             # create message with smtp server access problems
             print("There is a problem with smtp server access")
             pass
