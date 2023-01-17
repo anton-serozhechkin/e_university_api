@@ -108,7 +108,7 @@ class MainSettings(BaseSettings):
 
     @validator("POSTGRES_DSN", always=True)
     def validate_database_url(
-            cls, value: Union[str, int], values: dict
+        cls, value: Union[str, int], values: dict
     ) -> Union[URL, str]:
         if value is None:
             return _build_db_dsn(values=values)
@@ -116,7 +116,7 @@ class MainSettings(BaseSettings):
 
     @validator("POSTGRES_DSN_ASYNC", always=True)
     def validate_database_url_async(
-            cls, value: Union[str, int], values: dict
+        cls, value: Union[str, int], values: dict
     ) -> Union[URL, str]:
         if value is None:
             return _build_db_dsn(values=values, async_dsn=True)
