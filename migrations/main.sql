@@ -673,28 +673,28 @@ CREATE VIEW user_documents_list_view AS
         ud.user_document_id,
         ur.user_id;
 
-DROP VIEW IF EXISTS user_request_hostel_warrant_view;
-CREATE VIEW user_request_hostel_warrant_view AS
+DROP VIEW IF EXISTS user_request_hostel_accommodation_warrant_view;
+CREATE VIEW user_request_hostel_accommodation_warrant_view AS
     SELECT
-    urr.user_request_review_id,
-    urr.room_number as room_number,
-    urr.user_request_id as user_request_id,
-    urr.created_at as created_at,
-    h.number as hostel_number,
-    h.street as hostel_street,
-    h.build as hostel_build,
-    bp.bed_place_name as bed_place_name,
-    u.university_name as university_name,
-    u.short_university_name as short_university_name,
-    u.city as university_city,
-    ur.status_id as status_id,
-    ur.user_id as user_id,
-    json_build_object('last_name', s.last_name, 'first_name', s.first_name, 'middle_name', s.middle_name)
-            as student_full_name,
-    s.gender as student_gender,
-    f.shortname as faculty_shortname,
-    json_build_object('last_name', d.last_name, 'first_name', d.first_name, 'middle_name', d.middle_name)
-        as dean_full_name
+        urr.user_request_review_id,
+        urr.room_number,
+        urr.user_request_id,
+        urr.created_at,
+        h.number as hostel_number,
+        h.street as hostel_street,
+        h.build as hostel_build,
+        bp.bed_place_name,
+        u.university_name,
+        u.short_university_name,
+        u.city as university_city,
+        ur.status_id,
+        ur.user_id,
+        json_build_object('last_name', s.last_name, 'first_name', s.first_name, 'middle_name', s.middle_name)
+                as student_full_name,
+        s.gender as student_gender,
+        f.shortname as faculty_shortname,
+        json_build_object('last_name', d.last_name, 'first_name', d.first_name, 'middle_name', d.middle_name)
+            as dean_full_name
     FROM
         user_request_review urr
     LEFT JOIN hostel h ON
@@ -710,4 +710,8 @@ CREATE VIEW user_request_hostel_warrant_view AS
     LEFT JOIN faculty f ON
         ur.faculty_id = f.faculty_id
     LEFT JOIN dean d ON
-        f.dean_id = d.dean_id;
+        f.dean_id = d.dean_id
+    ORDER BY
+        urr.user_request_review_id,
+        urr.user_request_id,
+        urr.created_at;

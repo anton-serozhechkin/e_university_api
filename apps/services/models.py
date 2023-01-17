@@ -279,8 +279,8 @@ user_documents_list_view = Table(
 )
 
 
-user_request_hostel_warrant_view = Table(
-    "user_request_hostel_warrant_view",
+user_request_hostel_accommodation_warrant_view = Table(
+    "user_request_hostel_accommodation_warrant_view",
     metadata_obj,
     Column("user_request_review_id", INTEGER),
     Column("room_number", INTEGER),
