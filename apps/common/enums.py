@@ -10,11 +10,6 @@ class JSENDStatus(str, Enum):
 
 
 class MultipartSubtypeEnum(Enum):
-    """
-    For more info about Multipart subtypes, visit:
-    https://en.wikipedia.org/wiki/MIME#Multipart_subtypes
-    """
-
     mixed = "mixed"
     digest = "digest"
     alternative = "alternative"

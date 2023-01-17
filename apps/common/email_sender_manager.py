@@ -1,25 +1,23 @@
 import abc
 
-from apps.common.schemas import MessageSchema
-from fastapi_mail import FastMail, ConnectionConfig
+from fastapi_mail import ConnectionConfig, FastMail
+
 from apps.common.exceptions import (
-    WrongFile,
+    ApiError,
     ConnectionErrors,
+    DBProvaiderError,
     PydanticClassRequired,
     TemplateFolderDoesNotExist,
-    ApiError,
-    DBProvaiderError,
+    WrongFile,
 )
+from apps.common.schemas import MessageSchema
 from settings import Settings
 
 
 class EmailManagerInterface(metaclass=abc.ABCMeta):
     @classmethod
     def __subclasshook__(cls, subclass) -> bool:
-        return (
-            hasattr(subclass, "send_email")
-            and callable(subclass.send_email)
-        )
+        return hasattr(subclass, "send_email") and callable(subclass.send_email)
 
     @abc.abstractmethod
     def send_email_async(
