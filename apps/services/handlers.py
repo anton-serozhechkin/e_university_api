@@ -13,7 +13,6 @@ from apps.services.schemas import (
     CancelRequestIn,
     CountHostelAccommodationCostIn,
     CountHostelAccommodationCostOut,
-    CreateUserRequestIn,
     CreateUserRequestOut,
     HostelAccomodationViewOut,
     UserDocumenstListOut,
@@ -81,7 +80,7 @@ class ServiceHandler:
 
     @classmethod
     async def validate_speciality_code(
-            cls, speciality_code: int, university_id: int
+        cls, speciality_code: int, university_id: int
     ) -> bool:
         specialities = await get_specialties_list(university_id)
         if not speciality_code in create_speciality_dict(specialities).keys():
@@ -92,7 +91,7 @@ class ServiceHandler:
 
     @classmethod
     async def validate_speciality_name(
-            cls, speciality_name: str, university_id: int
+        cls, speciality_name: str, university_id: int
     ) -> bool:
         specialities = await get_specialties_list(university_id)
         if not speciality_name in create_speciality_dict(specialities).values():
@@ -103,12 +102,12 @@ class ServiceHandler:
 
     @classmethod
     async def validate_speciality_name_and_speciality_code_correspondence(
-            cls, speciality_name: str, speciality_code: int, university_id: int
+        cls, speciality_name: str, speciality_code: int, university_id: int
     ) -> bool:
         specialities = await get_specialties_list(university_id)
         if not (
-                (speciality_code, speciality_name)
-                in create_speciality_dict(specialities).items()
+            (speciality_code, speciality_name)
+            in create_speciality_dict(specialities).items()
         ):
             raise ValueError(
                 f"Speciality code '{speciality_code}' "
@@ -119,21 +118,21 @@ class ServiceHandler:
 
     @classmethod
     async def check_speciality_and_faculty_validation_result(
-            cls,
-            faculty_name: str,
-            speciality_name: str,
-            speciality_code: int,
-            university_id: int,
+        cls,
+        faculty_name: str,
+        speciality_name: str,
+        speciality_code: int,
+        university_id: int,
     ) -> bool:
         if (
-                await cls.validate_faculty_name(faculty_name, university_id)
-                and await cls.validate_speciality_name(speciality_name, university_id)
-                and await cls.validate_speciality_code(speciality_code, university_id)
-                and await cls.validate_speciality_name_and_speciality_code_correspondence(
-            speciality_name,
-            speciality_code,
-            university_id,
-        )
+            await cls.validate_faculty_name(faculty_name, university_id)
+            and await cls.validate_speciality_name(speciality_name, university_id)
+            and await cls.validate_speciality_code(speciality_code, university_id)
+            and await cls.validate_speciality_name_and_speciality_code_correspondence(
+                speciality_name,
+                speciality_code,
+                university_id,
+            )
         ):
             return True
         else:
@@ -141,20 +140,20 @@ class ServiceHandler:
 
     @classmethod
     async def create_request_for_hostel_accommodation(
-            cls,
-            *,
-            request: Request,
-            university_id: int,
-            user_request: RequestForHostelAccommodationIn,
-            user: UserOut,
-            session: AsyncSession,
+        cls,
+        *,
+        request: Request,
+        university_id: int,
+        user_request: RequestForHostelAccommodationIn,
+        user: UserOut,
+        session: AsyncSession,
     ) -> RequestForHostelAccommodationOut:
 
         if await cls.check_speciality_and_faculty_validation_result(
-                user_request.faculty_name,
-                user_request.speciality_name,
-                user_request.speciality_code,
-                university_id,
+            user_request.faculty_name,
+            user_request.speciality_name,
+            user_request.speciality_code,
+            university_id,
         ):
             user_faculty = await user_faculty_service.read(
                 data={"user_id": user.user_id}, session=session
