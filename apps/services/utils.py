@@ -137,6 +137,7 @@ def check_file_existing(path: str) -> None:
             code=http_status.HTTP_409_CONFLICT,
         )
 
+
 def check_user_request_status(status_id: int) -> None:
     if status_id != UserRequestStatus.APPROVED.value:
         raise BackendException(
@@ -144,6 +145,7 @@ def check_user_request_status(status_id: int) -> None:
             " the approved hostel accommodation request",
             code=http_status.HTTP_406_NOT_ACCEPTABLE,
         )
+
 
 def update_user_booking_hostel_data_by_user_request(
     user_request_data: RequestForHostelAccommodationIn, user_booking_hostel_data: Row

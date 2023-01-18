@@ -2,7 +2,7 @@ from datetime import date, datetime
 from decimal import Decimal
 from typing import Dict, List, Union, Optional
 
-from pydantic import root_validator, validator
+from pydantic import root_validator, validator, Field
 
 from apps.common.schemas import (
     BaseInSchema,
@@ -14,17 +14,29 @@ from apps.common.schemas import (
 
 
 class RequestForHostelAccommodationIn(BaseInSchema):
-    rector_first_name: str
+    rector_first_name: str = Field(description="Value must to be string and uppercase")
     rector_middle_name: str = None
-    rector_last_name: str
-    student_first_name: str
+    rector_last_name: str = Field(description="Value must to be string and uppercase")
+    student_first_name: str = Field(description="Value must to be string and uppercase")
     student_middle_name: str = None
-    student_last_name: str
-    speciality_code: int
-    speciality_name: str
-    course: int
-    faculty_name: str
-    educ_level: str
+    student_last_name: str = Field(
+        description="Value must to be 'string' and uppercase"
+    )
+    speciality_code: int = Field(
+        description="Have to exist in the speciality codes list"
+    )
+    speciality_name: str = Field(
+        description="Have to exist in the speciality names list"
+    )
+    course: int = Field(
+        title="University course number value",
+        description="Have to be exist in university courses interval",
+    )
+    faculty_name: str = Field(description="Have to exist in the faculty names list")
+    educ_level: str = Field(
+        title="University education level(string) value",
+        description="Can be 'B' or 'M'",
+    )
     comment: str = None
 
     @root_validator
@@ -73,13 +85,13 @@ class RequestForHostelAccommodationIn(BaseInSchema):
 
 class RequestForHostelAccommodationOut(BaseOutSchema):
     user_request_id: int
-    created_at: datetime
+    created_at: datetime = Field(description="Date, when request was created")
     comment: str = None
     user_id: int
     service_id: int
     faculty_id: int
     university_id: int
-    status_id: int
+    status_id: int = Field(description="Status id of user request")
 
 
 class CreateUserRequestOut(BaseOutSchema):
