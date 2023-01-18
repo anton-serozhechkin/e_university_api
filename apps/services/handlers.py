@@ -13,7 +13,6 @@ from apps.services.schemas import (
     CancelRequestIn,
     CountHostelAccommodationCostIn,
     CountHostelAccommodationCostOut,
-    CreateUserRequestIn,
     CreateUserRequestOut,
     HostelAccomodationViewOut,
     UserDocumenstListOut,
@@ -24,6 +23,8 @@ from apps.services.schemas import (
     UserRequestReviewIn,
     UserRequestReviewOut,
     UserRequestsListOut,
+    RequestForHostelAccommodationIn,
+    RequestForHostelAccommodationOut,
 )
 from apps.services.services import (
     bed_place_service,
@@ -41,6 +42,7 @@ from apps.services.services import (
     user_request_list_service,
     user_request_review_service,
     user_request_service,
+    get_faculty_list,
 )
 from apps.services.utils import (
     check_faculty_existence,
@@ -52,6 +54,9 @@ from apps.services.utils import (
     create_faculty_dict,
     create_telephone_set,
     get_worksheet_cell_col_row,
+    update_user_booking_hostel_data_by_user_request,
+    create_faculty_list,
+    create_speciality_dict,
 )
 from apps.users.schemas import CreateStudentIn, CreateStudentsListOut, UserOut
 from apps.users.services import student_service
@@ -66,6 +71,121 @@ from settings import (
 
 
 class ServiceHandler:
+    @classmethod
+    async def validate_faculty_name(cls, faculty_name: str, university_id: int) -> bool:
+        faculties = await get_faculty_list(university_id)
+        if not faculty_name in create_faculty_list(faculties):
+            raise ValueError(f"Wrong '{faculty_name}' name. This faculty doesn't exist")
+        return True
+
+    @classmethod
+    async def validate_speciality_code(
+        cls, speciality_code: int, university_id: int
+    ) -> bool:
+        specialities = await get_specialties_list(university_id)
+        if not speciality_code in create_speciality_dict(specialities).keys():
+            raise ValueError(
+                f"Wrong '{speciality_code}' code. This speciality doesn't exist"
+            )
+        return True
+
+    @classmethod
+    async def validate_speciality_name(
+        cls, speciality_name: str, university_id: int
+    ) -> bool:
+        specialities = await get_specialties_list(university_id)
+        if not speciality_name in create_speciality_dict(specialities).values():
+            raise ValueError(
+                f"Wrong '{speciality_name}' speciality name. This speciality doesn't exist"
+            )
+        return True
+
+    @classmethod
+    async def validate_speciality_name_and_speciality_code_correspondence(
+        cls, speciality_name: str, speciality_code: int, university_id: int
+    ) -> bool:
+        specialities = await get_specialties_list(university_id)
+        if not (
+            (speciality_code, speciality_name)
+            in create_speciality_dict(specialities).items()
+        ):
+            raise ValueError(
+                f"Speciality code '{speciality_code}' "
+                f"doesn't correspondence with exists "
+                f"'{speciality_name}' speciality name"
+            )
+        return True
+
+    @classmethod
+    async def check_speciality_and_faculty_validation_result(
+        cls,
+        faculty_name: str,
+        speciality_name: str,
+        speciality_code: int,
+        university_id: int,
+    ) -> bool:
+        if (
+            await cls.validate_faculty_name(faculty_name, university_id)
+            and await cls.validate_speciality_name(speciality_name, university_id)
+            and await cls.validate_speciality_code(speciality_code, university_id)
+            and await cls.validate_speciality_name_and_speciality_code_correspondence(
+                speciality_name,
+                speciality_code,
+                university_id,
+            )
+        ):
+            return True
+        else:
+            return False
+
+    @classmethod
+    async def create_request_for_hostel_accommodation(
+        cls,
+        *,
+        request: Request,
+        university_id: int,
+        user_request: RequestForHostelAccommodationIn,
+        user: UserOut,
+        session: AsyncSession,
+    ) -> RequestForHostelAccommodationOut:
+
+        if await cls.check_speciality_and_faculty_validation_result(
+            user_request.faculty_name,
+            user_request.speciality_name,
+            user_request.speciality_code,
+            university_id,
+        ):
+            user_faculty = await user_faculty_service.read(
+                data={"user_id": user.user_id}, session=session
+            )
+            data = {
+                "created_at": datetime.now(utc),
+                "comment": user_request.comment,
+                "user_id": user.user_id,
+                "service_id": 1,
+                "faculty_id": user_faculty.faculty_id,
+                "university_id": university_id,
+                "status_id": STATUS_MAPPING.get("Розглядається"),
+            }
+            user_request_booking_hostel = (
+                await user_request_booking_hostel_service.read(
+                    session=session,
+                    data={"user_id": user.user_id, "university_id": university_id},
+                )
+            )
+            user_request_service_response = await user_request_service.create(
+                session=session, data=data
+            )
+            prepared_data = {
+                "context": update_user_booking_hostel_data_by_user_request(
+                    user_request, user_request_booking_hostel
+                ),
+                "service_id": user_request_service_response.service_id,
+                "user_request_id": user_request_service_response.user_request_id,
+            }
+            await cls.__create_user_document(session, **prepared_data)
+            return user_request_service_response
+
     @staticmethod
     async def read_user_documents_list(
         *,
@@ -120,40 +240,6 @@ class ServiceHandler:
             session=session,
             filters={"university_id": university_id, "user_id": user.user_id},
         )
-
-    async def create_user_request(
-        self,
-        *,
-        request: Request,
-        university_id: int,
-        user_request: CreateUserRequestIn,
-        user: UserOut,
-        session: AsyncSession,
-    ) -> CreateUserRequestOut:
-        user_faculty_result = await user_faculty_service.read(
-            data={"user_id": user.user_id}, session=session
-        )
-        data = {
-            "created_at": datetime.now(utc),
-            "comment": user_request.comment,
-            "user_id": user.user_id,
-            "service_id": user_request.service_id,
-            "faculty_id": user_faculty_result.faculty_id,
-            "university_id": university_id,
-            "status_id": STATUS_MAPPING.get("Розглядається"),
-        }
-        user_request = await user_request_service.create(session=session, data=data)
-        result = await user_request_booking_hostel_service.read(
-            session=session,
-            data={"user_id": user.user_id, "university_id": university_id},
-        )
-        prepared_data = {
-            "context": result,
-            "service_id": user_request.service_id,
-            "user_request_id": user_request.user_request_id,
-        }
-        await self.__create_user_document(session, **prepared_data)
-        return user_request
 
     @staticmethod
     async def read_user_request_booking_hostel(
@@ -367,7 +453,7 @@ class ServiceHandler:
             f"hostel_settlement_{file_date_created}_"
             f"{kwargs.get('user_request_id')}.docx"
         )
-        document_path = SETTLEMENT_HOSTEL_PATH / str(context.user_id)
+        document_path = SETTLEMENT_HOSTEL_PATH / str(context['user_id'])
         Path(document_path).mkdir(exist_ok=True)
         document_path = file_manager.create(
             document_path, document_name, rendered_template

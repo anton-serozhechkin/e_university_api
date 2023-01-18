@@ -1,8 +1,8 @@
 from datetime import date, datetime
 from decimal import Decimal
-from typing import Dict, List, Union
+from typing import Dict, List, Union, Optional
 
-from pydantic import root_validator, validator
+from pydantic import root_validator, validator, Field
 
 from apps.common.schemas import (
     BaseInSchema,
@@ -13,9 +13,85 @@ from apps.common.schemas import (
 )
 
 
-class CreateUserRequestIn(BaseInSchema):
-    service_id: int
+class RequestForHostelAccommodationIn(BaseInSchema):
+    rector_first_name: str = Field(description="Value must to be string and uppercase")
+    rector_middle_name: str = None
+    rector_last_name: str = Field(description="Value must to be string and uppercase")
+    student_first_name: str = Field(description="Value must to be string and uppercase")
+    student_middle_name: str = None
+    student_last_name: str = Field(
+        description="Value must to be 'string' and uppercase"
+    )
+    speciality_code: int = Field(
+        description="Have to exist in the speciality codes list"
+    )
+    speciality_name: str = Field(
+        description="Have to exist in the speciality names list"
+    )
+    course: int = Field(
+        title="University course number value",
+        description="Have to be exist in university courses interval",
+    )
+    faculty_name: str = Field(description="Have to exist in the faculty names list")
+    educ_level: str = Field(
+        title="University education level(string) value",
+        description="Can be 'B' or 'M'",
+    )
     comment: str = None
+
+    @root_validator
+    def validate_rector_and_student_names(cls, values: str) -> str:
+        names = [
+            "rector_first_name",
+            "rector_last_name",
+            "student_first_name",
+            "student_last_name",
+        ]
+        for name in names:
+            if not values.get(name).istitle():
+                raise ValueError(
+                    f"{name.replace('_', ' ').capitalize()} first letter must be uppercase"
+                )
+        return values
+
+    @validator("student_middle_name")
+    def validate_student_middle_name(cls, value: str) -> Optional[str]:
+        if value:
+            if not value.istitle():
+                raise ValueError("Middle name must be uppercase")
+            return value
+        return value
+
+    @validator("rector_middle_name")
+    def validate_rector_middle_name(cls, value: str) -> Optional[str]:
+        if value:
+            if not value.istitle():
+                raise ValueError("Middle name must be uppercase")
+            return value
+        return value
+
+    @validator("educ_level")
+    def validate_education_level(cls, value: str) -> str:
+        if value.upper() not in ["B", "M"]:
+            raise ValueError("Wrong education level value. Should be 'B' or 'M'")
+        return value
+
+    @validator("course")
+    def validate_course(cls, value: int) -> int:
+        if value not in [1, 2, 3, 4, 5, 6]:
+            raise ValueError(f"Wrong '{value}' number. This course doesn't exist")
+        return value
+
+
+class RequestForHostelAccommodationOut(BaseOutSchema):
+    user_request_id: int
+    created_at: datetime = Field(description="Date, when request was created")
+    comment: str = None
+    user_id: int
+    service_id: int
+    faculty_id: int
+    university_id: int
+    status_id: int = Field(description="Status id of user request")
 
 
 class CreateUserRequestOut(BaseOutSchema):

@@ -1,7 +1,8 @@
 import os.path
 from collections import defaultdict
-from typing import Any, Callable, DefaultDict, Dict, List, Set, Tuple
+from typing import Any, Callable, DefaultDict, Dict, List, Set, Tuple, Union
 
+from sqlalchemy.engine.row import Row
 import xlrd
 from fastapi import UploadFile
 from fastapi import status as http_status
@@ -9,6 +10,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from apps.common.enums import UserRequestStatus
 from apps.common.exceptions import BackendException
+from apps.services.schemas import RequestForHostelAccommodationIn
 from apps.users.services import student_list_service
 
 
@@ -18,6 +20,20 @@ def create_faculty_dict(specialties: List) -> DefaultDict[str, Dict[str, int]]:
         faculty_dict[specialty.shortname]["faculty_id"] = specialty.faculty_id
         faculty_dict[specialty.shortname][specialty.name_1] = specialty.speciality_id
     return faculty_dict
+
+
+def create_speciality_dict(specialties: List) -> Dict[int, str]:
+    speciality_dict = {}
+    for specialty in specialties:
+        speciality_dict[specialty.code] = specialty.name_1
+    return speciality_dict
+
+
+def create_faculty_list(faculties: List) -> List:
+    faculty_list = []
+    for faculty in faculties:
+        faculty_list.append(faculty.name)
+    return faculty_list
 
 
 async def create_telephone_set(
@@ -129,3 +145,25 @@ def check_user_request_status(status_id: int) -> None:
             " the approved hostel accommodation request",
             code=http_status.HTTP_406_NOT_ACCEPTABLE,
         )
+
+
+def update_user_booking_hostel_data_by_user_request(
+    user_request_data: RequestForHostelAccommodationIn, user_booking_hostel_data: Row
+) -> Dict[str, Union[int, str]]:
+
+    updated_user_booking_hostel_data = dict(user_booking_hostel_data)
+
+    updated_user_booking_hostel_data.update(user_request_data.dict())
+    updated_user_booking_hostel_data.update(
+        full_name={
+            "last_name": user_request_data.dict()["student_last_name"],
+            "first_name": user_request_data.dict()["student_first_name"],
+            "middle_name": user_request_data.dict()["student_middle_name"],
+        },
+        rector_full_name={
+            "last_name": user_request_data.dict()["rector_last_name"],
+            "first_name": user_request_data.dict()["rector_first_name"],
+            "middle_name": user_request_data.dict()["rector_middle_name"],
+        },
+    )
+    return updated_user_booking_hostel_data

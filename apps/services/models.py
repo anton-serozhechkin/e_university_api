@@ -146,7 +146,8 @@ class UserRequestReview(Base):
 
     def __repr__(self) -> str:
         return (
-            f'{self.__class__.__name__}(user_request_review_id="{self.user_request_review_id}",'
+            f"{self.__class__.__name__}"
+            f'(user_request_review_id="{self.user_request_review_id}",'
             f' created_at="{self.created_at}", room_number="{self.room_number}",'
             f' start_accommodation_date="{self.start_accommodation_date}",'
             f' end_accommodation_date="{self.end_accommodation_date}",'
