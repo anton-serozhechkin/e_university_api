@@ -7,6 +7,7 @@ from fastapi import UploadFile
 from fastapi import status as http_status
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from apps.common.enums import UserRequestStatus
 from apps.common.exceptions import BackendException
 from apps.users.services import student_list_service
 
@@ -118,4 +119,13 @@ def check_file_existing(path: str) -> None:
         raise BackendException(
             message=f"File with path {path} was removed or deleted",
             code=http_status.HTTP_409_CONFLICT,
+        )
+
+
+def check_user_request_status(status_id: int) -> None:
+    if status_id != UserRequestStatus.APPROVED.value:
+        raise BackendException(
+            message="The warrant document can be downloaded only for"
+            " the approved hostel accommodation request",
+            code=http_status.HTTP_406_NOT_ACCEPTABLE,
         )
