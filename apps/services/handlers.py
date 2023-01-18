@@ -453,8 +453,8 @@ class ServiceHandler:
             f"hostel_settlement_{file_date_created}_"
             f"{kwargs.get('user_request_id')}.docx"
         )
-        DOCUMENT_PATH = SETTLEMENT_HOSTEL_PATH / str(context['user_id'])
-        Path(DOCUMENT_PATH).mkdir(exist_ok=True)
+        document_path = SETTLEMENT_HOSTEL_PATH / str(context['user_id'])
+        Path(document_path).mkdir(exist_ok=True)
         document_path = file_manager.create(
             document_path, document_name, rendered_template
         )
