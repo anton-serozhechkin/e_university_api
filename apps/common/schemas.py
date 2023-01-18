@@ -1,7 +1,7 @@
 import os
 from datetime import datetime
 from mimetypes import MimeTypes
-from typing import Dict, Generic, List, Optional, TypeVar, Union
+from typing import Dict, Generic, List, Optional, TypeVar, Tuple, Union
 
 from fastapi import status as http_status
 from fastapi_mail.errors import WrongFile
@@ -84,7 +84,7 @@ class MessageSchema(BaseModel):
     def validate_file(
             cls,
             v: List[Union[UploadFile, Dict, str]],
-    ) -> List[Union[UploadFile, Dict, str]]:
+    ) -> List[Tuple[UploadFile, Optional[Dict]]]:
         temp = []
         mime = MimeTypes()
 
@@ -121,7 +121,7 @@ class MessageSchema(BaseModel):
         return temp
 
     @validator("subtype")
-    def validate_subtype(cls, value, values, config, field):
+    def validate_subtype(cls, value: str, values: Dict) -> str:
         """Validate subtype field."""
         if values["template_body"]:
             return "html"
