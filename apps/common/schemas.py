@@ -4,13 +4,14 @@ from mimetypes import MimeTypes
 from typing import Dict, Generic, List, Optional, TypeVar, Union
 
 from fastapi import status as http_status
+from fastapi_mail.errors import WrongFile
 from pydantic import BaseModel, EmailStr, Field, validator
 from pydantic.generics import GenericModel
 from pydantic.typing import NoneType
 from starlette.datastructures import UploadFile
 
 from apps.common.enums import JSENDStatus, MultipartSubtypeEnum
-from apps.common.exceptions import WrongFile
+
 
 SchemaVar = TypeVar("SchemaVar", bound=Union[BaseModel, NoneType, str])
 
@@ -80,7 +81,10 @@ class MessageSchema(BaseModel):
     headers: Optional[Dict] = None
 
     @validator("attachments")
-    def validate_file(cls, v):
+    def validate_file(
+            cls,
+            v: List[Union[UploadFile, Dict, str]],
+    ) -> List[Union[UploadFile, Dict, str]]:
         temp = []
         mime = MimeTypes()
 

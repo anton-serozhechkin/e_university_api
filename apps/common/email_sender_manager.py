@@ -1,14 +1,10 @@
 import abc
 
 from fastapi_mail import ConnectionConfig, FastMail
-
-from apps.common.exceptions import (
-    ApiError,
+from fastapi_mail.errors import (
     ConnectionErrors,
-    DBProvaiderError,
     PydanticClassRequired,
     TemplateFolderDoesNotExist,
-    WrongFile,
 )
 from apps.common.schemas import MessageSchema
 from settings import Settings
@@ -59,11 +55,8 @@ class EmailManager(EmailManagerInterface):
             await fm.send_message(message, template_name=template_name)
         except (
             ConnectionErrors,
-            WrongFile,
             PydanticClassRequired,
             TemplateFolderDoesNotExist,
-            ApiError,
-            DBProvaiderError,
         ):
             # create message with smtp server access problems
             print("There is a problem with smtp server access")
