@@ -85,7 +85,8 @@ class Student(Base):
     telephone_number = Column(VARCHAR(length=50), nullable=False, unique=True)
     gender = Column(VARCHAR(length=1), nullable=False)
     course_id = Column(
-        INTEGER, ForeignKey("course.course_id", ondelete="CASCADE", onupdate="CASCADE"),
+        INTEGER,
+        ForeignKey("course.course_id", ondelete="CASCADE", onupdate="CASCADE"),
         nullable=False,
     )
     speciality_id = Column(

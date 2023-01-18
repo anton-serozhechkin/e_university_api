@@ -106,7 +106,7 @@ For work with application, you need to setup your database in docker container. 
 
 1. While postgres docker container is running, enter it (use separate terminal):
 
-      alembic upgrade head
+       alembic upgrade head
 
 2. The database with the specified in .env name will be created in case there is no such.
 
