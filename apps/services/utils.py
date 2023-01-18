@@ -9,6 +9,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from apps.common.exceptions import BackendException
 from apps.users.services import student_list_service
+from apps.common.enums import UserRequestStatus
 
 
 def create_faculty_dict(specialties: List) -> DefaultDict[str, Dict[str, int]]:
@@ -122,7 +123,7 @@ def check_file_existing(path: str) -> None:
 
 
 def check_user_request_status(status_id: int) -> None:
-    if status_id != 1:
+    if status_id != UserRequestStatus.APPROVED.value:
         raise BackendException(
             message="The warrant document can be downloaded only for"
             " the approved hostel accommodation request",
