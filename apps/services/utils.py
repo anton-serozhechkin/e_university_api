@@ -1,6 +1,5 @@
 import os.path
 from collections import defaultdict
-from dataclasses import dataclass
 from typing import Any, Callable, DefaultDict, Dict, List, Set, Tuple, Union
 
 from sqlalchemy.engine.row import Row
@@ -11,6 +10,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from apps.common.enums import UserRequestStatus
 from apps.common.exceptions import BackendException
+from apps.services.schemas import RequestForHostelAccommodationIn
 from apps.users.services import student_list_service
 
 
@@ -144,3 +144,24 @@ def check_user_request_status(status_id: int) -> None:
             " the approved hostel accommodation request",
             code=http_status.HTTP_406_NOT_ACCEPTABLE,
         )
+
+def update_user_booking_hostel_data_by_user_request(
+    user_request_data: RequestForHostelAccommodationIn, user_booking_hostel_data: Row
+) -> Dict[str, Union[int, str]]:
+
+    updated_user_booking_hostel_data = dict(user_booking_hostel_data)
+
+    updated_user_booking_hostel_data.update(user_request_data.dict())
+    updated_user_booking_hostel_data.update(
+        full_name={
+            "last_name": user_request_data.dict()["student_last_name"],
+            "first_name": user_request_data.dict()["student_first_name"],
+            "middle_name": user_request_data.dict()["student_middle_name"],
+        },
+        rector_full_name={
+            "last_name": user_request_data.dict()["rector_last_name"],
+            "first_name": user_request_data.dict()["rector_first_name"],
+            "middle_name": user_request_data.dict()["rector_middle_name"],
+        },
+    )
+    return updated_user_booking_hostel_data
