@@ -11,6 +11,7 @@ class JSENDStatus(str, Enum):
 
 class UserRequestStatus(str, Enum):
     """Enum based class to set status of user request."""
+
     APPROVED = 1
     REJECTED = 2
     IN_PROGRESS = 3

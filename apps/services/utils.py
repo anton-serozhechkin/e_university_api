@@ -7,9 +7,9 @@ from fastapi import UploadFile
 from fastapi import status as http_status
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from apps.common.enums import UserRequestStatus
 from apps.common.exceptions import BackendException
 from apps.users.services import student_list_service
-from apps.common.enums import UserRequestStatus
 
 
 def create_faculty_dict(specialties: List) -> DefaultDict[str, Dict[str, int]]:
