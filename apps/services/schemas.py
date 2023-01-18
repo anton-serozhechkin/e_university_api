@@ -171,3 +171,23 @@ class CountHostelAccommodationCostIn(BaseInSchema):
 
 class CountHostelAccommodationCostOut(BaseOutSchema):
     total_hostel_accommodation_cost: Decimal
+
+
+class UserRequestHostelAccommodationWarrantViewOut(BaseOutSchema):
+    user_request_review_id: int
+    room_number: int
+    user_request_id: int
+    created_at: datetime
+    hostel_number: int
+    hostel_street: str
+    hostel_build: str
+    bed_place_name: str
+    university_name: str
+    short_university_name: str
+    university_city: str
+    status_id: int
+    user_id: int
+    student_full_name: FullNameSchema
+    student_gender: str
+    faculty_shortname: str
+    dean_full_name: FullNameSchema
