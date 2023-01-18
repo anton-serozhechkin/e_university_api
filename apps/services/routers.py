@@ -473,7 +473,7 @@ async def download_user_document(
 
 @services_router.post(
     "/{university_id}/count-hostel-accommodation-cost/",
-    name="create_count_hostel_accommodation_cost ",
+    name="create_count_hostel_accommodation_cost",
     summary="Create Count Hostel Accommodation Cost",
     response_model=JSENDOutSchema[CountHostelAccommodationCostOut],
     responses={
@@ -496,3 +496,68 @@ async def count_hostel_accommodation_cost(
         ),
         "message": "Cost of hostel accommodation of student was counted successfully",
     }
+
+
+@services_router.get(
+    "/{university_id}/download-warrant-document/{user_request_review_id}/",
+    name="download_warrant_document_for_hostel_accommodation",
+    response_class=FileResponse,
+    summary="Download warrant document for hostel accommodation",
+    responses={
+        200: {
+            "description": "Successful download warrant document for hostel accommodation response",
+            "content": {
+                "text/html": {
+                    "example": "\n".join(
+                        [
+                            (
+                                "content-disposition: attachment;"
+                                " filename*=utf-8''some_file_name.docx"
+                            ),
+                            "content-length: 1010",
+                            (
+                                "content-type:"
+                                " application/vnd.openxmlformats-officedocument."
+                                "wordprocessingml.document"
+                            ),
+                            "date: Wed,14 Dec 2022 15:58:49 GMT",
+                            "etag: 9744b58c8e99ca7c251c717ad9b28bd2",
+                            "last-modified: Wed,23 Nov 2022 17:49:14 GMT",
+                            "server: uvicorn",
+                        ]
+                    )
+                }
+            },
+        },
+    },
+    tags=["Services application"],
+)
+async def download_warrant_document(
+    request: Request,
+    university_id: int,
+    user_request_review_id: int,
+    user: UserOut = Depends(get_current_user),
+    session: AsyncSession = Depends(get_async_session),
+):
+    """**Download generated warrant document for student hostel accommodation**.
+
+    **Path**:
+    - **university_id**: user university id
+    - **user_request_review_id**: id of user request review
+
+    **Return**:
+    - **generated file**: warrant file to download
+    """
+    file_path, file_name = await service_handler.download_warrant_document(
+        request=request,
+        user_request_review_id=user_request_review_id,
+        session=session,
+    )
+    return FileResponse(
+        path=file_path,
+        filename=file_name,
+        status_code=http_status.HTTP_200_OK,
+        media_type=(
+            "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+        ),
+    )
