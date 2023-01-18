@@ -7,7 +7,9 @@ from fastapi import File, Request, UploadFile
 from pytz import utc
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from apps.common.email_sender_manager import email_manager
 from apps.common.file_managers import file_manager
+from apps.common.schemas import MessageSchema
 from apps.services.models import STATUS_MAPPING, UserDocument
 from apps.services.schemas import (
     CancelRequestIn,
@@ -210,6 +212,27 @@ class ServiceHandler:
                 "remark": user_request_review.remark,
                 "bed_place_id": user_request_review.bed_place_id,
             },
+        )
+        if user_request_review.status_id == 1:
+            message = "Ваш запит на поселення в гуртожиток схвалено"
+        elif user_request_review.status_id == 2:
+            message = "Ваш запит на поселення в гуртожиток відхилено"
+        else:
+            message = "Ваш запит на поселення в гуртожиток скасовано"
+        student = await student_service.read(
+            session=session, data={"user_id": user.user_id}
+        )
+        await email_manager.send_email_async(
+            message=MessageSchema(
+                subject="Запит на поселення в гуртожиток",
+                template_body={
+                    "person": student,
+                    "message": message,
+                },
+                recipients=[user.email],
+                subtype="html",
+            ),
+            template_name="email.html",
         )
         await user_request_service.update(
             session=session,

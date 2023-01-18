@@ -92,6 +92,18 @@ class MainSettings(BaseSettings):
     LOG_LEVEL: int = Field(default=logging.WARNING)
     LOG_USE_COLORS: bool = Field(default=False)
 
+    # SEND MAIL SETTINGS
+    MAIL_USERNAME: str = Field(default="8f2d4fcedddbb9")
+    MAIL_PASSWORD: str = Field(default="6bab9ee9d83cf2")
+    MAIL_FROM: str = Field(default="noreply@gmail.com")
+    MAIL_PORT: int = Field(default=2525)
+    MAIL_SERVER: str = Field(default="smtp.mailtrap.io")
+    MAIL_FROM_NAME: str = Field(default="admin")
+    MAIL_TLS: bool = Field(default=True)
+    MAIL_SSL: bool = Field(default=False)
+    USE_CREDENTIALS: bool = Field(default=True)
+    TEMPLATE_FOLDER: str = Field(default="./apps/templates/email")
+
     class Config(BaseSettings.Config):
         extra = Extra.ignore
         env_file = ".env"
