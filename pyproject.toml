@@ -78,16 +78,11 @@ skip_glob = []
 [tool.mypy]
 ignore_missing_imports = true
 
-
+# === Pytest ===
 [tool.pytest.ini_options]
-python_files=test_*
-python_classes=Test*
-python_functions=test_*
-
-norecursedirs = ["venv", ".venv", ".env", "migrations",]
-testpaths = ["tests",]
-python_files = ["test*.py", "*test.py"]
-python_functions = ["*_test", "test_*"]
+norecursedirs = ["venv", ".venv", ".env", "migrations"]
+testpaths = "tests"
 console_output_style = "progress"
-asyncio_mode = "auto"
-log_cli = true
+python_files = "test_*"
+python_classes = "Test*"
+python_functions = "test_*"
