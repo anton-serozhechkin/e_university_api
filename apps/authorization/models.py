@@ -28,7 +28,11 @@ class Action(Base):
 
     action_id = Column(INTEGER, primary_key=True, nullable=False)
     action_name = Column(VARCHAR(length=50), nullable=False)
-    role_id = Column(INTEGER, ForeignKey("role.role_id"), nullable=False)
+    role_id = Column(
+        INTEGER,
+        ForeignKey("role.role_id", ondelete="CASCADE", onupdate="CASCADE"),
+        nullable=False,
+    )
 
     roles = relationship("Role", back_populates="actions")
 

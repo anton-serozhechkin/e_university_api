@@ -11,9 +11,12 @@ class University(Base):
 
     university_id = Column(INTEGER, primary_key=True, nullable=False)
     university_name = Column(VARCHAR(length=255), nullable=False)
+    short_university_name = Column(VARCHAR(length=50), nullable=False)
     city = Column(VARCHAR(length=255), nullable=False)
     logo = Column(VARCHAR(length=255))
-    rector_id = Column(INTEGER, ForeignKey("rector.rector_id"))
+    rector_id = Column(
+        INTEGER, ForeignKey("rector.rector_id", ondelete="CASCADE", onupdate="CASCADE")
+    )
 
     rector = relationship("Rector", back_populates="university")
     faculties = relationship("Faculty", back_populates="university")
@@ -23,6 +26,7 @@ class University(Base):
         "UserRequestReview", back_populates="university"
     )
     user_requests = relationship("UserRequest", back_populates="university")
+    service_document = relationship("ServiceDocument", back_populates="university")
 
     def __repr__(self) -> str:
         return (
@@ -41,7 +45,9 @@ class Faculty(Base):
     main_email = Column(VARCHAR(length=50))
     dean_id = Column(INTEGER, ForeignKey("dean.dean_id"))
     university_id = Column(
-        INTEGER, ForeignKey("university.university_id"), nullable=False
+        INTEGER,
+        ForeignKey("university.university_id", ondelete="CASCADE", onupdate="CASCADE"),
+        nullable=False,
     )
 
     dean = relationship("Dean", back_populates="faculty")
@@ -66,7 +72,11 @@ class Speciality(Base):  # TODO: rename to "Specialty"
     speciality_id = Column(INTEGER, primary_key=True, nullable=False)
     code = Column(INTEGER, nullable=False)
     name = Column(VARCHAR(length=255), nullable=False)
-    faculty_id = Column(INTEGER, ForeignKey("faculty.faculty_id"), nullable=False)
+    faculty_id = Column(
+        INTEGER,
+        ForeignKey("faculty.faculty_id", ondelete="CASCADE", onupdate="CASCADE"),
+        nullable=False,
+    )
 
     faculties = relationship("Faculty", back_populates="speciality")
 
