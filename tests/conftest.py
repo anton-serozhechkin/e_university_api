@@ -14,7 +14,7 @@ from pytest_alembic import Config, runner
 from sqlalchemy import create_engine
 from sqlalchemy.engine import URL, Engine
 from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession, create_async_engine
-from sqlalchemy.orm import Session, sessionmaker
+from sqlalchemy.orm import Session, scoped_session, sessionmaker
 
 from apps.common.db import async_session_factory as AsyncSessionFactory  # noqa
 from apps.common.db import session_factory as SessionFactory  # noqa
@@ -168,6 +168,12 @@ async def async_client(
         yield httpx_client
 
 
+@pytest.fixture(scope="function", autouse=True)
+def faker_seed() -> None:
+    """Generate random seed for Faker instance."""
+    return random.seed(version=3)
+
+
 @pytest.fixture(scope="session")
 def alembic_config() -> Config:
     return Config()
@@ -194,7 +200,7 @@ def apply_migrations(
     """Applies all migrations from base to head."""
     alembic_runner.migrate_up_to(revision="head")
     yield
-    alembic_runner.migrate_up_to(revision="base")
+    alembic_runner.migrate_down_to(revision="base")
 
 
 @pytest.fixture(scope="session")
@@ -241,6 +247,7 @@ def sync_db_session(
     with sync_session_factory() as session:
         yield session
         session.rollback()
+        session.close()
 
 
 @pytest.fixture(scope="function")
@@ -259,3 +266,26 @@ async def db_session(
     async with session_factory() as async_session:
         yield async_session
         await async_session.rollback()
+
+
+@pytest.fixture(scope="session")
+def scoped_db_session() -> scoped_session:
+    """Create scoped session for tests runner and model factories."""
+    session = scoped_session(session_factory=SessionFactory)
+    yield session
+    session.rollback()
+    session.close()
+
+
+@pytest.fixture(autouse=True, scope="session")
+def set_session_for_factories(scoped_db_session: scoped_session) -> None:
+    """Registration of model factories to set up a scoped session during the test run."""
+    known_factories: list[typing.Type[BaseModelFactory]] = [
+
+        # === Add new factory classes here!!! ===
+    ]
+
+    for factory_class in known_factories:
+        # Set up session to factory
+        factory_class._meta.sqlalchemy_session = scoped_db_session
+

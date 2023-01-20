@@ -1,9 +1,10 @@
 import datetime
 from typing import Any, Dict, List, Type
+import typing
 
 from pydantic_factories import AsyncPersistenceProtocol, ModelFactory, PostGenerated
 from pytz import utc
-
+import factory
 from apps.common.db import Base, async_session_factory
 from apps.common.services import AsyncCRUDBase, CreateSchemaType, ModelType
 
@@ -43,3 +44,30 @@ def generate_dt(name: str, values: Dict[str, Any]) -> datetime.datetime:
 class BaseFactory(BaseRawFactory):
     created_at: datetime.datetime = PostGenerated(fn=generate_dt)
     updated_at: datetime.datetime = PostGenerated(fn=generate_dt)
+
+
+class BaseModelFactory(factory.alchemy.SQLAlchemyModelFactory):
+    class Meta:
+        abstract = True
+        sqlalchemy_session_persistence = "commit"
+
+    @classmethod
+    def _create(cls, model_class, *args, **kwargs):
+        """Change RuntimeError to help with factory set up."""
+        if cls._meta.sqlalchemy_session is None:
+            raise RuntimeError(
+                f"Register {cls.__name__} factory inside conftest.py in set_session_for_factories fixture declaration."
+            )
+        return super()._create(model_class=model_class, *args, **kwargs)
+
+    @staticmethod
+    def check_factory(factory_class: typing.Type["BaseModelFactory"], model: typing.Type[Base]) -> None:
+        """Test that factory creates successfully."""
+        obj = factory_class()
+        size = random.randint(2, 3)
+        objs = factory_class.create_batch(size=size)
+
+        assert isinstance(obj, model)
+        assert size == len(objs)
+        for i in objs:
+            assert isinstance(i, model)
