@@ -1,12 +1,16 @@
 import datetime
 from typing import Any, Dict, List, Type
 import typing
+import random
 
 from pydantic_factories import AsyncPersistenceProtocol, ModelFactory, PostGenerated
 from pytz import utc
 import factory
 from apps.common.db import Base, async_session_factory
 from apps.common.services import AsyncCRUDBase, CreateSchemaType, ModelType
+
+
+starting_seq_num = 0
 
 
 class AsyncPersistenceHandler(AsyncPersistenceProtocol):
@@ -71,3 +75,8 @@ class BaseModelFactory(factory.alchemy.SQLAlchemyModelFactory):
         assert size == len(objs)
         for i in objs:
             assert isinstance(i, model)
+
+    # @classmethod
+    # def _setup_next_sequence(cls):
+    #     return starting_seq_num
+

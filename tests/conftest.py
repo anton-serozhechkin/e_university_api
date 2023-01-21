@@ -19,6 +19,8 @@ from sqlalchemy.orm import Session, scoped_session, sessionmaker
 from apps.common.db import async_session_factory as AsyncSessionFactory  # noqa
 from apps.common.db import session_factory as SessionFactory  # noqa
 from apps.common.dependencies import get_async_session, get_session
+from tests.apps.hostel.factories import BedPlaceFactory, CommandantFactory
+from tests.bases import BaseModelFactory
 from settings import Settings
 
 
@@ -198,7 +200,7 @@ def apply_migrations(
     create_database: None, alembic_runner: runner, alembic_engine: Engine
 ) -> typing.Generator[None, None, None]:
     """Applies all migrations from base to head."""
-    alembic_runner.migrate_up_to(revision="head")
+    alembic_runner.migrate_up_to(revision="0004")
     yield
     alembic_runner.migrate_down_to(revision="base")
 
@@ -280,8 +282,9 @@ def scoped_db_session() -> scoped_session:
 @pytest.fixture(autouse=True, scope="session")
 def set_session_for_factories(scoped_db_session: scoped_session) -> None:
     """Registration of model factories to set up a scoped session during the test run."""
-    known_factories: list[typing.Type[BaseModelFactory]] = [
-
+    known_factories: typing.List[typing.Type[BaseModelFactory]] = [
+        BedPlaceFactory,
+        CommandantFactory,
         # === Add new factory classes here!!! ===
     ]
 
