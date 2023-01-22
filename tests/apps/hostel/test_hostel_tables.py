@@ -1,4 +1,3 @@
-
 from apps.hostel.models import BedPlace, Hostel, Commandant
 from tests.apps.hostel.factories import (
     BedPlaceFactory,
