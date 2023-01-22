@@ -64,9 +64,9 @@ class OneTimeTokenFactory(BaseModelFactory):
 
 class StudentFactory(BaseModelFactory):
     student_id = factory.Sequence(lambda x: x)
-    last_name = factory.Faker("last_name", min_chars=1, max_chars=50)
-    first_name = factory.Faker("first_name", min_chars=1, max_chars=50)
-    middle_name = factory.Faker("first_name", max_chars=50)
+    last_name = factory.Faker("last_name")
+    first_name = factory.Faker("first_name")
+    middle_name = factory.Faker("first_name")
     telephone_number = factory.Faker("phone_number")
     gender = factory.Faker("pystr_format", string_format='?#{{random_letter}}', letters="ЧЖ")
     course_id = factory.SelfAttribute(attribute_name="course.course_id")

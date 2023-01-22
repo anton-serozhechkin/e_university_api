@@ -1,6 +1,5 @@
 import factory
 from pytz import utc
-from apps.educational_institutions.models import University, Faculty, Speciality, Dean, Rector, Course
 from apps.authorization.models import Role, Action
 from tests.bases import BaseModelFactory
 from tests.apps.users.factories import UserFactory

@@ -21,9 +21,9 @@ class BedPlaceFactory(BaseModelFactory):
 
 class CommandantFactory(BaseModelFactory):
     commandant_id = factory.Sequence(lambda x: x)
-    last_name = factory.Faker("last_name", min_chars=1, max_chars=50)
-    first_name = factory.Faker("first_name", min_chars=1, max_chars=50)
-    middle_name = factory.Faker("first_name", max_chars=50)
+    last_name = factory.Faker("last_name")
+    first_name = factory.Faker("first_name")
+    middle_name = factory.Faker("first_name")
     telephone_number = factory.Faker("phone_number")
 
     hostel = factory.RelatedFactoryList(

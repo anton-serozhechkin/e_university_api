@@ -26,7 +26,7 @@ class UniversityFactory(BaseModelFactory):
     city = factory.Faker("pystr", max_chars=255, min_chars=4)
     logo = factory.Faker("pystr", max_chars=255)
     rector_id = factory.SelfAttribute(attribute_name="rector.rector_id")
-    rector = factory.SubFactory(factory=RectorFactory)
+    rector = factory.SubFactory(factory="tests.apps.educational_institution.factories.RectorFactory")
     faculties = factory.RelatedFactory(
         factory="tests.apps.educational_institution.factories.FacultyFactory",
         factory_related_name="university",
