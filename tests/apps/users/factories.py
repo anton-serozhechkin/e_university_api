@@ -1,5 +1,6 @@
 from pytz import utc
 import factory
+from apps.authorization.services import get_hashed_password
 from apps.users.models import User, Student, OneTimeToken, UserFaculty
 from tests.bases import BaseModelFactory
 from tests.apps.educational_institution.factories import FacultyFactory, CourseFactory, SpecialityFactory
@@ -8,7 +9,8 @@ from tests.apps.educational_institution.factories import FacultyFactory, CourseF
 class UserFactory(BaseModelFactory):
     user_id = factory.Sequence(lambda x: x)
     login = factory.Faker("pystr", min_chars=1, max_chars=50)
-    password = factory.Faker("pystr", min_chars=1, max_chars=50)
+    simple_password = factory.Faker("pystr", min_chars=4, max_chars=10)
+    password = factory.LazyAttribute(function=lambda obj: get_hashed_password(password=obj.password))
     last_visit_at = factory.Faker("date_time", tzinfo=utc)
     is_active = factory.Faker("pybool")
     role_id = factory.SelfAttribute(attribute_name="role.role_id")
@@ -44,7 +46,7 @@ class UserFactory(BaseModelFactory):
     class Meta:
         model = User
         exclude = (
-            "role", "student", "user_request_reviews", "faculties", "user_requests", "user_faculties",
+            "role", "simple_password", "student", "user_request_reviews", "faculties", "user_requests", "user_faculties",
         )
         sqlalchemy_get_or_create = ("role_id",)
 
