@@ -19,7 +19,11 @@ from sqlalchemy.orm import Session, scoped_session, sessionmaker
 from apps.common.db import async_session_factory as AsyncSessionFactory  # noqa
 from apps.common.db import session_factory as SessionFactory  # noqa
 from apps.common.dependencies import get_async_session, get_session
-from tests.apps.hostel.factories import BedPlaceFactory, CommandantFactory
+from tests.apps.authorization.factories import RoleFactory, ActionFactory
+from tests.apps.educational_institution.factories import RectorFactory, UniversityFactory, FacultyFactory, SpecialityFactory, DeanFactory, CourseFactory
+from tests.apps.services.factories import ServiceFactory, UserRequestFactory, StatusFactory, RequisitesFactory, UserRequestReviewFactory, UserDocumentFactory, ServiceDocumentFactory
+from tests.apps.users.factories import UserFactory, OneTimeTokenFactory, UserFacultyFactory, StudentFactory
+from tests.apps.hostel.factories import BedPlaceFactory, CommandantFactory, HostelFactory
 from tests.bases import BaseModelFactory
 from settings import Settings
 
@@ -285,6 +289,26 @@ def set_session_for_factories(scoped_db_session: scoped_session) -> None:
     known_factories: typing.List[typing.Type[BaseModelFactory]] = [
         BedPlaceFactory,
         CommandantFactory,
+        HostelFactory,
+        UserFactory,
+        OneTimeTokenFactory,
+        StudentFactory,
+        SpecialityFactory,
+        FacultyFactory,
+        UserFacultyFactory,
+        RoleFactory,
+        ActionFactory,
+        RectorFactory,
+        UniversityFactory,
+        DeanFactory,
+        CourseFactory,
+        ServiceFactory,
+        UserRequestFactory,
+        UserRequestReviewFactory,
+        StatusFactory,
+        RequisitesFactory,
+        UserDocumentFactory,
+        ServiceDocumentFactory,
         # === Add new factory classes here!!! ===
     ]
 

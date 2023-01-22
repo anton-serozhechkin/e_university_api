@@ -11,17 +11,17 @@ class ServiceFactory(BaseModelFactory):
     service_id = factory.Sequence(lambda x: x)
     service_name = factory.Faker("pystr", min_chars=3, max_chars=255)
 
-    requisites = factory.RelatedFactory(
+    requisites = factory.RelatedFactoryList(
         factory="tests.apps.services.factories.RequisitesFactory",
         factory_related_name="service",
         size=0
     )
-    user_requests = factory.RelatedFactory(
+    user_requests = factory.RelatedFactoryList(
         factory="tests.apps.services.factories.UserRequestsFactory",
         factory_related_name="service",
         size=0
     )
-    service_document = factory.RelatedFactory(
+    service_document = factory.RelatedFactoryList(
         factory="tests.apps.services.factories.ServiceDocumentFactory",
         factory_related_name="service",
         size=0
@@ -47,12 +47,12 @@ class UserRequestFactory(BaseModelFactory):
     university = factory.SubFactory(factory=UniversityFactory)
     status_id = factory.SelfAttribute(attribute_name="status.status_id")
     status = factory.SubFactory(factory="tests.apps.services.factories.StatusFactory")
-    user_documents = factory.RelatedFactory(
+    user_documents = factory.RelatedFactoryList(
         factory="tests.apps.services.factories.UserDocumentFactory",
         factory_related_name="user_request",
         size=0
     )
-    user_request_review = factory.RelatedFactory(
+    user_request_review = factory.RelatedFactoryList(
         factory="tests.apps.services.factories.UserRequestReviewFactory",
         factory_related_name="user_request",
         size=0
@@ -70,7 +70,7 @@ class UserRequestFactory(BaseModelFactory):
 class StatusFactory(BaseModelFactory):
     status_id = factory.Sequence(lambda x: x)
     status_name = factory.Faker("pystr", min_chars=1, max_chars=50)
-    user_requests = factory.RelatedFactory(
+    user_requests = factory.RelatedFactoryList(
         factory=UserRequestFactory,
         factory_related_name="status",
         size=0
@@ -82,7 +82,7 @@ class StatusFactory(BaseModelFactory):
         sqlalchemy_get_or_create = ("status_name",)
 
 
-class RequisitesFactories(BaseModelFactory):
+class RequisitesFactory(BaseModelFactory):
     requisites_id = factory.Sequence(lambda x: x)
     iban = factory.Faker("pystr", max_chars=100)
     organisation_code = factory.Faker("pystr", max_chars=50)
@@ -107,7 +107,7 @@ class UserRequestReviewFactory(BaseModelFactory):
     updated_at = factory.Faker("date_time", tzinfo=utc)
     start_accommodation_date = factory.Faker("date")
     end_accommodation_date = factory.Faker("date")
-    total_sum = factory.Faker("pydecimal", left_digits=7, right_digits=2, positive=True)
+    total_sum = factory.Faker("pydecimal", left_digits=5, right_digits=2, positive=True)
     payment_deadline_date = factory.Faker("date")
     remark = factory.Faker("pystr", max_chars=255)
     bed_place_id = factory.SelfAttribute(attribute_name="bed_place.bed_place_id")

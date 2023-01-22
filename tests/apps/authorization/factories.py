@@ -10,12 +10,12 @@ class RoleFactory(BaseModelFactory):
     role_name = factory.Faker("pystr", max_chars=50)
     created_at = factory.Faker("date_time", tzinfo=utc)
     updated_at = factory.Faker("date_time", tzinfo=utc)
-    actions = factory.RelatedFactory(
+    actions = factory.RelatedFactoryList(
         factory="tests.apps.authorization.factories.ActionFactory",
         factory_related_name="role",
         size=0
     )
-    users = factory.RelatedFactory(
+    users = factory.RelatedFactoryList(
         factory=UserFactory,
         factory_related_name="role",
         size=0

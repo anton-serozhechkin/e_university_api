@@ -3,20 +3,20 @@ from apps.educational_institutions.models import University, Faculty, Speciality
 from tests.bases import BaseModelFactory
 
 
-class RectorFaculty(BaseModelFactory):
+class RectorFactory(BaseModelFactory):
     rector_id = factory.Sequence(lambda x: x)
-    last_name = factory.Faker("last_name", min_vars=3, max_vars=50)
-    first_name = factory.Faker("first_name", min_vars=3, max_vars=50)
-    middle_name = factory.Faker("first_name", max_vars=50)
-    faculty = factory.RelatedFactory(
+    last_name = factory.Faker("last_name")
+    first_name = factory.Faker("first_name")
+    middle_name = factory.Faker("first_name")
+    university = factory.RelatedFactoryList(
         factory="tests.apps.educational_institution.factories.UniversityFactory",
         factory_related_name="rector",
-        size=0
+        size=0,
     )
 
     class Meta:
         model = Rector
-        exclude = ("faculty",)
+        exclude = ("university",)
 
 
 class UniversityFactory(BaseModelFactory):
@@ -27,32 +27,32 @@ class UniversityFactory(BaseModelFactory):
     logo = factory.Faker("pystr", max_chars=255)
     rector_id = factory.SelfAttribute(attribute_name="rector.rector_id")
     rector = factory.SubFactory(factory="tests.apps.educational_institution.factories.RectorFactory")
-    faculties = factory.RelatedFactory(
+    faculties = factory.RelatedFactoryList(
         factory="tests.apps.educational_institution.factories.FacultyFactory",
         factory_related_name="university",
         size=0,
     )
-    hostels = factory.RelatedFactory(
+    hostels = factory.RelatedFactoryList(
         factory="tests.apps.hostels.factories.HostelFactory",
         factory_related_name="university",
         size=0,
     )
-    requisites = factory.RelatedFactory(
+    requisites = factory.RelatedFactoryList(
         factory="tests.apps.services.factories.RequisitesFactory",
         factory_related_name="university",
         size=0,
     )
-    user_request_reviews = factory.RelatedFactory(
+    user_request_reviews = factory.RelatedFactoryList(
         factory="tests.apps.services.factories.UserRequestReviewFactory",
         factory_related_name="university",
         size=0,
     )
-    user_requests = factory.RelatedFactory(
+    user_requests = factory.RelatedFactoryList(
         factory="tests.apps.services.factories.UserRequestFactory",
         factory_related_name="university",
         size=0,
     )
-    service_document = factory.RelatedFactory(
+    service_document = factory.RelatedFactoryList(
         factory="tests.apps.services.factories.ServiceDocumentFactory",
         factory_related_name="university",
         size=0,
@@ -81,22 +81,22 @@ class FacultyFactory(BaseModelFactory):
     dean = factory.SubFactory(factory="tests.apps.educational_institution.factories.DeanFactory")
     university_id = factory.SelfAttribute(attribute_name="university.university_id")
     university = factory.SubFactory(factory=UniversityFactory)
-    speciality = factory.RelatedFactory(
-        factory="tests.apps.services.factories.SpecialityFactory",
+    speciality = factory.RelatedFactoryList(
+        factory="tests.apps.educational_institution.factories.SpecialityFactory",
         factory_related_name="Faculty",
         size=0,
     )
-    students = factory.RelatedFactory(
+    students = factory.RelatedFactoryList(
         factory="tests.apps.users.factories.StudentFactory",
         factory_related_name="Faculty",
         size=0,
     )
-    users = factory.RelatedFactory(
+    users = factory.RelatedFactoryList(
         factory="tests.apps.users.factories.UsersFactory",
         factory_related_name="Faculty",
         size=0,
     )
-    user_requests = factory.RelatedFactory(
+    user_requests = factory.RelatedFactoryList(
         factory="tests.apps.services.factories.UserRequestFactory",
         factory_related_name="Faculty",
         size=0,
@@ -130,9 +130,9 @@ class SpecialityFactory(BaseModelFactory):
 
 class DeanFactory(BaseModelFactory):
     dean_id = factory.Sequence(lambda x: x)
-    last_name = factory.Faker("last_name", min_vars=3, max_vars=50)
-    first_name = factory.Faker("first_name", min_vars=3, max_vars=50)
-    middle_name = factory.Faker("first_name", max_vars=50)
+    last_name = factory.Faker("last_name")
+    first_name = factory.Faker("first_name")
+    middle_name = factory.Faker("first_name")
     faculty = factory.RelatedFactoryList(
         factory="tests.apps.educational_institution.factories.FacultyFactory",
         factory_related_name="dean",

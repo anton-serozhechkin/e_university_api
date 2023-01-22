@@ -29,7 +29,7 @@ class CommandantFactory(BaseModelFactory):
     hostel = factory.RelatedFactoryList(
         factory="tests.apps.hostel.factories.HostelFactory",
         factory_related_name="commandant",
-        size=0
+        size=0,
     )
 
     class Meta:
@@ -44,8 +44,8 @@ class HostelFactory(BaseModelFactory):
     name = factory.Faker("pystr", max_chars=100, min_chars=2)
     city = factory.Faker("pystr", max_chars=100, min_chars=10)
     street = factory.Faker("pystr", max_chars=100, min_chars=10)
-    build = factory.Faker("pystr", max_chars=10, min_chars=10)
-    month_price = factory.Faker("pydecimal", left_digits=6, right_digits=2, positive=True)
+    build = factory.Faker("pystr", max_chars=10, min_chars=1)
+    month_price = factory.Faker("pydecimal", left_digits=4, right_digits=2, positive=True)
     commandant_id = factory.SelfAttribute(attribute_name="commandant.commandant_id")
     university_id = factory.SelfAttribute(attribute_name="university.university_id")
     university = factory.SubFactory(factory=UniversityFactory)

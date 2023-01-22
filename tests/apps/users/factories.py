@@ -17,22 +17,22 @@ class UserFactory(BaseModelFactory):
     role = factory.SubFactory(factory="tests.apps.authorization.factories.RoleFactory")
     created_at = factory.Faker("date_time", tzinfo=utc)
     updated_at = factory.Faker("date_time", tzinfo=utc)
-    student = factory.RelatedFactory(
+    student = factory.RelatedFactoryList(
         factory="tests.apps.users.factories.StudentFactory",
         factory_related_name="user",
         size=0
     )
-    user_request_reviews = factory.RelatedFactory(
+    user_request_reviews = factory.RelatedFactoryList(
         factory="tests.apps.services.factories.UserRequestReviewFactory",
         factory_related_name="user",
         size=0
     )
-    faculties = factory.RelatedFactory(
+    faculties = factory.RelatedFactoryList(
         factory="tests.apps.educational_institution.factories.FacultyFactory",
         factory_related_name="user",
         size=0
     )
-    user_requests = factory.RelatedFactory(
+    user_requests = factory.RelatedFactoryList(
         factory="tests.apps.services.factories.UserRequestFactory",
         factory_related_name="user",
         size=0
@@ -81,7 +81,7 @@ class StudentFactory(BaseModelFactory):
     faculty = factory.SubFactory(factory=FacultyFactory)
     created_at = factory.Faker("date_time", tzinfo=utc)
     updated_at = factory.Faker("date_time", tzinfo=utc)
-    one_time_token = factory.RelatedFactory(
+    one_time_token = factory.RelatedFactoryList(
         factory="tests.apps.users.factories.OneTimeTokenFactory",
         factory_related_name="user_request",
         size=0
