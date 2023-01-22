@@ -105,7 +105,7 @@ class Rector(Base):
 
     university = relationship("University", back_populates="rector")
 
-    def __str__(self) -> str:
+    def __repr__(self) -> str:
         return (
             f'{self.__class__.__name__}(rector_id="{self.rector_id}",'
             f' first_name="{self.first_name}", middle_name="{self.middle_name}",'
