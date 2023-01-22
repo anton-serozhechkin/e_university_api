@@ -1,16 +1,8 @@
-from typing import Optional
-
-from pydantic import Field
-import random
-
 from pytz import utc
 import factory
-from apps.common.schemas import BaseInSchema
-from apps.services.models import Service, UserRequest, Status, Requisites, UserRequestReview, UserDocument, ServiceDocument
 from apps.users.models import User, Student, OneTimeToken, UserFaculty
-from tests.bases import AsyncPersistenceHandler, BaseFactory, BaseModelFactory
-from tests.apps.educational_institution.factories import UniversityFactory, FacultyFactory, CourseFactory, SpecialityFactory
-from tests.apps.hostel.factories import BedPlaceFactory, HostelFactory
+from tests.bases import BaseModelFactory
+from tests.apps.educational_institution.factories import FacultyFactory, CourseFactory, SpecialityFactory
 
 
 class UserFactory(BaseModelFactory):
