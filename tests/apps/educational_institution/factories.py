@@ -1,13 +1,6 @@
-from typing import Optional
-
-from pydantic import Field
-import random
-
 import factory
-from apps.common.schemas import BaseInSchema
-from apps.hostel.models import BedPlace, Commandant, Hostel
 from apps.educational_institutions.models import University, Faculty, Speciality, Dean, Rector, Course
-from tests.bases import AsyncPersistenceHandler, BaseFactory, BaseModelFactory
+from tests.bases import BaseModelFactory
 
 
 class RectorFaculty(BaseModelFactory):
@@ -15,7 +8,7 @@ class RectorFaculty(BaseModelFactory):
     last_name = factory.Faker("last_name", min_vars=3, max_vars=50)
     first_name = factory.Faker("first_name", min_vars=3, max_vars=50)
     middle_name = factory.Faker("first_name", max_vars=50)
-    faculty = factory.RelatedFactoryList(
+    faculty = factory.RelatedFactory(
         factory="tests.apps.educational_institution.factories.UniversityFactory",
         factory_related_name="rector",
         size=0
@@ -23,6 +16,7 @@ class RectorFaculty(BaseModelFactory):
 
     class Meta:
         model = Rector
+        exclude = ("faculty",)
 
 
 class UniversityFactory(BaseModelFactory):
@@ -66,6 +60,15 @@ class UniversityFactory(BaseModelFactory):
 
     class Meta:
         model = University
+        exclude = (
+            "rector",
+            "faculties",
+            "hostels",
+            "requisites",
+            "user_request_reviews",
+            "user_requests",
+            "service_document",
+        )
         sqlalchemy_get_or_create = ("rector_id",)
 
 
@@ -101,6 +104,14 @@ class FacultyFactory(BaseModelFactory):
 
     class Meta:
         model = Faculty
+        exclude = (
+            "dean",
+            "university",
+            "speciality",
+            "students",
+            "users",
+            "user_requests",
+        )
         sqlalchemy_get_or_create = ("dean_id", "university_id")
 
 
@@ -113,6 +124,7 @@ class SpecialityFactory(BaseModelFactory):
 
     class Meta:
         model = Speciality
+        exclude = ("faculties",)
         sqlalchemy_get_or_create = ("faculty_id",)
 
 
@@ -129,6 +141,7 @@ class DeanFactory(BaseModelFactory):
 
     class Meta:
         model = Dean
+        exclude = ("faculty",)
 
 
 class CourseFactory(BaseModelFactory):

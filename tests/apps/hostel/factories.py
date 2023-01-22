@@ -1,12 +1,6 @@
-from typing import Optional
-
-from pydantic import Field
-import random
-
 import factory
-from apps.common.schemas import BaseInSchema
 from apps.hostel.models import BedPlace, Commandant, Hostel
-from tests.bases import AsyncPersistenceHandler, BaseFactory, BaseModelFactory
+from tests.bases import BaseModelFactory
 from tests.apps.educational_institution.factories import UniversityFactory
 
 
@@ -22,13 +16,14 @@ class BedPlaceFactory(BaseModelFactory):
 
     class Meta:
         model = BedPlace
+        exclude = ("user_request_review",)
 
 
 class CommandantFactory(BaseModelFactory):
     commandant_id = factory.Sequence(lambda x: x)
-    last_name = factory.Faker("last_name")
-    first_name = factory.Faker("first_name")
-    middle_name = factory.Faker("first_name")
+    last_name = factory.Faker("last_name", min_chars=1, max_chars=50)
+    first_name = factory.Faker("first_name", min_chars=1, max_chars=50)
+    middle_name = factory.Faker("first_name", max_chars=50)
     telephone_number = factory.Faker("phone_number")
 
     hostel = factory.RelatedFactoryList(
@@ -39,6 +34,7 @@ class CommandantFactory(BaseModelFactory):
 
     class Meta:
         model = Commandant
+        exclude = ("hostel",)
         sqlalchemy_get_or_create = ("telephone_number",)
 
 
@@ -57,4 +53,5 @@ class HostelFactory(BaseModelFactory):
 
     class Meta:
         model = Hostel
+        exclude = ("university", "commandant")
         sqlalchemy_get_or_create = ("university_id", "commandant_id")
