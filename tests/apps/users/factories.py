@@ -8,10 +8,13 @@ from tests.apps.educational_institution.factories import FacultyFactory, CourseF
 
 class UserFactory(BaseModelFactory):
     user_id = factory.Sequence(lambda x: x)
-    login = factory.Faker("pystr", min_chars=1, max_chars=50)
+    mod_login = factory.Faker("pystr", min_chars=1, max_chars=40)
+    login = factory.LazyAttribute(function=lambda obj: obj.mod_login + str(obj.user_id))
     simple_password = factory.Faker("pystr", min_chars=4, max_chars=10)
-    password = factory.LazyAttribute(function=lambda obj: get_hashed_password(password=obj.password))
+    password = factory.LazyAttribute(function=lambda obj: get_hashed_password(obj.simple_password))
     last_visit_at = factory.Faker("date_time", tzinfo=utc)
+    mod_email = factory.Faker("email")
+    email = factory.LazyAttribute(function=lambda obj: str(obj.user_id) + obj.mod_email)
     is_active = factory.Faker("pybool")
     role_id = factory.SelfAttribute(attribute_name="role.role_id")
     role = factory.SubFactory(factory="tests.apps.authorization.factories.RoleFactory")
@@ -46,9 +49,13 @@ class UserFactory(BaseModelFactory):
     class Meta:
         model = User
         exclude = (
-            "role", "simple_password", "student", "user_request_reviews", "faculties", "user_requests", "user_faculties",
+            "role", "simple_password", "mod_login", "mod_email", "student", "user_request_reviews", "faculties", "user_requests", "user_faculties",
         )
-        sqlalchemy_get_or_create = ("role_id",)
+        sqlalchemy_get_or_create = (
+            "email",
+            "login",
+            "role_id",
+        )
 
 
 class OneTimeTokenFactory(BaseModelFactory):
@@ -69,8 +76,9 @@ class StudentFactory(BaseModelFactory):
     last_name = factory.Faker("last_name")
     first_name = factory.Faker("first_name")
     middle_name = factory.Faker("first_name")
-    telephone_number = factory.Faker("phone_number")
-    gender = factory.Faker("pystr_format", string_format='?#{{random_letter}}', letters="ЧЖ")
+    mod_tel_number = factory.Faker("pystr", min_chars=1, max_chars=10)
+    telephone_number = factory.LazyAttribute(function=lambda obj: str(obj.student_id) + obj.mod_tel_number)
+    gender = factory.Faker("pystr", min_chars=1, max_chars=1)
     course_id = factory.SelfAttribute(attribute_name="course.course_id")
     course = factory.SubFactory(factory=CourseFactory)
     speciality_id = factory.SelfAttribute(attribute_name="speciality.speciality_id")
@@ -89,9 +97,9 @@ class StudentFactory(BaseModelFactory):
 
     class Meta:
         model = Student
-        exclude = ("course", "speciality", "user", "faculty", "one_time_token")
+        exclude = ("course", "speciality", "mod_tel_number", "user", "faculty", "one_time_token")
         sqlalchemy_get_or_create = (
-            "course_id", "user_id", "faculty_id", "speciality_id"
+            "course_id", "user_id", "faculty_id", "speciality_id", "telephone_number"
         )
 
 

@@ -4,7 +4,7 @@ from apps.services.models import Service, UserRequest, Status, Requisites, UserR
 from tests.bases import BaseModelFactory
 from tests.apps.educational_institution.factories import UniversityFactory, FacultyFactory
 from tests.apps.hostel.factories import BedPlaceFactory, HostelFactory
-from tests.apps.users.factories import UserFactory
+from tests.apps.users.factories import UserFactory, StudentFactory
 
 
 class ServiceFactory(BaseModelFactory):
@@ -38,13 +38,12 @@ class UserRequestFactory(BaseModelFactory):
     created_at = factory.Faker("date_time", tzinfo=utc)
     updated_at = factory.Faker("date_time", tzinfo=utc)
     user_id = factory.SelfAttribute(attribute_name="user.user_id")
-    user = factory.SubFactory(factory="tests.apps.users.factories.UserFaculty")
+    user = factory.SubFactory(factory=UserFactory)
+    student = factory.LazyAttribute(function=lambda obj: StudentFactory(user_id=obj.user.user_id))
     service_id = factory.SelfAttribute(attribute_name="service.service_id")
     service = factory.SubFactory(factory=ServiceFactory)
-    faculty_id = factory.SelfAttribute(attribute_name="faculty.faculty_id")
-    faculty = factory.SubFactory(factory=FacultyFactory)
-    university_id = factory.SelfAttribute(attribute_name="university.university_id")
-    university = factory.SubFactory(factory=UniversityFactory)
+    faculty_id = factory.LazyAttribute(function=lambda obj: obj.student.faculty_id)
+    university_id = factory.LazyAttribute(function=lambda obj: obj.student.faculty.university_id)
     status_id = factory.SelfAttribute(attribute_name="status.status_id")
     status = factory.SubFactory(factory="tests.apps.services.factories.StatusFactory")
     user_documents = factory.RelatedFactoryList(
@@ -61,7 +60,7 @@ class UserRequestFactory(BaseModelFactory):
     class Meta:
         model = UserRequest
         exclude = (
-            "user_documents", "user_request_review", "user", "service", "faculty", "university", "status")
+            "user_documents", "user_request_review", "student", "user", "service", "faculty", "university", "status")
         sqlalchemy_get_or_create = (
             "user_id", "service_id", "faculty_id", "university_id", "status_id"
         )
@@ -112,8 +111,8 @@ class UserRequestReviewFactory(BaseModelFactory):
     remark = factory.Faker("pystr", max_chars=255)
     bed_place_id = factory.SelfAttribute(attribute_name="bed_place.bed_place_id")
     bed_place = factory.SubFactory(factory=BedPlaceFactory)
-    reviewer = factory.SelfAttribute(attribute_name="reviewer_user.user_id")
-    reviewer_user = factory.SubFactory(factory=UserFactory)
+    reviewer = factory.SelfAttribute(attribute_name="user.user_id")
+    user = factory.SubFactory(factory=UserFactory)
     hostel_id = factory.SelfAttribute(attribute_name="hostel.hostel_id")
     hostel = factory.SubFactory(factory=HostelFactory)
     university_id = factory.SelfAttribute(attribute_name="university.university_id")
@@ -125,7 +124,7 @@ class UserRequestReviewFactory(BaseModelFactory):
         model = UserRequestReview
         exclude = (
             "bed_place",
-            "reviewer_user",
+            "user",
             "hostel",
             "university",
             "user_request",
