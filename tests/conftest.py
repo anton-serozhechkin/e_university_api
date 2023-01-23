@@ -19,13 +19,37 @@ from sqlalchemy.orm import Session, scoped_session, sessionmaker
 from apps.common.db import async_session_factory as AsyncSessionFactory  # noqa
 from apps.common.db import session_factory as SessionFactory  # noqa
 from apps.common.dependencies import get_async_session, get_session
-from tests.apps.authorization.factories import RoleFactory, ActionFactory
-from tests.apps.educational_institution.factories import RectorFactory, UniversityFactory, FacultyFactory, SpecialityFactory, DeanFactory, CourseFactory
-from tests.apps.services.factories import ServiceFactory, UserRequestFactory, StatusFactory, RequisitesFactory, UserRequestReviewFactory, UserDocumentFactory, ServiceDocumentFactory
-from tests.apps.users.factories import UserFactory, OneTimeTokenFactory, UserFacultyFactory, StudentFactory
-from tests.apps.hostel.factories import BedPlaceFactory, CommandantFactory, HostelFactory
-from tests.bases import BaseModelFactory
 from settings import Settings
+from tests.apps.authorization.factories import ActionFactory, RoleFactory
+from tests.apps.educational_institution.factories import (
+    CourseFactory,
+    DeanFactory,
+    FacultyFactory,
+    RectorFactory,
+    SpecialityFactory,
+    UniversityFactory,
+)
+from tests.apps.hostel.factories import (
+    BedPlaceFactory,
+    CommandantFactory,
+    HostelFactory,
+)
+from tests.apps.services.factories import (
+    RequisitesFactory,
+    ServiceDocumentFactory,
+    ServiceFactory,
+    StatusFactory,
+    UserDocumentFactory,
+    UserRequestFactory,
+    UserRequestReviewFactory,
+)
+from tests.apps.users.factories import (
+    OneTimeTokenFactory,
+    StudentFactory,
+    UserFactory,
+    UserFacultyFactory,
+)
+from tests.bases import BaseModelFactory
 
 
 @pytest.fixture(scope="session", autouse=True)
@@ -315,4 +339,3 @@ def set_session_for_factories(scoped_db_session: scoped_session) -> None:
     for factory_class in known_factories:
         # Set up session to factory
         factory_class._meta.sqlalchemy_session = scoped_db_session
-

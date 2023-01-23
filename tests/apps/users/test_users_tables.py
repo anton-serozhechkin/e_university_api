@@ -1,9 +1,9 @@
-from apps.users.models import User, UserFaculty, OneTimeToken, Student
+from apps.users.models import OneTimeToken, Student, User, UserFaculty
 from tests.apps.users.factories import (
-    UserFactory,
-    UserFacultyFactory,
     OneTimeTokenFactory,
     StudentFactory,
+    UserFactory,
+    UserFacultyFactory,
 )
 from tests.bases import BaseModelFactory
 
@@ -26,7 +26,9 @@ class TestUser:
 
 class TestOneTimeToken:
     def test_factory(self) -> None:
-        BaseModelFactory.check_factory(factory_class=OneTimeTokenFactory, model=OneTimeToken)
+        BaseModelFactory.check_factory(
+            factory_class=OneTimeTokenFactory, model=OneTimeToken
+        )
 
     def test__repr__(self) -> None:
         obj: OneTimeToken = OneTimeTokenFactory()
@@ -59,7 +61,9 @@ class TestStudent:
 
 class TestUserFaculty:
     def test_factory(self) -> None:
-        BaseModelFactory.check_factory(factory_class=UserFacultyFactory, model=UserFaculty)
+        BaseModelFactory.check_factory(
+            factory_class=UserFacultyFactory, model=UserFaculty
+        )
 
     def test__repr__(self) -> None:
         obj: UserFaculty = UserFacultyFactory()

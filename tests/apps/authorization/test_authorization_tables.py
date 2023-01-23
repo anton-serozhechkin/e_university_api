@@ -1,5 +1,5 @@
-from apps.authorization.models import Role, Action
-from tests.apps.authorization.factories import RoleFactory, ActionFactory
+from apps.authorization.models import Action, Role
+from tests.apps.authorization.factories import ActionFactory, RoleFactory
 from tests.bases import BaseModelFactory
 
 

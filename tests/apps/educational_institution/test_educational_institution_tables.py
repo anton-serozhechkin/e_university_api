@@ -1,11 +1,18 @@
-from apps.educational_institutions.models import Rector, University, Faculty, Speciality, Dean, Course
+from apps.educational_institutions.models import (
+    Course,
+    Dean,
+    Faculty,
+    Rector,
+    Speciality,
+    University,
+)
 from tests.apps.educational_institution.factories import (
-    RectorFactory,
-    UniversityFactory,
-    FacultyFactory,
-    SpecialityFactory,
-    DeanFactory,
     CourseFactory,
+    DeanFactory,
+    FacultyFactory,
+    RectorFactory,
+    SpecialityFactory,
+    UniversityFactory,
 )
 from tests.bases import BaseModelFactory
 
@@ -27,7 +34,9 @@ class TestRector:
 
 class TestUniversity:
     def test_factory(self) -> None:
-        BaseModelFactory.check_factory(factory_class=UniversityFactory, model=University)
+        BaseModelFactory.check_factory(
+            factory_class=UniversityFactory, model=University
+        )
 
     def test__repr__(self) -> None:
         obj: University = UniversityFactory()
@@ -58,7 +67,9 @@ class TestFaculty:
 
 class TestSpeciality:
     def test_factory(self) -> None:
-        BaseModelFactory.check_factory(factory_class=SpecialityFactory, model=Speciality)
+        BaseModelFactory.check_factory(
+            factory_class=SpecialityFactory, model=Speciality
+        )
 
     def test__repr__(self) -> None:
         obj: Speciality = SpecialityFactory()

@@ -1,14 +1,14 @@
 import datetime
-from typing import Any, Dict, List, Type
-import typing
 import random
+import typing
+from typing import Any, Dict, List, Type
 
+import factory
 from pydantic_factories import AsyncPersistenceProtocol, ModelFactory, PostGenerated
 from pytz import utc
-import factory
+
 from apps.common.db import Base, async_session_factory
 from apps.common.services import AsyncCRUDBase, CreateSchemaType, ModelType
-
 
 starting_seq_num = 0
 
@@ -65,7 +65,9 @@ class BaseModelFactory(factory.alchemy.SQLAlchemyModelFactory):
         return super()._create(model_class=model_class, *args, **kwargs)
 
     @staticmethod
-    def check_factory(factory_class: typing.Type["BaseModelFactory"], model: typing.Type[Base]) -> None:
+    def check_factory(
+        factory_class: typing.Type["BaseModelFactory"], model: typing.Type[Base]
+    ) -> None:
         """Test that factory creates successfully."""
         obj = factory_class()
         size = random.randint(2, 3)
@@ -79,4 +81,3 @@ class BaseModelFactory(factory.alchemy.SQLAlchemyModelFactory):
     # @classmethod
     # def _setup_next_sequence(cls):
     #     return starting_seq_num
-

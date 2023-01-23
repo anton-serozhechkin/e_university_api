@@ -1,9 +1,14 @@
-from pytz import utc
 import factory
+from pytz import utc
+
 from apps.authorization.services import get_hashed_password
-from apps.users.models import User, Student, OneTimeToken, UserFaculty
+from apps.users.models import OneTimeToken, Student, User, UserFaculty
+from tests.apps.educational_institution.factories import (
+    CourseFactory,
+    FacultyFactory,
+    SpecialityFactory,
+)
 from tests.bases import BaseModelFactory
-from tests.apps.educational_institution.factories import FacultyFactory, CourseFactory, SpecialityFactory
 
 
 class UserFactory(BaseModelFactory):
@@ -11,7 +16,9 @@ class UserFactory(BaseModelFactory):
     mod_login = factory.Faker("pystr", min_chars=1, max_chars=40)
     login = factory.LazyAttribute(function=lambda obj: obj.mod_login + str(obj.user_id))
     simple_password = factory.Faker("pystr", min_chars=4, max_chars=10)
-    password = factory.LazyAttribute(function=lambda obj: get_hashed_password(obj.simple_password))
+    password = factory.LazyAttribute(
+        function=lambda obj: get_hashed_password(obj.simple_password)
+    )
     last_visit_at = factory.Faker("date_time", tzinfo=utc)
     mod_email = factory.Faker("email")
     email = factory.LazyAttribute(function=lambda obj: str(obj.user_id) + obj.mod_email)
@@ -23,33 +30,41 @@ class UserFactory(BaseModelFactory):
     student = factory.RelatedFactoryList(
         factory="tests.apps.users.factories.StudentFactory",
         factory_related_name="user",
-        size=0
+        size=0,
     )
     user_request_reviews = factory.RelatedFactoryList(
         factory="tests.apps.services.factories.UserRequestReviewFactory",
         factory_related_name="user",
-        size=0
+        size=0,
     )
     faculties = factory.RelatedFactoryList(
         factory="tests.apps.educational_institution.factories.FacultyFactory",
         factory_related_name="user",
-        size=0
+        size=0,
     )
     user_requests = factory.RelatedFactoryList(
         factory="tests.apps.services.factories.UserRequestFactory",
         factory_related_name="user",
-        size=0
+        size=0,
     )
     user_faculties = factory.RelatedFactoryList(
         factory="tests.apps.users.factories.UserFacultyFactory",
         factory_related_name="user",
-        size=0
+        size=0,
     )
 
     class Meta:
         model = User
         exclude = (
-            "role", "simple_password", "mod_login", "mod_email", "student", "user_request_reviews", "faculties", "user_requests", "user_faculties",
+            "role",
+            "simple_password",
+            "mod_login",
+            "mod_email",
+            "student",
+            "user_request_reviews",
+            "faculties",
+            "user_requests",
+            "user_faculties",
         )
         sqlalchemy_get_or_create = (
             "email",
@@ -77,7 +92,9 @@ class StudentFactory(BaseModelFactory):
     first_name = factory.Faker("first_name")
     middle_name = factory.Faker("first_name")
     mod_tel_number = factory.Faker("pystr", min_chars=1, max_chars=10)
-    telephone_number = factory.LazyAttribute(function=lambda obj: str(obj.student_id) + obj.mod_tel_number)
+    telephone_number = factory.LazyAttribute(
+        function=lambda obj: str(obj.student_id) + obj.mod_tel_number
+    )
     gender = factory.Faker("pystr", min_chars=1, max_chars=1)
     course_id = factory.SelfAttribute(attribute_name="course.course_id")
     course = factory.SubFactory(factory=CourseFactory)
@@ -92,14 +109,25 @@ class StudentFactory(BaseModelFactory):
     one_time_token = factory.RelatedFactoryList(
         factory="tests.apps.users.factories.OneTimeTokenFactory",
         factory_related_name="user_request",
-        size=0
+        size=0,
     )
 
     class Meta:
         model = Student
-        exclude = ("course", "speciality", "mod_tel_number", "user", "faculty", "one_time_token")
+        exclude = (
+            "course",
+            "speciality",
+            "mod_tel_number",
+            "user",
+            "faculty",
+            "one_time_token",
+        )
         sqlalchemy_get_or_create = (
-            "course_id", "user_id", "faculty_id", "speciality_id", "telephone_number"
+            "course_id",
+            "user_id",
+            "faculty_id",
+            "speciality_id",
+            "telephone_number",
         )
 
 

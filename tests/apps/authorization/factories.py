@@ -1,8 +1,9 @@
 import factory
 from pytz import utc
-from apps.authorization.models import Role, Action
-from tests.bases import BaseModelFactory
+
+from apps.authorization.models import Action, Role
 from tests.apps.users.factories import UserFactory
+from tests.bases import BaseModelFactory
 
 
 class RoleFactory(BaseModelFactory):
@@ -13,12 +14,10 @@ class RoleFactory(BaseModelFactory):
     actions = factory.RelatedFactoryList(
         factory="tests.apps.authorization.factories.ActionFactory",
         factory_related_name="role",
-        size=0
+        size=0,
     )
     users = factory.RelatedFactoryList(
-        factory=UserFactory,
-        factory_related_name="role",
-        size=0
+        factory=UserFactory, factory_related_name="role", size=0
     )
 
     class Meta:
@@ -36,4 +35,3 @@ class ActionFactory(BaseModelFactory):
         model = Action
         exclude = ("roles",)
         sqlalchemy_get_or_create = ("role_id",)
-

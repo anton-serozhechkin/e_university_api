@@ -185,7 +185,7 @@ class UserRequestReview(Base):
 
     def __repr__(self) -> str:
         return (
-            f'{self.__class__.__name__}(user_request_review_id='
+            f"{self.__class__.__name__}(user_request_review_id="
             f'"{self.user_request_review_id}",'
             f' created_at="{self.created_at}", room_number="{self.room_number}",'
             f' start_accommodation_date="{self.start_accommodation_date}",'
@@ -246,7 +246,7 @@ class ServiceDocument(Base):
 
     def __repr__(self):
         return (
-            f'{self.__class__.__name__}(service_document_id='
+            f"{self.__class__.__name__}(service_document_id="
             f'"{self.service_document_id}", service_id="{self.service_id}",'
             f'university_id="{self.university_id}", documents="{self.documents}"'
         )

@@ -1,7 +1,8 @@
 import factory
+
 from apps.hostel.models import BedPlace, Commandant, Hostel
-from tests.bases import BaseModelFactory
 from tests.apps.educational_institution.factories import UniversityFactory
+from tests.bases import BaseModelFactory
 
 
 class BedPlaceFactory(BaseModelFactory):
@@ -45,7 +46,9 @@ class HostelFactory(BaseModelFactory):
     city = factory.Faker("pystr", max_chars=100, min_chars=10)
     street = factory.Faker("pystr", max_chars=100, min_chars=10)
     build = factory.Faker("pystr", max_chars=10, min_chars=1)
-    month_price = factory.Faker("pydecimal", left_digits=4, right_digits=2, positive=True)
+    month_price = factory.Faker(
+        "pydecimal", left_digits=4, right_digits=2, positive=True
+    )
     commandant_id = factory.SelfAttribute(attribute_name="commandant.commandant_id")
     university_id = factory.SelfAttribute(attribute_name="university.university_id")
     university = factory.SubFactory(factory=UniversityFactory)

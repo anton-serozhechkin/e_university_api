@@ -1,5 +1,13 @@
 import factory
-from apps.educational_institutions.models import University, Faculty, Speciality, Dean, Rector, Course
+
+from apps.educational_institutions.models import (
+    Course,
+    Dean,
+    Faculty,
+    Rector,
+    Speciality,
+    University,
+)
 from tests.bases import BaseModelFactory
 
 
@@ -26,7 +34,9 @@ class UniversityFactory(BaseModelFactory):
     city = factory.Faker("pystr", max_chars=255, min_chars=4)
     logo = factory.Faker("pystr", max_chars=255)
     rector_id = factory.SelfAttribute(attribute_name="rector.rector_id")
-    rector = factory.SubFactory(factory="tests.apps.educational_institution.factories.RectorFactory")
+    rector = factory.SubFactory(
+        factory="tests.apps.educational_institution.factories.RectorFactory"
+    )
     faculties = factory.RelatedFactoryList(
         factory="tests.apps.educational_institution.factories.FacultyFactory",
         factory_related_name="university",
@@ -78,7 +88,9 @@ class FacultyFactory(BaseModelFactory):
     shortname = factory.Faker("pystr", max_chars=20, min_chars=3)
     main_email = factory.Faker("pystr", max_chars=50)
     dean_id = factory.SelfAttribute(attribute_name="dean.dean_id")
-    dean = factory.SubFactory(factory="tests.apps.educational_institution.factories.DeanFactory")
+    dean = factory.SubFactory(
+        factory="tests.apps.educational_institution.factories.DeanFactory"
+    )
     university_id = factory.SelfAttribute(attribute_name="university.university_id")
     university = factory.SubFactory(factory=UniversityFactory)
     speciality = factory.RelatedFactoryList(
@@ -136,7 +148,7 @@ class DeanFactory(BaseModelFactory):
     faculty = factory.RelatedFactoryList(
         factory="tests.apps.educational_institution.factories.FacultyFactory",
         factory_related_name="dean",
-        size=0
+        size=0,
     )
 
     class Meta:

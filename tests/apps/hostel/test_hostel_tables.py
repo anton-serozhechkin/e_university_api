@@ -1,8 +1,8 @@
-from apps.hostel.models import BedPlace, Hostel, Commandant
+from apps.hostel.models import BedPlace, Commandant, Hostel
 from tests.apps.hostel.factories import (
     BedPlaceFactory,
     CommandantFactory,
-    HostelFactory
+    HostelFactory,
 )
 from tests.bases import BaseModelFactory
 
@@ -13,15 +13,19 @@ class TestBedPlaces:
 
     def test__repr__(self) -> None:
         obj: BedPlace = BedPlaceFactory()
-        expected_result = f'{obj.__class__.__name__}(bed_place_id="{obj.bed_place_id}", ' \
-                          f'bed_place_name="{obj.bed_place_name}")'
+        expected_result = (
+            f'{obj.__class__.__name__}(bed_place_id="{obj.bed_place_id}", '
+            f'bed_place_name="{obj.bed_place_name}")'
+        )
         result = obj.__repr__()
         assert expected_result == result
 
 
 class TestCommandant:
     def test_factory(self) -> None:
-        BaseModelFactory.check_factory(factory_class=CommandantFactory, model=Commandant)
+        BaseModelFactory.check_factory(
+            factory_class=CommandantFactory, model=Commandant
+        )
 
     def test__repr__(self) -> None:
         obj: Commandant = CommandantFactory()
