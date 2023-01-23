@@ -61,7 +61,7 @@ class UserFactory(BaseModelFactory):
 class OneTimeTokenFactory(BaseModelFactory):
     token_id = factory.Sequence(lambda x: x)
     token = factory.Faker("pystr", min_chars=1, max_chars=255)
-    expires_at = factory.Faker("date_time")
+    expires_at = factory.Faker("date_time", tzinfo=utc)
     student_id = factory.SelfAttribute(attribute_name="student.student_id")
     student = factory.SubFactory(factory="tests.apps.users.factories.StudentFactory")
 
@@ -112,4 +112,4 @@ class UserFacultyFactory(BaseModelFactory):
     class Meta:
         model = UserFaculty
         exclude = ("user", "faculty")
-        sqlalchemy_get_or_create = ("user_id", "faculty_id", "telephone_number")
+        sqlalchemy_get_or_create = ("user_id", "faculty_id")
