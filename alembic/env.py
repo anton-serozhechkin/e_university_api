@@ -2,6 +2,7 @@ import pathlib
 from logging.config import fileConfig
 
 from alembic import context
+from settings import Settings
 from sqlalchemy_utils import create_database, database_exists
 
 from apps.authorization.models import Base as AuthBase
@@ -18,8 +19,8 @@ if config.config_file_name is not None:
 
 target_metadata = Base.metadata
 
-if not database_exists(engine.url):
-    create_database(engine.url)
+if not database_exists(Settings.POSTGRES_DSN):
+    create_database(Settings.POSTGRES_DSN)
 
 
 def run_migrations_offline() -> None:
@@ -40,7 +41,7 @@ def run_migrations_offline() -> None:
         SQL_VERSIONS_DIR.mkdir()
 
     context.configure(
-        url=engine.url,
+        url=Settings.POSTGRES_DSN,
         target_metadata=target_metadata,
         literal_binds=True,
         compare_type=True,
@@ -62,7 +63,7 @@ def run_migrations_online() -> None:
     and associate a connection with the context.
 
     """
-    connectable = context.config.attributes.get("connections", None)
+    connectable = context.config.attributes.get("connection", None)
     if connectable is None:
         connectable = engine
 
