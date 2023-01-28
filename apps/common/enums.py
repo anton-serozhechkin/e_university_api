@@ -9,7 +9,7 @@ class JSENDStatus(str, Enum):
     ERROR = "error"
 
 
-class UserRequestStatus(str, Enum):
+class UserRequestStatus(int, Enum):
     """Enum based class to set status of user request."""
 
     APPROVED = 1
