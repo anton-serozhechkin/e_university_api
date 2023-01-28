@@ -186,7 +186,6 @@ async def app_fixture(
         app (fastapi.FastAPI): Instance of FastAPI ASGI application.
     """
     print("run app_fixture")
-    print(db_session, 9898989898)
 
     async def override_get_async_session() -> AsyncSession:
         """Replace get_async_session dependency with AsyncSession from `db_session` fixture"""
@@ -307,8 +306,6 @@ def sync_db_session(
     """Create sync session for database and rollback it after test."""
     print("run sync_db_session")
     with sync_session_factory() as session:
-        users = session.execute(select(User)).fetchall()
-        print("users in sync_db_session", users)
         yield session
         session.rollback()
         session.close()
