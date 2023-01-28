@@ -77,7 +77,3 @@ class BaseModelFactory(factory.alchemy.SQLAlchemyModelFactory):
         assert size == len(objs)
         for i in objs:
             assert isinstance(i, model)
-
-    # @classmethod
-    # def _setup_next_sequence(cls):
-    #     return starting_seq_num
