@@ -104,7 +104,7 @@ class FacultyFactory(BaseModelFactory):
         size=0,
     )
     users = factory.RelatedFactoryList(
-        factory="tests.apps.users.factories.UsersFactory",
+        factory="tests.apps.users.factories.UserFacultyFactory",
         factory_related_name="Faculty",
         size=0,
     )

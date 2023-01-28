@@ -50,6 +50,7 @@ pydantic-factories = "^1.7.0"
 pytest-alembic = "^0.8.4"
 httpx = "^0.23.0"
 factory-boy = "^3.2.1"
+async-factory-boy = "^1.0.0"
 
 [build-system]
 requires = ["poetry-core"]
@@ -91,3 +92,4 @@ python_files = "test_*"
 python_classes = "Test*"
 python_functions = "test_*"
 pytest_alembic_tests_folder = "tests/alembic"
+asyncio_mode = "auto"
