@@ -83,7 +83,7 @@ class UniversityFactory(BaseModelFactory):
 
 
 class FacultyFactory(BaseModelFactory):
-    faculty_id = factory.Sequence(lambda x: x)
+    faculty_id = factory.Sequence(lambda x: x + 3000)
     name = factory.Faker("pystr", max_chars=255, min_chars=3)
     shortname = factory.Faker("pystr", max_chars=20, min_chars=3)
     main_email = factory.Faker("pystr", max_chars=50)
@@ -124,7 +124,7 @@ class FacultyFactory(BaseModelFactory):
             "users",
             "user_requests",
         )
-        sqlalchemy_get_or_create = ("dean_id", "university_id")
+        sqlalchemy_get_or_create = ("faculty_id", "dean_id", "university_id")
 
 
 class SpecialityFactory(BaseModelFactory):
@@ -154,6 +154,7 @@ class DeanFactory(BaseModelFactory):
     class Meta:
         model = Dean
         exclude = ("faculty",)
+        sqlalchemy_get_or_create = ("dean_id",)
 
 
 class CourseFactory(BaseModelFactory):
