@@ -1,10 +1,18 @@
 import typing
 import uuid
+import pytest
+from typing import List
 
-from fastapi import status
+from faker import Faker
+from httpx import AsyncClient
+from fastapi import status, FastAPI
 from httpx import Response
 
+from apps.authorization.services import create_access_token
 from apps.common.enums import JSENDStatus
+from apps.common.services import ModelType
+from apps.users.models import User
+from tests.apps.users.factories import UserFactory
 
 
 def assert_jsend_response(
@@ -22,3 +30,17 @@ def assert_jsend_response(
     assert response_json["code"] == code
     if data is not ...:
         assert response_json["data"] == data
+
+
+@pytest.fixture(scope="function")
+async def access_token(
+        faker: Faker,
+) -> str:
+    user: User = UserFactory(mod_email=faker.email())
+    return create_access_token(subject=user.email)
+
+
+def find_created_instance(instance_id: int, data: List, attr: str) -> ModelType:
+    for instance in data:
+        if instance.get(attr) == instance_id:
+            return instance

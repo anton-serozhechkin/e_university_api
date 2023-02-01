@@ -141,7 +141,7 @@ class SpecialityFactory(BaseModelFactory):
 
 
 class DeanFactory(BaseModelFactory):
-    dean_id = factory.Sequence(lambda x: x)
+    dean_id = factory.Sequence(lambda x: x + 3000)
     last_name = factory.Faker("last_name")
     first_name = factory.Faker("first_name")
     middle_name = factory.Faker("first_name")

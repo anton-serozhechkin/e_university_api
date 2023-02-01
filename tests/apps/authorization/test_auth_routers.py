@@ -8,7 +8,7 @@ from apps.authorization.services import create_access_token
 from apps.common.schemas import JSENDStatus
 from apps.users.models import User
 from apps.authorization.models import Role
-from tests.apps.conftest import assert_jsend_response
+from tests.apps.conftest import assert_jsend_response, find_created_instance
 from tests.apps.authorization.factories import RoleFactory
 from tests.apps.users.factories import UserFactory
 
@@ -69,7 +69,10 @@ class TestLoginRouter:
             code=status.HTTP_200_OK,
         )
         data = response.json()["data"]
-        amend = len(data) - 3
-        for i in range(3):
-            assert data[i+amend].get("role_id") == roles[i].role_id
-            assert data[i+amend].get("role_name") == roles[i].role_name
+
+        for role in roles:
+            created_instance = find_created_instance(
+                role.role_id, data, "role_id"
+            )
+            assert created_instance.get("role_id") == role.role_id
+            assert created_instance.get("role_name") == role.role_name

@@ -7,9 +7,9 @@ from typing import List
 from apps.authorization.services import create_access_token
 from apps.common.schemas import JSENDStatus
 from apps.educational_institutions.models import Faculty, Rector, University
-from apps.hostel.models import Hostel
+from apps.hostel.models import Hostel, BedPlace
 from apps.users.models import Student, User, UserFaculty
-from tests.apps.conftest import assert_jsend_response
+from tests.apps.conftest import assert_jsend_response, find_created_instance
 from tests.apps.educational_institution.factories import (
     FacultyFactory,
     RectorFactory,
@@ -54,20 +54,23 @@ class TestReadHostelListRouter:
             code=status.HTTP_200_OK,
         )
         data = response.json()["data"]
-        amend = len(data) - 3
-        for i in range(3):
-            assert data[i+amend].get("university_id") == hostels[i].university_id
-            assert data[i+amend].get("hostel_id") == hostels[i].hostel_id
-            assert data[i+amend].get("number") == hostels[i].number
-            assert data[i+amend].get("name") == hostels[i].name
-            assert data[i+amend].get("city") == hostels[i].city
-            assert data[i+amend].get("street") == hostels[i].street
-            assert data[i+amend].get("build") == hostels[i].build
-            assert data[i+amend].get("commandant_id") == hostels[i].commandant_id
-            assert data[i+amend].get("commandant_full_name") == {
-                'first_name': hostels[i].commandant.first_name,
-                'last_name': hostels[i].commandant.last_name,
-                'middle_name': hostels[i].commandant.middle_name,
+
+        for hostel in hostels:
+            created_instance = find_created_instance(
+                hostel.hostel_id, data, "hostel_id"
+            )
+            assert created_instance.get("university_id") == hostel.university_id
+            assert created_instance.get("hostel_id") == hostel.hostel_id
+            assert created_instance.get("number") == hostel.number
+            assert created_instance.get("name") == hostel.name
+            assert created_instance.get("city") == hostel.city
+            assert created_instance.get("street") == hostel.street
+            assert created_instance.get("build") == hostel.build
+            assert created_instance.get("commandant_id") == hostel.commandant_id
+            assert created_instance.get("commandant_full_name") == {
+                'first_name': hostel.commandant.first_name,
+                'last_name': hostel.commandant.last_name,
+                'middle_name': hostel.commandant.middle_name,
             }
 
     @pytest.mark.asyncio
@@ -140,8 +143,11 @@ class TestReadBedPlaceRouter:
             code=status.HTTP_200_OK,
         )
         data = response.json()["data"]
-        amend = len(data) - 3
-        for i in range(3):
-            assert data[i+amend].get("bed_place_id") == bed_places[i].bed_place_id
-            assert data[i+amend].get("bed_place_name") == bed_places[i].bed_place_name
+
+        for bed_place in bed_places:
+            created_instance = find_created_instance(
+                bed_place.bed_place_id, data, "bed_place_id"
+            )
+            assert created_instance.get("bed_place_id") == bed_place.bed_place_id
+            assert created_instance.get("bed_place_name") == bed_place.bed_place_name
 

@@ -6,17 +6,20 @@ from fastapi import FastAPI, status
 from httpx import AsyncClient
 from typing import List
 
+from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
+
 from apps.authorization.services import create_access_token
 from apps.common.schemas import JSENDStatus
-from apps.educational_institutions.models import Faculty, Rector, University, Dean
+from apps.educational_institutions.models import Faculty, Rector, University, Dean, Speciality
 from apps.hostel.models import Hostel
 from apps.users.models import Student, User, UserFaculty
-from tests.apps.conftest import assert_jsend_response
+from tests.apps.conftest import assert_jsend_response, find_created_instance
 from tests.apps.educational_institution.factories import (
     FacultyFactory,
     RectorFactory,
     UniversityFactory,
-    DeanFactory,
+    DeanFactory, SpecialityFactory,
 )
 from tests.apps.hostel.factories import HostelFactory, BedPlaceFactory
 from tests.apps.users.factories import StudentFactory, UserFactory, UserFacultyFactory
@@ -28,19 +31,17 @@ class TestReadFacultyList:
             async_client: AsyncClient,
             app_fixture: FastAPI,
             faker: Faker,
+            access_token: str,
     ) -> None:
-        mod_email = faker.email()
-        user: User = UserFactory(mod_email=mod_email)
         university: University = UniversityFactory()
         faculties: List[Faculty] = FacultyFactory.create_batch(
             size=3, university_id=university.university_id
         )
-        token: str = create_access_token(subject=user.email)
         response = await async_client.get(
             url=app_fixture.url_path_for(
                 name="read_faculty_list", university_id=university.university_id
             ),
-            headers={"Authorization": f"Bearer {token}"},
+            headers={"Authorization": f"Bearer {access_token}"},
         )
         assert_jsend_response(
             response=response,
@@ -50,16 +51,19 @@ class TestReadFacultyList:
             code=status.HTTP_200_OK,
         )
         data = response.json()["data"]
-        amend = len(data) - 3
-        for i in range(3):
-            assert data[i+amend].get("name") == faculties[i].name
-            assert data[i+amend].get("shortname") == faculties[i].shortname
-            assert data[i+amend].get("main_email") == faculties[i].main_email
-            assert data[i+amend].get("dean_id") == faculties[i].dean_id
-            assert data[i+amend].get("dean_full_name") == {
-                "first_name": faculties[i].dean.first_name,
-                "last_name": faculties[i].dean.last_name,
-                "middle_name": faculties[i].dean.middle_name,
+
+        for faculty in faculties:
+            created_instance = find_created_instance(
+                faculty.faculty_id, data, "faculty_id"
+            )
+            assert created_instance.get("name") == faculty.name
+            assert created_instance.get("shortname") == faculty.shortname
+            assert created_instance.get("main_email") == faculty.main_email
+            assert created_instance.get("dean_id") == faculty.dean_id
+            assert created_instance.get("dean_full_name") == {
+                "first_name": faculty.dean.first_name,
+                "last_name": faculty.dean.last_name,
+                "middle_name": faculty.dean.middle_name,
             }
 
 
@@ -69,12 +73,10 @@ class TestCreateFaculty:
             async_client: AsyncClient,
             app_fixture: FastAPI,
             faker: Faker,
-    ):
-        mod_email = faker.email()
-        user: User = UserFactory(mod_email=mod_email)
+            access_token: str,
+    ) -> None:
         university: University = UniversityFactory()
         dean: Dean = DeanFactory()
-        token = create_access_token(subject=user.email)
         faculty_name = faker.pystr(max_chars=255, min_chars=10)
         faculty_short_name = faker.pystr(max_chars=20, min_chars=2)
         faculty_email = faker.email()
@@ -82,7 +84,7 @@ class TestCreateFaculty:
             method="POST",
             url=app_fixture.url_path_for(name="create_faculty", university_id=university.university_id),
             headers={
-                "Authorization": f'Bearer {token}',
+                "Authorization": f'Bearer {access_token}',
                 "accept": "application/json",
                 "Content-Type": "application/json",
                 "Access-Control-Allow-Origin": "*",
@@ -111,4 +113,136 @@ class TestCreateFaculty:
         assert data.get("shortname") == faculty_short_name
         assert data.get("main_email") == faculty_email
         assert data.get("dean_id") == dean.dean_id
-        assert data.get("dean_full_name") is None # TODO Must be changed after changing handler behaviour
+        assert data.get("dean_full_name") is None  # TODO Must be changed after changing handler behaviour
+
+    async def test_create_faculty_200_new_dean(
+            self,
+            async_client: AsyncClient,
+            app_fixture: FastAPI,
+            faker: Faker,
+            db_session: AsyncSession,
+            access_token: str,
+    ) -> None:
+        university: University = UniversityFactory()
+        faculty_name = faker.pystr(max_chars=255, min_chars=10)
+        faculty_short_name = faker.pystr(max_chars=20, min_chars=2)
+        faculty_email = faker.email()
+        dean_last_name = faker.last_name()
+        dean_first_name = faker.first_name()
+        dean_middle_name = faker.first_name()
+        response = await async_client.request(
+            method='POST',
+            url=app_fixture.url_path_for(name="create_faculty", university_id=university.university_id),
+            headers={
+                "Authorization": f'Bearer {access_token}',
+                "accept": "application/json",
+                "Content-Type": "application/json",
+                "Access-Control-Allow-Origin": "*",
+            },
+            json={
+                "university_id": university.university_id,
+                "name": faculty_name,
+                "shortname": faculty_short_name,
+                "main_email": faculty_email,
+                "dean_id": None,
+                "dean_last_name": dean_last_name,
+                "dean_first_name": dean_first_name,
+                "dean_middle_name": dean_middle_name,
+            },
+        )
+        data = response.json()["data"]
+        assert_jsend_response(
+            response=response,
+            http_code=status.HTTP_200_OK,
+            status=JSENDStatus.SUCCESS,
+            message=f'Successfully created faculty with id {data.get("faculty_id")}',
+            code=status.HTTP_200_OK,
+        )
+        dean_result = await db_session.execute(select(Dean).where(Dean.last_name == dean_last_name))
+        dean = dean_result.first()[0]
+        assert data.get("university_id") == university.university_id
+        assert data.get("name") == faculty_name
+        assert data.get("shortname") == faculty_short_name
+        assert data.get("main_email") == faculty_email
+        assert data.get("dean_id") == dean.dean_id
+        assert data.get("dean_full_name") is None  # TODO Must be changed after changing handler behaviour
+
+    async def test_create_faculty_422(
+            self,
+            async_client: AsyncClient,
+            app_fixture: FastAPI,
+            faker: Faker,
+            access_token: str,
+    ) -> None:
+        fake_email = faker.pystr(max_chars=15)
+        university: University = UniversityFactory()
+        response = await async_client.request(
+            method="POST",
+            url=app_fixture.url_path_for(name="create_faculty", university_id=university.university_id),
+            headers={
+                "Authorization": f'Bearer {access_token}',
+                "accept": "application/json",
+                "Content-Type": "application/json",
+                "Access-Control-Allow-Origin": "*",
+            },
+            json={
+                "university_id": university.university_id,
+                "name": faker.pystr(),
+                "shortname": faker.pystr(),
+                "main_email": fake_email,
+                "dean_id": 1,
+                "dean_last_name": "",
+                "dean_first_name": "",
+                "dean_middle_name": "",
+            },
+        )
+        assert_jsend_response(
+            response=response,
+            http_code=422,
+            status=JSENDStatus.FAIL,
+            message='Validation error.',
+            code=422,
+        )
+
+
+class TestReadSpecialityList:
+    async def test_read_speciality_list_200(
+            self,
+            async_client: AsyncClient,
+            app_fixture: FastAPI,
+            faker: Faker,
+            access_token: str,
+    ) -> None:
+        university: University = UniversityFactory()
+        faculties: List[Faculty] = FacultyFactory.create_batch(size=3, university_id=university.university_id)
+        specialities = [
+            SpecialityFactory(faculty_id=faculty.faculty_id) for faculty in faculties
+        ]
+        response = await async_client.get(
+            url=app_fixture.url_path_for(
+                name="read_speciality_list",
+                university_id=university.university_id,
+            ),
+            headers={
+                "Authorization": f'Bearer {access_token}',
+            },
+        )
+        assert_jsend_response(
+            response=response,
+            http_code=status.HTTP_200_OK,
+            status=JSENDStatus.SUCCESS,
+            message=f"Got speciality list of the university with id {university.university_id}",
+            code=status.HTTP_200_OK,
+        )
+        data = response.json()["data"]
+
+        for speciality in specialities:
+            created_instance = find_created_instance(
+                speciality.speciality_id, data, "speciality_id"
+            )
+            assert created_instance.get("university_id") == university.university_id
+            assert created_instance.get("faculty_id") == speciality.faculty_id
+            assert created_instance.get("speciality_info") == {
+                "code": speciality.code,
+                "full_name": speciality.name,
+            }
