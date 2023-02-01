@@ -38,7 +38,7 @@ class EduInstitutionHandler:
     async def create_faculty(
         self, *, request: Request, data: FacultyIn, session: AsyncSession
     ) -> FacultyOut:
-        if not data.dean_id:
+        if data.dean_id is None:
             dean = await self.create_dean(
                 request=request,
                 data=FullNameSchema(
