@@ -29,8 +29,7 @@ class TestReadHostelListRouter:
     ) -> None:
         rector: Rector = RectorFactory()
         university: University = UniversityFactory(rector_id=rector.rector_id)
-        hostel_1: Hostel = HostelFactory(university_id=university.university_id)
-        hostel_2: Hostel = HostelFactory(university_id=university.university_id)
+        hostels: List[Hostel] = HostelFactory.create_batch(size=3, university_id=university.university_id)
         faculty: Faculty = FacultyFactory(university_id=university.university_id)
         mod_email = faker.email()
         user: User = UserFactory(mod_email=mod_email)
@@ -54,14 +53,22 @@ class TestReadHostelListRouter:
             message=f"Got hostels list of the university with id {university.university_id}",
             code=status.HTTP_200_OK,
         )
-        host_1 = response.json()["data"][0]
-        host_2 = response.json()["data"][1]
-        assert host_1["university_id"] == hostel_1.university_id
-        assert host_1["number"] == hostel_1.number
-        assert host_1["street"] == hostel_1.street
-        assert host_2["university_id"] == hostel_2.university_id
-        assert host_2["number"] == hostel_2.number
-        assert host_2["street"] == hostel_2.street
+        data = response.json()["data"]
+        amend = len(data) - 3
+        for i in range(3):
+            assert data[i+amend].get("university_id") == hostels[i].university_id
+            assert data[i+amend].get("hostel_id") == hostels[i].hostel_id
+            assert data[i+amend].get("number") == hostels[i].number
+            assert data[i+amend].get("name") == hostels[i].name
+            assert data[i+amend].get("city") == hostels[i].city
+            assert data[i+amend].get("street") == hostels[i].street
+            assert data[i+amend].get("build") == hostels[i].build
+            assert data[i+amend].get("commandant_id") == hostels[i].commandant_id
+            assert data[i+amend].get("commandant_full_name") == {
+                'first_name': hostels[i].commandant.first_name,
+                'last_name': hostels[i].commandant.last_name,
+                'middle_name': hostels[i].commandant.middle_name,
+            }
 
     @pytest.mark.asyncio
     async def test_read_hostel_list_404_only(
