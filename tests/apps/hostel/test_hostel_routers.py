@@ -127,7 +127,7 @@ class TestReadBedPlaceRouter:
     ) -> None:
         mod_email = faker.email()
         user: User = UserFactory(mod_email=mod_email)
-        bed_places: List = BedPlaceFactory.create_batch(size=3)
+        bed_places: List[BedPlace] = BedPlaceFactory.create_batch(size=3)
         token: str = create_access_token(subject=user.email)
         response = await async_client.get(
             url=app_fixture.url_path_for(

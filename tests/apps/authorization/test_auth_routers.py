@@ -4,7 +4,6 @@ from httpx import AsyncClient
 from typing import List
 
 from apps.authorization.services import create_access_token, create_refresh_token
-from apps.authorization.services import create_access_token
 from apps.common.schemas import JSENDStatus
 from apps.users.models import User
 from apps.authorization.models import Role

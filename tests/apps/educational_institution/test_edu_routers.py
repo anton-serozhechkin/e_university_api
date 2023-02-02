@@ -1,6 +1,3 @@
-import json
-
-import pytest
 from faker import Faker
 from fastapi import FastAPI, status
 from httpx import AsyncClient
@@ -9,20 +6,16 @@ from typing import List
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from apps.authorization.services import create_access_token
 from apps.common.schemas import JSENDStatus
-from apps.educational_institutions.models import Faculty, Rector, University, Dean, Speciality
-from apps.hostel.models import Hostel
-from apps.users.models import Student, User, UserFaculty
+from apps.educational_institutions.models import Faculty, Course, University, Dean
 from tests.apps.conftest import assert_jsend_response, find_created_instance
 from tests.apps.educational_institution.factories import (
     FacultyFactory,
-    RectorFactory,
     UniversityFactory,
-    DeanFactory, SpecialityFactory,
+    DeanFactory,
+    SpecialityFactory,
+    CourseFactory,
 )
-from tests.apps.hostel.factories import HostelFactory, BedPlaceFactory
-from tests.apps.users.factories import StudentFactory, UserFactory, UserFacultyFactory
 
 
 class TestReadFacultyList:
@@ -246,3 +239,33 @@ class TestReadSpecialityList:
                 "code": speciality.code,
                 "full_name": speciality.name,
             }
+
+
+class TestReadCourseList:
+    async def test_read_course_list_200(
+            self,
+            async_client: AsyncClient,
+            app_fixture: FastAPI,
+            faker: Faker,
+            access_token: str,
+    ) -> None:
+        courses: List[Course] = CourseFactory.create_batch(size=3)
+        response = await async_client.get(
+            url=app_fixture.url_path_for("read_courses_list"),
+            headers={
+                "Authorization": f"Bearer {access_token}",
+            }
+        )
+        data = response.json()["data"]
+        assert_jsend_response(
+            response=response,
+            http_code=status.HTTP_200_OK,
+            status=JSENDStatus.SUCCESS,
+            message="Got all courses",
+            code=status.HTTP_200_OK,
+        )
+        for course in courses:
+            created_instance = find_created_instance(
+                course.course_id, data, "course_id"
+            )
+            assert created_instance.get("value") == course.value
