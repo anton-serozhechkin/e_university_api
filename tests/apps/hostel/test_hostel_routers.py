@@ -1,13 +1,14 @@
+from typing import List
+
 import pytest
 from faker import Faker
 from fastapi import FastAPI, status
 from httpx import AsyncClient
-from typing import List
 
 from apps.authorization.services import create_access_token
 from apps.common.schemas import JSENDStatus
 from apps.educational_institutions.models import Faculty, Rector, University
-from apps.hostel.models import Hostel, BedPlace
+from apps.hostel.models import BedPlace, Hostel
 from apps.users.models import Student, User, UserFaculty
 from tests.apps.conftest import assert_jsend_response, find_created_instance
 from tests.apps.educational_institution.factories import (
@@ -15,7 +16,7 @@ from tests.apps.educational_institution.factories import (
     RectorFactory,
     UniversityFactory,
 )
-from tests.apps.hostel.factories import HostelFactory, BedPlaceFactory
+from tests.apps.hostel.factories import BedPlaceFactory, HostelFactory
 from tests.apps.users.factories import StudentFactory, UserFactory, UserFacultyFactory
 
 
@@ -29,7 +30,9 @@ class TestReadHostelListRouter:
     ) -> None:
         rector: Rector = RectorFactory()
         university: University = UniversityFactory(rector_id=rector.rector_id)
-        hostels: List[Hostel] = HostelFactory.create_batch(size=3, university_id=university.university_id)
+        hostels: List[Hostel] = HostelFactory.create_batch(
+            size=3, university_id=university.university_id
+        )
         faculty: Faculty = FacultyFactory(university_id=university.university_id)
         mod_email = faker.email()
         user: User = UserFactory(mod_email=mod_email)
@@ -68,17 +71,17 @@ class TestReadHostelListRouter:
             assert created_instance.get("build") == hostel.build
             assert created_instance.get("commandant_id") == hostel.commandant_id
             assert created_instance.get("commandant_full_name") == {
-                'first_name': hostel.commandant.first_name,
-                'last_name': hostel.commandant.last_name,
-                'middle_name': hostel.commandant.middle_name,
+                "first_name": hostel.commandant.first_name,
+                "last_name": hostel.commandant.last_name,
+                "middle_name": hostel.commandant.middle_name,
             }
 
     @pytest.mark.asyncio
     async def test_read_hostel_list_404_only(
-            self,
-            async_client: AsyncClient,
-            app_fixture: FastAPI,
-            faker: Faker,
+        self,
+        async_client: AsyncClient,
+        app_fixture: FastAPI,
+        faker: Faker,
     ) -> None:
         token: str = create_access_token(subject="ass@a.com")
         response = await async_client.get(
@@ -97,10 +100,10 @@ class TestReadHostelListRouter:
 
     @pytest.mark.asyncio
     async def test_read_hostel_list_401_only(
-            self,
-            async_client: AsyncClient,
-            app_fixture: FastAPI,
-            faker: Faker,
+        self,
+        async_client: AsyncClient,
+        app_fixture: FastAPI,
+        faker: Faker,
     ) -> None:
         response = await async_client.get(
             url=app_fixture.url_path_for(
@@ -120,19 +123,17 @@ class TestReadHostelListRouter:
 class TestReadBedPlaceRouter:
     @pytest.mark.asyncio
     async def test_read_bed_place_200_only(
-            self,
-            async_client: AsyncClient,
-            app_fixture: FastAPI,
-            faker: Faker,
+        self,
+        async_client: AsyncClient,
+        app_fixture: FastAPI,
+        faker: Faker,
     ) -> None:
         mod_email = faker.email()
         user: User = UserFactory(mod_email=mod_email)
         bed_places: List[BedPlace] = BedPlaceFactory.create_batch(size=3)
         token: str = create_access_token(subject=user.email)
         response = await async_client.get(
-            url=app_fixture.url_path_for(
-                name="read_bed_places"
-            ),
+            url=app_fixture.url_path_for(name="read_bed_places"),
             headers={"Authorization": f"Bearer {token}"},
         )
         assert_jsend_response(
@@ -150,4 +151,3 @@ class TestReadBedPlaceRouter:
             )
             assert created_instance.get("bed_place_id") == bed_place.bed_place_id
             assert created_instance.get("bed_place_name") == bed_place.bed_place_name
-

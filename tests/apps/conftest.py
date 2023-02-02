@@ -1,12 +1,11 @@
 import typing
 import uuid
-import pytest
 from typing import List
 
+import pytest
 from faker import Faker
-from httpx import AsyncClient
-from fastapi import status, FastAPI
-from httpx import Response
+from fastapi import FastAPI, status
+from httpx import AsyncClient, Response
 
 from apps.authorization.services import create_access_token
 from apps.common.enums import JSENDStatus
@@ -34,7 +33,7 @@ def assert_jsend_response(
 
 @pytest.fixture(scope="function")
 async def access_token(
-        faker: Faker,
+    faker: Faker,
 ) -> str:
     user: User = UserFactory(mod_email=faker.email())
     return create_access_token(subject=user.email)

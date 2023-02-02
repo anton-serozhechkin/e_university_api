@@ -1,23 +1,24 @@
+from typing import List
+
 from faker import Faker
 from fastapi import FastAPI, status
 from httpx import AsyncClient
-from typing import List
 
+from apps.authorization.models import Role
 from apps.authorization.services import create_access_token, create_refresh_token
 from apps.common.schemas import JSENDStatus
 from apps.users.models import User
-from apps.authorization.models import Role
-from tests.apps.conftest import assert_jsend_response, find_created_instance
 from tests.apps.authorization.factories import RoleFactory
+from tests.apps.conftest import assert_jsend_response, find_created_instance
 from tests.apps.users.factories import UserFactory
 
 
 class TestLoginRouter:
     async def test_login_200(
-            self,
-            async_client: AsyncClient,
-            app_fixture: FastAPI,
-            faker: Faker,
+        self,
+        async_client: AsyncClient,
+        app_fixture: FastAPI,
+        faker: Faker,
     ):
         password = faker.pystr(max_chars=255, min_chars=8)
         mod_email = faker.email()
@@ -40,7 +41,7 @@ class TestLoginRouter:
                 "accept": "application/json",
                 "Content-Type": "application/x-www-form-urlencoded",
                 "Access-Control-Allow-Origin": "*",
-            }
+            },
         )
         data = response.json()
         assert data.get("access_token") == create_access_token(user.email)
@@ -48,10 +49,10 @@ class TestLoginRouter:
         assert data.get("user_id") == user.user_id
 
     async def test_read_available_roles(
-            self,
-            async_client: AsyncClient,
-            app_fixture: FastAPI,
-            faker: Faker,
+        self,
+        async_client: AsyncClient,
+        app_fixture: FastAPI,
+        faker: Faker,
     ):
         user: User = UserFactory(email="c@a.com")
         roles: List[Role] = RoleFactory.create_batch(size=3)
@@ -70,8 +71,6 @@ class TestLoginRouter:
         data = response.json()["data"]
 
         for role in roles:
-            created_instance = find_created_instance(
-                role.role_id, data, "role_id"
-            )
+            created_instance = find_created_instance(role.role_id, data, "role_id")
             assert created_instance.get("role_id") == role.role_id
             assert created_instance.get("role_name") == role.role_name
