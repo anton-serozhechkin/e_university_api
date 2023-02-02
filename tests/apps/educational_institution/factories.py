@@ -22,6 +22,10 @@ class RectorFactory(BaseModelFactory):
         size=0,
     )
 
+    @classmethod
+    def _setup_next_sequence(cls):
+        return 1
+
     class Meta:
         model = Rector
         exclude = ("university",)
@@ -67,6 +71,10 @@ class UniversityFactory(BaseModelFactory):
         factory_related_name="university",
         size=0,
     )
+
+    @classmethod
+    def _setup_next_sequence(cls):
+        return 1
 
     class Meta:
         model = University
@@ -114,6 +122,10 @@ class FacultyFactory(BaseModelFactory):
         size=0,
     )
 
+    @classmethod
+    def _setup_next_sequence(cls):
+        return 1
+
     class Meta:
         model = Faculty
         exclude = (
@@ -134,6 +146,10 @@ class SpecialityFactory(BaseModelFactory):
     faculty_id = factory.SelfAttribute(attribute_name="faculties.faculty_id")
     faculties = factory.SubFactory(factory=FacultyFactory)
 
+    @classmethod
+    def _setup_next_sequence(cls):
+        return 1
+
     class Meta:
         model = Speciality
         exclude = ("faculties",)
@@ -151,6 +167,10 @@ class DeanFactory(BaseModelFactory):
         size=0,
     )
 
+    @classmethod
+    def _setup_next_sequence(cls):
+        return 1
+
     class Meta:
         model = Dean
         exclude = ("faculty",)
@@ -160,6 +180,10 @@ class DeanFactory(BaseModelFactory):
 class CourseFactory(BaseModelFactory):
     course_id = factory.Sequence(lambda x: x)
     value = factory.Faker("pyint", min_value=1, max_value=6)
+
+    @classmethod
+    def _setup_next_sequence(cls):
+        return 1
 
     class Meta:
         model = Course

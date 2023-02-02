@@ -53,6 +53,10 @@ class UserFactory(BaseModelFactory):
         size=0,
     )
 
+    @classmethod
+    def _setup_next_sequence(cls):
+        return 1
+
     class Meta:
         model = User
         exclude = (
@@ -79,6 +83,10 @@ class OneTimeTokenFactory(BaseModelFactory):
     expires_at = factory.Faker("date_time", tzinfo=utc)
     student_id = factory.SelfAttribute(attribute_name="student.student_id")
     student = factory.SubFactory(factory="tests.apps.users.factories.StudentFactory")
+
+    @classmethod
+    def _setup_next_sequence(cls):
+        return 1
 
     class Meta:
         model = OneTimeToken
@@ -112,6 +120,10 @@ class StudentFactory(BaseModelFactory):
         size=0,
     )
 
+    @classmethod
+    def _setup_next_sequence(cls):
+        return 1
+
     class Meta:
         model = Student
         exclude = (
@@ -136,6 +148,10 @@ class UserFacultyFactory(BaseModelFactory):
     faculty_id = factory.SelfAttribute(attribute_name="faculty.faculty_id")
     user = factory.SubFactory(factory=UserFactory)
     faculty = factory.SubFactory(factory=FacultyFactory)
+
+    @classmethod
+    def _setup_next_sequence(cls):
+        return 1
 
     class Meta:
         model = UserFaculty

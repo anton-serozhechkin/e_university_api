@@ -39,6 +39,10 @@ class ServiceFactory(BaseModelFactory):
         size=0,
     )
 
+    @classmethod
+    def _setup_next_sequence(cls):
+        return 1
+
     class Meta:
         model = Service
         exclude = ("service_document", "user_requests", "requisites")
@@ -73,6 +77,10 @@ class UserRequestFactory(BaseModelFactory):
         size=0,
     )
 
+    @classmethod
+    def _setup_next_sequence(cls):
+        return 1
+
     class Meta:
         model = UserRequest
         exclude = (
@@ -101,6 +109,10 @@ class StatusFactory(BaseModelFactory):
         factory=UserRequestFactory, factory_related_name="status", size=0
     )
 
+    @classmethod
+    def _setup_next_sequence(cls):
+        return 1
+
     class Meta:
         model = Status
         exclude = ("user_requests",)
@@ -118,6 +130,10 @@ class RequisitesFactory(BaseModelFactory):
     service = factory.SubFactory(factory=ServiceFactory)
     created_at = factory.Faker("date_time", tzinfo=utc)
     updated_at = factory.Faker("date_time", tzinfo=utc)
+
+    @classmethod
+    def _setup_next_sequence(cls):
+        return 1
 
     class Meta:
         model = Requisites
@@ -148,6 +164,10 @@ class UserRequestReviewFactory(BaseModelFactory):
     )
     user_request = factory.SubFactory(factory=UserRequestFactory)
 
+    @classmethod
+    def _setup_next_sequence(cls):
+        return 1
+
     class Meta:
         model = UserRequestReview
         exclude = (
@@ -177,6 +197,10 @@ class UserDocumentFactory(BaseModelFactory):
     created_at = factory.Faker("date_time", tzinfo=utc)
     updated_at = factory.Faker("date_time", tzinfo=utc)
 
+    @classmethod
+    def _setup_next_sequence(cls):
+        return 1
+
     class Meta:
         model = UserDocument
         exclude = ("user_request",)
@@ -190,6 +214,10 @@ class ServiceDocumentFactory(BaseModelFactory):
     university_id = factory.SelfAttribute(attribute_name="university.university_id")
     university = factory.SubFactory(factory=UniversityFactory)
     documents = factory.Faker("pystr", min_chars=1)
+
+    @classmethod
+    def _setup_next_sequence(cls):
+        return 1
 
     class Meta:
         model = ServiceDocument

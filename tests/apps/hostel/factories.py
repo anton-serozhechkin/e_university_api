@@ -15,6 +15,10 @@ class BedPlaceFactory(BaseModelFactory):
         size=0,
     )
 
+    @classmethod
+    def _setup_next_sequence(cls):
+        return 1
+
     class Meta:
         model = BedPlace
         exclude = ("user_request_review",)
@@ -32,6 +36,10 @@ class CommandantFactory(BaseModelFactory):
         factory_related_name="commandant",
         size=0,
     )
+
+    @classmethod
+    def _setup_next_sequence(cls):
+        return 1
 
     class Meta:
         model = Commandant
@@ -53,6 +61,10 @@ class HostelFactory(BaseModelFactory):
     university_id = factory.SelfAttribute(attribute_name="university.university_id")
     university = factory.SubFactory(factory=UniversityFactory)
     commandant = factory.SubFactory(factory=CommandantFactory)
+
+    @classmethod
+    def _setup_next_sequence(cls):
+        return 1
 
     class Meta:
         model = Hostel

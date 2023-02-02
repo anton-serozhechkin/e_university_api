@@ -20,6 +20,10 @@ class RoleFactory(BaseModelFactory):
         factory=UserFactory, factory_related_name="role", size=0
     )
 
+    @classmethod
+    def _setup_next_sequence(cls):
+        return 1
+
     class Meta:
         model = Role
         exclude = ("users", "actions")
@@ -30,6 +34,10 @@ class ActionFactory(BaseModelFactory):
     action_name = factory.Faker("pystr", min_chars=1, max_chars=50)
     role_id = factory.SelfAttribute(attribute_name="roles.role_id")
     roles = factory.SubFactory(factory=RoleFactory)
+
+    @classmethod
+    def _setup_next_sequence(cls):
+        return 1
 
     class Meta:
         model = Action
