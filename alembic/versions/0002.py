@@ -323,7 +323,7 @@ def upgrade() -> None:
     LEFT JOIN university u ON
         f.university_id = u.university_id
     LEFT JOIN rector r ON
-        u.rector_id = u.rector_id
+        r.rector_id = u.rector_id
     LEFT JOIN speciality sp ON
         s.speciality_id = sp.speciality_id
     LEFT JOIN course co ON
