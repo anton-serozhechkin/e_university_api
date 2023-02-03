@@ -142,7 +142,7 @@ class RequisitesFactory(BaseModelFactory):
 
 
 class UserRequestReviewFactory(BaseModelFactory):
-    user_request_review_id = factory.Sequence(lambda x: x)
+    user_request_review_id = factory.Sequence(lambda x: x + 3000)
     room_number = factory.Faker("pyint")
     created_at = factory.Faker("date_time", tzinfo=utc)
     updated_at = factory.Faker("date_time", tzinfo=utc)
