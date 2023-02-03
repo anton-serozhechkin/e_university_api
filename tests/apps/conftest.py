@@ -1,6 +1,6 @@
 import typing
 import uuid
-from typing import List
+from typing import List, Tuple
 
 import pytest
 from faker import Faker
@@ -10,8 +10,12 @@ from httpx import AsyncClient, Response
 from apps.authorization.services import create_access_token
 from apps.common.enums import JSENDStatus
 from apps.common.services import ModelType
-from apps.users.models import User
-from tests.apps.users.factories import UserFactory
+from apps.educational_institutions.models import University, Faculty, Speciality
+from apps.services.models import Status
+from apps.users.models import User, Student
+from tests.apps.educational_institution.factories import UniversityFactory, FacultyFactory, SpecialityFactory
+from tests.apps.services.factories import StatusFactory
+from tests.apps.users.factories import UserFactory, UserFacultyFactory, StudentFactory
 
 
 def assert_jsend_response(
@@ -37,6 +41,26 @@ async def access_token(
 ) -> str:
     user: User = UserFactory(mod_email=faker.email())
     return create_access_token(subject=user.email)
+
+
+@pytest.fixture(scope="function")
+async def student_creation(
+        faker: Faker,
+) -> Tuple[str, University, User, Student, Faculty, Speciality]:
+    user: User = UserFactory(mod_email=faker.email())
+    university: University = UniversityFactory()
+    faculty: Faculty = FacultyFactory(university_id=university.university_id)
+    request_status_list: List[Status] = StatusFactory.create_batch(size=4)
+    speciality: Speciality = SpecialityFactory(faculty_id=faculty.faculty_id)
+    UserFacultyFactory(user_id=user.user_id, faculty_id=faculty.faculty_id)
+    student: Student = StudentFactory(
+        user_id=user.user_id,
+        speciality_id=speciality.speciality_id,
+        faculty_id=faculty.faculty_id,
+        gender='M',
+    )
+    token = create_access_token(subject=user.email)
+    return token, university, user, student, faculty, speciality
 
 
 def find_created_instance(instance_id: int, data: List, attr: str) -> ModelType:

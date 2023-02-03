@@ -12,7 +12,7 @@ from tests.bases import BaseModelFactory
 
 
 class RectorFactory(BaseModelFactory):
-    rector_id = factory.Sequence(lambda x: x)
+    rector_id = factory.Sequence(lambda x: x + 3000)
     last_name = factory.Faker("last_name")
     first_name = factory.Faker("first_name")
     middle_name = factory.Faker("first_name")

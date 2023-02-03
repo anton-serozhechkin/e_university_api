@@ -49,7 +49,7 @@ class ServiceFactory(BaseModelFactory):
 
 
 class UserRequestFactory(BaseModelFactory):
-    user_request_id = factory.Sequence(lambda x: x)
+    user_request_id = factory.Sequence(lambda x: x + 3000)
     comment = factory.Faker("pystr", max_chars=255)
     created_at = factory.Faker("date_time", tzinfo=utc)
     updated_at = factory.Faker("date_time", tzinfo=utc)
@@ -187,7 +187,7 @@ class UserRequestReviewFactory(BaseModelFactory):
 
 
 class UserDocumentFactory(BaseModelFactory):
-    user_document_id = factory.Sequence(lambda x: x)
+    user_document_id = factory.Sequence(lambda x: x + 3000)
     name = factory.Faker("pystr", min_chars=1, max_chars=255)
     content = factory.Faker("pystr", min_chars=1, max_chars=255)
     user_request_id = factory.SelfAttribute(
