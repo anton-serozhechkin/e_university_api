@@ -3,12 +3,11 @@ from typing import List
 from faker import Faker
 from fastapi import FastAPI, status
 from httpx import AsyncClient
-from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from apps.common.schemas import JSENDStatus
 from apps.educational_institutions.models import Course, Dean, Faculty, University
-from tests.apps.conftest import assert_jsend_response, find_created_instance
+from tests.apps.conftest import assert_jsend_response, find_created_instance, dean_service
 from tests.apps.educational_institution.factories import (
     CourseFactory,
     DeanFactory,
@@ -157,12 +156,10 @@ class TestCreateFaculty:
             message=f'Successfully created faculty with id {data.get("faculty_id")}',
             code=status.HTTP_200_OK,
         )
-        dean_result = await db_session.execute(
-            select(Dean)
-            .where(Dean.last_name == dean_last_name)
-            .where(Dean.first_name == dean_first_name)
+        dean = await dean_service.read(
+            session=db_session,
+            data={"last_name": dean_last_name, "first_name": dean_first_name},
         )
-        dean = dean_result.first()[0]
         assert data.get("university_id") == university.university_id
         assert data.get("name") == faculty_name
         assert data.get("shortname") == faculty_short_name

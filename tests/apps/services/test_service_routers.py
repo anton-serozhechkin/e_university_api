@@ -1,26 +1,16 @@
-from decimal import Decimal
-from typing import List, Tuple
+from typing import Tuple
 import datetime
-import pytest
 from faker import Faker
 from fastapi import FastAPI, status
 from httpx import AsyncClient
-from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from apps.authorization.services import create_access_token
 from apps.common.schemas import JSENDStatus
-from apps.educational_institutions.models import Faculty, Rector, University, Speciality
-from apps.hostel.models import BedPlace, Hostel
-from apps.services.models import Service, UserRequest, Status, UserRequestReview
+from apps.educational_institutions.models import Faculty, University, Speciality
+from apps.hostel.models import Hostel
+from apps.services.models import Service, UserRequest, UserRequestReview
 from apps.users.models import Student, User, UserFaculty
-from settings import Settings
-from tests.apps.conftest import assert_jsend_response, find_created_instance
-from tests.apps.educational_institution.factories import (
-    FacultyFactory,
-    RectorFactory,
-    UniversityFactory,
-)
+from tests.apps.conftest import assert_jsend_response, find_created_instance, status_service
 from tests.apps.hostel.factories import BedPlaceFactory, HostelFactory
 from tests.apps.services.factories import ServiceFactory, UserRequestFactory, StatusFactory, UserRequestReviewFactory
 from tests.apps.users.factories import StudentFactory, UserFactory, UserFacultyFactory
@@ -39,8 +29,9 @@ class TestCheckUserRequestExistence:
     ) -> None:
         token, university, user, student, faculty, speciality = student_creation
         service: Service = ServiceFactory()
-        request_status_result = await db_session.execute(select(Status).where(Status.status_id == 3))
-        request_status = request_status_result.first()[0]
+        request_status = await status_service.read(
+            session=db_session, data={"status_id": 3}
+        )
         user_request: UserRequest = UserRequestFactory(
             user_id=user.user_id,
             service_id=service.service_id,
@@ -118,8 +109,9 @@ class TestReadUserRequestList:
             db_session: AsyncSession,
     ) -> None:
         token, university, user, student, faculty, speciality = student_creation
-        request_status_result = await db_session.execute(select(Status).where(Status.status_id == 3))
-        request_status = request_status_result.first()[0]
+        request_status = await status_service.read(
+            session=db_session, data={"status_id": 3}
+        )
         service_1: Service = ServiceFactory()
         service_2: Service = ServiceFactory()
         user_request_1: UserRequest = UserRequestFactory(
@@ -184,8 +176,9 @@ class TestCreateUserRequest:
     ) -> None:
         token, university, user, student, faculty, speciality = student_creation
         service: Service = ServiceFactory()
-        request_status_result = await db_session.execute(select(Status).where(Status.status_id == 3))
-        request_status = request_status_result.first()[0]
+        request_status = await status_service.read(
+            session=db_session, data={"status_id": 3}
+        )
         comment = faker.pystr(max_chars=255)
         response = await async_client.request(
             method="POST",
@@ -270,8 +263,9 @@ class TestReadUserRequestBookingHostel:
     ) -> None:
         token, university, user, student, faculty, speciality = student_creation
         service: Service = ServiceFactory()
-        apr_status_result = await db_session.execute(select(Status).where(Status.status_id == 1))
-        apr_status = apr_status_result.first()[0]
+        apr_status = await status_service.read(
+            session=db_session, data={"status_id": 1}
+        )
         hostel: Hostel = HostelFactory(university_id=university.university_id)
         user_request: UserRequest = UserRequestFactory(
             user_id=user.user_id,

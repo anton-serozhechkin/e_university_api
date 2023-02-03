@@ -10,12 +10,13 @@ from httpx import AsyncClient, Response
 from apps.authorization.services import create_access_token
 from apps.common.enums import JSENDStatus
 from apps.common.services import ModelType
-from apps.educational_institutions.models import University, Faculty, Speciality
+from apps.educational_institutions.models import University, Faculty, Speciality, Dean
 from apps.services.models import Status
 from apps.users.models import User, Student
 from tests.apps.educational_institution.factories import UniversityFactory, FacultyFactory, SpecialityFactory
 from tests.apps.services.factories import StatusFactory
 from tests.apps.users.factories import UserFactory, UserFacultyFactory, StudentFactory
+from apps.common.services import AsyncCRUDBase
 
 
 def assert_jsend_response(
@@ -67,3 +68,7 @@ def find_created_instance(instance_id: int, data: List, attr: str) -> ModelType:
     for instance in data:
         if instance.get(attr) == instance_id:
             return instance
+
+
+status_service = AsyncCRUDBase(model=Status)
+dean_service = AsyncCRUDBase(model=Dean)
