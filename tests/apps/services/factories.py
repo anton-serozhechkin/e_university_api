@@ -1,3 +1,5 @@
+from typing import Union
+
 import factory
 from pytz import utc
 
@@ -213,7 +215,7 @@ class ServiceDocumentFactory(BaseModelFactory):
     service = factory.SubFactory(factory=ServiceFactory)
     university_id = factory.SelfAttribute(attribute_name="university.university_id")
     university = factory.SubFactory(factory=UniversityFactory)
-    documents = factory.Faker("pystr", min_chars=1)
+    documents = factory.Faker("pydict", value_types=[str, str])
 
     @classmethod
     def _setup_next_sequence(cls):

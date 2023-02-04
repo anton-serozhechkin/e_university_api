@@ -10,12 +10,13 @@ import json
 from apps.common.schemas import JSENDStatus
 from apps.educational_institutions.models import Faculty, University, Speciality
 from apps.hostel.models import Hostel, BedPlace
-from apps.services.models import Service, UserRequest, UserRequestReview
+from apps.services.models import Service, UserRequest, UserRequestReview, Requisites, ServiceDocument
 from apps.services.schemas import UserRequestReviewIn
 from apps.users.models import Student, User, UserFaculty
 from tests.apps.conftest import assert_jsend_response, find_created_instance, status_service
 from tests.apps.hostel.factories import BedPlaceFactory, HostelFactory
-from tests.apps.services.factories import ServiceFactory, UserRequestFactory, StatusFactory, UserRequestReviewFactory
+from tests.apps.services.factories import ServiceFactory, UserRequestFactory, StatusFactory, UserRequestReviewFactory, \
+    RequisitesFactory, ServiceDocumentFactory
 from tests.apps.users.factories import StudentFactory, UserFactory, UserFacultyFactory
 
 
@@ -157,8 +158,8 @@ class TestReadUserRequestList:
             assert created_instance.get("user_request_id") == user_request.user_request_id
             assert created_instance.get("service_name") == user_request.service.service_name
             assert created_instance.get("created_at") == (
-                user_request.created_at.strftime('%Y-%m-%d')
-                + 'T' + user_request.created_at.strftime('%H:%M:%S') + '+00:00'
+                    user_request.created_at.strftime('%Y-%m-%d')
+                    + 'T' + user_request.created_at.strftime('%H:%M:%S') + '+00:00'
             )
             assert created_instance.get("status") == {
                 "status_id": user_request.status_id,
@@ -390,7 +391,7 @@ class TestCancelRequest:
         assert data.get("created_at") == (
                 user_request.created_at.strftime('%Y-%m-%d')
                 + 'T' + user_request.created_at.strftime('%H:%M:%S') + '+00:00'
-            )
+        )
         assert data.get("comment") == user_request.comment
         assert data.get("user_id") == user_request.user_id
         assert data.get("service_id") == user_request.service_id
@@ -515,3 +516,165 @@ class TestCreateUserRequestReview:
         assert data.get("hostel_id") == hostel.hostel_id
         assert data.get("university_id") == university.university_id
         assert data.get("user_request_id") == user_request.user_request_id
+
+    async def test_create_user_request_review_422(
+            self,
+            async_client: AsyncClient,
+            app_fixture: FastAPI,
+            faker: Faker,
+            student_creation: Tuple[
+                str, University, User, Student, Faculty, Speciality
+            ],
+            db_session: AsyncSession,
+    ) -> None:
+        token, university, user, student, faculty, speciality = student_creation
+        service: Service = ServiceFactory()
+        request_status = await status_service.read(
+            session=db_session, data={"status_id": 3}
+        )
+        approve_status = await status_service.read(
+            session=db_session, data={"status_id": 1}
+        )
+        bed_place: BedPlace = BedPlaceFactory()
+        hostel: Hostel = HostelFactory(university_id=university.university_id)
+        user_request: UserRequest = UserRequestFactory(
+            user_id=user.user_id,
+            service_id=service.service_id,
+            faculty_id=faculty.faculty_id,
+            university_id=university.university_id,
+            status_id=request_status.status_id
+        )
+        response = await async_client.request(
+            method="POST",
+            url=app_fixture.url_path_for(
+                name="create_user_request_review",
+                university_id=university.university_id,  # TODO Integrity Error during none existed input
+                user_request_id=user_request.user_request_id,  # TODO Integrity Error during none existed input
+            ),
+            headers={
+                "Authorization": f"Bearer {token}",
+                "accept": "application/json",
+                "Content-Type": "application/json",
+                "Access-Control-Allow-Origin": "*",
+            },
+            json={
+                "status_id": approve_status.status_id,
+                "room_number": faker.pystr(),
+                "start_accommodation_date": None,
+                "end_accommodation_date": None,
+                "total_sum": 0,
+                "payment_deadline_date": None,
+                "remark": None,
+                "hostel_id": hostel.hostel_id,  # TODO Integrity Error during none existed input
+                "bed_place_id": bed_place.bed_place_id,  # TODO Integrity Error during none existed input
+            },
+        )
+        assert_jsend_response(
+            response=response,
+            http_code=422,
+            status=JSENDStatus.FAIL,
+            message="Validation error.",
+            code=422,
+        )
+
+
+class TestReadHostelAccommodation:
+    async def test_read_hostel_accommodation_200(
+            self,
+            async_client: AsyncClient,
+            app_fixture: FastAPI,
+            faker: Faker,
+            student_creation: Tuple[
+                str, University, User, Student, Faculty, Speciality
+            ],
+            db_session: AsyncSession,
+    ) -> None:
+        token, university, user, student, faculty, speciality = student_creation
+        service: Service = ServiceFactory()
+        service_document: ServiceDocument = ServiceDocumentFactory(
+            service_id=service.service_id, university_id=university.university_id
+        )
+        requisites: Requisites = RequisitesFactory(
+            service_id=service.service_id, university_id=university.university_id
+        )
+        request_status = await status_service.read(
+            session=db_session, data={"status_id": 3}
+        )
+        approve_status = await status_service.read(
+            session=db_session, data={"status_id": 1}
+        )
+        hostel: Hostel = HostelFactory(university_id=university.university_id)
+        bed_place: BedPlace = BedPlaceFactory()
+        user_request: UserRequest = UserRequestFactory(
+            user_id=user.user_id,
+            service_id=service.service_id,
+            faculty_id=faculty.faculty_id,
+            university_id=university.university_id,
+            status_id=approve_status.status_id
+        )
+        user_request_review: UserRequestReview = UserRequestReviewFactory(
+            bed_place_id=bed_place.bed_place_id,
+            reviewer=user.user_id,
+            hostel_id=hostel.hostel_id,
+            university_id=university.university_id,
+            user_request_id=user_request.user_request_id,
+        )
+        response = await async_client.get(
+            url=app_fixture.url_path_for(
+                name="read_hostel_accommodation",
+                university_id=university.university_id,
+                user_request_id=user_request.user_request_id,
+            ),
+            headers={"Authorization": f"Bearer {token}"}
+        )
+        data = response.json()["data"]
+        assert_jsend_response(
+            response=response,
+            http_code=status.HTTP_200_OK,
+            status=JSENDStatus.SUCCESS,
+            message="Got hostel accommodation",
+            code=status.HTTP_200_OK,
+        )
+        assert data.get("university_id") == user_request_review.university_id
+        assert data.get(
+            "user_request_review_id"
+        ) == user_request_review.user_request_review_id
+        assert data.get("hostel_name") == {
+            "name": user_request_review.hostel.name,
+            "number": user_request_review.hostel.number,
+        }
+        assert data.get("hostel_address") == {
+            "city": user_request_review.hostel.city,
+            "street": user_request_review.hostel.street,
+            "build": user_request_review.hostel.build,
+        }
+        assert data.get("bed_place_name") == user_request_review.bed_place.bed_place_name
+        assert data.get("month_price") == float(user_request_review.hostel.month_price)
+        assert data.get(
+            "start_accommodation_date"
+        ) == user_request_review.start_accommodation_date
+        assert data.get(
+            "end_accommodation_date"
+        ) == user_request_review.end_accommodation_date
+        assert data.get("total_sum") == float(user_request_review.total_sum)
+        assert data.get(
+            "iban"
+        ) == requisites.iban
+        assert data.get("university_name") == university.university_name
+        assert data.get(
+            "organisation_code"
+        ) == requisites.organisation_code
+        assert data.get(
+            "payment_recognition"
+        ) == requisites.payment_recognition
+        assert data.get("commandant_full_name") == {
+            "first_name": user_request_review.hostel.commandant.first_name,
+            "last_name": user_request_review.hostel.commandant.last_name,
+            "middle_name": user_request_review.hostel.commandant.middle_name,
+        }
+        assert data.get(
+            "telephone_number"
+        ) == user_request_review.hostel.commandant.telephone_number
+        assert data.get(
+            "documents"
+        ) == service_document.documents
