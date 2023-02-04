@@ -51,7 +51,7 @@ async def student_creation(
     user: User = UserFactory(mod_email=faker.email())
     university: University = UniversityFactory()
     faculty: Faculty = FacultyFactory(university_id=university.university_id)
-    request_status_list: List[Status] = StatusFactory.create_batch(size=7)
+    request_status_list: List[Status] = StatusFactory.create_batch(size=10)
     speciality: Speciality = SpecialityFactory(faculty_id=faculty.faculty_id)
     UserFacultyFactory(user_id=user.user_id, faculty_id=faculty.faculty_id)
     student: Student = StudentFactory(
