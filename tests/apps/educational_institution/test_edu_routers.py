@@ -7,7 +7,11 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from apps.common.schemas import JSENDStatus
 from apps.educational_institutions.models import Course, Dean, Faculty, University
-from tests.apps.conftest import assert_jsend_response, find_created_instance, dean_service
+from tests.apps.conftest import (
+    assert_jsend_response,
+    dean_service,
+    find_created_instance,
+)
 from tests.apps.educational_institution.factories import (
     CourseFactory,
     DeanFactory,

@@ -12,11 +12,12 @@ from apps.common.exceptions import BackendException
 from apps.users.services import student_list_service
 
 
-def create_faculty_dict(specialties: List) -> DefaultDict[str, Dict[str, int]]:
+def create_faculty_dict(specialities: List) -> DefaultDict[str, Dict[str, int]]:
     faculty_dict = defaultdict(dict)
-    for specialty in specialties:
-        faculty_dict[specialty.shortname]["faculty_id"] = specialty.faculty_id
-        faculty_dict[specialty.shortname][specialty.name_1] = specialty.speciality_id
+    for faculty_id, faculty_short_name, speciality_id, speciality_name in specialities:
+
+        faculty_dict[faculty_short_name]["faculty_id"] = faculty_id
+        faculty_dict[faculty_short_name][speciality_name] = speciality_id
     return faculty_dict
 
 
