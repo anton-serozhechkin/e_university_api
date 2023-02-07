@@ -64,11 +64,12 @@ async def student_creation(
     return token, university, user, student, faculty, speciality
 
 
-def find_created_instance(instance_id: int, data: List, attr: str) -> ModelType:
+def find_created_instance(instance_attr: typing.Any, data: List, attr_name: str) -> ModelType:
     for instance in data:
-        if instance.get(attr) == instance_id:
+        if instance.get(attr_name) == instance_attr:
             return instance
 
 
 status_service = AsyncCRUDBase(model=Status)
 dean_service = AsyncCRUDBase(model=Dean)
+speciality_service = AsyncCRUDBase(model=Speciality)

@@ -1,19 +1,27 @@
-from typing import Tuple
+from pathlib import Path
+from typing import Tuple, List
 import datetime
 import pytest
+from collections import namedtuple
 from faker import Faker
-from fastapi import FastAPI, status
+from fastapi import FastAPI, status, UploadFile
 from httpx import AsyncClient
 from sqlalchemy.ext.asyncio import AsyncSession
 import json
+import io
 
+import settings
 from apps.common.schemas import JSENDStatus
-from apps.educational_institutions.models import Faculty, University, Speciality
+from apps.educational_institutions.models import Faculty, University, Speciality, Course
+from apps.educational_institutions.services import faculty_service
 from apps.hostel.models import Hostel, BedPlace
 from apps.services.models import Service, UserRequest, UserRequestReview, Requisites, ServiceDocument
 from apps.services.schemas import UserRequestReviewIn
+from apps.services.services import user_document_service
+from apps.services.utils import get_worksheet_cell_col_row
 from apps.users.models import Student, User, UserFaculty
-from tests.apps.conftest import assert_jsend_response, find_created_instance, status_service
+from tests.apps.conftest import assert_jsend_response, find_created_instance, status_service, speciality_service
+from tests.apps.educational_institution.factories import CourseFactory, FacultyFactory, SpecialityFactory
 from tests.apps.hostel.factories import BedPlaceFactory, HostelFactory
 from tests.apps.services.factories import ServiceFactory, UserRequestFactory, StatusFactory, UserRequestReviewFactory, \
     RequisitesFactory, ServiceDocumentFactory
@@ -597,9 +605,6 @@ class TestReadHostelAccommodation:
         requisites: Requisites = RequisitesFactory(
             service_id=service.service_id, university_id=university.university_id
         )
-        request_status = await status_service.read(
-            session=db_session, data={"status_id": 3}
-        )
         approve_status = await status_service.read(
             session=db_session, data={"status_id": 1}
         )
@@ -678,3 +683,434 @@ class TestReadHostelAccommodation:
         assert data.get(
             "documents"
         ) == service_document.documents
+
+    async def test_read_hostel_accommodation_200_empty(
+            self,
+            async_client: AsyncClient,
+            app_fixture: FastAPI,
+            faker: Faker,
+            student_creation: Tuple[
+                str, University, User, Student, Faculty, Speciality
+            ],
+            db_session: AsyncSession,
+    ) -> None:
+        token, university, user, student, faculty, speciality = student_creation
+
+        response = await async_client.get(
+            url=app_fixture.url_path_for(
+                name="read_hostel_accommodation",
+                university_id=faker.pyint(min_value=3000),
+                user_request_id=faker.pyint(min_value=2500),
+            ),
+            headers={"Authorization": f"Bearer {token}"}
+        )
+        assert_jsend_response(
+            response=response,
+            http_code=status.HTTP_200_OK,
+            status=JSENDStatus.SUCCESS,
+            message="Got hostel accommodation",
+            code=status.HTTP_200_OK,
+        )
+        data = response.json()["data"]
+        assert data is None
+
+
+class TestReadUserDocumentList:
+    async def test_read_user_document_list_200(
+            self,
+            async_client: AsyncClient,
+            app_fixture: FastAPI,
+            faker: Faker,
+            student_creation: Tuple[
+                str, University, User, Student, Faculty, Speciality
+            ],
+            db_session: AsyncSession,
+    ) -> None:
+        token, university, user, student, faculty, speciality = student_creation
+        service: Service = ServiceFactory()
+        user_documents = []
+        for _ in range(3):
+            response = await async_client.request(
+                method="POST",
+                url=app_fixture.url_path_for(
+                    name="create_user_request",
+                    university_id=university.university_id,
+                ),
+                headers={
+                    "Authorization": f"Bearer {token}",
+                    "accept": "application/json",
+                    "Content-Type": "application/json",
+                    "Access-Control-Allow-Origin": "*",
+                },
+                json={
+                    "service_id": service.service_id,
+                    "comment": faker.pystr(max_chars=255),
+                },
+            )
+            data = response.json()["data"]
+            user_request_id = data.get("user_request_id")
+            user_documents.append(
+                await user_document_service.read(
+                    session=db_session, data={"user_request_id": user_request_id}
+                )
+            )
+
+        response = await async_client.get(
+            url=app_fixture.url_path_for(
+                name="read_user_documents_list",
+                university_id=university.university_id
+            ),
+            headers={"Authorization": f"Bearer {token}"},
+        )
+        assert_jsend_response(
+            response=response,
+            http_code=status.HTTP_200_OK,
+            status=JSENDStatus.SUCCESS,
+            message="Got user documents list",
+            code=status.HTTP_200_OK,
+        )
+        data = response.json()["data"]
+        for user_document in user_documents:
+            created_instance = find_created_instance(
+                user_document.user_document_id, data, "user_document_id"
+            )
+            assert created_instance.get("university_id") == university.university_id
+            assert created_instance.get("user_document_id") == user_document.user_document_id
+            assert created_instance.get("name") == user_document.name
+            assert created_instance.get("created_at") == (
+                    user_document.created_at.strftime('%Y-%m-%d')
+                    + 'T' + user_document.created_at.strftime('%H:%M:%S.%f') + '+00:00'
+            )
+            assert created_instance.get("updated_at") == (
+                    user_document.updated_at.strftime('%Y-%m-%d')
+                    + 'T' + user_document.updated_at.strftime('%H:%M:%S.%f') + '+00:00'
+            )
+
+
+class TestReadUserRequestDetails:
+    async def test_read_user_request_details_200_full(
+            self,
+            async_client: AsyncClient,
+            app_fixture: FastAPI,
+            faker: Faker,
+            student_creation: Tuple[
+                str, University, User, Student, Faculty, Speciality
+            ],
+            db_session: AsyncSession,
+    ) -> None:
+        token, university, user, student, faculty, speciality = student_creation
+        service: Service = ServiceFactory()
+        hostel: Hostel = HostelFactory(university_id=university.university_id)
+        bed_place: BedPlace = BedPlaceFactory()
+        approved_status = await status_service.read(
+            session=db_session, data={"status_id": 1}
+        )
+        response = await async_client.request(
+            method="POST",
+            url=app_fixture.url_path_for(
+                name="create_user_request",
+                university_id=university.university_id,
+            ),
+            headers={
+                "Authorization": f"Bearer {token}",
+                "accept": "application/json",
+                "Content-Type": "application/json",
+                "Access-Control-Allow-Origin": "*",
+            },
+            json={
+                "service_id": service.service_id,
+                "comment": faker.pystr(max_chars=254),
+            },
+        )
+        user_request_out = response.json()["data"]
+        response = await async_client.request(
+            method="POST",
+            url=app_fixture.url_path_for(
+                name="create_user_request_review",
+                university_id=university.university_id,
+                user_request_id=user_request_out.get("user_request_id")
+            ),
+            headers={
+                "Authorization": f"Bearer {token}",
+                "accept": "application/json",
+                "Content-Type": "application/json",
+                "Access-Control-Allow-Origin": "*",
+            },
+            json={
+                "status_id": approved_status.status_id,
+                "room_number": faker.pyint(),
+                "start_accommodation_date": faker.date(),
+                "end_accommodation_data": faker.date(),
+                "total_sum": float(faker.pydecimal(
+                    left_digits=5, right_digits=2, positive=True
+                )),
+                "payment_deadline_date": faker.date(),
+                "hostel_id": hostel.hostel_id,
+                "bed_place_id": bed_place.bed_place_id,
+            },
+        )
+        user_request_review_out = response.json()["data"]
+        response = await async_client.get(
+            url=app_fixture.url_path_for(
+                name="read_user_request_details",
+                university_id=university.university_id,
+                user_request_id=user_request_out.get("user_request_id"),
+            ),
+            headers={
+                "Authorization": f"Bearer {token}",
+                "accept": "application/json",
+                "Content-Type": "application/json",
+                "Access-Control-Allow-Origin": "*",
+            },
+        )
+        assert_jsend_response(
+            response=response,
+            http_code=status.HTTP_200_OK,
+            status=JSENDStatus.SUCCESS,
+            message="Got request details",
+            code=status.HTTP_200_OK,
+        )
+        data = response.json()["data"]
+        user_documents = await user_document_service.list(
+            session=db_session,
+            filters={"user_request_id": user_request_out.get("user_request_id")},
+        )
+        assert data.get("user_request_id") == user_request_out.get("user_request_id")
+        assert data.get("university_id") == university.university_id
+        assert data.get("created_at") == user_request_out.get("created_at")
+        assert data.get("service_name") == service.service_name
+        assert data.get("status_name") == approved_status.status_name
+        assert data.get("status_id") == approved_status.status_id
+        assert data.get("comment") == user_request_out.get("comment")
+        assert data.get("hostel_name") == {
+            "name": hostel.name, "number": hostel.number
+        }
+        assert data.get("room_number") == user_request_review_out.get("room_number")
+        assert data.get("bed_place_name") == bed_place.bed_place_name
+        assert data.get("remark") == user_request_review_out.get("remark")
+        assert data.get("documents") == [{
+            "id": user_document.user_document_id,
+            "name": user_document.name,
+            "created_at": (user_document.created_at.strftime('%Y-%m-%d')
+                           + 'T' + user_document.created_at.strftime('%H:%M:%S.%f')
+                           + '+00:00'
+                           )
+        } for user_document in user_documents]
+
+    async def test_read_user_request_details_200_empty(
+            self,
+            async_client: AsyncClient,
+            app_fixture: FastAPI,
+            faker: Faker,
+            student_creation: Tuple[
+                str, University, User, Student, Faculty, Speciality
+            ],
+            db_session: AsyncSession,
+    ) -> None:
+        token, university, user, student, faculty, speciality = student_creation
+        service: Service = ServiceFactory()
+        request_status = await status_service.read(
+            session=db_session, data={"status_id": 3}
+        )
+        response = await async_client.request(
+            method="POST",
+            url=app_fixture.url_path_for(
+                name="create_user_request",
+                university_id=university.university_id,
+            ),
+            headers={
+                "Authorization": f"Bearer {token}",
+                "accept": "application/json",
+                "Content-Type": "application/json",
+                "Access-Control-Allow-Origin": "*",
+            },
+            json={
+                "service_id": service.service_id,
+                "comment": faker.pystr(max_chars=254),
+            },
+        )
+        user_request_out = response.json()["data"]
+        response = await async_client.get(
+            url=app_fixture.url_path_for(
+                name="read_user_request_details",
+                university_id=university.university_id,
+                user_request_id=user_request_out.get("user_request_id"),
+            ),
+            headers={
+                "Authorization": f"Bearer {token}",
+                "accept": "application/json",
+                "Content-Type": "application/json",
+                "Access-Control-Allow-Origin": "*",
+            },
+        )
+        assert_jsend_response(
+            response=response,
+            http_code=status.HTTP_200_OK,
+            status=JSENDStatus.SUCCESS,
+            message="Got request details",
+            code=status.HTTP_200_OK,
+        )
+        data = response.json()["data"]
+        user_documents = await user_document_service.list(
+            session=db_session,
+            filters={"user_request_id": user_request_out.get("user_request_id")},
+        )
+        assert data.get("user_request_id") == user_request_out.get("user_request_id")
+        assert data.get("university_id") == university.university_id
+        assert data.get("created_at") == user_request_out.get("created_at")
+        assert data.get("service_name") == service.service_name
+        assert data.get("status_name") == request_status.status_name
+        assert data.get("status_id") == request_status.status_id
+        assert data.get("comment") == user_request_out.get("comment")
+        assert data.get("hostel_name") == {
+            "name": None, "number": None
+        }
+        assert data.get("room_number") is None
+        assert data.get("bed_place_name") is None
+        assert data.get("remark") is None
+        assert data.get("documents") == [{
+            "id": user_document.user_document_id,
+            "name": user_document.name,
+            "created_at": (user_document.created_at.strftime('%Y-%m-%d')
+                           + 'T' + user_document.created_at.strftime('%H:%M:%S.%f')
+                           + '+00:00'
+                           )
+        } for user_document in user_documents]
+
+    async def test_read_user_request_details_422(
+            self,
+            async_client: AsyncClient,
+            app_fixture: FastAPI,
+            faker: Faker,
+            student_creation: Tuple[
+                str, University, User, Student, Faculty, Speciality
+            ],
+            db_session: AsyncSession,
+    ) -> None:
+        token, university, user, student, faculty, speciality = student_creation
+        response = await async_client.get(
+            url=app_fixture.url_path_for(
+                name="read_user_request_details",
+                university_id=university.university_id,
+                user_request_id=faker.pyint(min_value=2900),
+            ),
+            headers={
+                "Authorization": f"Bearer {token}",
+                "accept": "application/json",
+                "Content-Type": "application/json",
+                "Access-Control-Allow-Origin": "*",
+            },
+        )
+        assert_jsend_response(
+            response=response,
+            http_code=422,
+            status=JSENDStatus.FAIL,
+            message="Validation error.",
+            code=422,
+        )
+
+
+class TestCreateStudentsListFromFile:
+    async def test_create_students_list_from_file_200(
+            self,
+            async_client: AsyncClient,
+            app_fixture: FastAPI,
+            faker: Faker,
+            student_creation: Tuple[
+                str, University, User, Student, Faculty, Speciality
+            ],
+            db_session: AsyncSession,
+    ) -> None:
+        token, university, user, student, faculty, speciality = student_creation
+        courses: Course = CourseFactory.create_batch(size=10)
+        file_path = Path(settings.BASE_DIR / "tests" / "samples" / "Form.xlsx").as_posix()
+        with io.open(file_path, 'rb', buffering=0) as f:
+            data = f.read()
+        upload_file = UploadFile(
+            filename="Form.xlsx",
+            file=io.BytesIO(data)
+        )
+        StudentData = namedtuple('StudentData', [
+            'last_name',
+            'first_name',
+            'middle_name',
+            'telephone',
+            'course',
+            'speciality_id',
+            'faculty_id',
+            'gender',
+        ])
+        student_data_list = []
+        worksheet, cell, col, row = get_worksheet_cell_col_row(upload_file)
+        for i in range(row, len(worksheet.col(1))):
+            faculty_list = await faculty_service.list(
+                session=db_session, filters={"shortname": cell(i, col + 7)}
+            )
+            if not faculty_list:
+                faculty: Faculty = FacultyFactory(
+                    university_id=university.university_id,
+                    shortname=cell(i, col + 7)
+                )
+            faculty_id = (
+                faculty_list[0].faculty_id if faculty_list else faculty.faculty_id
+            )
+            speciality_list = await speciality_service.list(
+                session=db_session,
+                filters={
+                    "faculty_id": faculty_id,
+                    "name": cell(i, col + 6),
+                }
+            )
+            if not speciality_list:
+                speciality: Speciality = SpecialityFactory(
+                    faculty_id=faculty_id, name=cell(i, col + 6)
+                )
+            speciality_id = (
+                speciality_list[0].speciality_id if speciality_list
+                else speciality.speciality_id
+            )
+            student_data_list.append(
+                StudentData(
+                    cell(i, col),
+                    cell(i, col + 1),
+                    cell(i, col + 2),
+                    cell(i, col + 3),
+                    cell(i, col + 4),
+                    speciality_id,
+                    faculty_id,
+                    cell(i, col + 8)
+                )
+            )
+        response = await async_client.post(
+            url=app_fixture.url_path_for(
+                name="create_students_list_from_file",
+                university_id=university.university_id,
+            ),
+            headers={
+                "Authorization": f"Bearer {token}",
+            },
+            files={"file": open(file_path, 'rb')},
+        )
+        assert_jsend_response(
+            response=response,
+            http_code=status.HTTP_200_OK,
+            status=JSENDStatus.SUCCESS,
+            message="Created students list from file",
+            code=status.HTTP_200_OK,
+        )
+        data = response.json()["data"]
+        for student in student_data_list:
+            created_instance = find_created_instance(
+                student.telephone, data, "telephone_number"
+            )
+            assert created_instance.get("first_name") == student.first_name
+            assert created_instance.get("last_name") == student.last_name
+            assert created_instance.get("middle_name") == student.middle_name
+            assert created_instance.get("telephone_number") == student.telephone
+            assert created_instance.get("gender") == student.gender
+            assert created_instance.get("course_id") == student.course
+            assert created_instance.get("speciality_id") == student.speciality_id
+            assert created_instance.get("user_id") is None
+            assert created_instance.get("faculty_id") == student.faculty_id
+
+
