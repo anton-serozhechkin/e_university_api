@@ -1,6 +1,7 @@
 from typing import List
 
 from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from apps.common.db import database
 from apps.common.services import AsyncCRUDBase
@@ -22,13 +23,18 @@ from apps.services.models import (
 from apps.users.models import UserFaculty
 
 
-async def get_specialties_list(university_id: int) -> List:
-    query = (
-        select(Faculty, Speciality)
+async def get_specialties_list(session: AsyncSession, university_id: int) -> List:
+    result = await session.execute(
+        select(
+            Faculty.faculty_id,
+            Faculty.shortname,
+            Speciality.speciality_id,
+            Speciality.name,
+        )
         .filter(Speciality.faculty_id == Faculty.faculty_id)
         .where(Faculty.university_id == university_id)
     )
-    return await database.fetch_all(query)
+    return result.all()
 
 
 bed_place_service = AsyncCRUDBase(model=BedPlace)
