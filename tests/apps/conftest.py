@@ -1,5 +1,7 @@
 import typing
 import uuid
+from datetime import datetime
+from pathlib import Path
 from typing import List, Tuple
 
 import pytest
@@ -9,10 +11,18 @@ from httpx import AsyncClient, Response
 
 from apps.authorization.services import create_access_token
 from apps.common.enums import JSENDStatus
+from apps.common.file_managers import file_manager
 from apps.common.services import AsyncCRUDBase, ModelType
 from apps.educational_institutions.models import Dean, Faculty, Speciality, University
 from apps.services.models import Status
+from apps.services.schemas import UserRequestHostelAccommodationWarrantViewOut
 from apps.users.models import Student, User
+from settings import (
+    HOSTEL_WARRANT_TEMPLATE,
+    TEMPLATES_PATH,
+    WARRANT_HOSTEL_ACCOMMODATION_PATH,
+    Settings,
+)
 from tests.apps.educational_institution.factories import (
     FacultyFactory,
     SpecialityFactory,
@@ -73,6 +83,27 @@ def find_created_instance(
     for instance in data:
         if instance.get(attr_name) == instance_attr:
             return instance
+
+
+async def create_user_warrant_content(
+    context: UserRequestHostelAccommodationWarrantViewOut,
+) -> str:
+    rendered_template = file_manager.render(
+        TEMPLATES_PATH, HOSTEL_WARRANT_TEMPLATE, context
+    )
+    created_at = datetime.strptime(
+        context.created_at.strftime(Settings.DATETIME_FORMAT),
+        Settings.DATETIME_FORMAT,
+    )
+    file_date_created = str(created_at).replace(":", "-").replace(" ", "_")
+    document_name = f"hostel_warrant_{file_date_created}_{context.user_request_id}.docx"
+
+    Path(WARRANT_HOSTEL_ACCOMMODATION_PATH).mkdir(exist_ok=True)
+
+    document_path = file_manager.create(
+        WARRANT_HOSTEL_ACCOMMODATION_PATH, document_name, rendered_template
+    )
+    return document_path
 
 
 status_service = AsyncCRUDBase(model=Status)
