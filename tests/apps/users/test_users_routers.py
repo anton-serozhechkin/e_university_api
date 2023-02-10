@@ -11,7 +11,8 @@ from apps.authorization.models import Role
 from apps.authorization.services import create_access_token
 from apps.common.schemas import JSENDStatus
 from apps.common.utils import get_token_and_expires_at
-from apps.educational_institutions.models import Faculty, Rector, University, Speciality
+from apps.educational_institutions.models import Faculty, Rector, University, Speciality, Course
+from apps.educational_institutions.services import course_list_service
 from apps.hostel.models import BedPlace, Hostel
 from apps.users.models import Student, User, UserFaculty
 from apps.users.services import one_time_token_service
@@ -20,7 +21,7 @@ from tests.apps.conftest import assert_jsend_response, find_created_instance
 from tests.apps.educational_institution.factories import (
     FacultyFactory,
     RectorFactory,
-    UniversityFactory,
+    UniversityFactory, CourseFactory,
 )
 from tests.apps.hostel.factories import BedPlaceFactory, HostelFactory
 from tests.apps.users.factories import StudentFactory, UserFactory, UserFacultyFactory
@@ -234,3 +235,200 @@ class TestDeleteUser:
         )
         data = response.json()["data"]
         assert data.get("user_id") == user.user_id
+
+
+class TestRegistration:
+    async def test_registration_200(
+            self,
+            async_client: AsyncClient,
+            app_fixture: FastAPI,
+            faker: Faker,
+            access_token: str,
+    ) -> None:
+        access_token = access_token
+        university: University = UniversityFactory()
+        student: Student = StudentFactory(
+            user_id=None, telephone_number="444444444444"
+        )
+        response = await async_client.request(
+            method="POST",
+            url=app_fixture.url_path_for(
+                name="create_student_existence",
+            ),
+            headers={"Authorization": f"Bearer {access_token}"},
+            json={
+                "last_name": student.last_name,
+                "first_name": student.first_name,
+                "telephone_number": student.telephone_number,
+            }
+        )
+        existence_out = response.json()["data"]
+        email = faker.email()
+        password = faker.pystr(min_chars=10, max_chars=50)
+        response = await async_client.request(
+            method="POST",
+            url=app_fixture.url_path_for("registration"),
+            json={
+                "token": existence_out.get("token"),
+                "email": email,
+                "password": password,
+                "password_re_check": password,
+            }
+        )
+        data = response.json()["data"]
+        assert_jsend_response(
+            response=response,
+            http_code=status.HTTP_200_OK,
+            status=JSENDStatus.SUCCESS,
+            message=f"User with id {data.get('user_id')} was registered successfully",
+            code=status.HTTP_200_OK,
+        )
+        assert data.get("login")[:4] == student.last_name[:4].lower()
+        assert data.get("login")[-3:].isdigit()
+        assert data.get("last_visit")[:10] == datetime.datetime.utcnow().strftime("%Y-%m-%d")
+        assert data.get("email") == email
+        assert data.get("is_active") is True
+        assert data.get("role_id") == 1
+
+
+class TestCreateStudent:
+    async def test_create_student_200(
+            self,
+            async_client: AsyncClient,
+            app_fixture: FastAPI,
+            faker: Faker,
+            access_token: str,
+            db_session: AsyncSession,
+    ) -> None:
+        token = access_token
+        university: University = UniversityFactory()
+        faculty: Faculty = FacultyFactory(university_id=university.university_id)
+        speciality: Speciality = StudentFactory(faculty_id=faculty.faculty_id)
+        course: Course = CourseFactory()
+        first_course = await course_list_service.read(
+            session=db_session, data={"course_id": 1}
+        )
+        first_name = faker.first_name()
+        last_name = faker.last_name()
+        middle_name = faker.first_name()
+        telephone_number = str(faker.pyint(min_value=100000000000, max_value=999999999999))
+        gender = "Ч"
+        response = await async_client.request(
+            method="POST",
+            url=app_fixture.url_path_for(
+                name="create_student",
+                university_id=university.university_id,
+            ),
+            headers={"Authorization": f"Bearer {token}"},
+            json={
+                "last_name": last_name,
+                "first_name": first_name,
+                "telephone_number": telephone_number,
+                "middle_name": middle_name,
+                "course_id": first_course.course_id,
+                "faculty_id": faculty.faculty_id,
+                "speciality_id": speciality.speciality_id,
+                "gender": gender,
+            }
+        )
+        data = response.json()["data"]
+        assert_jsend_response(
+            response=response,
+            http_code=status.HTTP_200_OK,
+            status=JSENDStatus.SUCCESS,
+            message=f"Created student with id {data.get('student_id')}",
+            code=status.HTTP_200_OK,
+        )
+        assert data.get("telephone_number") == telephone_number
+        assert data.get("gender") == gender
+        assert data.get("course_id") == first_course.course_id
+        assert data.get("speciality_id") == speciality.speciality_id
+        assert data.get("user_id") is None
+        assert data.get("faculty_id") == faculty.faculty_id
+
+
+class TestReadStudentsList:
+    async def test_read_students_list_200(
+            self,
+            async_client: AsyncClient,
+            app_fixture: FastAPI,
+            faker: Faker,
+            access_token: str,
+    ) -> None:
+        token = access_token
+        university: University = UniversityFactory()
+        faculty: Faculty = FacultyFactory(university_id=university.university_id)
+        speciality: Speciality = StudentFactory(faculty_id=faculty.faculty_id)
+        course: Course = CourseFactory()
+        students: List[Student] = StudentFactory.create_batch(
+            size=4,
+            faculty_id=faculty.faculty_id,
+            speciality_id=speciality.speciality_id,
+            course_id=course.course_id
+        )
+        response = await async_client.get(
+            url=app_fixture.url_path_for(
+                name="read_students_list",
+                university_id=university.university_id,
+            ),
+            headers={"Authorization": f"Bearer {token}"},
+        )
+        data = response.json()["data"]
+        assert_jsend_response(
+            response=response,
+            http_code=status.HTTP_200_OK,
+            status=JSENDStatus.SUCCESS,
+            message=(
+                f"Got students list of the university"
+                f" with id {university.university_id}"
+            ),
+            code=status.HTTP_200_OK,
+        )
+        for student in students:
+            created_instance = find_created_instance(
+                student.student_id, data, "student_id"
+            )
+            assert created_instance.get("student_id") == student.student_id
+            assert created_instance.get("student_full_name") == {
+                "first_name": student.first_name,
+                "last_name": student.last_name,
+                "middle_name": student.middle_name,
+            }
+            assert created_instance.get("telephone_number") == student.telephone_number
+            assert created_instance.get("user_id") == student.user_id
+            assert created_instance.get("university_id") == university.university_id
+            assert created_instance.get("faculty_id") == student.faculty_id
+            assert created_instance.get("speciality_id") == student.speciality_id
+            assert created_instance.get("course_id") == student.course_id
+            assert created_instance.get("gender") == student.gender
+
+
+class TestDeleteStudent:
+    async def test_delete_student_200(
+            self,
+            async_client: AsyncClient,
+            app_fixture: FastAPI,
+            faker: Faker,
+            access_token: str,
+    ) -> None:
+        token = access_token
+        university: University = UniversityFactory()
+        student: Student = StudentFactory()
+        response = await async_client.request(
+            method="DELETE",
+            url=app_fixture.url_path_for(
+                name="delete_student",
+                university_id=university.university_id,
+            ),
+            headers={"Authorization": f"Bearer {token}"},
+            json={"student_id": student.student_id},
+        )
+        data = response.json()["data"]
+        assert_jsend_response(
+            response=response,
+            http_code=status.HTTP_200_OK,
+            status=JSENDStatus.SUCCESS,
+            message=f"Deleted student with id {student.student_id}",
+            code=status.HTTP_200_OK,
+        )
+        assert data.get("student_id") == student.student_id
