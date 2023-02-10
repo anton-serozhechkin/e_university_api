@@ -12,7 +12,7 @@ from tests.bases import BaseModelFactory
 
 
 class UserFactory(BaseModelFactory):
-    user_id = factory.Sequence(lambda x: x)
+    user_id = factory.Sequence(lambda x: x + 3000)
     mod_login = factory.Faker("pystr", min_chars=1, max_chars=40)
     login = factory.LazyAttribute(function=lambda obj: obj.mod_login + str(obj.user_id))
     simple_password = factory.Faker("pystr", min_chars=4, max_chars=10)

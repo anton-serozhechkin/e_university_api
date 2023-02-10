@@ -139,7 +139,7 @@ async def create_user(
 @users_router.delete(
     "/{university_id}/users/",
     name="delete_user",
-    response_model=JSENDOutSchema,
+    response_model=JSENDOutSchema[DeleteUserIn],
     summary="Delete user",
     responses={
         200: {"description": "Successful delete user response"},
