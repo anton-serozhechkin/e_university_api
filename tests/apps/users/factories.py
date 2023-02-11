@@ -78,7 +78,7 @@ class UserFactory(BaseModelFactory):
 
 
 class OneTimeTokenFactory(BaseModelFactory):
-    token_id = factory.Sequence(lambda x: x)
+    token_id = factory.Sequence(lambda x: x + 3000)
     token = factory.Faker("pystr", min_chars=1, max_chars=255)
     expires_at = factory.Faker("date_time", tzinfo=utc)
     student_id = factory.SelfAttribute(attribute_name="student.student_id")

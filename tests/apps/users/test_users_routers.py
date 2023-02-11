@@ -193,9 +193,7 @@ class TestCreateUser:
             code=status.HTTP_200_OK,
         )
         assert data.get("login")[-3:].isdigit()
-        assert data.get("last_visit")[:10] == datetime.datetime.utcnow().strftime(
-            "%Y-%m-%d"
-        )
+        assert data.get("last_visit_at") is None
         assert data.get("email") == email
         assert data.get("is_active") is False
         assert data.get("role_id") == role.role_id
@@ -278,7 +276,7 @@ class TestRegistration:
         )
         assert data.get("login")[:4] == student.last_name[:4].lower()
         assert data.get("login")[-3:].isdigit()
-        assert data.get("last_visit")[:10] == datetime.datetime.utcnow().strftime(
+        assert data.get("last_visit_at")[:10] == datetime.datetime.utcnow().strftime(
             "%Y-%m-%d"
         )
         assert data.get("email") == email
@@ -489,7 +487,7 @@ class TestReadMe:
         )
         assert data.get("user_id") == user_out.get("user_id")
         assert data.get("login") == user_out.get("login")
-        assert data.get("last_visit_at") == user_out.get("last_visit")
+        assert data.get("last_visit_at") == user_out.get("last_visit_at")
         assert data.get("email") == user_out.get("email")
         assert data.get("is_active") == user_out.get("is_active")
         assert data.get("role") == [

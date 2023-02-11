@@ -139,7 +139,7 @@ class UserHandler:
         return CreateUserOut(
             user_id=registered_user.user_id,
             login=registered_user.login,
-            last_visit=registered_user.last_visit_at,
+            last_visit_at=registered_user.last_visit_at,
             email=registered_user.email,
             is_active=registered_user.is_active,
             role_id=registered_user.role_id,
