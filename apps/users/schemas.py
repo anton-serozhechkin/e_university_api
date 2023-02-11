@@ -129,7 +129,7 @@ class CreateUserIn(BaseInSchema):
 class CreateUserOut(BaseOutSchema):
     user_id: int
     login: str
-    last_visit: datetime = None
+    last_visit_at: datetime = None
     email: str
     is_active: bool = None
     role_id: int
