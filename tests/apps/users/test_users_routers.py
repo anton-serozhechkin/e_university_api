@@ -1,43 +1,37 @@
 import datetime
-from typing import List, Tuple
+from typing import List
 
-import pytest
 from faker import Faker
 from fastapi import FastAPI, status
 from httpx import AsyncClient
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from apps.authorization.models import Role
-from apps.authorization.services import create_access_token
+from apps.authorization.services import create_access_token, role_service
 from apps.common.schemas import JSENDStatus
-from apps.common.utils import get_token_and_expires_at
-from apps.educational_institutions.models import Faculty, Rector, University, Speciality, Course
+from apps.educational_institutions.models import Course, Faculty, Speciality, University
 from apps.educational_institutions.services import course_list_service
-from apps.hostel.models import BedPlace, Hostel
-from apps.users.models import Student, User, UserFaculty
+from apps.users.models import Student, User
 from apps.users.services import one_time_token_service
 from tests.apps.authorization.factories import RoleFactory
 from tests.apps.conftest import assert_jsend_response, find_created_instance
 from tests.apps.educational_institution.factories import (
+    CourseFactory,
     FacultyFactory,
-    RectorFactory,
-    UniversityFactory, CourseFactory,
+    UniversityFactory,
 )
-from tests.apps.hostel.factories import BedPlaceFactory, HostelFactory
 from tests.apps.users.factories import StudentFactory, UserFactory, UserFacultyFactory
 
 
 class TestCreateStudentExistence:
     async def test_create_student_existence_200(
-            self,
-            async_client: AsyncClient,
-            app_fixture: FastAPI,
-            faker: Faker,
-            db_session: AsyncSession,
+        self,
+        async_client: AsyncClient,
+        app_fixture: FastAPI,
+        faker: Faker,
+        db_session: AsyncSession,
     ) -> None:
-        student: Student = StudentFactory(
-            user_id=None, telephone_number="333333333333"
-        )
+        student: Student = StudentFactory(user_id=None, telephone_number="333333333333")
         response = await async_client.request(
             method="POST",
             url=app_fixture.url_path_for("create_student_existence"),
@@ -45,7 +39,7 @@ class TestCreateStudentExistence:
                 "last_name": student.last_name,
                 "first_name": student.first_name,
                 "telephone_number": student.telephone_number,
-            }
+            },
         )
         one_time_token = await one_time_token_service.read(
             session=db_session, data={"student_id": student.student_id}
@@ -61,22 +55,20 @@ class TestCreateStudentExistence:
         assert data.get("student_id") == student.student_id
         assert data.get("token") == one_time_token.token
         assert data.get("expires_at") == (
-                one_time_token.expires_at.strftime("%Y-%m-%d")
-                + "T"
-                + one_time_token.expires_at.strftime("%H:%M:%S.%f")
-                + "+00:00"
+            one_time_token.expires_at.strftime("%Y-%m-%d")
+            + "T"
+            + one_time_token.expires_at.strftime("%H:%M:%S.%f")
+            + "+00:00"
         )
 
     async def test_create_student_existence_422(
-            self,
-            async_client: AsyncClient,
-            app_fixture: FastAPI,
-            faker: Faker,
-            db_session: AsyncSession,
+        self,
+        async_client: AsyncClient,
+        app_fixture: FastAPI,
+        faker: Faker,
+        db_session: AsyncSession,
     ) -> None:
-        student: Student = StudentFactory(
-            user_id=None, telephone_number="333333333333"
-        )
+        student: Student = StudentFactory(user_id=None, telephone_number="333333333333")
         response = await async_client.request(
             method="POST",
             url=app_fixture.url_path_for("create_student_existence"),
@@ -84,7 +76,7 @@ class TestCreateStudentExistence:
                 "last_name": student.last_name,
                 "first_name": student.first_name,
                 "telephone_number": faker.pyint(),
-            }
+            },
         )
         assert_jsend_response(
             response=response,
@@ -97,11 +89,11 @@ class TestCreateStudentExistence:
 
 class TestReadUsersList:
     async def test_read_users_list_200(
-            self,
-            async_client: AsyncClient,
-            app_fixture: FastAPI,
-            faker: Faker,
-            access_token: str,
+        self,
+        async_client: AsyncClient,
+        app_fixture: FastAPI,
+        faker: Faker,
+        access_token: str,
     ) -> None:
         token = access_token
         university: University = UniversityFactory()
@@ -112,14 +104,15 @@ class TestReadUsersList:
         user_faculties = [
             UserFacultyFactory(
                 user_id=users[i].user_id, faculty_id=faculties[i].faculty_id
-            ) for i in range(5)
+            )
+            for i in range(5)
         ]
         response = await async_client.get(
             url=app_fixture.url_path_for(
                 name="read_users_list",
                 university_id=university.university_id,
             ),
-            headers={"Authorization": f"Bearer {token}"}
+            headers={"Authorization": f"Bearer {token}"},
         )
         assert_jsend_response(
             response=response,
@@ -130,9 +123,7 @@ class TestReadUsersList:
         )
         data = response.json()["data"]
         for user in users:
-            created_instance = find_created_instance(
-                user.user_id, data, "user_id"
-            )
+            created_instance = find_created_instance(user.user_id, data, "user_id")
             assert created_instance.get("user_id") == user.user_id
             assert created_instance.get("login") == user.login
             assert created_instance.get("last_visit_at") == (
@@ -143,30 +134,32 @@ class TestReadUsersList:
             )
             assert created_instance.get("email") == user.email
             assert created_instance.get("is_active") == user.is_active
-            assert created_instance.get("role") == [{
-                "role": user.roles.role_id,
-                "role_name": user.roles.role_name,
-            }]
+            assert created_instance.get("role") == [
+                {
+                    "role": user.roles.role_id,
+                    "role_name": user.roles.role_name,
+                }
+            ]
             user_faculty_set = {
-                faculty.faculty_id for faculty in user_faculties
+                faculty.faculty_id
+                for faculty in user_faculties
                 if faculty.user_id == user.user_id
             }
             assert created_instance.get("faculties") == [
-                {
-                    "faculty": faculty.faculty_id,
-                    "faculty_name": faculty.name
-                } for faculty in faculties if faculty.faculty_id in user_faculty_set
+                {"faculty": faculty.faculty_id, "faculty_name": faculty.name}
+                for faculty in faculties
+                if faculty.faculty_id in user_faculty_set
             ]
             assert created_instance.get("university_id") == university.university_id
 
 
 class TestCreateUser:
     async def test_create_user_200(
-            self,
-            async_client: AsyncClient,
-            app_fixture: FastAPI,
-            faker: Faker,
-            access_token: str,
+        self,
+        async_client: AsyncClient,
+        app_fixture: FastAPI,
+        faker: Faker,
+        access_token: str,
     ) -> None:
         university: University = UniversityFactory()
         faculties: List[Faculty] = FacultyFactory.create_batch(
@@ -200,7 +193,9 @@ class TestCreateUser:
             code=status.HTTP_200_OK,
         )
         assert data.get("login")[-3:].isdigit()
-        assert data.get("last_visit")[:10] == datetime.datetime.utcnow().strftime("%Y-%m-%d")
+        assert data.get("last_visit")[:10] == datetime.datetime.utcnow().strftime(
+            "%Y-%m-%d"
+        )
         assert data.get("email") == email
         assert data.get("is_active") is False
         assert data.get("role_id") == role.role_id
@@ -208,11 +203,11 @@ class TestCreateUser:
 
 class TestDeleteUser:
     async def test_delete_user_200(
-            self,
-            async_client: AsyncClient,
-            app_fixture: FastAPI,
-            faker: Faker,
-            access_token: str,
+        self,
+        async_client: AsyncClient,
+        app_fixture: FastAPI,
+        faker: Faker,
+        access_token: str,
     ) -> None:
         token = access_token
         university: University = UniversityFactory()
@@ -239,17 +234,15 @@ class TestDeleteUser:
 
 class TestRegistration:
     async def test_registration_200(
-            self,
-            async_client: AsyncClient,
-            app_fixture: FastAPI,
-            faker: Faker,
-            access_token: str,
+        self,
+        async_client: AsyncClient,
+        app_fixture: FastAPI,
+        faker: Faker,
+        access_token: str,
     ) -> None:
         access_token = access_token
         university: University = UniversityFactory()
-        student: Student = StudentFactory(
-            user_id=None, telephone_number="444444444444"
-        )
+        student: Student = StudentFactory(user_id=None, telephone_number="444444444444")
         response = await async_client.request(
             method="POST",
             url=app_fixture.url_path_for(
@@ -260,7 +253,7 @@ class TestRegistration:
                 "last_name": student.last_name,
                 "first_name": student.first_name,
                 "telephone_number": student.telephone_number,
-            }
+            },
         )
         existence_out = response.json()["data"]
         email = faker.email()
@@ -273,7 +266,7 @@ class TestRegistration:
                 "email": email,
                 "password": password,
                 "password_re_check": password,
-            }
+            },
         )
         data = response.json()["data"]
         assert_jsend_response(
@@ -285,7 +278,9 @@ class TestRegistration:
         )
         assert data.get("login")[:4] == student.last_name[:4].lower()
         assert data.get("login")[-3:].isdigit()
-        assert data.get("last_visit")[:10] == datetime.datetime.utcnow().strftime("%Y-%m-%d")
+        assert data.get("last_visit")[:10] == datetime.datetime.utcnow().strftime(
+            "%Y-%m-%d"
+        )
         assert data.get("email") == email
         assert data.get("is_active") is True
         assert data.get("role_id") == 1
@@ -293,12 +288,12 @@ class TestRegistration:
 
 class TestCreateStudent:
     async def test_create_student_200(
-            self,
-            async_client: AsyncClient,
-            app_fixture: FastAPI,
-            faker: Faker,
-            access_token: str,
-            db_session: AsyncSession,
+        self,
+        async_client: AsyncClient,
+        app_fixture: FastAPI,
+        faker: Faker,
+        access_token: str,
+        db_session: AsyncSession,
     ) -> None:
         token = access_token
         university: University = UniversityFactory()
@@ -311,7 +306,9 @@ class TestCreateStudent:
         first_name = faker.first_name()
         last_name = faker.last_name()
         middle_name = faker.first_name()
-        telephone_number = str(faker.pyint(min_value=100000000000, max_value=999999999999))
+        telephone_number = str(
+            faker.pyint(min_value=100000000000, max_value=999999999999)
+        )
         gender = "Ч"
         response = await async_client.request(
             method="POST",
@@ -329,7 +326,7 @@ class TestCreateStudent:
                 "faculty_id": faculty.faculty_id,
                 "speciality_id": speciality.speciality_id,
                 "gender": gender,
-            }
+            },
         )
         data = response.json()["data"]
         assert_jsend_response(
@@ -349,11 +346,11 @@ class TestCreateStudent:
 
 class TestReadStudentsList:
     async def test_read_students_list_200(
-            self,
-            async_client: AsyncClient,
-            app_fixture: FastAPI,
-            faker: Faker,
-            access_token: str,
+        self,
+        async_client: AsyncClient,
+        app_fixture: FastAPI,
+        faker: Faker,
+        access_token: str,
     ) -> None:
         token = access_token
         university: University = UniversityFactory()
@@ -364,7 +361,7 @@ class TestReadStudentsList:
             size=4,
             faculty_id=faculty.faculty_id,
             speciality_id=speciality.speciality_id,
-            course_id=course.course_id
+            course_id=course.course_id,
         )
         response = await async_client.get(
             url=app_fixture.url_path_for(
@@ -405,11 +402,11 @@ class TestReadStudentsList:
 
 class TestDeleteStudent:
     async def test_delete_student_200(
-            self,
-            async_client: AsyncClient,
-            app_fixture: FastAPI,
-            faker: Faker,
-            access_token: str,
+        self,
+        async_client: AsyncClient,
+        app_fixture: FastAPI,
+        faker: Faker,
+        access_token: str,
     ) -> None:
         token = access_token
         university: University = UniversityFactory()
@@ -432,3 +429,79 @@ class TestDeleteStudent:
             code=status.HTTP_200_OK,
         )
         assert data.get("student_id") == student.student_id
+
+
+class TestReadMe:
+    async def test_read_me_200(
+        self,
+        async_client: AsyncClient,
+        app_fixture: FastAPI,
+        faker: Faker,
+        db_session: AsyncSession,
+    ) -> None:
+        university: University = UniversityFactory()
+        faculty: Faculty = FacultyFactory(university_id=university.university_id)
+        role: Role = RoleFactory()
+        student: Student = StudentFactory(
+            faculty_id=faculty.faculty_id,
+            telephone_number=str(
+                faker.pyint(min_value=100000000000, max_value=999999999999)
+            ),
+            user_id=None,
+        )
+        response = await async_client.request(
+            method="POST",
+            url=app_fixture.url_path_for(name="create_student_existence"),
+            json={
+                "last_name": student.last_name,
+                "first_name": student.first_name,
+                "telephone_number": student.telephone_number,
+            },
+        )
+        student_existence_out = response.json()["data"]
+        password = faker.pystr(min_chars=10, max_chars=50)
+        response = await async_client.request(
+            method="POST",
+            url=app_fixture.url_path_for(name="registration"),
+            json={
+                "token": student_existence_out.get("token"),
+                "email": faker.email(),
+                "password": password,
+                "password_re_check": password,
+            },
+        )
+        user_out = response.json()["data"]
+        token = create_access_token(subject=user_out.get("email"))
+        response = await async_client.get(
+            url=app_fixture.url_path_for("read_me"),
+            headers={"Authorization": f"Bearer {token}"},
+        )
+        data = response.json()["data"]
+        role = await role_service.read(
+            session=db_session, data={"role_id": user_out.get("role_id")}
+        )
+        assert_jsend_response(
+            response=response,
+            http_code=status.HTTP_200_OK,
+            status=JSENDStatus.SUCCESS,
+            message="Got user information",
+            code=status.HTTP_200_OK,
+        )
+        assert data.get("user_id") == user_out.get("user_id")
+        assert data.get("login") == user_out.get("login")
+        assert data.get("last_visit_at") == user_out.get("last_visit")
+        assert data.get("email") == user_out.get("email")
+        assert data.get("is_active") == user_out.get("is_active")
+        assert data.get("role") == [
+            {
+                "role": role.role_id,
+                "role_name": role.role_name,
+            }
+        ]
+        assert data.get("faculties") == [
+            {
+                "faculty": faculty.faculty_id,
+                "faculty_name": faculty.name,
+            }
+        ]
+        assert data.get("university_id") == university.university_id

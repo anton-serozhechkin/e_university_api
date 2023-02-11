@@ -23,9 +23,7 @@ from apps.services.models import (
     UserRequest,
     UserRequestReview,
 )
-from apps.services.schemas import (
-    UserRequestHostelAccommodationWarrantViewOut,
-)
+from apps.services.schemas import UserRequestHostelAccommodationWarrantViewOut
 from apps.services.services import user_document_service
 from apps.services.utils import get_worksheet_cell_col_row
 from apps.users.models import Student, User
