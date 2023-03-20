@@ -391,7 +391,7 @@ class ServiceHandler:
         file: UploadFile = File(...),
         session: AsyncSession,
     ) -> Union[List[CreateStudentsListOut], None]:
-        specialties, students = await get_specialties_list(university_id), []
+        specialties, students = await get_specialties_list(session, university_id), []
 
         faculty_dict = create_faculty_dict(specialties)
 
