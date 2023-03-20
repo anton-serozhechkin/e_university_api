@@ -9,7 +9,10 @@ class Role(Base):
     __tablename__ = "role"
 
     role_id = Column(INTEGER, primary_key=True)
-    role_name = Column(VARCHAR(length=50))
+    role_name = Column(
+        VARCHAR(length=50),
+        nullable=False,
+    )
     created_at = Column(AwareDateTime, default=func.now(), nullable=False)
     updated_at = Column(AwareDateTime, default=func.now(), nullable=False)
 

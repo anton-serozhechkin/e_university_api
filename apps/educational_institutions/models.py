@@ -15,7 +15,9 @@ class University(Base):
     city = Column(VARCHAR(length=255), nullable=False)
     logo = Column(VARCHAR(length=255))
     rector_id = Column(
-        INTEGER, ForeignKey("rector.rector_id", ondelete="CASCADE", onupdate="CASCADE")
+        INTEGER,
+        ForeignKey("rector.rector_id", ondelete="CASCADE", onupdate="CASCADE"),
+        nullable=False,
     )
 
     rector = relationship("Rector", back_populates="university")
@@ -43,7 +45,11 @@ class Faculty(Base):
     name = Column(VARCHAR(length=255), nullable=False)
     shortname = Column(VARCHAR(length=20))
     main_email = Column(VARCHAR(length=50))
-    dean_id = Column(INTEGER, ForeignKey("dean.dean_id"))
+    dean_id = Column(
+        INTEGER,
+        ForeignKey("dean.dean_id"),
+        nullable=False,
+    )
     university_id = Column(
         INTEGER,
         ForeignKey("university.university_id", ondelete="CASCADE", onupdate="CASCADE"),

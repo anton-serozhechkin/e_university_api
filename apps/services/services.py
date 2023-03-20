@@ -3,7 +3,6 @@ from typing import List
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from apps.common.db import database
 from apps.common.services import AsyncCRUDBase
 from apps.educational_institutions.models import Faculty, Speciality
 from apps.hostel.models import BedPlace, Hostel

@@ -59,7 +59,7 @@ def upgrade() -> None:
     op.create_table(
         "role",
         sa.Column("role_id", sa.INTEGER(), nullable=False),
-        sa.Column("role_name", sa.VARCHAR(length=50), nullable=True),
+        sa.Column("role_name", sa.VARCHAR(length=50), nullable=False),
         sa.Column(
             "created_at",
             sa.TIMESTAMP(timezone=True),
@@ -107,7 +107,7 @@ def upgrade() -> None:
         sa.Column("short_university_name", sa.VARCHAR(length=50), nullable=False),
         sa.Column("city", sa.VARCHAR(length=255), nullable=False),
         sa.Column("logo", sa.VARCHAR(length=255), nullable=True),
-        sa.Column("rector_id", sa.INTEGER(), nullable=True),
+        sa.Column("rector_id", sa.INTEGER(), nullable=False),
         sa.ForeignKeyConstraint(
             ("rector_id",),
             ["rector.rector_id"],
@@ -130,7 +130,7 @@ def upgrade() -> None:
         ),
         sa.Column("email", sa.VARCHAR(length=100), nullable=False),
         sa.Column("is_active", sa.BOOLEAN(), nullable=True),
-        sa.Column("role_id", sa.INTEGER(), nullable=True),
+        sa.Column("role_id", sa.INTEGER(), nullable=False),
         sa.Column(
             "created_at",
             sa.TIMESTAMP(timezone=True),
@@ -160,7 +160,7 @@ def upgrade() -> None:
         sa.Column("name", sa.VARCHAR(length=255), nullable=False),
         sa.Column("shortname", sa.VARCHAR(length=20), nullable=True),
         sa.Column("main_email", sa.VARCHAR(length=50), nullable=True),
-        sa.Column("dean_id", sa.INTEGER(), nullable=True),
+        sa.Column("dean_id", sa.INTEGER(), nullable=False),
         sa.Column("university_id", sa.INTEGER(), nullable=False),
         sa.ForeignKeyConstraint(
             ("dean_id",),
