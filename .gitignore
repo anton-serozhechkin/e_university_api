@@ -15,4 +15,5 @@ pgadmin_data
 alembic
 
 .coverage
+
 /venv/
