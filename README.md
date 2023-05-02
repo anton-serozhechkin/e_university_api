@@ -37,7 +37,7 @@ During development it may be useful to run application outside of docker contain
 
 1. Install Python 3.8 (refer `pyproject.toml` for python verion used on the project) and [Poetry](https://python-poetry.org/)
 
-2. Create virtual environment and install project dependencies:
+2. Create virtual environment and install/update project dependencies:
 
        poetry install
 
@@ -114,6 +114,35 @@ For work with application, you need to setup your database in docker container. 
    and run the previous command again. You can choose the database to work with by changing POSTGRES_DB.
 
 4. How to work using alembic see README section in alembic dir.
+
+
+### Use code linters
+
+Before creating a pull request you need to use linters and check the code quality.
+
+1. Use flake8 to check the code, enter the command:
+
+       flake8 .
+
+   every error line in report must be corrected in code
+
+2. Use black, enter command:
+
+       black .
+
+3. Use isort, enter command:
+
+       isort .
+
+
+### Performing tests
+
+For testing application there is need to use pytest and it's plugings.
+There is need to always check amount of test cases and their covering.
+
+1. To perform created test cases, use command:
+
+       pytest --cov
 
 
 ## Project layout

@@ -43,7 +43,12 @@ pytest-asyncio = "^0.20.2"
 pytest-mock = "^3.10.0"
 pytest-sugar = "^0.9.6"
 pytest-cov = "^4.0.0"
+pytest-randomly = "^3.12.0"
+pytest-clarity = "^1.0.1"
 faker = "^15.3.1"
+pydantic-factories = "^1.7.0"
+pytest-alembic = "^0.8.4"
+httpx = "^0.23.0"
 
 [build-system]
 requires = ["poetry-core"]
@@ -75,3 +80,15 @@ skip_glob = []
 
 [tool.mypy]
 ignore_missing_imports = true
+
+
+[tool.pytest.ini_options]
+python_classes = "Test*"
+
+norecursedirs = ["venv", ".venv", ".env", "migrations",]
+testpaths = ["tests",]
+python_files = ["test*.py", "*test.py"]
+python_functions = ["*_test", "test_*"]
+console_output_style = "progress"
+asyncio_mode = "auto"
+log_cli = true
